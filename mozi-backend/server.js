@@ -12,6 +12,8 @@ db.once("open",() => console.log('Connected to Database'))
 app.use(express.json())
 
 const movieRouter = require('./routes/movie')
-app.use('/movie',movieRouter)
+app.use('/api',movieRouter)
+const userRouter = require('./routes/user')
+app.use('/api',userRouter)
 
 app.listen(3001, () => console.log('Server started')) 
