@@ -1,0 +1,133 @@
+{
+    "movie":{
+        "title": "Cím",
+        "description": "Leírás",
+        "category": "Kategória",
+        "releaseDate": "Kiadási Dátum",
+        "rating": "Értékelés",
+        "poster": "Poszter",
+        "selectedMovie": "Választott film"
+    },
+    "navbar":{
+        "Categories": "Kategóriák",
+        "Movies": "Filmek",
+        "Users": "Felhasználók",
+        "myaccount": "Fiókom",
+        "logout": "Kijelentkezés",
+        "myReviews": "Véleményeim",
+        "Reviews": "Vélemények",
+        "Language": "Nyelv",
+        "English": "Angol",
+        "Hungarian": "Magyar"
+    },
+    "footer":"© 2023 MovieZone Minden jog fenntartva.",
+    "review":{
+        "reviewCard":{
+            "nameOfUser": "Felhasználó neve",
+            "description":"Leírás",
+            "rating":"Értékelés"
+        },
+        "selectedReview": "Választott vélemény",
+        "noReviewFound": "Úgy néz ki még nincsenek vélemények írva ezzel a felhasználóval. Véleményezni a főoldalon lehetséges a filmekre kattintva!",
+        "noReviewFoundForMovie": "Úgy néz ki még nincsenek vélemények írva erről a filmről. Légy az első aki véleményezi ezt a filmet"
+        
+    },
+    "category":{
+        "categoryName": "Kategória neve",
+        "selectedCategory": "Választott kategória",
+        "name": "Név",
+        "noCategoryFound": "Nem találhatóak kategóriák! Adj hozzá a bal felső sarokban levő gomb lenyomásával!"
+    },
+    "user":{
+        "userCard":{
+            "fullName": "Teljes név",
+            "email": "Email",
+            "role": "Szerepkör"
+        },
+        "firstName":"Keresztnév",
+        "lastName": "Vezetéknév",
+        "email": "Email",
+        "password": "Jelszó",
+        "role":"Szerepkör",
+        "selectedUser":"Választott felhasználó"
+    },
+    "failMessages" : {
+        "reviewAddMultiple": "Már van vélemény adva az adott filmről!",
+        "reviewDescriptionMissing": "Nincs megadva a vélemény leirása!",
+        "reviewRatingMissing": "Nincs megadva a vélemény értékelése!"
+    },
+    "successMessages": {
+        "reviewAdd": "A vélemény hozzáadása sikeres!",
+        "movieAdd": "A film hozzáadása sikeres!",
+        "categoryAdd": "A kategória hozzáadása sikeres!",
+        "reviewEdit": "A vélemény szerkesztése sikeres!",
+        "movieEdit": "A film szerkesztése sikeres!",
+        "categoryEdit": "A kategória szerkesztése sikeres!",
+        "userEdit": "A felhasználó szerkesztése sikeres!",
+        "reviewDelete": "A vélemény törlése sikeres!",
+        "movieDelete": "A film törlése sikeres!",
+        "categoryDelete": "A kategória törlése sikeres!",
+        "userDelete": "A felhasználó törlése sikeres!"
+    },
+    "addTitle": {
+        "category":"Kategória hozzáadása",
+        "movie":"Film hozzáadása",
+        "review":"Véleményezd ezt a filmet"
+    },
+    "buttons": {
+        "add": "Hozzáadás",
+        "edit": "Szerkesztés",
+        "delete": "Törlés",
+        "accept": "Elfogad",
+        "quit": "Kilépés"
+    },
+    "deleteMessages": {
+        "deleteMovieTitle": "Szeretné kitörölni ezt a filmet?",
+        "deleteMovieContent": "Ha elfogadja, ez a film örökre törölve lesz az adatbázisból!",
+        "deleteReviewTitle": "Szeretné kitörölni ezt a véleményt?",
+        "deleteReviewContent": "Ha elfogadja, ez a vélemény örökre törölve lesz az adatbázisból!",
+        "deleteCategoryTitle": "Szeretné kitörölni ezt a kategóriát?",
+        "deleteCategoryContent": "Ha elfogadja, ez a kategória örökre törölve lesz az adatbázisból!",
+        "deleteUserTitle": "Szeretné kitörölni ezt a felhasználót?",
+        "deleteUserContent": "Ha elfogadja, ez a felhasználó örökre törölve lesz az adatbázisból!",
+        "deleteCurrentUserTitle": "Szeretné kitörölni a saját fiokját?",
+        "deleteCurrentUserContent": "Ha elfogadja, a fiokja örökre törölve lesz! Ezt a műveletet nem lehet visszafordítani! Biztosan törölni szeretné a fiokját?"
+    },
+    "login": {
+        "login": "Bejelentkezés",
+        "email":"Email",
+        "password":"Jelszó",
+        "noAccount":"Nincs még felhasználója? Regisztráljon itt!",
+        "forgotPass": "Elfelejtett jelszó?",
+        "invalidLogin": "Email vagy jelszó nem megfelelő!"
+    },
+    "register": {
+        "register": "Regisztráció",
+        "firstName":"Keresztnév",
+        "lastName": "Vezetéknév",
+        "email": "Email",
+        "password": "Jelszó",
+        "hasAccount": "Van már felhasználoja? Kattintson a bejelentkezéshez!",
+        "accountExists": "A felhasználó már létezik"
+    },
+    "forgotPass": {
+        "passwordReset":"Jelszó visszaállítása",
+        "content":"Ne aggódjon, ha az email címe megtalálható a rendszerünkben, megadjuk a visszaállítási utasításokat",
+        "email":"Email",
+        "hasAccount": "Van már felhasználoja? Kattintson a bejelentkezéshez!",
+        "noUser": "Nem található az email a rendszerünkben!"
+    },
+    "formikErrors": {
+        "categoryReq": "A kategória neve kötelező!",
+        "emailReq": "Az email kötelező!",
+        "titleReq": "A cím kötelező!",
+        "descriptionReq": "A leírás kötelező!",
+        "releaseDateReq": "A kiadási dátum kötelező!",
+        "releaseDateFormat": "Érvénytelen formátum! Formátum kinézete:dd/MM/yyyy",
+        "firstNameReq": "A keresztnév kötelező!",
+        "lastNameReq": "A vezetéknév kötelező!",
+        "passwordReq":"A jelszó kötelező!",
+        "passwordLength": "A jelszó 5  vagy több karakterből kell álljon!",
+        "emailFormat": "Érvénytelen email formátum!"
+    }
+}

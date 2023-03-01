@@ -1,0 +1,132 @@
+{
+    "movie":{
+        "title": "Title",
+        "description": "Description",
+        "category": "Category",
+        "releaseDate": "Release Date",
+        "rating": "Rating",
+        "poster": "Poster",
+        "selectedMovie": "Selected Movie"
+    },
+    "navbar":{
+        "Categories": "Categories",
+        "Movies": "Movies",
+        "Users": "Users",
+        "myaccount": "My account",
+        "logout": "Logout",
+        "myReviews": "My Reviews",
+        "Reviews": "Reviews",
+        "Language": "Language",
+        "English": "English",
+        "Hungarian": "Hungarian"
+    },
+    "footer":"© 2023 MovieZone All rights reserved.",
+    "review":{
+        "reviewCard":{
+            "nameOfUser": "Name of user",
+            "description":"Description",
+            "rating":"Rating"
+        },
+        "selectedReview": "Selected Review",
+        "noReviewFound": "It seems like there have been no reviews written with this account. Reviews can be made on the home page by clicking on the films!",
+        "noReviewFoundForMovie": "It seems like there have been no reviews written for this movie. Be the first to review this movie!"
+    },
+    "category":{
+        "categoryName": "Category Name",
+        "selectedCategory": "Selected Category",
+        "name": "Name",
+        "noCategoryFound": "No categories found! Add one with the button in the upper left corner!"
+    },
+    "user":{
+        "userCard":{
+            "fullName": "Full Name",
+            "email": "Email",
+            "role": "Role"
+        },
+        "firstName":"First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "password": "Password",
+        "role":"Role",
+        "selectedUser":"Selected User"
+    },
+    "failMessages" : {
+        "reviewAddMultiple": "You have already rated this movie!",
+        "reviewDescriptionMissing": "No description has been given!",
+        "reviewRatingMissing": "No rating has been given!"
+    },
+    "successMessages": {
+        "reviewAdd": "Review was added successfully!",
+        "movieAdd": "Movie was added successfully!",
+        "categoryAdd": "Category was added successfully!",
+        "reviewEdit": "Review was edited successfully!",
+        "movieEdit": "Movie was edited successfully!",
+        "categoryEdit": "Category was edited successfully!",
+        "userEdit": "User was edited successfully",
+        "reviewDelete": "Review was deleted successfully!",
+        "movieDelete": "Movie was deleted successfully!",
+        "categoryDelete": "Category was deleted successfully!",
+        "userDelete": "User was deleted successfully!"
+    },
+    "addTitle": {
+        "category":"Add Category",
+        "movie":"Add Movie",
+        "review":"Rate this movie"
+    },
+    "buttons": {
+        "add": "Add",
+        "edit": "Edit",
+        "delete": "Delete",
+        "accept": "Accept",
+        "quit": "Quit"
+    },
+    "deleteMessages": {
+        "deleteMovieTitle": "Do you wish to delete this movie?",
+        "deleteMovieContent": "If you accept, this movie will forever be deleted from the database!",
+        "deleteReviewTitle": "Do you wish to delete this review?",
+        "deleteReviewContent": "If you accept, this review will forever be deleted from the database!",
+        "deleteCategoryTitle": "Do you wish to delete this category?",
+        "deleteCategoryContent": "If you accept, this category will forever be deleted from the database!",
+        "deleteUserTitle": "Do you wish to delete this user?",
+        "deleteUserContent": "If you accept, this user will forever be deleted from the database!",
+        "deleteCurrentUserTitle": "Do you wish to delete your account?",
+        "deleteCurrentUserContent": "If you accept, you will delete your account permanently! This action cannot be reversed! Are you sure you want to delete your account?"
+    },
+    "login": {
+        "login": "Login",
+        "email":"Email",
+        "password":"Password",
+        "noAccount":"Don't have an account? Register here!",
+        "forgotPass": "Forgot Password?",
+        "invalidLogin": "Email or password is not valid!"
+    },
+    "register": {
+        "register": "Register",
+        "firstName":"First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "password": "Password",
+        "hasAccount": "Already have an account? Click to Login!",
+        "accountExists": "Account already exists!"
+    },
+    "forgotPass": {
+        "passwordReset":"Reset Password",
+        "content":"Don't worry, if your email is in our system, we'll provide you with the reset instructions",
+        "email":"Email",
+        "hasAccount": "Already have an account? Click to Login!",
+        "noUser": "The email cannot be found in our system!"
+    },
+    "formikErrors": {
+        "categoryReq": "Category name is required!",
+        "emailReq": "Email is required!",
+        "titleReq": "Title is required!",
+        "descriptionReq": "Description is required!",
+        "releaseDateReq": "Release date is required!",
+        "releaseDateFormat": "Invalid date format! Format is:dd/MM/yyyy",
+        "firstNameReq": "First name is required!",
+        "lastNameReq":  "Last name is required!",
+        "passwordReq":"Password is required!",
+        "passwordLength": "Password has to be 5 or more characters long!",
+        "emailFormat": "Invalid email format!"
+    }
+}

@@ -1,0 +1,1 @@
+export const baseUrl = 'http://192.168.88.44:8000/api'
