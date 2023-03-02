@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { FormikErrors, useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
@@ -25,9 +26,8 @@ interface Props {
 export default function CategoryEditModal(props: Props) {
   const { t } = useTranslation();
   const { editCategory } = useApiContext();
-  const updateCategory = async () => {
+  const updateCategory = async (name:string) => {
     const categoryId = props.categoryId;
-    const name = props.name;
     console.log(categoryId);
     console.log(name);
     const setIsOpenEdit = props.setIsOpenEdit;
@@ -44,6 +44,28 @@ export default function CategoryEditModal(props: Props) {
     setAlertMessage(msg);
     setAlertType("success");
   };
+
+  interface Values {
+    name: string;
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      name: props.name,
+    },
+    onSubmit: async (values) => {
+      updateCategory(values.name);
+    },
+    validate: (values) => {
+      let errors: FormikErrors<Values> = {};
+      if (!values.name) {
+        const msg = t("formikErrors.nameReq");
+        errors.name = msg;
+      }
+
+      return errors;
+    },
+  });
 
   return (
     <Modal
@@ -63,6 +85,8 @@ export default function CategoryEditModal(props: Props) {
           boxShadow: 24,
           p: 4,
         }}
+        component="form"
+        onSubmit={formik.handleSubmit}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {t("category.selectedCategory")}
@@ -77,18 +101,26 @@ export default function CategoryEditModal(props: Props) {
           <CardContent>
             <Typography variant="subtitle1">{t("category.name")}: </Typography>
             <TextField
+              id="name"
               defaultValue={props.name}
-              onChange={(e) => {
-                props.setName(e.target.value);
-              }}
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "category-edit-modal-name" }}
             ></TextField>
+            {formik.errors.name ? (
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "red" }}
+                data-testid="category-edit-error-name"
+              >
+                {formik.errors.name}
+              </Typography>
+            ) : null}
           </CardContent>
         </Card>
         <Button
+          type="submit"
           variant="contained"
-          onClick={updateCategory}
           sx={{ border: 1, borderRadius: 1 }}
         >
           {t("buttons.edit")}

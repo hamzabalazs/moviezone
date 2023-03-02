@@ -127,6 +127,8 @@
         "lastNameReq":  "Last name is required!",
         "passwordReq":"Password is required!",
         "passwordLength": "Password has to be 5 or more characters long!",
-        "emailFormat": "Invalid email format!"
+        "emailFormat": "Invalid email format!",
+        "nameReq":"Name is required!",
+        "ratingReq":"Rating is required!"
     }
 }

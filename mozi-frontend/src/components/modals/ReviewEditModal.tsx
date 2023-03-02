@@ -4,13 +4,12 @@ import {
   Card,
   CardContent,
   InputLabel,
-  MenuItem,
   Modal,
   Rating,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
+import { FormikErrors, useFormik } from "formik";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
@@ -30,14 +29,20 @@ export default function ReviewEditModal(props: Props) {
   const [value, setValue] = useState<number | null>(0);
   const { editReview } = useApiContext();
   const { t } = useTranslation();
-  const updateReview = async () => {
+  const updateReview = async (description: string) => {
     const reviewId = props.reviewId;
     const rating = value as number;
-    const description = props.description;
     const setIsOpenEdit = props.setIsOpenEdit;
     const setIsOpenAlert = props.setIsOpenAlert;
     const setAlertMessage = props.setAlertMessage;
     const setAlertType = props.setAlertType;
+    if (rating === 0) {
+      const msg = t("formikErrors.ratingReq");
+      setIsOpenAlert(true);
+      setAlertMessage(msg);
+      setAlertType("error");
+      return
+    }
     const result = await editReview({ id: reviewId, rating, description });
     if (!result) return;
 
@@ -47,6 +52,28 @@ export default function ReviewEditModal(props: Props) {
     setAlertMessage(msg);
     setAlertType("success");
   };
+
+  interface Values {
+    description: string;
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      description: props.description,
+    },
+    onSubmit: async (values) => {
+      updateReview(values.description);
+    },
+    validate: (values) => {
+      let errors: FormikErrors<Values> = {};
+      if (!values.description) {
+        const msg = t("formikErrors.descriptionReq");
+        errors.description = msg;
+      }
+
+      return errors;
+    },
+  });
 
   return (
     <Modal
@@ -66,6 +93,8 @@ export default function ReviewEditModal(props: Props) {
           boxShadow: 24,
           p: 4,
         }}
+        component="form"
+        onSubmit={formik.handleSubmit}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {t("review.selectedReview")}
@@ -83,11 +112,20 @@ export default function ReviewEditModal(props: Props) {
             </Typography>
             <TextField
               defaultValue={props.description}
-              onChange={(e) => props.setDescription(e.target.value)}
+              id="description"
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "review-edit-modal-description" }}
             ></TextField>
-
+            {formik.errors.description ? (
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "red" }}
+                data-testid="review-edit-error-description"
+              >
+                {formik.errors.description}
+              </Typography>
+            ) : null}
             <InputLabel id="rating-select">
               {t("review.reviewCard.rating")}
             </InputLabel>
@@ -103,8 +141,8 @@ export default function ReviewEditModal(props: Props) {
           </CardContent>
         </Card>
         <Button
+          type="submit"
           variant="contained"
-          onClick={updateReview}
           sx={{ border: 1, borderRadius: 1 }}
           data-testid="review-edit-modal-button"
         >

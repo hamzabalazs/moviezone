@@ -97,10 +97,4 @@ test("user edit modal works fine", () => {
   expect(userEmail.value).toBe("changeEmail");
   expect(userPassword.value).toBe("changePassword");
   expect(userRole.value).toBe("editor");
-
-  expect(setFirstName).toHaveBeenCalledTimes(1);
-  expect(setLastName).toHaveBeenCalledTimes(1);
-  expect(setEmail).toHaveBeenCalledTimes(1);
-  expect(setPassword).toHaveBeenCalledTimes(1);
-  expect(setLastName).toHaveBeenCalledTimes(1);
 });

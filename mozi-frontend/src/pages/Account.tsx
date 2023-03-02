@@ -1,12 +1,5 @@
-import {
-  Container,
-  Fab,
-  Grid,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
+import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MyFooter from "../components/MyFooter";
 import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -15,14 +8,12 @@ import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
 import UserCurrentEditModal from "../components/modals/UserCurrentEditModal";
 import UserCurrentDeleteDialog from "../components/dialogs/UserCurrentDeleteDialog";
-import { useApiContext } from "../api/ApiContext";
-import { User } from "../api/types";
+import { CurrUser, User } from "../api/types";
 import { useTranslation } from "react-i18next";
+import { getPersistedUser } from "../api/useLogIn";
 
 function Account() {
-  const context = useApiContext();
   const { t } = useTranslation();
-  const currUser = context.user;
   const [isOpenEditCurrent, setIsOpenEditCurrent] = useState(false);
   const [isOpenDeleteCurrent, setIsOpenDeleteCurrent] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
@@ -43,23 +34,33 @@ function Account() {
     role: "viewer",
   });
 
+  function currUserToUser(user: CurrUser): User {
+    const id = user.id;
+    const firstName = user.firstName;
+    const lastName = user.lastName;
+    const email = user.email;
+    const password = user.password;
+    const role = user.role;
+    return { id, firstName, lastName, email, password, role };
+  }
+
   useEffect(() => {
-    if (currUser) {
-      const id = currUser.id;
-      const firstName = currUser.firstName;
-      const email = currUser.email;
-      const lastName = currUser.lastName;
-      const password = currUser.password;
-      const role = currUser.role;
-      setUser({ id, firstName, lastName, email, password, role });
+    const user = getPersistedUser();
+    if (user) {
+      const newUser = currUserToUser(user);
+      setUser(newUser);
     }
   }, []);
 
-  const navigate = useNavigate();
-
-  const handleRoleSelect = (event: SelectChangeEvent) => {
-    setRole(event.target.value as "admin" | "viewer" | "editor");
-  };
+  useEffect(() => {
+    if (isOpenEditCurrent === false && alertType === "success") {
+      const user = getPersistedUser();
+      if (user) {
+        const newUser = currUserToUser(user);
+        setUser(newUser);
+      }
+    }
+  }, [isOpenEditCurrent]);
 
   return (
     <>

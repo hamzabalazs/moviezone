@@ -57,6 +57,5 @@ test("review edit works fine", async () => {
   await waitFor(() => {
     expect(reviewEditModalDescription.value).toBe("changeDescription");
     expect(reviewEditModalRating).toHaveAttribute("data-value", "3");
-    expect(setDescription).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import {
   createMemoryRouter,
-  MemoryRouter,
   RouterProvider,
 } from "react-router-dom";
 import { CurrUser } from "../api/types";

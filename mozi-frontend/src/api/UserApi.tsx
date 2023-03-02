@@ -1,5 +1,7 @@
 import { baseUrl } from "../url";
-import { User } from "./types";
+import { CurrUser, User } from "./types";
+const USER_KEY = "user-info";
+
 
 interface AddUserProps {
   firstName: string;
@@ -88,6 +90,19 @@ export async function UpdateCurrentUserAPI(user: User, token: string) {
         password: user.password,
       }),
     });
+    if(response.status === 200){
+      const currUser:CurrUser = {
+        id:user.id,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        email:user.email,
+        password:user.password,
+        role:user.role,
+        token:token
+
+      }
+      localStorage.setItem(USER_KEY,JSON.stringify(currUser))
+    }
     return response.status === 200;
   } catch (err) {}
   return false;

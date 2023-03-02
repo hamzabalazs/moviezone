@@ -42,5 +42,4 @@ test("category edit works fine", async () => {
   expect(cardEditName.value).toBe("mockname");
   fireEvent.change(cardEditName, { target: { value: "changeEditName" } });
   expect(cardEditName.value).toBe("changeEditName");
-  expect(setName).toHaveBeenCalledTimes(1);
 });

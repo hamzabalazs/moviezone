@@ -59,7 +59,7 @@ export function useLogIn(): LogInData {
   };
 }
 
-function getPersistedUser(): CurrUser | undefined {
+export function getPersistedUser(): CurrUser | undefined {
   try {
     const storedUser = localStorage.getItem(USER_KEY);
     if (storedUser) return JSON.parse(storedUser);

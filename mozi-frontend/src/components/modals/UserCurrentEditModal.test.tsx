@@ -105,9 +105,4 @@ test("user current edit modal works fine", async () => {
   expect(userLastName.value).toBe("changeLastName");
   expect(userEmail.value).toBe("changeEmail");
   expect(userPassword.value).toBe("changePassword");
-
-  expect(setFirstName).toHaveBeenCalledTimes(1);
-  expect(setLastName).toHaveBeenCalledTimes(1);
-  expect(setEmail).toHaveBeenCalledTimes(1);
-  expect(setPassword).toHaveBeenCalledTimes(1);
 });

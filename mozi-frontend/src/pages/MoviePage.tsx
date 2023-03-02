@@ -83,6 +83,7 @@ export default function MoviePage() {
   }, [context.reviews]);
 
   useEffect(() => {
+    refetchData()
     const currMovie = movies.find((x) => x.id === currMovieId);
     if (currMovie !== undefined) {
       setSelectedMovie(currMovie);
@@ -108,7 +109,6 @@ export default function MoviePage() {
       description !== ""
     ) {
       const result = await context.addReview({ movieId, rating, description });
-      console.log(result);
       await refetchData();
       if (!result) return;
 
@@ -301,7 +301,23 @@ export default function MoviePage() {
                     <>
                       {movieReviewList.map((review) => (
                         <Grid item key={review.id} xs={12}>
-                          <ReviewDisplayCard review={review} />
+                          {review.userId === currUser.id && (
+                            <ReviewCard
+                            review={review}
+                            setIsOpenEdit={setIsOpenReviewEdit}
+                            setIsOpenDelete={setIsOpenReviewDelete}
+                            setReviewId={setReviewId}
+                            setUserId={setUserId}
+                            setDescription={setDescription}
+                            setMovieId={setMovieId}
+                            setRating={setRating}
+                            selectedUpdatedReview={selectedReview}
+                            setSelectedUpdatedReview={setSelectedReview}
+                          />
+                          )}
+                          {review.userId !== currUser.id && (
+                            <ReviewDisplayCard review={review} />
+                          )}
                         </Grid>
                       ))}
                     </>

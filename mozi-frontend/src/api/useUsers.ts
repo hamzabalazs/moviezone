@@ -39,7 +39,7 @@ export function useUsers(token?: string): UserData {
 
   async function editUser(user: User): Promise<boolean> {
     if (!token) return false;
-    console.log(token);
+    console.log(user);
     const result = await UpdateUserAPI(user, token);
     refetchData();
     return result;
@@ -47,7 +47,6 @@ export function useUsers(token?: string): UserData {
 
   async function editCurrentUser(user: User): Promise<boolean> {
     if (!token) return false;
-    console.log(token);
     const result = await UpdateCurrentUserAPI(user, token);
     refetchData();
     return result;

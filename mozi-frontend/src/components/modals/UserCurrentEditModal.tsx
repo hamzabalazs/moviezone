@@ -4,10 +4,10 @@ import {
   Card,
   CardContent,
   Modal,
-  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
+import { FormikErrors, useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
@@ -33,12 +33,8 @@ interface Props {
 export default function UserCurrentEditModal(props: Props) {
   const { editCurrentUser } = useApiContext();
   const { t } = useTranslation();
-  const updateUser = async () => {
+  const updateUser = async (firstName:string,lastName:string,email:string,password:string) => {
     const userId = props.userId;
-    const firstName = props.firstName;
-    const lastName = props.lastName;
-    const email = props.email;
-    const password = props.password;
     const role = props.role;
 
     const setIsOpenEdit = props.setIsOpenEdit;
@@ -62,6 +58,61 @@ export default function UserCurrentEditModal(props: Props) {
     setAlertType("success");
   };
 
+  const emailvalidation =
+    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+
+    interface Values {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password:string
+    }
+
+  const formikValues = {
+    firstName:props.firstName,
+    lastName: props.lastName,
+    email: props.email,
+    password: props.password
+  }
+
+  const formik = useFormik({
+    initialValues: formikValues,
+    onSubmit: (values) => {
+      const firstName = values.firstName;
+      const lastName = values.lastName;
+      const email = values.email;
+      const password = values.password;
+      updateUser(firstName, lastName, email,password);
+    },
+    enableReinitialize: true,
+    validate: (values) => {
+      let errors: FormikErrors<Values> = {};
+      if (!values.firstName) {
+        const msg = t("formikErrors.firstNameReq");
+        errors.firstName = msg;
+      }
+      if (!values.lastName) {
+        const msg = t("formikErrors.lastNameReq");
+        errors.lastName = msg;
+      }
+      if (!values.email) {
+        const msg = t("formikErrors.emailReq");
+        errors.email = msg;
+      } else if (!emailvalidation.test(values.email)) {
+        const msg = t("formikErrors.emailFormat");
+        errors.email = msg;
+      }
+      if (!values.password) {
+        const msg = t("formikErrors.passwordReq");
+        errors.password = msg;
+      } else if (values.password.length < 5) {
+        const msg = t("formikErrors.passwordLength");
+        errors.password = msg;
+      }
+      return errors;
+    },
+  });
+
   return (
     <Modal
       open={props.isOpenEdit}
@@ -80,6 +131,8 @@ export default function UserCurrentEditModal(props: Props) {
           boxShadow: 24,
           p: 4,
         }}
+        component="form"
+        onSubmit={formik.handleSubmit}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {t("user.selectedUser")}
@@ -94,37 +147,77 @@ export default function UserCurrentEditModal(props: Props) {
           <CardContent>
             <Typography variant="subtitle1">{t("user.firstName")}: </Typography>
             <TextField
-              defaultValue={props.firstName}
-              onChange={(e) => props.setFirstName(e.target.value)}
+              id="firstName"
+              defaultValue={formik.values.firstName}
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-firstName" }}
             ></TextField>
+            {formik.errors.firstName ? (
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "red" }}
+                  data-testid="register-error-firstName"
+                >
+                  {formik.errors.firstName}
+                </Typography>
+              ) : null}
             <Typography variant="subtitle1">{t("user.lastName")}: </Typography>
             <TextField
-              defaultValue={props.lastName}
-              onChange={(e) => props.setLastName(e.target.value)}
+              id="lastName"
+              defaultValue={formik.values.lastName}
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-lastName" }}
             ></TextField>
+            {formik.errors.lastName ? (
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "red" }}
+                  data-testid="register-error-lastName"
+                >
+                  {formik.errors.lastName}
+                </Typography>
+              ) : null}
             <Typography variant="subtitle1">{t("user.email")}: </Typography>
             <TextField
-              defaultValue={props.email}
-              onChange={(e) => props.setEmail(e.target.value)}
+              id="email"
+              defaultValue={formik.values.email}
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-email" }}
             ></TextField>
+            {formik.errors.email ? (
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "red" }}
+                  data-testid="register-error-email"
+                >
+                  {formik.errors.email}
+                </Typography>
+              ) : null}
             <Typography variant="subtitle1">{t("user.password")}: </Typography>
             <TextField
-              defaultValue={props.password}
-              onChange={(e) => props.setPassword(e.target.value)}
+              id="password"
+              defaultValue={formik.values.password}
+              onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-password" }}
             ></TextField>
+            {formik.errors.password ? (
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "red" }}
+                  data-testid="register-error-password"
+                >
+                  {formik.errors.password}
+                </Typography>
+              ) : null}
           </CardContent>
         </Card>
         <Button
           variant="contained"
-          onClick={updateUser}
+          type="submit"
           sx={{ border: 1, borderRadius: 1 }}
         >
           {t("buttons.edit")}

@@ -113,13 +113,5 @@ test("movie edit works fine ( admin and editor only )", async () => {
   expect(movieEditTitle.value).toBe("changeTitle");
   expect(movieEditDescription.value).toBe("changeDescription");
   expect(movieEditReleaseDate.value).toBe("12/03/1999");
-  //expect(movieEditCategory.value).toBe("idC1");
-
-  expect(setDescription).toHaveBeenCalledTimes(1);
-  expect(setTitle).toHaveBeenCalledTimes(1);
-  expect(setReleaseDate).toHaveBeenCalledTimes(1);
-  expect(setCategoryId).toHaveBeenCalledTimes(1);
-
-  // fireEvent.click(editButton);
-  // await waitFor(() => expect(setIsOpenEdit).toHaveBeenCalledTimes(1));
+  
 });

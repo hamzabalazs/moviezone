@@ -128,6 +128,8 @@
         "lastNameReq": "A vezetéknév kötelező!",
         "passwordReq":"A jelszó kötelező!",
         "passwordLength": "A jelszó 5  vagy több karakterből kell álljon!",
-        "emailFormat": "Érvénytelen email formátum!"
+        "emailFormat": "Érvénytelen email formátum!",
+        "nameReq":"A név kötelező!",
+        "ratingReq":"Az értékelés kötelező!"
     }
 }
