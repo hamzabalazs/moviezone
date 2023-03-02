@@ -9,43 +9,42 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
+import { ReviewUpdated } from "../../api/types";
 
 interface Props {
-  isOpenDelete: boolean;
-  setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  reviewId: string;
-  setReviewId: Dispatch<SetStateAction<string>>;
-  setSelectedMovieId: Dispatch<SetStateAction<string>>;
+  review?: ReviewUpdated;
+  onClose?: () => void;
   setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
   setAlertMessage: Dispatch<SetStateAction<string>>;
   setAlertType: Dispatch<SetStateAction<string>>;
 }
 
-export default function ReviewDeleteDialog(props: Props) {
+export default function ReviewDeleteDialog({
+  review,
+  onClose,
+  setIsOpenAlert,
+  setAlertMessage,
+  setAlertType,
+}: Props) {
   const { t } = useTranslation();
   const { deleteReview } = useApiContext();
-  const handleDeletion = async () => {
-    const reviewId = props.reviewId;
-    const setIsOpenDelete = props.setIsOpenDelete;
-    const setReviewId = props.setReviewId;
-    const setSelectedMovieId = props.setSelectedMovieId;
-    const setIsOpenAlert = props.setIsOpenAlert;
-    const setAlertMessage = props.setAlertMessage;
-    const setAlertType = props.setAlertType;
-    const result = await deleteReview(reviewId);
-    if (!result) return;
 
-    const msg = t("successMessages.reviewDelete");
-    setIsOpenDelete(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+  const handleDeletion = async () => {
+    if (review === undefined) return;
+    const result = await deleteReview(review.id);
+    if (result) {
+      const msg = t("successMessages.reviewDelete");
+      setIsOpenAlert(true);
+      setAlertMessage(msg);
+      setAlertType("success");
+    }
+    onClose?.();
   };
 
   return (
     <Dialog
-      open={props.isOpenDelete}
-      onClose={() => props.setIsOpenDelete(false)}
+      open={Boolean(review)}
+      onClose={() => onClose?.()}
       aria-labelledby="alert-delete-title"
       aria-describedby="alert-delete-description"
       data-testid="review-delete-dialog"
@@ -62,7 +61,7 @@ export default function ReviewDeleteDialog(props: Props) {
         <Button onClick={handleDeletion} autoFocus>
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => props.setIsOpenDelete(false)}>
+        <Button onClick={() => onClose?.()}>
           {t("buttons.quit")}
         </Button>
       </DialogActions>

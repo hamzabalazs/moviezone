@@ -16,7 +16,10 @@ function Reviews() {
   const { t } = useTranslation();
   const context = useApiContext();
   const currUser = context.user;
-  const [isOpenEdit, setIsOpenEdit] = useState(false);
+
+  const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(undefined);
+  const [deletingReview, setDeletingReview] = useState<ReviewUpdated | undefined>(undefined);
+
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -24,22 +27,11 @@ function Reviews() {
   const [reviewId, setReviewId] = useState("");
   const [userId, setUserId] = useState("");
   const [movieId, setMovieId] = useState("");
-  const [description, setDescription] = useState("");
-  const [rating, setRating] = useState(0);
   const [updatedReviewLists, setUpdatedReviewLists] = useState<ReviewUpdated[]>(
     []
   );
   const [reviewListOfUser, setReviewListOfUser] = useState<ReviewUpdated[]>([]);
-  const [selectedUpdatedReview, setSelectedUpdatedReview] =
-    useState<ReviewUpdated>({
-      id: "",
-      userId: "",
-      movieId: "",
-      firstName: "",
-      lastName: "",
-      description: "",
-      rating: 0,
-    });
+  
 
   useEffect(() => {
     fillUpdatedReviewList();
@@ -89,21 +81,15 @@ function Reviews() {
           setAlertType={setAlertType}
         />
         <ReviewEditModal
-          isOpenEdit={isOpenEdit}
-          setIsOpenEdit={setIsOpenEdit}
-          description={description}
-          setDescription={setDescription}
-          reviewId={reviewId}
+          review={editingReview}
+          onClose={() => setEditingReview(undefined)}
           setIsOpenAlert={setIsOpenAlert}
           setAlertMessage={setAlertMessage}
           setAlertType={setAlertType}
         />
         <ReviewDeleteDialog
-          isOpenDelete={isOpenDelete}
-          setIsOpenDelete={setIsOpenDelete}
-          reviewId={reviewId}
-          setReviewId={setReviewId}
-          setSelectedMovieId={setMovieId}
+          review={deletingReview}
+          onClose={() => setDeletingReview(undefined)}
           setIsOpenAlert={setIsOpenAlert}
           setAlertMessage={setAlertMessage}
           setAlertType={setAlertType}
@@ -127,15 +113,8 @@ function Reviews() {
                 <Grid item key={review.id} xs={12}>
                   <ReviewCard
                     review={review}
-                    setIsOpenEdit={setIsOpenEdit}
-                    setIsOpenDelete={setIsOpenDelete}
-                    setReviewId={setReviewId}
-                    setUserId={setUserId}
-                    setDescription={setDescription}
-                    setMovieId={setMovieId}
-                    setRating={setRating}
-                    selectedUpdatedReview={selectedUpdatedReview}
-                    setSelectedUpdatedReview={setSelectedUpdatedReview}
+                    onEdit={() => setEditingReview(review)}
+                    onDelete={() => setDeletingReview(review)}
                   />
                 </Grid>
               ))}

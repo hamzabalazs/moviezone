@@ -8,8 +8,6 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
-import UserCurrentEditModal from "../components/modals/UserCurrentEditModal";
-import UserCurrentDeleteDialog from "../components/dialogs/UserCurrentDeleteDialog";
 import { useApiContext } from "../api/ApiContext";
 import { User } from "../api/types";
 import { useTranslation } from "react-i18next";
@@ -21,27 +19,10 @@ export function Users() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
 
-  const [isOpenEdit, setIsOpenEdit] = useState(false);
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
-  const [isOpenEditCurrent, setIsOpenEditCurrent] = useState(false);
-  const [isOpenDeleteCurrent, setIsOpenDeleteCurrent] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  const [userId, setUserId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"admin" | "editor" | "viewer">("viewer");
-  const [selectedUser, setSelectedUser] = useState<User>({
-    id: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    role: "viewer",
-  });
+  
 
   return (
     <>

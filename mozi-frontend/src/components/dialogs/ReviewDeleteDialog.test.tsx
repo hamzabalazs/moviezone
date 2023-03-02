@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { ReviewData } from "../../api/review/useReviews";
+import { ReviewUpdated } from "../../api/types";
 import { MockedApiContext } from "../../common/testing/MockedApiProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 
@@ -8,20 +10,31 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-function renderReviewDeleteDialog(setIsOpenDelete: jest.Mock<any, any>) {
+const testReview: ReviewUpdated = {
+  id: "idR1",
+  movieId: "idM2",
+  userId:"idU1",
+  firstName:"admin",
+  lastName:"admin",
+  description:"descriptiontest",
+  rating:3
+}
+
+function renderReviewDeleteDialog(props:{
+  review?:ReviewUpdated;
+  onClose?:() => void;
+  deleteReview?: ReviewData["deleteReview"]
+}) {
   const isOpenDelete = true;
   const reviewId = "idR2";
   return render(
     <MockedApiContext>
       <ReviewDeleteDialog
-        isOpenDelete={isOpenDelete}
-        setIsOpenDelete={setIsOpenDelete}
-        reviewId={reviewId}
+        review={props.review}
+        onClose={props.onClose}
         setIsOpenAlert={jest.fn()}
         setAlertMessage={jest.fn()}
         setAlertType={jest.fn()}
-        setReviewId={jest.fn()}
-        setSelectedMovieId={jest.fn()}
       />
     </MockedApiContext>
   );
@@ -29,7 +42,6 @@ function renderReviewDeleteDialog(setIsOpenDelete: jest.Mock<any, any>) {
 
 test("review delete works fine", async () => {
   const setIsOpenDelete = jest.fn();
-  renderReviewDeleteDialog(setIsOpenDelete);
 
   const cardDeleteDialog = screen.getByTestId("review-delete-dialog");
   const cardDeleteDialogAccept = screen.getByRole("button", {

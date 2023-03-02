@@ -36,8 +36,13 @@ export default function MoviePage() {
   const { t } = useTranslation();
   const [isOpenMovieDelete, setIsOpenMovieDelete] = useState(false);
   const [isOpenMovieEdit, setIsOpenMovieEdit] = useState(false);
-  const [isOpenReviewDelete, setIsOpenReviewDelete] = useState(false);
-  const [isOpenReviewEdit, setIsOpenReviewEdit] = useState(false);
+  const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(
+    undefined
+  );
+  const [deletingReview, setDeletingReview] = useState<
+    ReviewUpdated | undefined
+  >(undefined);
+
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
@@ -83,7 +88,7 @@ export default function MoviePage() {
   }, [context.reviews]);
 
   useEffect(() => {
-    refetchData()
+    refetchData();
     const currMovie = movies.find((x) => x.id === currMovieId);
     if (currMovie !== undefined) {
       setSelectedMovie(currMovie);
@@ -216,21 +221,15 @@ export default function MoviePage() {
             setAlertType={setAlertType}
           />
           <ReviewEditModal
-            isOpenEdit={isOpenReviewEdit}
-            setIsOpenEdit={setIsOpenReviewEdit}
-            description={description}
-            setDescription={setDescription}
-            reviewId={reviewId}
+            review={editingReview}
+            onClose={() => setEditingReview(undefined)}
             setIsOpenAlert={setIsOpenAlert}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
           />
           <ReviewDeleteDialog
-            isOpenDelete={isOpenReviewDelete}
-            setIsOpenDelete={setIsOpenReviewDelete}
-            reviewId={reviewId}
-            setReviewId={setReviewId}
-            setSelectedMovieId={setMovieId}
+            review={deletingReview}
+            onClose={() => setDeletingReview(undefined)}
             setIsOpenAlert={setIsOpenAlert}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
@@ -259,82 +258,30 @@ export default function MoviePage() {
             }}
           >
             <Grid container spacing={4}>
-              {(currUser?.role === "admin" || currUser?.role === "editor") && (
+              {movieReviewList.length !== 0 && (
                 <>
-                  {movieReviewList.length !== 0 && (
-                    <>
-                      {movieReviewList.map((review) => (
-                        <Grid item key={review.id} xs={12}>
-                          <ReviewCard
-                            review={review}
-                            setIsOpenEdit={setIsOpenReviewEdit}
-                            setIsOpenDelete={setIsOpenReviewDelete}
-                            setReviewId={setReviewId}
-                            setUserId={setUserId}
-                            setDescription={setDescription}
-                            setMovieId={setMovieId}
-                            setRating={setRating}
-                            selectedUpdatedReview={selectedReview}
-                            setSelectedUpdatedReview={setSelectedReview}
-                          />
-                        </Grid>
-                      ))}
-                    </>
-                  )}
-                  {movieReviewList.length === 0 && (
-                    <Grid item xs={12}>
-                      <Typography
-                        variant="h6"
-                        align="center"
-                        color="textPrimary"
-                        gutterBottom
-                      >
-                        {t("review.noReviewFoundForMovie")}
-                      </Typography>
+                  {movieReviewList.map((review) => (
+                    <Grid item key={review.id} xs={12}>
+                      <ReviewCard
+                        review={review}
+                        onEdit={() => setEditingReview(review)}
+                        onDelete={() => setDeletingReview(review)}
+                      />
                     </Grid>
-                  )}
+                  ))}
                 </>
               )}
-              {currUser?.role === "viewer" && (
-                <>
-                  {movieReviewList.length !== 0 && (
-                    <>
-                      {movieReviewList.map((review) => (
-                        <Grid item key={review.id} xs={12}>
-                          {review.userId === currUser.id && (
-                            <ReviewCard
-                            review={review}
-                            setIsOpenEdit={setIsOpenReviewEdit}
-                            setIsOpenDelete={setIsOpenReviewDelete}
-                            setReviewId={setReviewId}
-                            setUserId={setUserId}
-                            setDescription={setDescription}
-                            setMovieId={setMovieId}
-                            setRating={setRating}
-                            selectedUpdatedReview={selectedReview}
-                            setSelectedUpdatedReview={setSelectedReview}
-                          />
-                          )}
-                          {review.userId !== currUser.id && (
-                            <ReviewDisplayCard review={review} />
-                          )}
-                        </Grid>
-                      ))}
-                    </>
-                  )}
-                  {movieReviewList.length === 0 && (
-                    <Grid item xs={12}>
-                      <Typography
-                        variant="h6"
-                        align="center"
-                        color="textPrimary"
-                        gutterBottom
-                      >
-                        {t("review.noReviewFoundForMovie")}
-                      </Typography>
-                    </Grid>
-                  )}
-                </>
+              {movieReviewList.length === 0 && (
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                  >
+                    {t("review.noReviewFoundForMovie")}
+                  </Typography>
+                </Grid>
               )}
             </Grid>
           </div>

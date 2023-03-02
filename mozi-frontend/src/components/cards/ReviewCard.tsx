@@ -5,42 +5,19 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
 import { ReviewUpdated } from "../../api/types";
 import { useTranslation } from "react-i18next";
+import { useApiContext } from "../../api/ApiContext";
 
 interface Props {
   review: ReviewUpdated;
-  setIsOpenEdit: Dispatch<SetStateAction<boolean>>;
-  setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  setReviewId: Dispatch<SetStateAction<string>>;
-  setUserId: Dispatch<SetStateAction<string>>;
-  setDescription: Dispatch<SetStateAction<string>>;
-  setMovieId: Dispatch<SetStateAction<string>>;
-  setRating: Dispatch<SetStateAction<number>>;
-  selectedUpdatedReview: ReviewUpdated;
-  setSelectedUpdatedReview: Dispatch<SetStateAction<ReviewUpdated>>;
+  onEdit:() => void;
+  onDelete:() => void;
 }
 
-export default function ReviewCard(props: Props) {
+export default function ReviewCard({review,onEdit,onDelete}: Props) {
   const { t } = useTranslation();
-  const handleDeletePopup = () => {
-    props.setIsOpenDelete(true);
-    handleSelectedReview();
-  };
-
-  const handleEditPopup = () => {
-    props.setIsOpenEdit(true);
-    handleSelectedReview();
-  };
-
-  const handleSelectedReview = () => {
-    props.setReviewId(props.selectedUpdatedReview.id);
-    props.setUserId(props.selectedUpdatedReview.userId);
-    props.setMovieId(props.selectedUpdatedReview.movieId);
-    props.setDescription(props.selectedUpdatedReview.description);
-    props.setRating(props.selectedUpdatedReview.rating);
-  };
+  const {user} = useApiContext()
 
   return (
     <Card
@@ -68,7 +45,7 @@ export default function ReviewCard(props: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-name"
         >
-          {props.review.firstName} {props.review.lastName}
+          {review.firstName} {review.lastName}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("review.reviewCard.description")} :
@@ -80,7 +57,7 @@ export default function ReviewCard(props: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-description"
         >
-          {props.review.description}
+          {review.description}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("review.reviewCard.rating")} :
@@ -92,35 +69,33 @@ export default function ReviewCard(props: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-rating"
         >
-          {props.review.rating}
+          {review.rating}
         </Typography>
       </CardContent>
-      <CardActions disableSpacing sx={{ mt: "auto" }}>
-        <Button
+      {((user?.role === "admin" || user?.role === "editor") || (user?.id === review.userId)) &&(
+        <CardActions disableSpacing sx={{ mt: "auto" }}>
+        {onEdit && (
+          <Button
           size="small"
           sx={{ color: "text.secondary" }}
-          onClick={handleEditPopup}
-          onMouseEnter={() => {
-            props.setSelectedUpdatedReview(props.review);
-            handleSelectedReview();
-          }}
+          onClick={() => onEdit()}
           data-testid="review-edit-button"
         >
           {t("buttons.edit")}
         </Button>
-        <Button
+        )}
+        {onDelete && (
+          <Button
           size="small"
           sx={{ color: "text.secondary" }}
-          onClick={handleDeletePopup}
-          onMouseEnter={() => {
-            props.setSelectedUpdatedReview(props.review);
-            handleSelectedReview();
-          }}
+          onClick={() => onDelete()}
           data-testid="review-delete-button"
         >
           {t("buttons.delete")}
         </Button>
+        )}
       </CardActions>
+      )}
     </Card>
   );
 }
