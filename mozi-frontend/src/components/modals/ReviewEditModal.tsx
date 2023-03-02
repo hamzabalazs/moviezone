@@ -10,8 +10,8 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { FormikErrors, useFormik } from "formik";
-import { Dispatch, SetStateAction, useState } from "react";
+import {  useFormik } from "formik";
+import { Dispatch, SetStateAction} from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
 import { ReviewUpdated } from "../../api/types";
@@ -32,20 +32,11 @@ export default function ReviewEditModal({
   setAlertMessage,
   setAlertType,
 }: Props) {
-  //const [value, setValue] = useState<number | null>(0);
   const { editReview } = useApiContext();
   const { t } = useTranslation();
   const updateReview = async (
     editedReview: Omit<ReviewUpdated, "id" | "firstName" | "lastName"|"movieId"|"userId">
   ) => {
-    // const rating = value as number;
-    // if (rating === 0) {
-    //   const msg = t("formikErrors.ratingReq");
-    //   setIsOpenAlert(true);
-    //   setAlertMessage(msg);
-    //   setAlertType("error");
-    //   return;
-    // }
     if (review === undefined) return;
     const result = await editReview({ id: review.id, ...editedReview });
     if (result) {

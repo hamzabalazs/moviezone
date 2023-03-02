@@ -15,7 +15,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Movie, Review, ReviewUpdated } from "../api/types";
 import AlertComponent from "../components/AlertComponent";
 import MoviePageCard from "../components/cards/MoviePageCard";
-import ReviewDisplayCard from "../components/cards/ReviewDisplayCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import MovieEditModal from "../components/modals/MovieEditModal";
@@ -34,6 +33,10 @@ export default function MoviePage() {
   const { refetchData, movies } = useMovies();
   const currUser = context.user;
   const { t } = useTranslation();
+
+  const [editingMovie, setEditingMovie] = useState<Movie | undefined>(undefined);
+  const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(undefined);
+
   const [isOpenMovieDelete, setIsOpenMovieDelete] = useState(false);
   const [isOpenMovieEdit, setIsOpenMovieEdit] = useState(false);
   const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(
@@ -52,9 +55,6 @@ export default function MoviePage() {
   const [categoryId, setCategoryId] = useState("");
   const [rating, setRating] = useState(1);
   const [ratingDescription, setRatingDescription] = useState("");
-  const [reviewId, setReviewId] = useState("");
-  const [userId, setUserId] = useState("");
-  const [movieId, setMovieId] = useState("");
   const [value, setValue] = useState<number | null>(0);
   const [userReviewList, setUserReviewList] = useState<Review[]>([]);
   const [movieReviewList, setMovieReviewList] = useState<ReviewUpdated[]>([]);
@@ -66,15 +66,6 @@ export default function MoviePage() {
     releaseDate: "",
     rating: 0,
     categoryId: "",
-  });
-  const [selectedReview, setSelectedReview] = useState<ReviewUpdated>({
-    id: "",
-    userId: "",
-    movieId: "",
-    firstName: "",
-    lastName: "",
-    description: "",
-    rating: 0,
   });
 
   const { currMovieId } = useParams();
@@ -88,11 +79,11 @@ export default function MoviePage() {
   }, [context.reviews]);
 
   useEffect(() => {
-    refetchData();
     const currMovie = movies.find((x) => x.id === currMovieId);
     if (currMovie !== undefined) {
       setSelectedMovie(currMovie);
       updateReviewList();
+      console.log(selectedMovie)
     }
   }, [movies]);
 
@@ -204,18 +195,8 @@ export default function MoviePage() {
             setAlertType={setAlertType}
           />
           <MovieEditModal
-            isOpenEdit={isOpenMovieEdit}
-            setIsOpenEdit={setIsOpenMovieEdit}
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            releaseDate={releaseDate}
-            setReleaseDate={setReleaseDate}
-            categoryId={categoryId}
-            setCategoryId={setCategoryId}
-            movieId={selectedMovie.id}
-            poster={selectedMovie.poster}
+            movie={editingMovie}
+            onClose={() => setEditingMovie(undefined)}
             setIsOpenAlert={setIsOpenAlert}
             setAlertMessage={setAlertMessage}
             setAlertType={setAlertType}
@@ -237,16 +218,8 @@ export default function MoviePage() {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <MoviePageCard
               movie={selectedMovie}
-              userRole={currUser?.role}
-              setIsOpenDelete={setIsOpenMovieDelete}
-              setIsOpenEdit={setIsOpenMovieEdit}
-              setTitle={setTitle}
-              setDescription={setDescription}
-              setReleaseDate={setReleaseDate}
-              setCategoryId={setCategoryId}
-              setRating={setRating}
-              selectedMovie={selectedMovie}
-              setSelectedMovie={setSelectedMovie}
+              onEdit={() => setEditingMovie(selectedMovie)}
+              onDelete={() => setDeletingMovie(selectedMovie)}
             />
           </div>
           <div

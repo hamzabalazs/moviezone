@@ -20,12 +20,9 @@ function Reviews() {
   const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewUpdated | undefined>(undefined);
 
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  const [reviewId, setReviewId] = useState("");
-  const [userId, setUserId] = useState("");
   const [movieId, setMovieId] = useState("");
   const [updatedReviewLists, setUpdatedReviewLists] = useState<ReviewUpdated[]>(
     []

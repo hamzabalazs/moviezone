@@ -11,7 +11,7 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import {  useFormik } from "formik";
+import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
@@ -80,7 +80,6 @@ export default function UserEditModal({
 }: Props) {
   const { t } = useTranslation();
   const { editUser } = useApiContext();
-
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
@@ -187,27 +186,29 @@ export default function UserEditModal({
               inputProps={{ "data-testid": "user-edit-modal-password" }}
               error={formik.errors.password}
             />
-            <InputLabel id="role-select">{t("user.role")}</InputLabel>
             {allowEditRole && (
-              <Select
-                labelId="role-select"
-                label="Role"
-                name="role"
-                value={formik.values.role}
-                onChange={formik.handleChange}
-                sx={{ border: 1, borderRadius: 1 }}
-                data-testid="user-edit-modal-role"
-              >
-                <MenuItem value="admin">
-                  Admin {t("user.role").toLowerCase()}
-                </MenuItem>
-                <MenuItem value="editor">
-                  Editor {t("user.role").toLowerCase()}
-                </MenuItem>
-                <MenuItem value="viewer">
-                  Viewer {t("user.role").toLowerCase()}
-                </MenuItem>
-              </Select>
+              <>
+                <InputLabel id="role-select">{t("user.role")}</InputLabel>
+                <Select
+                  labelId="role-select"
+                  label="Role"
+                  name="role"
+                  value={formik.values.role}
+                  onChange={formik.handleChange}
+                  sx={{ border: 1, borderRadius: 1 }}
+                  data-testid="user-edit-modal-role"
+                >
+                  <MenuItem value="admin">
+                    Admin {t("user.role").toLowerCase()}
+                  </MenuItem>
+                  <MenuItem value="editor">
+                    Editor {t("user.role").toLowerCase()}
+                  </MenuItem>
+                  <MenuItem value="viewer">
+                    Viewer {t("user.role").toLowerCase()}
+                  </MenuItem>
+                </Select>
+              </>
             )}
           </CardContent>
         </Card>

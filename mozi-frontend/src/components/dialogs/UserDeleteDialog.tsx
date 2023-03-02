@@ -14,9 +14,9 @@ import { User } from "../../api/types";
 interface Props {
   user?: User;
   onClose?: () => void;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setIsOpenAlert?: Dispatch<SetStateAction<boolean>>;
+  setAlertMessage?: Dispatch<SetStateAction<string>>;
+  setAlertType?: Dispatch<SetStateAction<string>>;
 }
 
 export default function UserDeleteDialog({
@@ -34,9 +34,9 @@ export default function UserDeleteDialog({
     const result = await deleteUser(user.id);
     if (result) {
       const msg = t("successMessages.userDelete");
-      setIsOpenAlert(true);
-      setAlertMessage(msg);
-      setAlertType("success");
+      setIsOpenAlert?.(true);
+      setAlertMessage?.(msg);
+      setAlertType?.("success");
     }
 
     onClose?.();

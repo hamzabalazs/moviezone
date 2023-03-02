@@ -6,25 +6,23 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
-import UserCurrentEditModal from "../components/modals/UserCurrentEditModal";
-import UserCurrentDeleteDialog from "../components/dialogs/UserCurrentDeleteDialog";
 import { CurrUser, User } from "../api/types";
 import { useTranslation } from "react-i18next";
-import { getPersistedUser } from "../api/auth/useLogIn";
+import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
+import UserEditModal from "../components/modals/UserEditModal";
+import { useApiContext } from "../api/ApiContext";
 
 function Account() {
   const { t } = useTranslation();
-  const [isOpenEditCurrent, setIsOpenEditCurrent] = useState(false);
-  const [isOpenDeleteCurrent, setIsOpenDeleteCurrent] = useState(false);
+  const context = useApiContext();
+
+  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
+
   const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("");
-  const [userId, setUserId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"admin" | "viewer" | "editor">("viewer");
+
   const [user, setUser] = useState<User>({
     id: "",
     firstName: "",
@@ -34,33 +32,18 @@ function Account() {
     role: "viewer",
   });
 
-  function currUserToUser(user: CurrUser): User {
-    const id = user.id;
-    const firstName = user.firstName;
-    const lastName = user.lastName;
-    const email = user.email;
-    const password = user.password;
-    const role = user.role;
-    return { id, firstName, lastName, email, password, role };
-  }
+  
 
   useEffect(() => {
-    const user = getPersistedUser();
-    if (user) {
-      const newUser = currUserToUser(user);
-      setUser(newUser);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isOpenEditCurrent === false && alertType === "success") {
-      const user = getPersistedUser();
-      if (user) {
-        const newUser = currUserToUser(user);
-        setUser(newUser);
+    if(context.user){
+      const displayUser = context.users.find(x => x.id === context.user?.id)
+      if(displayUser){
+        setUser(displayUser)
       }
+      
     }
-  }, [isOpenEditCurrent]);
+    
+  },[context.users])
 
   return (
     <>
@@ -73,24 +56,14 @@ function Account() {
           alertType={alertType}
           setAlertType={setAlertType}
         />
-        <UserCurrentDeleteDialog
-          isOpenDelete={isOpenDeleteCurrent}
-          setIsOpenDelete={setIsOpenDeleteCurrent}
-          userId={userId}
+        <UserDeleteDialog
+          user={deletingUser}
+          onClose={() => setDeletingUser(undefined)}
         />
-        <UserCurrentEditModal
-          isOpenEdit={isOpenEditCurrent}
-          setIsOpenEdit={setIsOpenEditCurrent}
-          firstName={firstName}
-          setFirstName={setFirstName}
-          lastName={lastName}
-          setLastName={setLastName}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          role={role}
-          userId={userId}
+        
+        <UserEditModal
+          user={editingUser}
+          onClose={() => setEditingUser(undefined)}
           setIsOpenAlert={setIsOpenAlert}
           setAlertMessage={setAlertMessage}
           setAlertType={setAlertType}
@@ -110,19 +83,13 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              <UserCard
+              {context.users.find(x => x.id === context.user?.id) && (
+                <UserCard
                 user={user}
-                // setIsOpenEdit={setIsOpenEditCurrent}
-                // setIsOpenDelete={setIsOpenDeleteCurrent}
-                // setFirstName={setFirstName}
-                // setLastName={setLastName}
-                // setEmail={setEmail}
-                // setPassword={setPassword}
-                // setRole={setRole}
-                // setUserId={setUserId}
-                // selectedUser={user}
-                // setSelectedUser={setUser}
+                onEdit={() => setEditingUser(user)}
+                onDelete={() => setDeletingUser(user)}
               />
+              )}
             </Grid>
           </Grid>
         </div>
