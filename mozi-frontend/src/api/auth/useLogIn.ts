@@ -1,6 +1,7 @@
 import React from "react";
-import { baseUrl } from "../url";
-import { CurrUser, User } from "./types";
+import { API_URL } from "../constants";
+
+import { CurrUser, User } from "../types";
 
 export type LogInData = {
   user?: CurrUser;
@@ -18,7 +19,7 @@ export function useLogIn(): LogInData {
 
   async function logIn(email: string, password: string): Promise<boolean> {
     try {
-      const response = await fetch(baseUrl + "/login", {
+      const response = await fetch(API_URL + "/login", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

@@ -1,15 +1,16 @@
-import { baseUrl } from "../url";
-import { Category } from "./types";
+
+import { API_URL } from "../constants";
+import { Category } from "../types";
 
 // Category GET by ID
 export const getCategoryById = async (
   categoryId: string
 ): Promise<Category | undefined> => {
-  const testresponse = await fetch(baseUrl + "/category/" + categoryId, {
+  const testresponse = await fetch(API_URL + "/category/" + categoryId, {
     method: "GET",
   });
   if (testresponse.status === 200) {
-    const res = await fetch(baseUrl + "/category/" + categoryId, {
+    const res = await fetch(API_URL + "/category/" + categoryId, {
       method: "GET",
     });
     const body = await res.json();
@@ -24,7 +25,7 @@ export async function UpdateCategoryAPI(
   token: string
 ): Promise<boolean> {
   try {
-    const response = await fetch(baseUrl + "/category/" + category.id, {
+    const response = await fetch(API_URL + "/category/" + category.id, {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -43,7 +44,7 @@ export async function DeleteCategoryAPI(
   token: string
 ): Promise<boolean> {
   try {
-    const response = await fetch(baseUrl + "/category/" + id, {
+    const response = await fetch(API_URL + "/category/" + id, {
       method: "DELETE",
       headers: {
         "auth-token": token,
@@ -56,7 +57,7 @@ export async function DeleteCategoryAPI(
 
 // Category GET ALL
 export async function getCategoryList() {
-  const res = await fetch(baseUrl + "/categories", { method: "GET" });
+  const res = await fetch(API_URL + "/categories", { method: "GET" });
   if (res.status === 200) {
     const data = await res.json();
     return data.data;
@@ -68,7 +69,7 @@ export async function AddCategoryAPI(
   category: Omit<Category, "id">,
   token: string
 ) {
-  const response = await fetch(baseUrl + "/category", {
+  const response = await fetch(API_URL + "/category", {
     method: "POST",
     headers: {
       "Content-type": "application/json",

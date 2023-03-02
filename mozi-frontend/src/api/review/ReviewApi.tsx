@@ -1,5 +1,6 @@
-import { baseUrl } from "../url";
-import { Review } from "./types";
+
+import { API_URL } from "../constants";
+import { Review } from "../types";
 
 //Review POST
 export async function AddReviewAPI(
@@ -7,7 +8,7 @@ export async function AddReviewAPI(
   token: string
 ) {
   if (review.rating !== 0) {
-    const response = await fetch(baseUrl + "/review", {
+    const response = await fetch(API_URL + "/review", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -27,7 +28,7 @@ export async function DeleteReviewAPI(
   token: string
 ): Promise<boolean> {
   try {
-    const response = await fetch(baseUrl + "/review/" + id, {
+    const response = await fetch(API_URL + "/review/" + id, {
       method: "DELETE",
       headers: {
         "auth-token": token,
@@ -47,7 +48,7 @@ export async function UpdateReviewAPI(
   const description = review.description;
 
   try {
-    const response = await fetch(baseUrl + "/review/" + review.id, {
+    const response = await fetch(API_URL + "/review/" + review.id, {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -62,7 +63,7 @@ export async function UpdateReviewAPI(
 
 //Review GET ALL
 export async function getReviewsList() {
-  const res = await fetch(baseUrl + "/reviews", { method: "GET" });
+  const res = await fetch(API_URL + "/reviews", { method: "GET" });
   const data = await res.json();
   return data.data;
 }
@@ -71,11 +72,11 @@ export async function getReviewsList() {
 export const getReviewById = async (
   reviewId: string
 ): Promise<Review | undefined> => {
-  const testresponse = await fetch(baseUrl + "/review/" + reviewId, {
+  const testresponse = await fetch(API_URL + "/review/" + reviewId, {
     method: "GET",
   });
   if (testresponse.status === 200) {
-    const res = await fetch(baseUrl + "/review/" + reviewId, {
+    const res = await fetch(API_URL + "/review/" + reviewId, {
       method: "GET",
     });
     const body = await res.json();

@@ -16,7 +16,7 @@ import {
 import { FormikErrors, useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
-import { resizeFile } from "../../api/MovieApi";
+import { resizeFile } from "../../api/movie/MovieApi";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
 

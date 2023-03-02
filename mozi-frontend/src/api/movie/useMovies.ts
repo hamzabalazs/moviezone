@@ -5,7 +5,7 @@ import {
   getMovieList,
   UpdateMovieAPI,
 } from "./MovieApi";
-import { Movie } from "./types";
+import { Movie } from "../types";
 
 export type MovieData = {
   movies: Movie[];

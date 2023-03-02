@@ -1,7 +1,6 @@
-import { baseUrl } from "../url";
-import { CurrUser, User } from "./types";
+import { API_URL } from "../constants";
+import { CurrUser, User } from "../types";
 const USER_KEY = "user-info";
-
 
 interface AddUserProps {
   firstName: string;
@@ -17,7 +16,7 @@ export async function PostUserAPI(props: AddUserProps) {
   const password = props.password;
   let item = { firstName, lastName, email, password };
   try {
-    const response = await fetch(baseUrl + "/user", {
+    const response = await fetch(API_URL + "/user", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -30,7 +29,7 @@ export async function PostUserAPI(props: AddUserProps) {
 }
 
 export async function getUserByIdForMovie(userId: string) {
-  const res = await fetch(baseUrl + "/user/" + userId, {
+  const res = await fetch(API_URL + "/user/" + userId, {
     method: "GET",
   });
   if (res.status === 200) {
@@ -42,7 +41,7 @@ export async function getUserByIdForMovie(userId: string) {
 // User DELETE by ID
 export async function DeleteUserAPI(id: string, token: string) {
   try {
-    const response = await fetch(baseUrl + "/user/" + id, {
+    const response = await fetch(API_URL + "/user/" + id, {
       method: "DELETE",
       headers: {
         "auth-token": token,
@@ -54,9 +53,9 @@ export async function DeleteUserAPI(id: string, token: string) {
 }
 
 // User PATCH by ID
-export async function UpdateUserAPI(user: User, token: string) {
+export async function UpdateUserAPI(user: Omit<User, "role"> & Partial<Pick<User, "role">>, token: string) {
   try {
-    const response = await fetch(baseUrl + "/user/" + user.id, {
+    const response = await fetch(API_URL + "/user/" + user.id, {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -77,7 +76,7 @@ export async function UpdateUserAPI(user: User, token: string) {
 
 export async function UpdateCurrentUserAPI(user: User, token: string) {
   try {
-    const response = await fetch(baseUrl + "/user/" + user.id, {
+    const response = await fetch(API_URL + "/user/" + user.id, {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -110,14 +109,14 @@ export async function UpdateCurrentUserAPI(user: User, token: string) {
 
 //User GET by ID
 export const getUserById = async (userId: string, token: string) => {
-  const testresponse = await fetch(baseUrl + "/user/" + userId, {
+  const testresponse = await fetch(API_URL + "/user/" + userId, {
     method: "GET",
     headers: {
       "auth-token": token,
     },
   });
   if (testresponse.status === 200) {
-    const res = await fetch(baseUrl + "/user/" + userId, {
+    const res = await fetch(API_URL + "/user/" + userId, {
       method: "GET",
       headers: {
         "auth-token": token,
@@ -130,7 +129,8 @@ export const getUserById = async (userId: string, token: string) => {
 
 //User GET ALL
 export async function getUserList() {
-  const res = await fetch(baseUrl + "/users", {
+  console.log(API_URL);
+  const res = await fetch(API_URL + "/users", {
     method: "GET",
   });
   const data = await res.json();

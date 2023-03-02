@@ -10,7 +10,7 @@ import UserCurrentEditModal from "../components/modals/UserCurrentEditModal";
 import UserCurrentDeleteDialog from "../components/dialogs/UserCurrentDeleteDialog";
 import { CurrUser, User } from "../api/types";
 import { useTranslation } from "react-i18next";
-import { getPersistedUser } from "../api/useLogIn";
+import { getPersistedUser } from "../api/auth/useLogIn";
 
 function Account() {
   const { t } = useTranslation();
@@ -110,21 +110,19 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {
-                <UserCard
-                  user={user}
-                  setIsOpenEdit={setIsOpenEditCurrent}
-                  setIsOpenDelete={setIsOpenDeleteCurrent}
-                  setFirstName={setFirstName}
-                  setLastName={setLastName}
-                  setEmail={setEmail}
-                  setPassword={setPassword}
-                  setRole={setRole}
-                  setUserId={setUserId}
-                  selectedUser={user}
-                  setSelectedUser={setUser}
-                />
-              }
+              <UserCard
+                user={user}
+                // setIsOpenEdit={setIsOpenEditCurrent}
+                // setIsOpenDelete={setIsOpenDeleteCurrent}
+                // setFirstName={setFirstName}
+                // setLastName={setLastName}
+                // setEmail={setEmail}
+                // setPassword={setPassword}
+                // setRole={setRole}
+                // setUserId={setUserId}
+                // selectedUser={user}
+                // setSelectedUser={setUser}
+              />
             </Grid>
           </Grid>
         </div>

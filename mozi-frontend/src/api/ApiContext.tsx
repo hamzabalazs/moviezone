@@ -1,9 +1,9 @@
 import React from "react";
-import { CategoryData, useCategories } from "./useCategories";
-import { LogInData, useLogIn } from "./useLogIn";
-import { MovieData, useMovies } from "./useMovies";
-import { UserData, useUsers } from "./useUsers";
-import { ReviewData, useReviews } from "./useReviews";
+import { CategoryData, useCategories } from "./category/useCategories";
+import { LogInData, useLogIn } from "./auth/useLogIn";
+import { MovieData, useMovies } from "./movie/useMovies";
+import { UserData, useUsers } from "./user/useUsers";
+import { ReviewData, useReviews } from "./review/useReviews";
 
 export type ApiContextData = LogInData &
   Omit<CategoryData, "refetchData"> &

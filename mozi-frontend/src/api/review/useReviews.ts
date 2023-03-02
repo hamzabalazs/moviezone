@@ -5,7 +5,7 @@ import {
   getReviewsList,
   UpdateReviewAPI,
 } from "./ReviewApi";
-import { Review } from "./types";
+import { Review } from "../types";
 
 export type ReviewData = {
   reviews: Review[];

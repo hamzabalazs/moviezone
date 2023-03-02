@@ -1,4 +1,14 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { User } from "../../api/types";
+import { UserData } from "../../api/user/useUsers";
 import { MockedApiContext } from "../../common/testing/MockedApiProvider";
 import UserEditModal from "./UserEditModal";
 
@@ -8,93 +18,136 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-function renderUserEditModal(
-  setIsOpenEdit: jest.Mock<any, any>,
-  setFirstName: jest.Mock<any, any>,
-  setLastName: jest.Mock<any, any>,
-  setEmail: jest.Mock<any, any>,
-  setPassword: jest.Mock<any, any>,
-  setRole: jest.Mock<any, any>
-) {
-  const isOpenEdit = true;
-  const userId = "idU3";
-  const firstName = "viewer";
-  const lastName = "viewer";
-  const email = "viewer@example.com";
-  const password = "viewer";
-  const role = "viewer";
+const testUser: User = {
+  id: "idU3",
+  firstName: "viewer",
+  lastName: "viewer",
+  email: "viewer@example.com",
+  password: "viewer",
+  role: "viewer",
+};
 
+const newTestUser: User = {
+  id: "idU3",
+  firstName: "New viewer",
+  lastName: "New viewer",
+  email: "new_viewer@example.com",
+  password: "New viewer",
+  role: "editor",
+};
+
+function renderUserEditModal(props: {
+  user?: User;
+  onClose?: () => void;
+  allowEditRole?: boolean;
+  editUser?: UserData["editUser"];
+}) {
   return render(
-    <MockedApiContext>
+    <MockedApiContext value={{ editUser: props.editUser }}>
       <UserEditModal
-        isOpenEdit={isOpenEdit}
-        setIsOpenEdit={setIsOpenEdit}
-        setFirstName={setFirstName}
-        setLastName={setLastName}
-        setEmail={setEmail}
-        setPassword={setPassword}
-        setRole={setRole}
+        user={props.user}
+        onClose={props.onClose}
+        allowEditRole={props.allowEditRole}
         setIsOpenAlert={jest.fn()}
         setAlertMessage={jest.fn()}
         setAlertType={jest.fn()}
-        userId={userId}
-        firstName={firstName}
-        lastName={lastName}
-        email={email}
-        password={password}
-        role={role}
       />
     </MockedApiContext>
   );
 }
 
-test("user edit modal works fine", () => {
-  const setIsOpenEdit = jest.fn();
-  const setFirstName = jest.fn();
-  const setLastName = jest.fn();
-  const setEmail = jest.fn();
-  const setPassword = jest.fn();
-  const setRole = jest.fn();
-  renderUserEditModal(
-    setIsOpenEdit,
-    setFirstName,
-    setLastName,
-    setEmail,
-    setPassword,
-    setRole
+test("If user is not provided should not open", () => {
+  const { queryByTestId } = renderUserEditModal({});
+
+  const modal = queryByTestId("user-edit-modal");
+
+  expect(modal).not.toBeInTheDocument();
+});
+
+test("If user is provided should show open modal with correct values", () => {
+  const { queryByTestId } = renderUserEditModal({ user: testUser });
+
+  const modal = queryByTestId("user-edit-modal");
+  const firstName = queryByTestId("user-edit-modal-firstName");
+  const lastName = queryByTestId("user-edit-modal-lastName");
+  const email = queryByTestId("user-edit-modal-email");
+  const password = queryByTestId("user-edit-modal-password");
+  const role = queryByTestId("user-edit-modal-role");
+  const submit = queryByTestId("user-edit-modal-submit");
+
+  expect(modal).toBeInTheDocument();
+  expect(firstName).toBeInTheDocument();
+  expect(firstName).toHaveValue(testUser.firstName);
+  expect(lastName).toBeInTheDocument();
+  expect(lastName).toHaveValue(testUser.lastName);
+  expect(email).toBeInTheDocument();
+  expect(email).toHaveValue(testUser.email);
+  expect(password).toBeInTheDocument();
+  expect(role).not.toBeInTheDocument();
+  expect(submit).toBeInTheDocument();
+});
+
+test("If allowEditRole isset should show role selector", () => {
+  const { queryByTestId } = renderUserEditModal({
+    user: testUser,
+    allowEditRole: true,
+  });
+
+  const role = queryByTestId("user-edit-modal-role");
+
+  expect(role).toBeInTheDocument();
+});
+
+test("Should call editUser with correct values", async () => {
+  const editUserSpy = jest.fn();
+  const { getByTestId, getByRole } = renderUserEditModal({
+    user: testUser,
+    allowEditRole: true,
+    editUser: editUserSpy,
+  });
+
+  const firstName = getByTestId("user-edit-modal-firstName");
+  const lastName = getByTestId("user-edit-modal-lastName");
+  const email = getByTestId("user-edit-modal-email");
+  const password = getByTestId("user-edit-modal-password");
+  const role = within(getByTestId("user-edit-modal-role"));
+  const submit = getByTestId("user-edit-modal-submit");
+
+  fireEvent.change(firstName, { target: { value: newTestUser.firstName } });
+  fireEvent.change(lastName, { target: { value: newTestUser.lastName } });
+  fireEvent.change(email, { target: { value: newTestUser.email } });
+  fireEvent.change(password, { target: { value: newTestUser.password } });
+  fireEvent.mouseDown(role.getByRole("button"));
+  const listbox = within(getByRole("listbox"));
+  fireEvent.click(
+    listbox
+      .getAllByRole("option")
+      .find((x) => x.getAttribute("data-value") === newTestUser.role)!
   );
 
-  const userFirstName = screen.getByTestId(
-    "user-edit-modal-firstName"
-  ) as HTMLInputElement;
-  const userLastName = screen.getByTestId(
-    "user-edit-modal-lastName"
-  ) as HTMLInputElement;
-  const userEmail = screen.getByTestId(
-    "user-edit-modal-email"
-  ) as HTMLInputElement;
-  const userPassword = screen.getByTestId(
-    "user-edit-modal-password"
-  ) as HTMLInputElement;
-  const userRole = screen.getByTestId(
-    "user-edit-modal-role"
-  ) as HTMLInputElement;
+  act(() => {
+    userEvent.click(submit);
+  });
 
-  expect(userFirstName.value).toBe("viewer");
-  expect(userLastName.value).toBe("viewer");
-  expect(userEmail.value).toBe("viewer@example.com");
-  expect(userPassword.value).toBe("viewer");
-  expect(userRole.value).toBe("viewer");
+  await waitFor(() => {
+    expect(editUserSpy).toHaveBeenCalledWith(newTestUser);
+  });
+});
 
-  fireEvent.change(userFirstName, { target: { value: "changeFirstName" } });
-  fireEvent.change(userLastName, { target: { value: "changeLastName" } });
-  fireEvent.change(userEmail, { target: { value: "changeEmail" } });
-  fireEvent.change(userPassword, { target: { value: "changePassword" } });
-  fireEvent.change(userRole, { target: { value: "editor" } });
+test("If allowEditRole not set should call editUser without role", async () => {
+  const editUserSpy = jest.fn();
+  const { getByTestId } = renderUserEditModal({
+    user: testUser,
+    editUser: editUserSpy,
+  });
 
-  expect(userFirstName.value).toBe("changeFirstName");
-  expect(userLastName.value).toBe("changeLastName");
-  expect(userEmail.value).toBe("changeEmail");
-  expect(userPassword.value).toBe("changePassword");
-  expect(userRole.value).toBe("editor");
+  const submit = getByTestId("user-edit-modal-submit");
+
+  act(() => {
+    userEvent.click(submit);
+  });
+
+  await waitFor(() => {
+    expect(editUserSpy).toHaveBeenCalledWith({ ...testUser, role: undefined });
+  });
 });

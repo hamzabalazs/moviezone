@@ -1,14 +1,13 @@
-import { baseUrl } from "../url";
 import Resizer from "react-image-file-resizer";
-import { Movie } from "./types";
-
+import { API_URL } from "../constants";
+import { Movie } from "../types";
 // Movie DELETE by ID
 export async function DeleteMovieAPI(
   id: string,
   token: string
 ): Promise<boolean> {
   try {
-    const response = await fetch(baseUrl + "/movie/" + id, {
+    const response = await fetch(API_URL + "/movie/" + id, {
       method: "DELETE",
       headers: {
         "auth-token": token,
@@ -21,7 +20,7 @@ export async function DeleteMovieAPI(
 
 // Movie GET ALL
 export async function getMovieList(): Promise<Movie[]> {
-  const res = await fetch(baseUrl + "/movies", {
+  const res = await fetch(API_URL + "/movies", {
     method: "GET",
   });
   if (res.status === 200) {
@@ -34,11 +33,11 @@ export async function getMovieList(): Promise<Movie[]> {
 export const getMovieById = async (
   movieId: string
 ): Promise<Movie | undefined> => {
-  const testresponse = await fetch(baseUrl + "/movie/" + movieId, {
+  const testresponse = await fetch(API_URL + "/movie/" + movieId, {
     method: "GET",
   });
   if (testresponse.status === 200) {
-    const res = await fetch(baseUrl + "/movie/" + movieId, {
+    const res = await fetch(API_URL + "/movie/" + movieId, {
       method: "GET",
     });
     const body = await res.json();
@@ -48,7 +47,7 @@ export const getMovieById = async (
 };
 
 export async function getMovieByIdForReviews(movieId: string) {
-  const res = await fetch(baseUrl + "/movie/" + movieId, {
+  const res = await fetch(API_URL + "/movie/" + movieId, {
     method: "GET",
   });
   if (res.status === 200) {
@@ -63,7 +62,7 @@ export async function UpdateMovieAPI(
   token: string
 ): Promise<boolean> {
   try {
-    const response = await fetch(baseUrl + "/movie/" + movie.id, {
+    const response = await fetch(API_URL + "/movie/" + movie.id, {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -87,7 +86,7 @@ export async function AddMovieAPI(
   movie: Omit<Movie, "id" | "rating">,
   token: string
 ): Promise<boolean> {
-  const response = await fetch(baseUrl + "/movie", {
+  const response = await fetch(API_URL + "/movie", {
     method: "POST",
     headers: {
       "Content-type": "application/json",

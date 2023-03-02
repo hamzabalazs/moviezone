@@ -15,8 +15,6 @@ import Reviews from "./pages/Reviews";
 import MoviePage from "./pages/MoviePage";
 import Account from "./pages/Account";
 
-
-
 import { ApiContextProvider, useApiContext } from "./api/ApiContext";
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";

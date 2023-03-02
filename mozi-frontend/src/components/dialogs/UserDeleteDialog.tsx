@@ -9,40 +9,43 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
+import { User } from "../../api/types";
 
 interface Props {
-  isOpenDelete: boolean;
-  setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  userId: string;
+  user?: User;
+  onClose?: () => void;
   setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
   setAlertMessage: Dispatch<SetStateAction<string>>;
   setAlertType: Dispatch<SetStateAction<string>>;
 }
 
-export default function UserDeleteDialog(props: Props) {
+export default function UserDeleteDialog({
+  user,
+  onClose,
+  setIsOpenAlert,
+  setAlertMessage,
+  setAlertType,
+}: Props) {
   const { deleteUser } = useApiContext();
   const { t } = useTranslation();
 
   const handleDeletion = async () => {
-    const userId = props.userId;
-    const setIsOpenDelete = props.setIsOpenDelete;
-    const setIsOpenAlert = props.setIsOpenAlert;
-    const setAlertMessage = props.setAlertMessage;
-    const setAlertType = props.setAlertType;
-    const result = await deleteUser(userId);
-    if (!result) return;
+    if (user === undefined) return;
+    const result = await deleteUser(user.id);
+    if (result) {
+      const msg = t("successMessages.userDelete");
+      setIsOpenAlert(true);
+      setAlertMessage(msg);
+      setAlertType("success");
+    }
 
-    const msg = t("successMessages.userDelete");
-    setIsOpenDelete(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+    onClose?.();
   };
 
   return (
     <Dialog
-      open={props.isOpenDelete}
-      onClose={() => props.setIsOpenDelete(false)}
+      open={Boolean(user)}
+      onClose={() => onClose?.()}
       aria-labelledby="alert-delete-title"
       aria-describedby="alert-delete-description"
       data-testid="user-delete-dialog"
@@ -59,7 +62,7 @@ export default function UserDeleteDialog(props: Props) {
         <Button onClick={handleDeletion} autoFocus>
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => props.setIsOpenDelete(false)}>
+        <Button onClick={() => onClose?.()}>
           {t("buttons.quit")}
         </Button>
       </DialogActions>

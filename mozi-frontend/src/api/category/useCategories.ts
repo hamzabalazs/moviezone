@@ -5,7 +5,7 @@ import {
   getCategoryList,
   UpdateCategoryAPI,
 } from "./CategoryApi";
-import { Category } from "./types";
+import { Category } from "../types";
 
 export type CategoryData = {
   categories: Category[];

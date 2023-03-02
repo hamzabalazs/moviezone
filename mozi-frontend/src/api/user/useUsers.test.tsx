@@ -1,6 +1,6 @@
 import { waitFor } from "@testing-library/react";
 import { act, renderHook } from "@testing-library/react-hooks";
-import { User } from "./types";
+import { User } from "../types";
 import { useUsers } from "./useUsers";
 
 const mockedUsedNavigate = jest.fn();

@@ -17,8 +17,12 @@ import { useTranslation } from "react-i18next";
 export function Users() {
   const context = useApiContext();
   const { t } = useTranslation();
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
+
+  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
+
   const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenEditCurrent, setIsOpenEditCurrent] = useState(false);
   const [isOpenDeleteCurrent, setIsOpenDeleteCurrent] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState(false);
@@ -51,53 +55,22 @@ export function Users() {
           setAlertType={setAlertType}
         />
         <UserDeleteDialog
-          isOpenDelete={isOpenDelete}
-          setIsOpenDelete={setIsOpenDelete}
-          userId={userId}
+          user={deletingUser}
+          onClose={() => setDeletingUser(undefined)}
           setIsOpenAlert={setIsOpenAlert}
           setAlertMessage={setAlertMessage}
           setAlertType={setAlertType}
         />
-        <UserCurrentDeleteDialog
-          isOpenDelete={isOpenDeleteCurrent}
-          setIsOpenDelete={setIsOpenDeleteCurrent}
-          userId={userId}
-        />
+        
         <UserEditModal
-          isOpenEdit={isOpenEdit}
-          setIsOpenEdit={setIsOpenEdit}
-          firstName={firstName}
-          setFirstName={setFirstName}
-          lastName={lastName}
-          setLastName={setLastName}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          role={role}
-          setRole={setRole}
-          userId={userId}
+          user={editingUser}
+          onClose={() => setEditingUser(undefined)}
+          allowEditRole
           setIsOpenAlert={setIsOpenAlert}
           setAlertMessage={setAlertMessage}
           setAlertType={setAlertType}
         />
-        <UserCurrentEditModal
-          isOpenEdit={isOpenEditCurrent}
-          setIsOpenEdit={setIsOpenEditCurrent}
-          firstName={firstName}
-          setFirstName={setFirstName}
-          lastName={lastName}
-          setLastName={setLastName}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          userId={userId}
-          role={role}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
-        />
+        
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>
             <Typography
@@ -116,16 +89,8 @@ export function Users() {
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}
-                  setIsOpenEdit={setIsOpenEdit}
-                  setIsOpenDelete={setIsOpenDelete}
-                  setFirstName={setFirstName}
-                  setLastName={setLastName}
-                  setEmail={setEmail}
-                  setPassword={setPassword}
-                  setRole={setRole}
-                  setUserId={setUserId}
-                  selectedUser={selectedUser}
-                  setSelectedUser={setSelectedUser}
+                  onEdit={() => setEditingUser(user)}
+                  onDelete={() => setDeletingUser(user)}
                 />
               </Grid>
             ))}

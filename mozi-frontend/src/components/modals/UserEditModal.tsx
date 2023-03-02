@@ -7,124 +7,121 @@ import {
   MenuItem,
   Modal,
   Select,
-  SelectChangeEvent,
-  TextField,
+  TextField as MuiTextField,
+  TextFieldProps,
   Typography,
 } from "@mui/material";
-import { FormikErrors, useFormik } from "formik";
+import {  useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
+import { User } from "../../api/types";
+import * as Yup from "yup";
 
 interface Props {
-  isOpenEdit: boolean;
-  setIsOpenEdit: Dispatch<SetStateAction<boolean>>;
-  firstName: string;
-  setFirstName: Dispatch<SetStateAction<string>>;
-  lastName: string;
-  setLastName: Dispatch<SetStateAction<string>>;
-  email: string;
-  setEmail: Dispatch<SetStateAction<string>>;
-  password: string;
-  setPassword: Dispatch<SetStateAction<string>>;
-  role: "admin" | "editor" | "viewer";
-  setRole: Dispatch<SetStateAction<"admin" | "editor" | "viewer">>;
-  userId: string;
+  user?: User;
+  onClose?: () => void;
+  allowEditRole?: boolean;
   setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
   setAlertMessage: Dispatch<SetStateAction<string>>;
   setAlertType: Dispatch<SetStateAction<string>>;
 }
 
-export default function UserEditModal(props: Props) {
+// function AlertProvider() {
+//   const [alert, setAlert] = useSate();
+
+// useEffect(() => {
+// if(alert ){
+//   const timer = setTimeout(3000, () => setAlert(undefined))
+//   return ()=>clearTimeout(timer);
+// }
+// }, [alert])
+
+//   function showMessage(alert){
+
+//   }
+
+//   return <context.provider value={{showMessage}}>
+//     {alert && (
+//       <Alert
+//       sx={{
+//         marginRight: 2,
+//         marginLeft: 2,
+//         marginTop: 3,
+//         marginBottom: 3,
+//         position: "sticky",
+//         top: 1,
+//       }}
+//       variant="filled"
+//       severity={alert.variant}
+//       data-testid="alert-success"
+//     >
+//       {alert.message}
+//     </Alert>
+//     )}
+//     {...}
+//   </context.provider>
+// }
+
+// Usage
+// const {showMessage} = useMyStack();
+// showMessage({
+//   message:  t("successMessages.userEdit"),
+//   variant: "success"
+// });
+
+export default function UserEditModal({
+  user,
+  onClose,
+  allowEditRole,
+  setIsOpenAlert,
+  setAlertMessage,
+  setAlertType,
+}: Props) {
   const { t } = useTranslation();
   const { editUser } = useApiContext();
-  const handleRoleSelect = (event: SelectChangeEvent) => {
-    props.setRole(event.target.value as "admin" | "editor" | "viewer");
-  };
-  const updateUser = async (firstName:string,lastName:string,email:string,password:string) => {
-    const userId = props.userId;
-    const role = props.role;
-    const setIsOpenEdit = props.setIsOpenEdit;
-    const setIsOpenAlert = props.setIsOpenAlert;
-    const setAlertMessage = props.setAlertMessage;
-    const setAlertType = props.setAlertType;
+
+
+  const updateUser = async (editedUser: Omit<User, "id">) => {
+    if (user === undefined) return;
+
     const result = await editUser({
-      id: userId,
-      firstName,
-      lastName,
-      email,
-      password,
-      role,
+      id: user.id,
+      ...editedUser,
+      role: allowEditRole ? editedUser.role : undefined,
     });
 
-    if (!result) return;
-
-    const msg = t("successMessages.userEdit");
-    setIsOpenEdit(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
-  };
-
-  const emailvalidation =
-    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
-
-    interface Values {
-      firstName: string;
-      lastName: string;
-      email: string;
-      password:string
+    if (result) {
+      const msg = t("successMessages.userEdit");
+      setIsOpenAlert(true);
+      setAlertMessage(msg);
+      setAlertType("success");
     }
 
-  const formikValues = {
-    firstName:props.firstName,
-    lastName: props.lastName,
-    email: props.email,
-    password: props.password
-  }
+    onClose?.();
+  };
+
+  const formikValues: Omit<User, "id"> = {
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    password: user?.password || "",
+    role: user?.role || "viewer",
+  };
+
+  const schema = useEditUserSchema();
 
   const formik = useFormik({
     initialValues: formikValues,
-    onSubmit: (values) => {
-      const firstName = values.firstName;
-      const lastName = values.lastName;
-      const email = values.email;
-      const password = values.password;
-      updateUser(firstName, lastName, email,password);
-    },
+    onSubmit: updateUser,
     enableReinitialize: true,
-    validate: (values) => {
-      let errors: FormikErrors<Values> = {};
-      if (!values.firstName) {
-        const msg = t("formikErrors.firstNameReq");
-        errors.firstName = msg;
-      }
-      if (!values.lastName) {
-        const msg = t("formikErrors.lastNameReq");
-        errors.lastName = msg;
-      }
-      if (!values.email) {
-        const msg = t("formikErrors.emailReq");
-        errors.email = msg;
-      } else if (!emailvalidation.test(values.email)) {
-        const msg = t("formikErrors.emailFormat");
-        errors.email = msg;
-      }
-      if (!values.password) {
-        const msg = t("formikErrors.passwordReq");
-        errors.password = msg;
-      } else if (values.password.length < 5) {
-        const msg = t("formikErrors.passwordLength");
-        errors.password = msg;
-      }
-      return errors;
-    },
+    validationSchema: schema,
   });
 
   return (
     <Modal
-      open={props.isOpenEdit}
-      onClose={() => props.setIsOpenEdit(false)}
+      open={Boolean(user)}
+      onClose={() => onClose?.()}
       data-testid="user-edit-modal"
     >
       <Box
@@ -156,100 +153,113 @@ export default function UserEditModal(props: Props) {
             <Typography variant="subtitle1">{t("user.firstName")}: </Typography>
             <TextField
               id="firstName"
-              defaultValue={props.firstName}
+              variant="outlined"
+              value={formik.values.firstName}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-firstName" }}
-            ></TextField>
-            {formik.errors.firstName ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="register-error-firstName"
-                >
-                  {formik.errors.firstName}
-                </Typography>
-              ) : null}
+              error={formik.errors.firstName}
+            />
             <Typography variant="subtitle1">{t("user.lastName")}: </Typography>
             <TextField
               id="lastName"
-              defaultValue={props.lastName}
+              value={formik.values.lastName}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-lastName" }}
-            ></TextField>
-            {formik.errors.lastName ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="register-error-lastName"
-                >
-                  {formik.errors.lastName}
-                </Typography>
-              ) : null}
+              error={formik.errors.lastName}
+            />
             <Typography variant="subtitle1">{t("user.email")}: </Typography>
             <TextField
               id="email"
-              defaultValue={props.email}
+              value={formik.values.email}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-email" }}
-            ></TextField>
-            {formik.errors.email ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="register-error-email"
-                >
-                  {formik.errors.email}
-                </Typography>
-              ) : null}
+              error={formik.errors.email}
+            />
             <Typography variant="subtitle1">{t("user.password")}: </Typography>
             <TextField
               id="password"
-              defaultValue={props.password}
+              value={formik.values.password}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "user-edit-modal-password" }}
-            ></TextField>
-            {formik.errors.password ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="register-error-password"
-                >
-                  {formik.errors.password}
-                </Typography>
-              ) : null}
+              error={formik.errors.password}
+            />
             <InputLabel id="role-select">{t("user.role")}</InputLabel>
-            <Select
-              labelId="role-select"
-              label="Role"
-              defaultValue={props.role}
-              onChange={handleRoleSelect}
-              sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "user-edit-modal-role" }}
-            >
-              <MenuItem value="admin">
-                Admin {t("user.role").toLowerCase()}
-              </MenuItem>
-              <MenuItem value="editor">
-                Editor {t("user.role").toLowerCase()}
-              </MenuItem>
-              <MenuItem value="viewer">
-                Viewer {t("user.role").toLowerCase()}
-              </MenuItem>
-            </Select>
+            {allowEditRole && (
+              <Select
+                labelId="role-select"
+                label="Role"
+                name="role"
+                value={formik.values.role}
+                onChange={formik.handleChange}
+                sx={{ border: 1, borderRadius: 1 }}
+                data-testid="user-edit-modal-role"
+              >
+                <MenuItem value="admin">
+                  Admin {t("user.role").toLowerCase()}
+                </MenuItem>
+                <MenuItem value="editor">
+                  Editor {t("user.role").toLowerCase()}
+                </MenuItem>
+                <MenuItem value="viewer">
+                  Viewer {t("user.role").toLowerCase()}
+                </MenuItem>
+              </Select>
+            )}
           </CardContent>
         </Card>
         <Button
           type="submit"
           variant="contained"
           sx={{ border: 1, borderRadius: 1 }}
+          data-testid="user-edit-modal-submit"
         >
           {t("buttons.edit")}
         </Button>
       </Box>
     </Modal>
   );
+}
+
+function TextField({
+  error,
+  ...props
+}: Omit<TextFieldProps, "error"> & { error?: string }): JSX.Element {
+  return (
+    <>
+      <MuiTextField {...props} />
+      {error ? (
+        <Typography
+          variant="subtitle2"
+          sx={{ color: "red" }}
+          data-testid="register-error-firstName"
+        >
+          {error}
+        </Typography>
+      ) : null}
+    </>
+  );
+}
+
+function useEditUserSchema() {
+  const { t } = useTranslation();
+
+  return Yup.object({
+    firstName: Yup.string().required(t("formikErrors.firstNameReq") || ""),
+    lastName: Yup.string().required(t("formikErrors.lastNameReq") || ""),
+    email: Yup.string()
+      .required(t("formikErrors.emailReq") || "")
+      .email(t("formikErrors.emailFormat") || ""),
+    password: Yup.string()
+      .required(t("formikErrors.passwordReq") || "")
+      .test(
+        "len",
+        t("formikErrors.passwordLength") || "",
+        (val) => val.length > 5
+      ),
+    role: Yup.string().required(),
+  });
 }

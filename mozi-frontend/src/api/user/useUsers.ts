@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { User } from "./types";
+import { User } from "../types";
 import {
   DeleteUserAPI,
   getUserList,
@@ -12,7 +12,9 @@ export type UserData = {
   users: User[];
   usersLoading: boolean;
   registerUser: (user: Omit<User, "id" | "role">) => Promise<boolean>;
-  editUser: (user: User) => Promise<boolean>;
+  editUser: (
+    user: Omit<User, "role"> & { role?: User["role"] }
+  ) => Promise<boolean>;
   editCurrentUser: (user: User) => Promise<boolean>;
   deleteUser: (id: string) => Promise<boolean>;
   refetchData: () => Promise<void>;
@@ -37,7 +39,7 @@ export function useUsers(token?: string): UserData {
     return result;
   }
 
-  async function editUser(user: User): Promise<boolean> {
+  async function editUser(user: Omit<User, "role"> & { role?: User["role"] }): Promise<boolean> {
     if (!token) return false;
     console.log(user);
     const result = await UpdateUserAPI(user, token);

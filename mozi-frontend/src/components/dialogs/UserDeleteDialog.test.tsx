@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { User } from "../../api/types";
+import { UserData } from "../../api/user/useUsers";
 import { MockedApiContext } from "../../common/testing/MockedApiProvider";
 import UserDeleteDialog from "./UserDeleteDialog";
 
@@ -8,15 +10,26 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-function renderUserDeleteDialog(setIsOpenDelete: jest.Mock<any, any>) {
-  const isOpenDelete = true;
-  const userId = "idR2";
+const testUser: User = {
+  id: "idU3",
+  firstName: "viewer",
+  lastName: "viewer",
+  email: "viewer@example.com",
+  password: "viewer",
+  role: "viewer",
+};
+
+function renderUserDeleteDialog(props: {
+  user?:User;
+  onClose?:() => void;
+  deleteUser?: UserData["deleteUser"]
+}) {
+
   return render(
-    <MockedApiContext>
+    <MockedApiContext value={{ deleteUser:props.deleteUser}}>
       <UserDeleteDialog
-        isOpenDelete={isOpenDelete}
-        setIsOpenDelete={setIsOpenDelete}
-        userId={userId}
+        user={props.user}
+        onClose={props.onClose}
         setIsOpenAlert={jest.fn()}
         setAlertMessage={jest.fn()}
         setAlertType={jest.fn()}
@@ -27,7 +40,7 @@ function renderUserDeleteDialog(setIsOpenDelete: jest.Mock<any, any>) {
 
 test("user delete works fine", async () => {
   const setIsOpenDelete = jest.fn();
-  renderUserDeleteDialog(setIsOpenDelete);
+  renderUserDeleteDialog({});
 
   const cardDeleteDialog = screen.getByTestId("user-delete-dialog");
   const cardDeleteDialogAccept = screen.getByRole("button", {

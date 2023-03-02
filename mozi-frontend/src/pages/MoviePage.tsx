@@ -26,7 +26,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ReviewCard from "../components/cards/ReviewCard";
 import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
-import { useMovies } from "../api/useMovies";
+import { useMovies } from "../api/movie/useMovies";
 
 export default function MoviePage() {
   const navigate = useNavigate();
