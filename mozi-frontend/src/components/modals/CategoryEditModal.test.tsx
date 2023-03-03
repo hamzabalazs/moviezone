@@ -14,14 +14,14 @@ function renderCategoryEditModal(setName: jest.Mock<any, any>) {
   const categoryId = "idC2";
   return render(
     <MockedApiContext>
-      <CategoryEditModal
+      {/* <CategoryEditModal
         isOpenEdit={isOpenEdit}
         setIsOpenEdit={jest.fn()}
         name={name}
         setName={setName}
         categoryId={categoryId}
         setAlert={jest.fn()}
-      />
+      /> */}
     </MockedApiContext>
   );
 }

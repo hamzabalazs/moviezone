@@ -9,36 +9,40 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
-import { AlertType } from "../../api/types";
+import { AlertType, Category } from "../../api/types";
 
 interface Props {
-  isOpenDelete: boolean;
-  setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  categoryId: string;
+  category?: Category;
+  onClose: () => void;
   setAlert: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
-export default function CategoryDeleteDialog(props: Props) {
+export default function CategoryDeleteDialog({
+  category,
+  onClose,
+  setAlert,
+}: Props) {
   const { t } = useTranslation();
   const { deleteCategory } = useApiContext();
+
   const handleDeletion = async () => {
-    const categoryId = props.categoryId;
-    const setIsOpenDelete = props.setIsOpenDelete;
-    const setAlert = props.setAlert
+    if (category === undefined) return;
+    const categoryId = category.id;
 
     const result = await deleteCategory(categoryId);
-    if (!result) return;
+    if (result){
+      const msg = t("successMessages.categoryDelete");
+      setAlert({ isOpen: true, message: msg, type: "success" });
 
-    const msg = t("successMessages.categoryDelete");
-    setIsOpenDelete(false);
-    setAlert({isOpen:true,message:msg,type:"success"})
+    }
+    onClose()
+
   };
 
   return (
     <Dialog
-      open={props.isOpenDelete}
-      onClose={() => props.setIsOpenDelete(false)}
+      open={Boolean(category)}
+      onClose={() => onClose()}
       aria-labelledby="alert-delete-title"
       aria-describedby="alert-delete-description"
       data-testid="category-delete-dialog"
@@ -55,7 +59,7 @@ export default function CategoryDeleteDialog(props: Props) {
         <Button onClick={handleDeletion} autoFocus>
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => props.setIsOpenDelete(false)}>
+        <Button onClick={() => onClose()}>
           {t("buttons.quit")}
         </Button>
       </DialogActions>

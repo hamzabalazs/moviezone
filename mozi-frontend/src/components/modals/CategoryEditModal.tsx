@@ -4,69 +4,62 @@ import {
   Card,
   CardContent,
   Modal,
-  TextField,
+  TextField as MuiTextField,
+  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { AlertType } from "../../api/types";
+import { AlertType, Category } from "../../api/types";
+import * as Yup from "yup";
 
 interface Props {
-  isOpenEdit: boolean;
-  setIsOpenEdit: Dispatch<SetStateAction<boolean>>;
-  name: string;
-  setName: Dispatch<SetStateAction<string>>;
-  categoryId: string;
+  category?: Category;
+  onClose: () => void;
   setAlert: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
-export default function CategoryEditModal(props: Props) {
+export default function CategoryEditModal({
+  category,
+  onClose,
+  setAlert,
+}: Props) {
   const { t } = useTranslation();
   const { editCategory } = useApiContext();
-  const updateCategory = async (name:string) => {
-    const categoryId = props.categoryId;
-    console.log(categoryId);
-    console.log(name);
-    const setIsOpenEdit = props.setIsOpenEdit;
-    const setAlert = props.setAlert
 
-    const result = await editCategory({ id: categoryId, name });
-    if (!result) return;
+  const updateCategory = async (editedCategory: Omit<Category,"id">) => {
+    if(category === undefined) return;
+    const categoryId = category.id
+    const result = await editCategory({ id: categoryId, ...editedCategory });
+    if (result){
+      const msg = t("successMessages.categoryEdit");
+      setAlert({ isOpen: true, message: msg, type: "success" });
+    }
 
-    const msg = t("successMessages.categoryEdit");
-    setIsOpenEdit(false);
-    setAlert({isOpen:true,message:msg,type:"success"})
+    onClose();
   };
 
   interface Values {
     name: string;
   }
 
+  const schema = useEditCategorySchema();
+
   const formik = useFormik({
     initialValues: {
-      name: props.name,
+      name: category?.name || "",
     },
-    onSubmit: async (values) => {
-      updateCategory(values.name);
-    },
-    validate: (values) => {
-      let errors: FormikErrors<Values> = {};
-      if (!values.name) {
-        const msg = t("formikErrors.nameReq");
-        errors.name = msg;
-      }
-
-      return errors;
-    },
+    onSubmit:updateCategory,
+    enableReinitialize:true,
+    validationSchema: schema
   });
 
   return (
     <Modal
-      open={props.isOpenEdit}
-      onClose={() => props.setIsOpenEdit(false)}
+      open={Boolean(category)}
+      onClose={() => onClose()}
       data-testid="category-edit-modal"
     >
       <Box
@@ -98,7 +91,7 @@ export default function CategoryEditModal(props: Props) {
             <Typography variant="subtitle1">{t("category.name")}: </Typography>
             <TextField
               id="name"
-              defaultValue={props.name}
+              value={formik.values.name}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               inputProps={{ "data-testid": "category-edit-modal-name" }}
@@ -124,4 +117,33 @@ export default function CategoryEditModal(props: Props) {
       </Box>
     </Modal>
   );
+}
+
+function TextField({
+  error,
+  ...props
+}: Omit<TextFieldProps, "error"> & { error?: string }): JSX.Element {
+  return (
+    <>
+      <MuiTextField {...props} />
+      {error ? (
+        <Typography
+          variant="subtitle2"
+          sx={{ color: "red" }}
+          data-testid="register-error-firstName"
+        >
+          {error}
+        </Typography>
+      ) : null}
+    </>
+  );
+}
+
+function useEditCategorySchema() {
+  const { t } = useTranslation();
+
+  return Yup.object({
+    name: Yup.string().required(t("formikErrors.nameReq") || ""),
+    
+  });
 }

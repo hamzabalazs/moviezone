@@ -18,15 +18,11 @@ function Categories() {
   const { t } = useTranslation();
   const context = useApiContext();
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
-  const [isOpenEdit, setIsOpenEdit] = useState(false);
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
+  
+  const [editingCategory,setEditingCategory] = useState<Category | undefined>(undefined)
+  const [deletingCategory,setDeletingCategory] = useState<Category | undefined>(undefined)
+
   const [isOpenAdd, setIsOpenAdd] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    id: "",
-    name: "",
-  });
-  const [name, setName] = useState("");
-  const [categoryId, setCategoryId] = useState("");
 
   const handleAddCategory = () => {
     setIsOpenAdd(true);
@@ -41,17 +37,13 @@ function Categories() {
           setAlert={setAlert}
         />
         <CategoryEditModal
-          isOpenEdit={isOpenEdit}
-          setIsOpenEdit={setIsOpenEdit}
-          name={name}
-          setName={setName}
-          categoryId={categoryId}
+          category={editingCategory}
+          onClose={() => setEditingCategory(undefined)}
           setAlert={setAlert}
         />
         <CategoryDeleteDialog
-          isOpenDelete={isOpenDelete}
-          setIsOpenDelete={setIsOpenDelete}
-          categoryId={categoryId}
+          category={deletingCategory}
+          onClose={() => setDeletingCategory(undefined)}
           setAlert={setAlert}
         />
         <div>
@@ -89,12 +81,8 @@ function Categories() {
                 <Grid item key={category.id} xs={12}>
                   <CategoryCard
                     category={category}
-                    setIsOpenEdit={setIsOpenEdit}
-                    setIsOpenDelete={setIsOpenDelete}
-                    setName={setName}
-                    setCategoryId={setCategoryId}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
+                    onEdit={() => setEditingCategory(category)}
+                    onDelete={() => setDeletingCategory(category)}
                   />
                 </Grid>
               ))}
