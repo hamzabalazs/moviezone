@@ -1,19 +1,22 @@
-require('dotenv').config()
-
 const express = require('express')
+const expressGraphQL = require('express-graphql').graphqlHTTP
+const {
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLString
+} = require('graphql')
 const app = express()
-const mongoose = require('mongoose')
 
-mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser:true})
-const db = mongoose.connection
-db.on("error",(e) => console.error(e))
-db.once("open",() => console.log('Connected to Database'))
+const schema = new GraphQLSchema({
+    query: new GraphQLObjectType({
+        name:"HelloWorld",
+        fields: () => ({
+            message: {type: GraphQLString}
+        })
+    })
+})
 
-app.use(express.json())
-
-const movieRouter = require('./routes/movie')
-app.use('/api',movieRouter)
-const userRouter = require('./routes/user')
-app.use('/api',userRouter)
-
-app.listen(3001, () => console.log('Server started')) 
+app.use('/graphql', expressGraphQL({
+    graphiql:true
+}))
+app.listen(5000, () => console.log("Server started"))

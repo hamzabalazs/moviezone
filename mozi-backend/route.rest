@@ -1,7 +1,0 @@
-GET http://localhost:3001/api/movies
-###
-GET http://localhost:3001/movie/2
-
-###
-
-DELETE http://localhost:3001/api/movie/63ff5fd25227ffe0f0dd80f6
