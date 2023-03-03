@@ -3,12 +3,13 @@ import LockIcon from "@mui/icons-material/Lock";
 import {
   Avatar,
   Button,
-  TextField,
+  TextField as MuiTextField,
   Grid,
   Box,
   Container,
   Typography,
   Link,
+  TextFieldProps,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AlertComponent from "../components/AlertComponent";
@@ -16,17 +17,16 @@ import { useTranslation } from "react-i18next";
 import { useApiContext } from "../api/ApiContext";
 import { FormikErrors, useFormik } from "formik";
 import { AlertType } from "../api/types";
+import * as Yup from "yup";
 
-interface Values {
-  email: string;
-  password: string;
-}
 
 function Login() {
   const navigate = useNavigate();
   const context = useApiContext();
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const { t } = useTranslation();
+
+  const schema = useEditUserSchema()
 
   const formik = useFormik({
     initialValues: {
@@ -43,18 +43,7 @@ function Login() {
         setAlert({isOpen:true,message:msg,type:"error"})
       }
     },
-    validate: (values) => {
-      let errors: FormikErrors<Values> = {};
-      if (!values.email) {
-        const msg = t("formikErrors.emailReq");
-        errors.email = msg;
-      }
-      if (!values.password) {
-        const msg = t("formikErrors.passwordReq");
-        errors.password = msg;
-      }
-      return errors;
-    },
+    validationSchema:schema
   });
 
   useEffect(() => {
@@ -103,16 +92,8 @@ function Login() {
                 id="email"
                 onChange={formik.handleChange}
                 inputProps={{ "data-testid": "login-email" }}
+                error={formik.errors.email}
               />
-              {formik.errors.email ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="login-error-email"
-                >
-                  {formik.errors.email}
-                </Typography>
-              ) : null}
               <TextField
                 sx={{ border: 1, borderRadius: 1 }}
                 margin="normal"
@@ -123,16 +104,8 @@ function Login() {
                 type="password"
                 onChange={formik.handleChange}
                 inputProps={{ "data-testid": "login-password" }}
+                error={formik.errors.password}
               />
-              {formik.errors.password ? (
-                <Typography
-                  variant="subtitle2"
-                  sx={{ color: "red" }}
-                  data-testid="login-error-password"
-                >
-                  {formik.errors.password}
-                </Typography>
-              ) : null}
             </div>
             <Button
               type="submit"
@@ -167,3 +140,40 @@ function Login() {
   );
 }
 export default Login;
+
+function TextField({
+  error,
+  ...props
+}: Omit<TextFieldProps, "error"> & { error?: string }): JSX.Element {
+  return (
+    <>
+      <MuiTextField {...props} />
+      {error ? (
+        <Typography
+          variant="subtitle2"
+          sx={{ color: "red" }}
+          data-testid="register-error-firstName"
+        >
+          {error}
+        </Typography>
+      ) : null}
+    </>
+  );
+}
+
+function useEditUserSchema() {
+  const { t } = useTranslation();
+
+  return Yup.object({
+    email: Yup.string()
+      .required(t("formikErrors.emailReq") || "")
+      .email(t("formikErrors.emailFormat") || ""),
+    password: Yup.string()
+      .required(t("formikErrors.passwordReq") || "")
+      .test(
+        "len",
+        t("formikErrors.passwordLength") || "",
+        (val) => val.length > 5
+      ),
+  });
+}
