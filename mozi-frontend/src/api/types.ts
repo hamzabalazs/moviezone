@@ -43,3 +43,9 @@ export type ReviewUpdated = {
   description: string;
   rating: number;
 };
+
+export type AlertType = {
+  isOpen: boolean;
+  message: string;
+  type: "success" | "error" | undefined
+}

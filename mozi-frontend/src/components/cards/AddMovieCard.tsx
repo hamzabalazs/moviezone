@@ -19,12 +19,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { resizeFile } from "../../api/movie/MovieApi";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
+import { AlertType } from "../../api/types";
 
 interface Props {
   setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+ 
 }
 
 interface Values {
@@ -40,9 +40,7 @@ export default function AddMovieCard(props: Props) {
   const [poster, setPoster] = useState("");
   const { addMovie } = useApiContext();
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setIsOpenAlert = props.setIsOpenAlert;
-  const setAlertMessage = props.setAlertMessage;
-  const setAlertType = props.setAlertType;
+  const setAlert = props.setAlert
   const handleAddMovie = async (
     title: string,
     description: string,
@@ -59,9 +57,7 @@ export default function AddMovieCard(props: Props) {
 
     const msg = t("successMessages.movieAdd");
     setIsOpenAdd(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+    setAlert({isOpen:true,message:msg,type:"success"})
   };
 
   const datevalidator =

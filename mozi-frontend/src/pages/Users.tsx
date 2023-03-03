@@ -9,7 +9,7 @@ import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
-import { User } from "../api/types";
+import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 
 export function Users() {
@@ -19,9 +19,7 @@ export function Users() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
 
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
 
   return (
@@ -29,27 +27,20 @@ export function Users() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <UserDeleteDialog
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
           allowEditRole
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         
         <div>

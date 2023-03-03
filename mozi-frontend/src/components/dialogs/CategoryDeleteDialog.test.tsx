@@ -17,9 +17,8 @@ function renderCategoryDeleteDialog(setIsOpenDelete: jest.Mock<any, any>) {
         isOpenDelete={isOpenDelete}
         setIsOpenDelete={setIsOpenDelete}
         categoryId={categoryId}
-        setIsOpenAlert={jest.fn()}
-        setAlertMessage={jest.fn()}
-        setAlertType={jest.fn()}
+        setAlert={jest.fn()}
+
       />
     </MockedApiContext>
   );

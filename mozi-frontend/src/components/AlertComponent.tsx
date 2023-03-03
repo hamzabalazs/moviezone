@@ -1,20 +1,21 @@
 import { Alert } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
+import { AlertType } from "../api/types";
 
-interface Props {
-  isOpenAlert: boolean;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  alertType: string;
-  setAlertType: Dispatch<SetStateAction<string>>;
-  alertMessage: string;
+interface Props{
+  alert:AlertType,
+  setAlert:Dispatch<SetStateAction<AlertType>>
 }
 
-export default function AlertComponent(props: Props) {
-  if (props.isOpenAlert === true) {
+export default function AlertComponent({
+  alert,
+  setAlert
+}:Props) {
+  if (alert.isOpen === true) {
     setTimeout(() => {
-      props.setIsOpenAlert(false);
+      setAlert({ isOpen: false, message: "", type: undefined });
     }, 5000);
-    if (props.alertType === "success") {
+    if (alert.type === "success") {
       return (
         <Alert
           sx={{
@@ -29,7 +30,7 @@ export default function AlertComponent(props: Props) {
           severity="success"
           data-testid="alert-success"
         >
-          {props.alertMessage}
+          {alert.message}
         </Alert>
       );
     } else {
@@ -47,7 +48,7 @@ export default function AlertComponent(props: Props) {
           severity="error"
           data-testid="alert-error"
         >
-          {props.alertMessage}
+          {alert.message}
         </Alert>
       );
     }

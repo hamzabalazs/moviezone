@@ -30,9 +30,8 @@ function renderUserDeleteDialog(props: {
       <UserDeleteDialog
         user={props.user}
         onClose={props.onClose}
-        setIsOpenAlert={jest.fn()}
-        setAlertMessage={jest.fn()}
-        setAlertType={jest.fn()}
+        setAlert={jest.fn()}
+
       />
     </MockedApiContext>
   );

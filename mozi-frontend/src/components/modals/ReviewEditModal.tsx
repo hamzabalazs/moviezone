@@ -14,23 +14,20 @@ import {  useFormik } from "formik";
 import { Dispatch, SetStateAction} from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { ReviewUpdated } from "../../api/types";
+import { AlertType, ReviewUpdated } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {
   review?: ReviewUpdated;
   onClose?: () => void;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function ReviewEditModal({
   review,
   onClose,
-  setIsOpenAlert,
-  setAlertMessage,
-  setAlertType,
+  setAlert
 }: Props) {
   const { editReview } = useApiContext();
   const { t } = useTranslation();
@@ -41,9 +38,7 @@ export default function ReviewEditModal({
     const result = await editReview({ id: review.id, ...editedReview });
     if (result) {
       const msg = t("successMessages.reviewEdit");
-      setIsOpenAlert(true);
-      setAlertMessage(msg);
-      setAlertType("success");
+      setAlert({isOpen:true,message:msg,type:"success"})
     }
     onClose?.();
   };

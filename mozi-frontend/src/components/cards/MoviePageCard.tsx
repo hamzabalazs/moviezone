@@ -7,7 +7,6 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
 import { Movie } from "../../api/types";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
@@ -16,16 +15,6 @@ interface Props {
   movie: Movie;
   onEdit?: () => void;
   onDelete?: () => void;
-  // userRole: "admin" | "editor" | "viewer" | undefined;
-  // setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  // setIsOpenEdit: Dispatch<SetStateAction<boolean>>;
-  // setTitle: Dispatch<SetStateAction<string>>;
-  // setDescription: Dispatch<SetStateAction<string>>;
-  // setReleaseDate: Dispatch<SetStateAction<string>>;
-  // setCategoryId: Dispatch<SetStateAction<string>>;
-  // setRating: Dispatch<SetStateAction<number>>;
-  // selectedMovie: Movie;
-  // setSelectedMovie: Dispatch<SetStateAction<Movie>>;
 }
 
 export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {

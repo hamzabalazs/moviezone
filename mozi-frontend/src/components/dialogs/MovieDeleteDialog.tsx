@@ -10,41 +10,43 @@ import { Dispatch, SetStateAction } from "react";
 import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { AlertType, Movie } from "../../api/types";
 
 interface Props {
-  isOpenDelete: boolean;
-  setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
-  movieId: string;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  movie?: Movie;
+  onClose?: () => void;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
-export default function MovieDeleteDialog(props: Props) {
+export default function MovieDeleteDialog({
+  movie,
+  onClose,
+  setAlert
+}: Props) {
   const { deleteMovie } = useApiContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const movieId = props.movieId;
-  const setIsOpenDelete = props.setIsOpenDelete;
-  const setIsOpenAlert = props.setIsOpenAlert;
-  const setAlertMessage = props.setAlertMessage;
-  const setAlertType = props.setAlertType;
-  const handleDeletion = async () => {
-    const result = await deleteMovie(movieId);
-    if (!result) return;
 
-    const msg = t("successMessages.movieDelete");
-    setIsOpenDelete(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
-    navigate("/");
+  
+  const handleDeletion = async () => {
+    if(movie === undefined) return;
+
+    const movieId = movie.id;
+    const result = await deleteMovie(movieId);
+    if (result) {
+      const msg = t("successMessages.movieDelete");
+      setAlert({isOpen:true,message:msg,type:"success"})
+      navigate("/");
+    }
+
+    onClose?.();
   };
 
   return (
     <Dialog
-      open={props.isOpenDelete}
-      onClose={() => props.setIsOpenDelete(false)}
+      open={Boolean(movie)}
+      onClose={() => onClose?.()}
       aria-labelledby="alert-delete-title"
       aria-describedby="alert-delete-description"
       data-testid="movie-delete-dialog"
@@ -61,7 +63,7 @@ export default function MovieDeleteDialog(props: Props) {
         <Button onClick={handleDeletion} autoFocus>
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => props.setIsOpenDelete(false)}>
+        <Button onClick={() => onClose?.()}>
           {t("buttons.quit")}
         </Button>
       </DialogActions>

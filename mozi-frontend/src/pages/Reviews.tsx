@@ -1,6 +1,6 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ReviewUpdated } from "../api/types";
+import { AlertType, ReviewUpdated } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -20,9 +20,7 @@ function Reviews() {
   const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewUpdated | undefined>(undefined);
 
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const [movieId, setMovieId] = useState("");
   const [updatedReviewLists, setUpdatedReviewLists] = useState<ReviewUpdated[]>(
     []
@@ -71,25 +69,18 @@ function Reviews() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <ReviewEditModal
           review={editingReview}
           onClose={() => setEditingReview(undefined)}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         <ReviewDeleteDialog
           review={deletingReview}
           onClose={() => setDeletingReview(undefined)}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>

@@ -15,23 +15,20 @@ import { Dispatch, SetStateAction } from "react";
 import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { Movie } from "../../api/types";
+import { AlertType, Movie } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {
   movie?: Movie;
   onClose?: () => void;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function MovieEditModal({
   movie,
   onClose,
-  setIsOpenAlert,
-  setAlertMessage,
-  setAlertType,
+  setAlert
 }: Props) {
   const { t } = useTranslation();
   const context = useApiContext();
@@ -48,9 +45,7 @@ export default function MovieEditModal({
     });
     if (result) {
       const msg = t("successMessages.movieEdit");
-      setIsOpenAlert(true);
-      setAlertMessage(msg);
-      setAlertType("success");
+      setAlert({isOpen:true,message:msg,type:"success"})
     }
 
     onClose?.();

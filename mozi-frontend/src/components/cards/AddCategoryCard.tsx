@@ -11,12 +11,12 @@ import { Dispatch, SetStateAction } from "react";
 import { FormikErrors, useFormik } from "formik";
 import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
+import { AlertType } from "../../api/types";
 
 interface Props {
   setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+ 
 }
 
 interface Values {
@@ -28,9 +28,7 @@ export default function AddCategoryCard(props: Props) {
   const { addCategory } = useApiContext();
 
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setIsOpenAlert = props.setIsOpenAlert;
-  const setAlertMessage = props.setAlertMessage;
-  const setAlertType = props.setAlertType;
+  const setAlert= props.setAlert
   const handleAddCategory = async (name: string) => {
     const result = await addCategory({
       name,
@@ -39,9 +37,7 @@ export default function AddCategoryCard(props: Props) {
 
     const msg = t("successMessages.categoryAdd");
     setIsOpenAdd(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+    setAlert({isOpen:true,message:msg,type:"success"})
   };
 
   const formik = useFormik({

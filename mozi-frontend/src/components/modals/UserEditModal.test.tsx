@@ -48,9 +48,7 @@ function renderUserEditModal(props: {
         user={props.user}
         onClose={props.onClose}
         allowEditRole={props.allowEditRole}
-        setIsOpenAlert={jest.fn()}
-        setAlertMessage={jest.fn()}
-        setAlertType={jest.fn()}
+        setAlert={jest.fn()}
       />
     </MockedApiContext>
   );

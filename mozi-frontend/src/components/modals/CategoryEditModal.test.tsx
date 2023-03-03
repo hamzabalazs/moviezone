@@ -20,9 +20,7 @@ function renderCategoryEditModal(setName: jest.Mock<any, any>) {
         name={name}
         setName={setName}
         categoryId={categoryId}
-        setIsOpenAlert={jest.fn()}
-        setAlertMessage={jest.fn()}
-        setAlertType={jest.fn()}
+        setAlert={jest.fn()}
       />
     </MockedApiContext>
   );

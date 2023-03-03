@@ -15,16 +15,15 @@ import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { User } from "../../api/types";
+import { AlertType, User } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {
   user?: User;
   onClose?: () => void;
   allowEditRole?: boolean;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 // function AlertProvider() {
@@ -74,9 +73,7 @@ export default function UserEditModal({
   user,
   onClose,
   allowEditRole,
-  setIsOpenAlert,
-  setAlertMessage,
-  setAlertType,
+  setAlert
 }: Props) {
   const { t } = useTranslation();
   const { editUser } = useApiContext();
@@ -92,9 +89,7 @@ export default function UserEditModal({
 
     if (result) {
       const msg = t("successMessages.userEdit");
-      setIsOpenAlert(true);
-      setAlertMessage(msg);
-      setAlertType("success");
+      setAlert({isOpen:true,message:msg,type:"success"})
     }
 
     onClose?.();

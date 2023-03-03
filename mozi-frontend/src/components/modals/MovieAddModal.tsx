@@ -1,20 +1,18 @@
 import { Box, Modal } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
+import { AlertType } from "../../api/types";
 import AddMovieCard from "../cards/AddMovieCard";
 
 interface Props {
   isOpenAdd: boolean;
   setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function MovieAddModal(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setIsOpenAlert = props.setIsOpenAlert;
-  const setAlertMessage = props.setAlertMessage;
-  const setAlertType = props.setAlertType;
+  const setAlert = props.setAlert
   return (
     <Modal
       open={props.isOpenAdd}
@@ -36,9 +34,7 @@ export default function MovieAddModal(props: Props) {
       >
         <AddMovieCard
           setIsOpenAdd={setIsOpenAdd}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
       </Box>
     </Modal>

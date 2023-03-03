@@ -9,34 +9,25 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { User } from "../../api/types";
+import { AlertType, User } from "../../api/types";
 
 interface Props {
   user?: User;
   onClose?: () => void;
-  setIsOpenAlert?: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage?: Dispatch<SetStateAction<string>>;
-  setAlertType?: Dispatch<SetStateAction<string>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
-export default function UserDeleteDialog({
-  user,
-  onClose,
-  setIsOpenAlert,
-  setAlertMessage,
-  setAlertType,
-}: Props) {
+export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
   const { deleteUser } = useApiContext();
   const { t } = useTranslation();
 
   const handleDeletion = async () => {
     if (user === undefined) return;
+    if (setAlert === undefined) return;
     const result = await deleteUser(user.id);
     if (result) {
       const msg = t("successMessages.userDelete");
-      setIsOpenAlert?.(true);
-      setAlertMessage?.(msg);
-      setAlertType?.("success");
+      setAlert({ isOpen: true, message: msg, type: "success" });
     }
 
     onClose?.();
@@ -62,9 +53,7 @@ export default function UserDeleteDialog({
         <Button onClick={handleDeletion} autoFocus>
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()}>
-          {t("buttons.quit")}
-        </Button>
+        <Button onClick={() => onClose?.()}>{t("buttons.quit")}</Button>
       </DialogActions>
     </Dialog>
   );

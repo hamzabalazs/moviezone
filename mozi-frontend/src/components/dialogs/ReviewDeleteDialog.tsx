@@ -9,22 +9,19 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { ReviewUpdated } from "../../api/types";
+import { AlertType, ReviewUpdated } from "../../api/types";
 
 interface Props {
   review?: ReviewUpdated;
   onClose?: () => void;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function ReviewDeleteDialog({
   review,
   onClose,
-  setIsOpenAlert,
-  setAlertMessage,
-  setAlertType,
+  setAlert
 }: Props) {
   const { t } = useTranslation();
   const { deleteReview } = useApiContext();
@@ -34,9 +31,7 @@ export default function ReviewDeleteDialog({
     const result = await deleteReview(review.id);
     if (result) {
       const msg = t("successMessages.reviewDelete");
-      setIsOpenAlert(true);
-      setAlertMessage(msg);
-      setAlertType("success");
+      setAlert({isOpen:true,message:msg,type:"success"})
     }
     onClose?.();
   };

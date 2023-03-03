@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Movie, Review, ReviewUpdated } from "../api/types";
+import { AlertType, Movie, Review, ReviewUpdated } from "../api/types";
 import AlertComponent from "../components/AlertComponent";
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
@@ -25,20 +25,18 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ReviewCard from "../components/cards/ReviewCard";
 import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
-import { useMovies } from "../api/movie/useMovies";
 
 export default function MoviePage() {
   const navigate = useNavigate();
   const context = useApiContext();
-  const { refetchData, movies } = useMovies();
   const currUser = context.user;
   const { t } = useTranslation();
-
-  const [editingMovie, setEditingMovie] = useState<Movie | undefined>(undefined);
-  const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(undefined);
-
-  const [isOpenMovieDelete, setIsOpenMovieDelete] = useState(false);
-  const [isOpenMovieEdit, setIsOpenMovieEdit] = useState(false);
+  const [editingMovie, setEditingMovie] = useState<Movie | undefined>(
+    undefined
+  );
+  const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
+    undefined
+  );
   const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(
     undefined
   );
@@ -46,14 +44,7 @@ export default function MoviePage() {
     ReviewUpdated | undefined
   >(undefined);
 
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [rating, setRating] = useState(1);
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const [ratingDescription, setRatingDescription] = useState("");
   const [value, setValue] = useState<number | null>(0);
   const [userReviewList, setUserReviewList] = useState<Review[]>([]);
@@ -69,29 +60,28 @@ export default function MoviePage() {
   });
 
   const { currMovieId } = useParams();
+  const currMovie = context.movies.find((x) => x.id === currMovieId);
 
   useEffect(() => {
     const usersReviews = context.reviews.filter(
       (x) => x.userId === currUser?.id
     );
     setUserReviewList(usersReviews);
-    refetchData();
   }, [context.reviews]);
 
   useEffect(() => {
-    const currMovie = movies.find((x) => x.id === currMovieId);
+    
     if (currMovie !== undefined) {
       setSelectedMovie(currMovie);
       updateReviewList();
-      console.log(selectedMovie)
     }
-  }, [movies]);
+  }, [context.movies]);
 
   useEffect(() => {
-    if (alertMessage === "Movie was deleted successfully!") {
+    if (alert.message === "Movie was deleted successfully!") {
       navigate("/");
     }
-  }, [alertMessage]);
+  }, [alert.message]);
 
   const handleAddReview = async () => {
     const movieId = currMovieId;
@@ -105,34 +95,23 @@ export default function MoviePage() {
       description !== ""
     ) {
       const result = await context.addReview({ movieId, rating, description });
-      await refetchData();
       if (!result) return;
 
-      setAlertMessage("Review success");
-      setAlertType("success");
-      setIsOpenAlert(true);
+      
+      setAlert({isOpen:true,message:"Review success",type:"success"})
       setRatingDescription("");
       setValue(0);
     } else if (movieId === undefined) {
-      setAlertMessage("There is no movie to be rated");
-      setAlertType("error");
-      setIsOpenAlert(true);
+      setAlert({isOpen:true,message:"There is no movie to be rated",type:"error"})
     } else if (userReviewList.length !== 0) {
-      setAlertMessage("You have already rated this movie!");
-      setAlertType("error");
-      setIsOpenAlert(true);
+      setAlert({isOpen:true,message:"You have already rated this movie!",type:"error"})
     } else if (rating === 0) {
-      setAlertMessage("No rating has been given!");
-      setAlertType("error");
-      setIsOpenAlert(true);
+      setAlert({isOpen:true,message:"No rating has been given!",type:"error"})
+
     } else if (description === "") {
-      setAlertMessage("No description has been given!");
-      setAlertType("error");
-      setIsOpenAlert(true);
+      setAlert({isOpen:true,message:"No description has been given!",type:"error"})
     } else {
-      setAlertMessage("Some error");
-      setAlertType("error");
-      setIsOpenAlert(true);
+      setAlert({isOpen:true,message:"Some error",type:"error"})
     }
   };
 
@@ -179,49 +158,39 @@ export default function MoviePage() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <div style={{ paddingBottom: "2.5rem" }}>
           <MovieDeleteDialog
-            isOpenDelete={isOpenMovieDelete}
-            setIsOpenDelete={setIsOpenMovieDelete}
-            movieId={selectedMovie.id}
-            setIsOpenAlert={setIsOpenAlert}
-            setAlertMessage={setAlertMessage}
-            setAlertType={setAlertType}
+            movie={deletingMovie}
+            onClose={() => setDeletingMovie(undefined)}
+            setAlert={setAlert}
           />
           <MovieEditModal
             movie={editingMovie}
             onClose={() => setEditingMovie(undefined)}
-            setIsOpenAlert={setIsOpenAlert}
-            setAlertMessage={setAlertMessage}
-            setAlertType={setAlertType}
+            setAlert={setAlert}
           />
           <ReviewEditModal
             review={editingReview}
             onClose={() => setEditingReview(undefined)}
-            setIsOpenAlert={setIsOpenAlert}
-            setAlertMessage={setAlertMessage}
-            setAlertType={setAlertType}
+            setAlert={setAlert}
           />
           <ReviewDeleteDialog
             review={deletingReview}
             onClose={() => setDeletingReview(undefined)}
-            setIsOpenAlert={setIsOpenAlert}
-            setAlertMessage={setAlertMessage}
-            setAlertType={setAlertType}
+            setAlert={setAlert}
           />
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <MoviePageCard
-              movie={selectedMovie}
-              onEdit={() => setEditingMovie(selectedMovie)}
-              onDelete={() => setDeletingMovie(selectedMovie)}
-            />
-          </div>
+          {context.movies.find((x) => x.id === currMovieId) && (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <MoviePageCard
+                movie={selectedMovie}
+                onEdit={() => setEditingMovie(selectedMovie)}
+                onDelete={() => setDeletingMovie(selectedMovie)}
+              />
+            </div>
+          )}
           <div
             style={{
               display: "flex",

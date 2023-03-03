@@ -11,6 +11,7 @@ import { FormikErrors, useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
+import { AlertType } from "../../api/types";
 
 interface Props {
   isOpenEdit: boolean;
@@ -18,9 +19,8 @@ interface Props {
   name: string;
   setName: Dispatch<SetStateAction<string>>;
   categoryId: string;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function CategoryEditModal(props: Props) {
@@ -31,18 +31,14 @@ export default function CategoryEditModal(props: Props) {
     console.log(categoryId);
     console.log(name);
     const setIsOpenEdit = props.setIsOpenEdit;
-    const setIsOpenAlert = props.setIsOpenAlert;
-    const setAlertMessage = props.setAlertMessage;
-    const setAlertType = props.setAlertType;
+    const setAlert = props.setAlert
 
     const result = await editCategory({ id: categoryId, name });
     if (!result) return;
 
     const msg = t("successMessages.categoryEdit");
     setIsOpenEdit(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+    setAlert({isOpen:true,message:msg,type:"success"})
   };
 
   interface Values {

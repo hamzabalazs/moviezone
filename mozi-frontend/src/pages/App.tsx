@@ -10,6 +10,7 @@ import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
+import { AlertType } from "../api/types";
 
 export function Home() {
   const context = useApiContext();
@@ -17,9 +18,7 @@ export function Home() {
   const navigate = useNavigate();
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [role, setRole] = useState<"admin" | "editor" | "viewer">("viewer");
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   const handleAddMovie = () => {
     setIsOpenAdd(true);
@@ -43,11 +42,8 @@ export function Home() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <div style={{ paddingBottom: "2.5rem" }}>
           {(role === "admin" || role === "editor") && (
@@ -55,9 +51,7 @@ export function Home() {
               <MovieAddModal
                 isOpenAdd={isOpenAdd}
                 setIsOpenAdd={setIsOpenAdd}
-                setIsOpenAlert={setIsOpenAlert}
-                setAlertMessage={setAlertMessage}
-                setAlertType={setAlertType}
+                setAlert={setAlert}
               />
               <IconButton
                 sx={{

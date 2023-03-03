@@ -1,7 +1,7 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
 import { useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Category } from "../api/types";
+import { AlertType, Category } from "../api/types";
 import CategoryDeleteDialog from "../components/dialogs/CategoryDeleteDialog";
 import CategoryAddModal from "../components/modals/CategoryAddModal";
 import CategoryEditModal from "../components/modals/CategoryEditModal";
@@ -17,9 +17,7 @@ import { useTranslation } from "react-i18next";
 function Categories() {
   const { t } = useTranslation();
   const context = useApiContext();
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenAdd, setIsOpenAdd] = useState(false);
@@ -39,11 +37,8 @@ function Categories() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <CategoryEditModal
           isOpenEdit={isOpenEdit}
@@ -51,25 +46,19 @@ function Categories() {
           name={name}
           setName={setName}
           categoryId={categoryId}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         <CategoryDeleteDialog
           isOpenDelete={isOpenDelete}
           setIsOpenDelete={setIsOpenDelete}
           categoryId={categoryId}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         <div>
           <CategoryAddModal
             isOpenAdd={isOpenAdd}
             setIsOpenAdd={setIsOpenAdd}
-            setIsOpenAlert={setIsOpenAlert}
-            setAlertMessage={setAlertMessage}
-            setAlertType={setAlertType}
+            setAlert={setAlert}
           />
           <IconButton
             sx={{

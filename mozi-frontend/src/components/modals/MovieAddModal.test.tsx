@@ -15,9 +15,8 @@ function renderMovieAddModal() {
       <MovieAddModal
         isOpenAdd={isOpenAdd}
         setIsOpenAdd={jest.fn()}
-        setIsOpenAlert={jest.fn()}
-        setAlertMessage={jest.fn()}
-        setAlertType={jest.fn()}
+        setAlert={jest.fn()}
+        
       />
     </MockedApiContext>
   );

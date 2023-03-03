@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../api/ApiContext";
+import { AlertType } from "../api/types";
 
 interface Values {
   firstName: string;
@@ -27,9 +28,7 @@ function Register() {
   const { t } = useTranslation();
   const context = useApiContext();
   const navigate = useNavigate();
-  const [alertMessage, setAlertMessage] = useState("");
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   const emailvalidation =
     /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
@@ -60,9 +59,7 @@ function Register() {
       });
       if (!result) {
         const msg = t("register.accountExists");
-        setAlertType("error");
-        setAlertMessage(msg);
-        setIsOpenAlert(true);
+        setAlert({isOpen:true,message:msg,type:"error"})
         return;
       }
       navigate("/login");
@@ -98,11 +95,8 @@ function Register() {
   return (
     <>
       <AlertComponent
-        isOpenAlert={isOpenAlert}
-        setIsOpenAlert={setIsOpenAlert}
-        alertType={alertType}
-        setAlertType={setAlertType}
-        alertMessage={alertMessage}
+        alert={alert}
+        setAlert={setAlert}
       />
       <Container component="main" maxWidth="xs">
         <Box

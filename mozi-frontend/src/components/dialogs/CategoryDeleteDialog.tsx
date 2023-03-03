@@ -9,14 +9,14 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
+import { AlertType } from "../../api/types";
 
 interface Props {
   isOpenDelete: boolean;
   setIsOpenDelete: Dispatch<SetStateAction<boolean>>;
   categoryId: string;
-  setIsOpenAlert: Dispatch<SetStateAction<boolean>>;
-  setAlertMessage: Dispatch<SetStateAction<string>>;
-  setAlertType: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<AlertType>>;
+  
 }
 
 export default function CategoryDeleteDialog(props: Props) {
@@ -25,18 +25,14 @@ export default function CategoryDeleteDialog(props: Props) {
   const handleDeletion = async () => {
     const categoryId = props.categoryId;
     const setIsOpenDelete = props.setIsOpenDelete;
-    const setIsOpenAlert = props.setIsOpenAlert;
-    const setAlertMessage = props.setAlertMessage;
-    const setAlertType = props.setAlertType;
+    const setAlert = props.setAlert
 
     const result = await deleteCategory(categoryId);
     if (!result) return;
 
     const msg = t("successMessages.categoryDelete");
     setIsOpenDelete(false);
-    setIsOpenAlert(true);
-    setAlertMessage(msg);
-    setAlertType("success");
+    setAlert({isOpen:true,message:msg,type:"success"})
   };
 
   return (

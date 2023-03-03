@@ -6,7 +6,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
-import { CurrUser, User } from "../api/types";
+import { AlertType, CurrUser, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";
@@ -19,9 +19,7 @@ function Account() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
 
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   const [user, setUser] = useState<User>({
     id: "",
@@ -50,11 +48,8 @@ function Account() {
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <AlertComponent
-          isOpenAlert={isOpenAlert}
-          setIsOpenAlert={setIsOpenAlert}
-          alertMessage={alertMessage}
-          alertType={alertType}
-          setAlertType={setAlertType}
+          alert={alert}
+          setAlert={setAlert}
         />
         <UserDeleteDialog
           user={deletingUser}
@@ -64,9 +59,7 @@ function Account() {
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
-          setIsOpenAlert={setIsOpenAlert}
-          setAlertMessage={setAlertMessage}
-          setAlertType={setAlertType}
+          setAlert={setAlert}
         />
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>

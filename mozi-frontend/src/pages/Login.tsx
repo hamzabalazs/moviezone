@@ -15,6 +15,7 @@ import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../api/ApiContext";
 import { FormikErrors, useFormik } from "formik";
+import { AlertType } from "../api/types";
 
 interface Values {
   email: string;
@@ -24,9 +25,7 @@ interface Values {
 function Login() {
   const navigate = useNavigate();
   const context = useApiContext();
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const { t } = useTranslation();
 
   const formik = useFormik({
@@ -40,10 +39,8 @@ function Login() {
       const logedIn = await context.logIn(email, password);
       if (logedIn) navigate("/");
       else {
-        setAlertType("error");
         const msg = t("login.invalidLogin");
-        setAlertMessage(msg);
-        setIsOpenAlert(true);
+        setAlert({isOpen:true,message:msg,type:"error"})
       }
     },
     validate: (values) => {
@@ -69,11 +66,8 @@ function Login() {
   return (
     <>
       <AlertComponent
-        isOpenAlert={isOpenAlert}
-        setIsOpenAlert={setIsOpenAlert}
-        alertMessage={alertMessage}
-        alertType={alertType}
-        setAlertType={setAlertType}
+        alert={alert}
+        setAlert={setAlert}
       />
       <Container component="main" maxWidth="xs">
         <Box

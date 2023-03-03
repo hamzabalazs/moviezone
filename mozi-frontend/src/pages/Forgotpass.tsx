@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useApiContext } from "../api/ApiContext";
 import { FormikErrors, useFormik } from "formik";
 import AlertComponent from "../components/AlertComponent";
+import { AlertType } from "../api/types";
 
 interface Values {
   email: string;
@@ -23,9 +24,7 @@ function Forgotpass() {
   const { t } = useTranslation();
   const context = useApiContext();
   const navigate = useNavigate();
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("");
-  const [isOpenAlert, setIsOpenAlert] = useState(false);
+  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   useEffect(() => {
     if (context.user) {
@@ -41,10 +40,8 @@ function Forgotpass() {
       const email = values.email;
       const isUser = context.users.find((x) => x.email === email);
       if (!isUser) {
-        setAlertType("error");
         const msg = t("forgotPass.noUser");
-        setAlertMessage(msg);
-        setIsOpenAlert(true);
+        setAlert({isOpen:true,message:msg,type:"error"})
       } else navigate("/login");
     },
     validate: (values) => {
@@ -60,11 +57,8 @@ function Forgotpass() {
   return (
     <>
       <AlertComponent
-        isOpenAlert={isOpenAlert}
-        setIsOpenAlert={setIsOpenAlert}
-        alertMessage={alertMessage}
-        alertType={alertType}
-        setAlertType={setAlertType}
+        alert={alert}
+        setAlert={setAlert}
       />
       <Container component="main" maxWidth="xs">
         <Box
