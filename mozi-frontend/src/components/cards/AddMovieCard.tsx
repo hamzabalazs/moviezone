@@ -22,8 +22,8 @@ import { useApiContext } from "../../api/ApiContext";
 import { AlertType } from "../../api/types";
 
 interface Props {
-  setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
  
 }
 
@@ -56,8 +56,8 @@ export default function AddMovieCard(props: Props) {
     if (!result) return;
 
     const msg = t("successMessages.movieAdd");
-    setIsOpenAdd(false);
-    setAlert({isOpen:true,message:msg,type:"success"})
+    setIsOpenAdd?.(false);
+    setAlert?.({isOpen:true,message:msg,type:"success"})
   };
 
   const datevalidator =
@@ -126,7 +126,7 @@ export default function AddMovieCard(props: Props) {
             onChange={formik.handleChange}
             value={formik.values.title}
             sx={{ border: 1, borderRadius: 1 }}
-            inputProps={{ "data-testid": "movie-add-modal-title" }}
+            inputProps={{ "data-testid": "movie-add-title" }}
           ></TextField>
           {formik.errors.title ? (
             <Typography variant="subtitle2" sx={{ color: "red" }}>
@@ -144,7 +144,7 @@ export default function AddMovieCard(props: Props) {
             onChange={formik.handleChange}
             value={formik.values.description}
             sx={{ border: 1, borderRadius: 1 }}
-            inputProps={{ "data-testid": "movie-add-modal-description" }}
+            inputProps={{ "data-testid": "movie-add-description" }}
           ></TextField>
           {formik.errors.description ? (
             <Typography variant="subtitle2" sx={{ color: "red" }}>
@@ -162,7 +162,7 @@ export default function AddMovieCard(props: Props) {
             sx={{ marginBottom: 1, border: 1, borderRadius: 1 }}
             value={formik.values.releaseDate}
             onChange={formik.handleChange}
-            inputProps={{ "data-testid": "movie-add-modal-releaseDate" }}
+            inputProps={{ "data-testid": "movie-add-releaseDate" }}
           ></TextField>
           {formik.errors.releaseDate ? (
             <Typography variant="subtitle2" sx={{ color: "red" }}>
@@ -176,7 +176,7 @@ export default function AddMovieCard(props: Props) {
             value={categoryId}
             onChange={handleSelect}
             sx={{ border: 1, borderRadius: 1 }}
-            inputProps={{ "data-testid": "movie-add-modal-category" }}
+            inputProps={{ "data-testid": "movie-add-category" }}
           >
             {context.categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
@@ -205,7 +205,7 @@ export default function AddMovieCard(props: Props) {
                 const image = await resizeFile(file);
                 if (isString(image)) setPoster(image);
               }}
-              data-testid="movie-add-modal-poster"
+              data-testid="movie-add-poster"
             />
             <PhotoCamera />
             <img
@@ -226,6 +226,7 @@ export default function AddMovieCard(props: Props) {
             size="small"
             sx={{ color: "text.secondary", border: 1, borderRadius: 1 }}
             type="submit"
+            data-testid="movie-add-button"
           >
             {t("buttons.add")}
           </Button>

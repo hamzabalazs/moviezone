@@ -5,8 +5,8 @@ import AddMovieCard from "../cards/AddMovieCard";
 
 interface Props {
   isOpenAdd: boolean;
-  setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
 
@@ -16,7 +16,7 @@ export default function MovieAddModal(props: Props) {
   return (
     <Modal
       open={props.isOpenAdd}
-      onClose={() => props.setIsOpenAdd(false)}
+      onClose={() => props.setIsOpenAdd?.(false)}
       data-testid="movie-add-modal"
     >
       <Box
