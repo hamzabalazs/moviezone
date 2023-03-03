@@ -129,6 +129,7 @@
         "passwordLength": "Password has to be 5 or more characters long!",
         "emailFormat": "Invalid email format!",
         "nameReq":"Name is required!",
-        "ratingReq":"Rating is required!"
+        "ratingReq":"Rating is required!",
+        "posterReq": "Poster is required!"
     }
 }

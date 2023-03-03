@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import { AlertType, Movie } from "../../api/types";
 import * as Yup from "yup";
+import { datevalidator } from "../../common/datevalidator";
 
 interface Props {
   movie?: Movie;
@@ -24,7 +25,6 @@ interface Props {
   setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
-
 export default function MovieEditModal({
   movie,
   onClose,
@@ -51,19 +51,13 @@ export default function MovieEditModal({
     onClose?.();
   };
 
+  
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
     title: movie?.title || "",
     description: movie?.description || "",
     releaseDate: movie?.releaseDate || "",
     categoryId: movie?.categoryId || ""
   };
-
-  // const datevalidator =
-  //   /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/;
-
-
-  
-
   const schema = useEditMovieSchema();
 
   const formik = useFormik({
@@ -199,12 +193,7 @@ function useEditMovieSchema() {
     title: Yup.string().required(t("formikErrors.titleReq") || ""),
     description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
     releaseDate: Yup.string()
-      .required(t("formikErrors.releaseDateReq") || ""),
-      // .test(
-      //   "len",
-      //   t("formikErrors.passwordLength") || "",
-      //   (val) => val.length > 5
-      // ),
+      .required(t("formikErrors.releaseDateReq") || "").matches(datevalidator,t("formikErrors.releaseDateFormat") || ""),
     categoryId: Yup.string().required(),
   });
 }

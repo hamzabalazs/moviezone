@@ -6,7 +6,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
-import { AlertType, CurrUser, User } from "../api/types";
+import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";

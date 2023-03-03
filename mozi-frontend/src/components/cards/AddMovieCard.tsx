@@ -10,7 +10,8 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  TextField,
+  TextField as MuiTextField,
+  TextFieldProps,
   Typography,
 } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
@@ -19,86 +20,45 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { resizeFile } from "../../api/movie/MovieApi";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { AlertType } from "../../api/types";
+import { AlertType, Movie } from "../../api/types";
+import * as Yup from "yup";
+import { datevalidator } from "../../common/datevalidator";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
- 
-}
-
-interface Values {
-  title: string;
-  description: string;
-  releaseDate: string;
 }
 
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();
   const context = useApiContext();
-  const [categoryId, setCategoryId] = useState("");
   const [poster, setPoster] = useState("");
   const { addMovie } = useApiContext();
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert = props.setAlert
-  const handleAddMovie = async (
-    title: string,
-    description: string,
-    releaseDate: string
-  ) => {
-    const result = await addMovie({
-      title,
-      description,
-      releaseDate,
-      categoryId,
-      poster,
-    });
-    if (!result) return;
-
-    const msg = t("successMessages.movieAdd");
-    setIsOpenAdd?.(false);
-    setAlert?.({isOpen:true,message:msg,type:"success"})
+  const setAlert = props.setAlert;
+  const handleAddMovie = async (addedMovie: Omit<Movie, "id" | "rating" | "poster">) => {
+    const result = await addMovie({ ...addedMovie,poster });
+    if (result) {
+      const msg = t("successMessages.movieAdd");
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      setIsOpenAdd?.(false);
+    }
   };
 
-  const datevalidator =
-    /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/;
+  const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
+    title: "",
+    description: "",
+    releaseDate: "",
+    categoryId: "",
 
-  const handleSelect = (event: SelectChangeEvent) => {
-    setCategoryId(event.target.value as string);
   };
+
+  const schema = useAddMovieSchema();
   const formik = useFormik({
-    initialValues: {
-      title: "",
-      description: "",
-      releaseDate: "",
-    },
-    onSubmit: (values) => {
-      const title = values.title;
-      const description = values.description;
-      const releaseDate = values.releaseDate;
-      handleAddMovie(title, description, releaseDate);
-    },
-    validate: (values) => {
-      let errors: FormikErrors<Values> = {};
-
-      if (!values.title) {
-        const msg = t("formikErrors.titleReq");
-        errors.title = msg;
-      }
-      if (!values.description) {
-        const msg = t("formikErrors.descriptionReq");
-        errors.description = msg;
-      }
-      if (!values.releaseDate) {
-        const msg = t("formikErrors.releaseDateReq");
-        errors.releaseDate = msg;
-      } else if (!datevalidator.test(values.releaseDate)) {
-        const msg = t("formikErrors.releaseDateFormat");
-        errors.releaseDate = msg;
-      }
-
-      return errors;
-    },
+    initialValues: formikValues,
+    onSubmit:handleAddMovie,
+    enableReinitialize:true,
+    validationSchema: schema,
   });
 
   return (
@@ -127,12 +87,8 @@ export default function AddMovieCard(props: Props) {
             value={formik.values.title}
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-title" }}
+            error={formik.errors.title}
           ></TextField>
-          {formik.errors.title ? (
-            <Typography variant="subtitle2" sx={{ color: "red" }}>
-              {formik.errors.title}
-            </Typography>
-          ) : null}
           <Typography variant="subtitle1" sx={{ mt: "auto" }}>
             {t("movie.description")}
           </Typography>
@@ -145,12 +101,8 @@ export default function AddMovieCard(props: Props) {
             value={formik.values.description}
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-description" }}
+            error={formik.errors.description}
           ></TextField>
-          {formik.errors.description ? (
-            <Typography variant="subtitle2" sx={{ color: "red" }}>
-              {formik.errors.description}
-            </Typography>
-          ) : null}
           <Typography variant="subtitle1" sx={{ mt: "auto" }}>
             {t("movie.releaseDate")}
           </Typography>
@@ -163,18 +115,16 @@ export default function AddMovieCard(props: Props) {
             value={formik.values.releaseDate}
             onChange={formik.handleChange}
             inputProps={{ "data-testid": "movie-add-releaseDate" }}
+            error={formik.errors.releaseDate}
           ></TextField>
-          {formik.errors.releaseDate ? (
-            <Typography variant="subtitle2" sx={{ color: "red" }}>
-              {formik.errors.releaseDate}
-            </Typography>
-          ) : null}
           <InputLabel id="category-select">{t("movie.category")}</InputLabel>
           <Select
             labelId="category-select"
             label="Category"
-            value={categoryId}
-            onChange={handleSelect}
+            value={formik.values.categoryId}
+            name="categoryId"
+            id="categoryId"
+            onChange={formik.handleChange}
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-category" }}
           >
@@ -184,6 +134,15 @@ export default function AddMovieCard(props: Props) {
               </MenuItem>
             ))}
           </Select>
+          {formik.errors.categoryId ? (
+            <Typography
+              variant="subtitle2"
+              sx={{ color: "red" }}
+              data-testid="register-error-firstName"
+            >
+              {formik.errors.categoryId}
+            </Typography>
+          ) : null}
           <Typography variant="subtitle1" sx={{ mt: "auto", marginTop: 1 }}>
             {t("movie.poster")}
           </Typography>
@@ -198,12 +157,14 @@ export default function AddMovieCard(props: Props) {
               hidden
               accept="image/*"
               type="file"
+              name="poster"
+              id="poster"
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 console.log(file);
                 if (!file) return;
                 const image = await resizeFile(file);
-                if (isString(image)) setPoster(image);
+                if (isString(image)) setPoster(image)
               }}
               data-testid="movie-add-poster"
             />
@@ -234,4 +195,35 @@ export default function AddMovieCard(props: Props) {
       </Card>
     </Box>
   );
+}
+
+function TextField({
+  error,
+  ...props
+}: Omit<TextFieldProps, "error"> & { error?: string }): JSX.Element {
+  return (
+    <>
+      <MuiTextField {...props} />
+      {error ? (
+        <Typography
+          variant="subtitle2"
+          sx={{ color: "red" }}
+          data-testid="register-error-firstName"
+        >
+          {error}
+        </Typography>
+      ) : null}
+    </>
+  );
+}
+
+function useAddMovieSchema() {
+  const { t } = useTranslation();
+
+  return Yup.object({
+    title: Yup.string().required(t("formikErrors.titleReq") || ""),
+    description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
+    releaseDate: Yup.string().required(t("formikErrors.releaseDateReq") || "").matches(datevalidator,t("formikErrors.releaseDateFormat") || ""),
+    categoryId: Yup.string().required(t("formikErrors.categoryReq") || ""),
+  });
 }
