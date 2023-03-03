@@ -152,7 +152,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-firstName"
+          data-testid="login-errors"
         >
           {error}
         </Typography>
@@ -173,7 +173,7 @@ function useEditUserSchema() {
       .test(
         "len",
         t("formikErrors.passwordLength") || "",
-        (val) => val.length > 5
+        (val) => val.length >= 5
       ),
   });
 }

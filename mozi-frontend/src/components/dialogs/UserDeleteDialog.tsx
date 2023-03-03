@@ -23,11 +23,10 @@ export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
 
   const handleDeletion = async () => {
     if (user === undefined) return;
-    if (setAlert === undefined) return;
     const result = await deleteUser(user.id);
     if (result) {
       const msg = t("successMessages.userDelete");
-      setAlert({ isOpen: true, message: msg, type: "success" });
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
     }
 
     onClose?.();
@@ -50,10 +49,14 @@ export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus>
+        <Button
+          onClick={handleDeletion}
+          autoFocus
+          data-testid="user-delete-dialog-accept"
+        >
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()}>{t("buttons.quit")}</Button>
+        <Button onClick={() => onClose?.()} data-testid="user-delete-dialog-quit">{t("buttons.quit")}</Button>
       </DialogActions>
     </Dialog>
   );

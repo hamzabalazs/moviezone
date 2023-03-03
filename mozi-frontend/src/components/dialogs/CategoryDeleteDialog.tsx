@@ -13,8 +13,8 @@ import { AlertType, Category } from "../../api/types";
 
 interface Props {
   category?: Category;
-  onClose: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  onClose?: () => void;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 export default function CategoryDeleteDialog({
@@ -32,17 +32,17 @@ export default function CategoryDeleteDialog({
     const result = await deleteCategory(categoryId);
     if (result){
       const msg = t("successMessages.categoryDelete");
-      setAlert({ isOpen: true, message: msg, type: "success" });
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
 
     }
-    onClose()
+    onClose?.()
 
   };
 
   return (
     <Dialog
       open={Boolean(category)}
-      onClose={() => onClose()}
+      onClose={() => onClose?.()}
       aria-labelledby="alert-delete-title"
       aria-describedby="alert-delete-description"
       data-testid="category-delete-dialog"
@@ -56,10 +56,10 @@ export default function CategoryDeleteDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus>
+        <Button onClick={handleDeletion} autoFocus data-testid="category-delete-dialog-accept">
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose()}>
+        <Button onClick={() => onClose?.()} data-testid="category-delete-dialog-quit">
           {t("buttons.quit")}
         </Button>
       </DialogActions>

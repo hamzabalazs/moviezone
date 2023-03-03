@@ -21,7 +21,7 @@ import * as Yup from "yup";
 interface Props {
   movie?: Movie;
   onClose?: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
 
@@ -45,7 +45,7 @@ export default function MovieEditModal({
     });
     if (result) {
       const msg = t("successMessages.movieEdit");
-      setAlert({isOpen:true,message:msg,type:"success"})
+      setAlert?.({isOpen:true,message:msg,type:"success"})
     }
 
     onClose?.();
@@ -144,10 +144,12 @@ export default function MovieEditModal({
             <Select
               labelId="category-select"
               label={t("movie.category")}
+              name="categoryId"
               value={formik.values.categoryId}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "movie-edit-category" }}
+              data-testid="movie-edit-category"
+              inputProps={{"data-testid":"movie-edit-categoryId"}}
             >
               {context.categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
@@ -161,6 +163,7 @@ export default function MovieEditModal({
           type="submit"
           variant="contained"
           sx={{ border: 1, borderRadius: 1 }}
+          data-testid="movie-edit-button"
         >
           {t("buttons.edit")}
         </Button>

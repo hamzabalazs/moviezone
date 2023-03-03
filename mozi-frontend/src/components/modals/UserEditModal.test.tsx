@@ -2,7 +2,6 @@ import {
   act,
   fireEvent,
   render,
-  screen,
   waitFor,
   within,
 } from "@testing-library/react";
@@ -85,7 +84,7 @@ test("If user is provided should show open modal with correct values", () => {
   expect(submit).toBeInTheDocument();
 });
 
-test("If allowEditRole isset should show role selector", () => {
+test("If allowEditRole is set should show role selector", () => {
   const { queryByTestId } = renderUserEditModal({
     user: testUser,
     allowEditRole: true,

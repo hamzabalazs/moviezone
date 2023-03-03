@@ -20,7 +20,7 @@ import * as Yup from "yup";
 interface Props {
   review?: ReviewUpdated;
   onClose?: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
 
@@ -38,7 +38,7 @@ export default function ReviewEditModal({
     const result = await editReview({ id: review.id, ...editedReview });
     if (result) {
       const msg = t("successMessages.reviewEdit");
-      setAlert({isOpen:true,message:msg,type:"success"})
+      setAlert?.({isOpen:true,message:msg,type:"success"})
     }
     onClose?.();
   };
@@ -116,7 +116,7 @@ export default function ReviewEditModal({
           type="submit"
           variant="contained"
           sx={{ border: 1, borderRadius: 1 }}
-          data-testid="review-edit-modal-button"
+          data-testid="review-edit-modal-edit"
         >
           {t("buttons.edit")}
         </Button>

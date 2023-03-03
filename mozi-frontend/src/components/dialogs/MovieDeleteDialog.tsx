@@ -15,7 +15,7 @@ import { AlertType, Movie } from "../../api/types";
 interface Props {
   movie?: Movie;
   onClose?: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
 
@@ -36,7 +36,7 @@ export default function MovieDeleteDialog({
     const result = await deleteMovie(movieId);
     if (result) {
       const msg = t("successMessages.movieDelete");
-      setAlert({isOpen:true,message:msg,type:"success"})
+      setAlert?.({isOpen:true,message:msg,type:"success"})
       navigate("/");
     }
 
@@ -60,10 +60,10 @@ export default function MovieDeleteDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus>
+        <Button onClick={handleDeletion} autoFocus data-testid="movie-delete-accept">
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()}>
+        <Button onClick={() => onClose?.()} data-testid="movie-delete-quit">
           {t("buttons.quit")}
         </Button>
       </DialogActions>

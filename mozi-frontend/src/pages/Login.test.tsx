@@ -32,9 +32,9 @@ test("login error happens if email empty", async () => {
     fireEvent.click(loginButton);
   });
   await waitFor(() => {
-    const loginErrorEmail = screen.getByTestId("login-error-email");
-    expect(loginErrorEmail).toBeVisible();
-    expect(loginErrorEmail).toHaveTextContent("formikErrors.emailReq");
+    const loginErrors = screen.getAllByTestId("login-errors");
+    expect(loginErrors[0]).toBeVisible();
+    expect(loginErrors[0]).toHaveTextContent("formikErrors.emailReq");
   });
 });
 
@@ -51,9 +51,9 @@ test("login error happens if password is empty", async () => {
     fireEvent.click(loginButton);
   });
   await waitFor(() => {
-    const loginErrorPassword = screen.getByTestId("login-error-password");
-    expect(loginErrorPassword).toBeVisible();
-    expect(loginErrorPassword).toHaveTextContent("formikErrors.passwordReq");
+    const loginErrors = screen.getAllByTestId("login-errors");
+    expect(loginErrors[1]).toBeVisible();
+    expect(loginErrors[1]).toHaveTextContent("formikErrors.passwordReq");
   });
 });
 

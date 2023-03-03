@@ -17,8 +17,8 @@ import * as Yup from "yup";
 
 interface Props {
   category?: Category;
-  onClose: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  onClose?: () => void;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 export default function CategoryEditModal({
@@ -35,10 +35,10 @@ export default function CategoryEditModal({
     const result = await editCategory({ id: categoryId, ...editedCategory });
     if (result){
       const msg = t("successMessages.categoryEdit");
-      setAlert({ isOpen: true, message: msg, type: "success" });
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
     }
 
-    onClose();
+    onClose?.();
   };
 
   interface Values {
@@ -59,7 +59,7 @@ export default function CategoryEditModal({
   return (
     <Modal
       open={Boolean(category)}
-      onClose={() => onClose()}
+      onClose={() => onClose?.()}
       data-testid="category-edit-modal"
     >
       <Box
@@ -111,6 +111,7 @@ export default function CategoryEditModal({
           type="submit"
           variant="contained"
           sx={{ border: 1, borderRadius: 1 }}
+          data-testid="category-edit-modal-edit"
         >
           {t("buttons.edit")}
         </Button>

@@ -53,10 +53,10 @@ export default function ReviewDeleteDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus>
+        <Button onClick={handleDeletion} autoFocus data-testid="review-delete-dialog-accept">
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()}>
+        <Button onClick={() => onClose?.()} data-testid="review-delete-dialog-quit">
           {t("buttons.quit")}
         </Button>
       </DialogActions>
