@@ -14,8 +14,8 @@ import { useTranslation } from "react-i18next";
 import { AlertType } from "../../api/types";
 
 interface Props {
-  setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
  
 }
 
@@ -36,8 +36,8 @@ export default function AddCategoryCard(props: Props) {
     if (!result) return;
 
     const msg = t("successMessages.categoryAdd");
-    setIsOpenAdd(false);
-    setAlert({isOpen:true,message:msg,type:"success"})
+    setIsOpenAdd?.(false);
+    setAlert?.({isOpen:true,message:msg,type:"success"})
   };
 
   const formik = useFormik({
@@ -100,6 +100,7 @@ export default function AddCategoryCard(props: Props) {
             size="small"
             sx={{ color: "text.secondary", border: 1, borderRadius: 1 }}
             type="submit"
+            data-testid="category-add-button"
           >
             {t("buttons.add")}
           </Button>

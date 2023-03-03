@@ -5,8 +5,8 @@ import AddCategoryCard from "../cards/AddCategoryCard";
 
 interface Props {
   isOpenAdd: boolean;
-  setIsOpenAdd: Dispatch<SetStateAction<boolean>>;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
+  setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
+  setAlert?: Dispatch<SetStateAction<AlertType>>;
   
 }
 
@@ -16,7 +16,7 @@ export default function CategoryAddModal(props: Props) {
   return (
     <Modal
       open={props.isOpenAdd}
-      onClose={() => props.setIsOpenAdd(false)}
+      onClose={() => props.setIsOpenAdd?.(false)}
       data-testid="category-add-modal"
     >
       <Box
