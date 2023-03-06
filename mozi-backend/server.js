@@ -1,22 +1,35 @@
-const express = require('express')
-const expressGraphQL = require('express-graphql').graphqlHTTP
-const {
-    GraphQLSchema,
-    GraphQLObjectType,
-    GraphQLString
-} = require('graphql')
-const app = express()
+const { ApolloServer } = require("apollo-server-express");
+const sqlite3 = require("sqlite3").verbose();
+const { typeDefs } = require("./Schema/TypeDefs");
+const { resolvers } = require("./Schema/Resolvers");
+const express = require("express");
+const expressGraphQL = require("express-graphql").graphqlHTTP;
 
-const schema = new GraphQLSchema({
-    query: new GraphQLObjectType({
-        name:"HelloWorld",
-        fields: () => ({
-            message: {type: GraphQLString}
-        })
+async function startApolloServer(typeDefs, resolvers) {
+  const db = new sqlite3.Database("db.sqlite", (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log("Connected to database!");
+  });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context() {
+      return { db };
+    },
+  });
+  const app = express();
+  await server.start();
+  server.applyMiddleware({ app });
+
+  app.use(
+    "/graphql",
+    expressGraphQL({
+      graphiql: true,
     })
-})
+  );
+  app.listen(5000, () => console.log("Server started"));
+}
 
-app.use('/graphql', expressGraphQL({
-    graphiql:true
-}))
-app.listen(5000, () => console.log("Server started"))
+startApolloServer(typeDefs, resolvers);
