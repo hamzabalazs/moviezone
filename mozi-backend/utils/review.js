@@ -1,7 +1,5 @@
-function getReviews(input, context) {
-  const sql = !input.movie_id
-    ? "SELECT * FROM review"
-    : `SELECT * FROM review WHERE review.movie_id = '${input.movie_id}'`;
+function getReviews(_, context) {
+  const sql = "SELECT * FROM review";
   return new Promise((resolve, reject) => {
     context.db.all(sql, [], (err, rows) => {
       if (err) {
@@ -24,10 +22,10 @@ function getReviewById(id, context) {
   });
 }
 
-function getReviewsOfUserForMovie(user_id,movie_id, context) {
+function getReviewsOfUserForMovie(user_id, movie_id, context) {
   const sql = `SELECT * FROM review WHERE review.user_id = "${user_id}" AND review.movie_id = "${movie_id}"`;
   return new Promise((resolve, reject) => {
-    context.db.all(sql,[], (err, rows) => {
+    context.db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
       }
@@ -50,12 +48,12 @@ function createReview(review, context) {
 }
 
 async function updateReview(review, context) {
-  const updatedReview = await getReviewById(review.id,context)
+  const updatedReview = await getReviewById(review.id, context);
   const returnReview = {
     ...review,
-    movie_id:updatedReview.movie_id,
-    user_id:updatedReview.user_id
-  }
+    movie_id: updatedReview.movie_id,
+    user_id: updatedReview.user_id,
+  };
   const sql = `UPDATE review SET rating="${review.rating}", description="${review.description}" WHERE review.id = "${review.id}"`;
   return new Promise((resolve, reject) => {
     context.db.run(sql, (err, rows) => {

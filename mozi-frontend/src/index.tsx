@@ -69,7 +69,7 @@ root.render(
                   </RoleWrapper>
                 }
               ></Route>
-              <Route path="movie/:currMovieId" element={<MoviePage />}></Route>
+              <Route path="movie/:currmovie_id" element={<MoviePage />}></Route>
               <Route path="account" element={<Account />}></Route>
             </Routes>
           </ApiContextProvider>

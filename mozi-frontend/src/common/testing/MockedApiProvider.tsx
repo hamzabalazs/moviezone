@@ -161,38 +161,128 @@ export function MockedApiContext({
         reviews: [
           {
             id: "idR1",
-            userId: "idU3",
-            movieId: "idM2",
-            description: "description1",
+            user:{
+              id:"idU2",
+              first_name:"first",
+              last_name:"last",
+              email:"email",
+              role:"viewer",
+              password:"vivu"
+            } ,
+            movie:{
+              id:"idM2",
+              title:"title",
+              description:"WAAA",
+              poster:"posterket",
+              release_date:"awuuu",
+              category:{
+                id:"idC1",
+                name:"name1"
+              },
+              rating:0
+            } ,
+            description: "description1EDITED",
             rating: 5,
           },
           {
             id: "idR2",
-            userId: "idU2",
-            movieId: "idM3",
-            description: "description2",
+            user:{
+              id:"idU2",
+              first_name:"first",
+              last_name:"last",
+              email:"email",
+              role:"viewer",
+              password:"vivu"
+            } ,
+            movie:{
+              id:"idM2",
+              title:"title",
+              description:"WAAA",
+              poster:"posterket",
+              release_date:"awuuu",
+              category:{
+                id:"idC1",
+                name:"name1"
+              },
+              rating:0
+            } ,
+            description: "description1EDITED",
             rating: 5,
           },
           {
             id: "idR3",
-            userId: "idU3",
-            movieId: "idM4",
-            description: "description3",
-            rating: 3,
+            user:{
+              id:"idU2",
+              first_name:"first",
+              last_name:"last",
+              email:"email",
+              role:"viewer",
+              password:"vivu"
+            } ,
+            movie:{
+              id:"idM2",
+              title:"title",
+              description:"WAAA",
+              poster:"posterket",
+              release_date:"awuuu",
+              category:{
+                id:"idC1",
+                name:"name1"
+              },
+              rating:0
+            } ,
+            description: "description1EDITED",
+            rating: 5,
           },
           {
             id: "idR4",
-            userId: "idU2",
-            movieId: "idM4",
-            description: "description4",
+            user:{
+              id:"idU2",
+              first_name:"first",
+              last_name:"last",
+              email:"email",
+              role:"viewer",
+              password:"vivu"
+            } ,
+            movie:{
+              id:"idM2",
+              title:"title",
+              description:"WAAA",
+              poster:"posterket",
+              release_date:"awuuu",
+              category:{
+                id:"idC1",
+                name:"name1"
+              },
+              rating:0
+            } ,
+            description: "description1EDITED",
             rating: 5,
           },
           {
             id: "idR5",
-            userId: "idU1",
-            movieId: "idM1",
-            description: "description5",
-            rating: 2,
+            user:{
+              id:"idU2",
+              first_name:"first",
+              last_name:"last",
+              email:"email",
+              role:"viewer",
+              password:"vivu"
+            } ,
+            movie:{
+              id:"idM2",
+              title:"title",
+              description:"WAAA",
+              poster:"posterket",
+              release_date:"awuuu",
+              category:{
+                id:"idC1",
+                name:"name1"
+              },
+              rating:0
+            } ,
+            description: "description1EDITED",
+            rating: 5,
           },
         ],
         usersLoading: false,

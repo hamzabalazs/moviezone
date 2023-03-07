@@ -12,14 +12,30 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-const testReview: ReviewUpdated = {
-  id: "idR1",
-  movieId: "idM2",
-  userId: "idU1",
-  first_name: "admin",
-  last_name: "admin",
-  description: "descriptiontest",
-  rating: 3,
+const testReview: Review = {
+  id: "idC1",
+  user:{
+    id:"idU2",
+    first_name:"first",
+    last_name:"last",
+    email:"email",
+    role:"viewer",
+    password:"vivu"
+  } ,
+  movie:{
+    id:"idM2",
+    title:"title",
+    description:"WAAA",
+    poster:"posterket",
+    release_date:"awuuu",
+    category:{
+      id:"idC1",
+      name:"name1"
+    },
+    rating:0
+  } ,
+  description: "description1EDITED",
+  rating: 5,
 };
 
 const newReview = {
@@ -29,7 +45,7 @@ const newReview = {
 };
 
 function renderReviewEditModal(props: {
-  review?: ReviewUpdated;
+  review?: Review;
   onClose?: () => void;
   editReview?: ReviewData["editReview"];
 }) {

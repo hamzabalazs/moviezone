@@ -5,12 +5,12 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { ReviewUpdated } from "../../api/types";
+import { Review } from "../../api/types";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
 
 interface Props {
-  review: ReviewUpdated;
+  review: Review;
   onEdit:() => void;
   onDelete:() => void;
 }
@@ -45,7 +45,7 @@ export default function ReviewCard({review,onEdit,onDelete}: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-name"
         >
-          {review.first_name} {review.last_name}
+          {review.user.first_name} {review.user.last_name}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("review.reviewCard.description")} :
@@ -72,7 +72,7 @@ export default function ReviewCard({review,onEdit,onDelete}: Props) {
           {review.rating}
         </Typography>
       </CardContent>
-      {((user?.role === "admin" || user?.role === "editor") || (user?.id === review.userId)) &&(
+      {((user?.role === "admin" || user?.role === "editor") || (user?.id === review.user.id)) &&(
         <CardActions disableSpacing sx={{ mt: "auto" }}>
         {onEdit && (
           <Button

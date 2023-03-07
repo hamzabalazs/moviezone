@@ -1,60 +1,153 @@
 import { useEffect, useState } from "react";
-import {
-  AddReviewAPI,
-  DeleteReviewAPI,
-  getReviewsList,
-  UpdateReviewAPI,
-} from "./ReviewApi";
+import { client } from "../../index";
 import { Review } from "../types";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 export type ReviewData = {
   reviews: Review[];
   reviewsLoading: boolean;
-  addReview: (review: Omit<Review, "id" | "userId">) => Promise<boolean>;
-  editReview: (review: Omit<Review, "userId" | "movieId">) => Promise<boolean>;
+  addReview: (rating:number,description:string,movie_id:string) => Promise<boolean>;
+  editReview: (
+    review: Omit<Review, "user" | "movie">
+  ) => Promise<boolean>;
   deleteReview: (id: string) => Promise<boolean>;
   refetchData: () => Promise<void>;
 };
 
-export function useReviews(token?: string): ReviewData {
-  const [loading, setLoading] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
+const GET_REVIEWS = gql`
+  query GetReviews {
+  getReviews {
+    id
+    rating
+    description
+    movie {
+      title
+      id
+    }
+    user {
+      id
+      first_name
+      last_name
+    }
+  }
+}
+`;
 
+const ADD_REVIEW = gql`
+  mutation CreateReview($input: AddReviewInput!) {
+    createReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
+
+const UPDATE_REVIEW = gql`
+  mutation UpdateReview($input: UpdateReviewInput!) {
+    updateReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
+
+const DELETE_REVIEW = gql`
+  mutation DeleteReview($input: DeleteReviewInput!) {
+    deleteReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
+
+export function useReviews(token?: string): ReviewData {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [AddReviewAPI] = useMutation(ADD_REVIEW);
+  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
+  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
+  const { data: reviewsData, loading } = useQuery(GET_REVIEWS);
   async function refetchData() {
-    setLoading(true);
-    const reviews = await getReviewsList();
-    setReviews(reviews);
-    setLoading(false);
+    await client.refetchQueries({
+      include: [GET_REVIEWS],
+    });
+    setReviews(reviewsData.getReviews);
   }
 
-  async function addReview(
-    review: Omit<Review, "id" | "userId">
-  ): Promise<boolean> {
+  async function addReview(rating:number,description:string,movie_id:string): Promise<boolean> {
     if (!token) return false;
-    const result = await AddReviewAPI(review, token);
+    const result = await AddReviewAPI({
+      variables: {
+        input: {
+          rating: rating,
+          description: description,
+          movie_id:movie_id,
+        },
+      },
+    });
     refetchData();
-    return result;
+    if (result === undefined) return false;
+    return true;
   }
 
   async function editReview(
-    review: Omit<Review, "userId" | "movieId">
+    review: Omit<Review, "user" | "movie">
   ): Promise<boolean> {
     if (!token) return false;
-    const result = await UpdateReviewAPI(review, token);
+    const result = await UpdateReviewAPI({
+      variables: {
+        input: {
+          id: review.id,
+          rating: review.rating,
+          description: review.description,
+        },
+      },
+    });
     refetchData();
-    return result;
+    if (result === undefined) return false;
+    return true;
   }
 
   async function deleteReview(id: string): Promise<boolean> {
     if (!token) return false;
-    const result = await DeleteReviewAPI(id, token);
+    const result = await DeleteReviewAPI({ variables: { input: { id } } });
     refetchData();
-    return result;
+    if (result === undefined) return false;
+    return true;
   }
 
   useEffect(() => {
-    refetchData();
-  }, []);
+    if (reviewsData) {
+      console.log(reviews)
+      refetchData();
+    }
+  }, [reviewsData]);
 
   return {
     reviews,

@@ -28,8 +28,8 @@ export async function PostUserAPI(props: AddUserProps) {
   return false;
 }
 
-export async function getUserByIdForMovie(userId: string) {
-  const res = await fetch(API_URL + "/user/" + userId, {
+export async function getUserByIdForMovie(user_id: string) {
+  const res = await fetch(API_URL + "/user/" + user_id, {
     method: "GET",
   });
   if (res.status === 200) {
@@ -108,15 +108,15 @@ export async function UpdateCurrentUserAPI(user: User, token: string) {
 }
 
 //User GET by ID
-export const getUserById = async (userId: string, token: string) => {
-  const testresponse = await fetch(API_URL + "/user/" + userId, {
+export const getUserById = async (user_id: string, token: string) => {
+  const testresponse = await fetch(API_URL + "/user/" + user_id, {
     method: "GET",
     headers: {
       "auth-token": token,
     },
   });
   if (testresponse.status === 200) {
-    const res = await fetch(API_URL + "/user/" + userId, {
+    const res = await fetch(API_URL + "/user/" + user_id, {
       method: "GET",
       headers: {
         "auth-token": token,

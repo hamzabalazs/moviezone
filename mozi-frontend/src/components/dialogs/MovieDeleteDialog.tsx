@@ -32,8 +32,8 @@ export default function MovieDeleteDialog({
   const handleDeletion = async () => {
     if(movie === undefined) return;
 
-    const movieId = movie.id;
-    const result = await deleteMovie(movieId);
+    const movie_id = movie.id;
+    const result = await deleteMovie(movie_id);
     if (result) {
       const msg = t("successMessages.movieDelete");
       setAlert?.({isOpen:true,message:msg,type:"success"})

@@ -39,8 +39,8 @@ const resolvers = {
       return await categoryModule.checkForCategory(input.name, context);
     },
     // Reviews
-    async getReviews(_, { input }, context) {
-      return await reviewModule.getReviews(input, context);
+    async getReviews(_, __, context) {
+      return await reviewModule.getReviews(_, context);
     },
     async getReviewById(_, { input }, context) {
       return await reviewModule.getReviewById(input.id, context);
@@ -107,10 +107,10 @@ const resolvers = {
       return await userModule.updateUser(updatedUser, context);
     },
     async deleteUser(_, args, context) {
-      const userId = args.input.id;
-      const user = await userModule.getUserById(userId, context);
+      const user_id = args.input.id;
+      const user = await userModule.getUserById(user_id, context);
       if (user === undefined) throw new Error("User does not exist!");
-      return await userModule.deleteUser(userId, context);
+      return await userModule.deleteUser(user_id, context);
     },
     
     // Categories
@@ -172,12 +172,12 @@ const resolvers = {
       return await movieModule.updateMovie(updatedMovie, context);
     },
     async deleteMovie(_, args, context) {
-      const movieId = args.input.id;
-      const isMovie = await movieModule.getMovieById(movieId, context);
+      const movie_id = args.input.id;
+      const isMovie = await movieModule.getMovieById(movie_id, context);
       if (isMovie === undefined) {
         throw new Error("Movie not found!");
       }
-      return await movieModule.deleteMovie(movieId, context);
+      return await movieModule.deleteMovie(movie_id, context);
     },
     // Reviews
     async createReview(_, args, context) {

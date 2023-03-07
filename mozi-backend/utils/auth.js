@@ -55,8 +55,8 @@ async function createToken(loginDetails, context) {
 }
 
 function getToken(user, context) {
-  const userId = user.id;
-  const sql = `SELECT * FROM session where user_id = "${userId}"`;
+  const user_id = user.id;
+  const sql = `SELECT * FROM session where user_id = "${user_id}"`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, (err, rows) => {
       if (err) {

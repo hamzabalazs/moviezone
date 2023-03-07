@@ -4,7 +4,7 @@ import { Review } from "../types";
 
 //Review POST
 export async function AddReviewAPI(
-  review: Omit<Review, "id" | "userId">,
+  review: Omit<Review, "id" | "user_id">,
   token: string
 ) {
   if (review.rating !== 0) {
@@ -41,7 +41,7 @@ export async function DeleteReviewAPI(
 
 //Review PATCH by ID
 export async function UpdateReviewAPI(
-  review: Omit<Review, "userId" | "movieId">,
+  review: Omit<Review, "user_id" | "movie_id">,
   token: string
 ): Promise<boolean> {
   const rating = review.rating;

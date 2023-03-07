@@ -62,12 +62,12 @@ export default function MoviePage() {
     },
   });
 
-  const { currMovieId } = useParams();
-  const currMovie = context.movies.find((x) => x.id === currMovieId);
+  const { currmovie_id } = useParams();
+  const currMovie = context.movies.find((x) => x.id === currmovie_id);
 
   useEffect(() => {
     const usersReviews = context.reviews.filter(
-      (x) => x.userId === currUser?.id
+      (x) => x.user.id === currUser?.id
     );
     setUserReviewList(usersReviews);
   }, [context.reviews]);
@@ -87,24 +87,25 @@ export default function MoviePage() {
   }, [alert.message]);
 
   const handleAddReview = async () => {
-    const movieId = currMovieId;
+    const movie_id = currmovie_id;
     const rating = value as number;
     const description = ratingDescription;
-
+    
     if (
-      movieId !== undefined &&
+      movie_id !== undefined &&
       userReviewList.length === 0 &&
       rating !== 0 &&
-      description !== ""
+      description !== "" &&
+      currUser
     ) {
-      const result = await context.addReview({ movieId, rating, description });
+      const result = await context.addReview(rating,description,movie_id);
       if (!result) return;
 
       
       setAlert({isOpen:true,message:"Review success",type:"success"})
       setRatingDescription("");
       setValue(0);
-    } else if (movieId === undefined) {
+    } else if (movie_id === undefined) {
       setAlert({isOpen:true,message:"There is no movie to be rated",type:"error"})
     } else if (userReviewList.length !== 0) {
       setAlert({isOpen:true,message:"You have already rated this movie!",type:"error"})
@@ -121,11 +122,11 @@ export default function MoviePage() {
   async function updateReviewList() {
     const updatedReviewList: ReviewUpdated[] = [];
     for (let i = 0; i < context.reviews.length; i++) {
-      const userId = context.reviews[i].userId;
-      const user = context.users.find((x) => x.id === userId);
+      const user_id = context.reviews[i].user.id;
+      const user = context.users.find((x) => x.id === user_id);
       if (user !== undefined) {
-        const movieId = context.reviews[i].movieId;
-        const userId = context.reviews[i].userId;
+        const movie = context.reviews[i].movie;
+        const user = context.reviews[i].user;
         const first_name = user.first_name;
         const last_name = user.last_name;
         const id = context.reviews[i].id;
@@ -133,8 +134,8 @@ export default function MoviePage() {
         const rating = context.reviews[i].rating;
         updatedReviewList.push({
           id,
-          movieId,
-          userId,
+          movie,
+          user,
           first_name,
           last_name,
           description,
@@ -143,10 +144,10 @@ export default function MoviePage() {
       } else continue;
     }
     const userReviews = updatedReviewList.filter(
-      (x) => x.movieId === currMovieId && x.userId === currUser?.id
+      (x) => x.movie.id === currmovie_id && x.user.id === currUser?.id
     );
     const movieReviews = updatedReviewList.filter(
-      (x) => x.movieId === currMovieId
+      (x) => x.movie.id === currmovie_id
     );
     setUserReviewList(userReviews);
     setMovieReviewList(movieReviews);
@@ -185,7 +186,7 @@ export default function MoviePage() {
             onClose={() => setDeletingReview(undefined)}
             setAlert={setAlert}
           />
-          {context.movies.find((x) => x.id === currMovieId) && (
+          {context.movies.find((x) => x.id === currmovie_id) && (
             <div style={{ display: "flex", justifyContent: "center" }}>
               <MoviePageCard
                 movie={selectedMovie}

@@ -9,10 +9,10 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { AlertType, ReviewUpdated } from "../../api/types";
+import { AlertType, Review } from "../../api/types";
 
 interface Props {
-  review?: ReviewUpdated;
+  review?: Review;
   onClose?: () => void;
   setAlert: Dispatch<SetStateAction<AlertType>>;
   

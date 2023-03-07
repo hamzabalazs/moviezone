@@ -14,11 +14,11 @@ import {  useFormik } from "formik";
 import { Dispatch, SetStateAction} from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { AlertType, ReviewUpdated } from "../../api/types";
+import { AlertType, Review } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {
-  review?: ReviewUpdated;
+  review?: Review;
   onClose?: () => void;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
   
@@ -32,10 +32,10 @@ export default function ReviewEditModal({
   const { editReview } = useApiContext();
   const { t } = useTranslation();
   const updateReview = async (
-    editedReview: Omit<ReviewUpdated, "id" | "first_name" | "last_name"|"movieId"|"userId">
+    editedReview: Omit<Review, "id" | "movie"|"user">
   ) => {
     if (review === undefined) return;
-    const result = await editReview({ id: review.id, ...editedReview });
+    const result = await editReview({ id:review.id, ...editedReview });
     if (result) {
       const msg = t("successMessages.reviewEdit");
       setAlert?.({isOpen:true,message:msg,type:"success"})

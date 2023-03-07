@@ -32,13 +32,13 @@ import React from 'react'
 
 // // Movie GET by ID
 // export const getMovieById = async (
-//   movieId: string
+//   movie_id: string
 // ): Promise<Movie | undefined> => {
-//   const testresponse = await fetch(API_URL + "/movie/" + movieId, {
+//   const testresponse = await fetch(API_URL + "/movie/" + movie_id, {
 //     method: "GET",
 //   });
 //   if (testresponse.status === 200) {
-//     const res = await fetch(API_URL + "/movie/" + movieId, {
+//     const res = await fetch(API_URL + "/movie/" + movie_id, {
 //       method: "GET",
 //     });
 //     const body = await res.json();
@@ -47,8 +47,8 @@ import React from 'react'
 //   }
 // };
 
-// export async function getMovieByIdForReviews(movieId: string) {
-//   const res = await fetch(API_URL + "/movie/" + movieId, {
+// export async function getMovieByIdForReviews(movie_id: string) {
+//   const res = await fetch(API_URL + "/movie/" + movie_id, {
 //     method: "GET",
 //   });
 //   if (res.status === 200) {

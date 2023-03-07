@@ -71,10 +71,6 @@ const typeDefs = gql`
     id: ID!
   }
 
-  input ReviewsInput {
-    movie_id: ID
-  }
-
   input ReviewInput {
     id: ID!
   }
@@ -197,7 +193,7 @@ const typeDefs = gql`
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category!
     checkForCategory(input: CategoryNameInput!): Category!
-    getReviews(input: ReviewsInput): [Review!]!
+    getReviews: [Review!]!
     getReviewById(input: ReviewInput!): Review!
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getExistingToken(input: GetTokenInput!): Session!

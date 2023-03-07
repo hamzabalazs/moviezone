@@ -22,7 +22,7 @@ function renderMoviePage(user?: CurrUser) {
   const FAKE_EVENT = { name: "test event" };
   const routes = [
     {
-      path: "/:currMovieId",
+      path: "/:currmovie_id",
       element: <MoviePage />,
       loader: () => FAKE_EVENT,
     },

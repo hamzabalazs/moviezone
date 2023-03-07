@@ -13,8 +13,8 @@ export type CurrUser = User & {
 
 export type Review = {
   id: string;
-  userId: string;
-  movieId: string;
+  user: User;
+  movie: Movie;
   description: string;
   rating: number;
 };
@@ -36,8 +36,8 @@ export type Movie = {
 
 export type ReviewUpdated = {
   id: string;
-  movieId: string;
-  userId: string;
+  movie: Movie;
+  user: User;
   first_name: string;
   last_name: string;
   description: string;

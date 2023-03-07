@@ -1,6 +1,6 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AlertType, ReviewUpdated } from "../api/types";
+import { AlertType, Review, ReviewUpdated } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -17,15 +17,12 @@ function Reviews() {
   const context = useApiContext();
   const currUser = context.user;
 
-  const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(undefined);
-  const [deletingReview, setDeletingReview] = useState<ReviewUpdated | undefined>(undefined);
+  const [editingReview, setEditingReview] = useState<Review | undefined>(undefined);
+  const [deletingReview, setDeletingReview] = useState<Review | undefined>(undefined);
 
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
-  const [movieId, setMovieId] = useState("");
-  const [updatedReviewLists, setUpdatedReviewLists] = useState<ReviewUpdated[]>(
-    []
-  );
-  const [reviewListOfUser, setReviewListOfUser] = useState<ReviewUpdated[]>([]);
+  
+  const [reviewListOfUser, setReviewListOfUser] = useState<Review[]>([]);
   
 
   useEffect(() => {
@@ -33,34 +30,11 @@ function Reviews() {
   }, [context.reviews]);
 
   async function fillUpdatedReviewList() {
-    const updatedReviewList: ReviewUpdated[] = [];
-    for (let i = 0; i < context.reviews.length; i++) {
-      const userId = context.reviews[i].userId;
-      const user = context.users.find((x) => x.id === userId);
-      if (user !== undefined) {
-        const userId = context.reviews[i].userId;
-        const first_name = user.first_name;
-        const last_name = user.last_name;
-        const id = context.reviews[i].id;
-        const description = context.reviews[i].description;
-        const rating = context.reviews[i].rating;
-        updatedReviewList.push({
-          id,
-          movieId,
-          userId,
-          first_name,
-          last_name,
-          description,
-          rating,
-        });
-      } else continue;
-    }
     if (currUser) {
-      const usersReviews = updatedReviewList.filter(
-        (x) => x.userId === currUser.id
+      const usersReviews = context.reviews.filter(
+        (x) => x.user.id === currUser.id
       );
       setReviewListOfUser(usersReviews);
-      setUpdatedReviewLists(updatedReviewList);
     }
   }
 
