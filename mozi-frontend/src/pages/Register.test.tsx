@@ -23,11 +23,11 @@ function renderRegister() {
   );
 }
 
-test("register error if firstName is empty", async () => {
+test("register error if first_name is empty", async () => {
   renderRegister();
 
   const registerFormFirstName = screen.getByTestId(
-    "register-firstName"
+    "register-first_name"
   ) as HTMLInputElement;
   const registerButton = screen.getByRole("button", {
     name: "register.register",
@@ -39,7 +39,7 @@ test("register error if firstName is empty", async () => {
   });
   await waitFor(() => {
     const registerErrorFirstName = screen.getByTestId(
-      "register-error-firstName"
+      "register-error-first_name"
     );
     expect(registerErrorFirstName).toHaveTextContent(
       "formikErrors.firstNameReq"
@@ -47,11 +47,11 @@ test("register error if firstName is empty", async () => {
   });
 });
 
-test("register error if lastName is empty", async () => {
+test("register error if last_name is empty", async () => {
   renderRegister();
 
   const registerFormLastName = screen.getByTestId(
-    "register-lastName"
+    "register-last_name"
   ) as HTMLInputElement;
   const registerButton = screen.getByRole("button", {
     name: "register.register",
@@ -62,7 +62,7 @@ test("register error if lastName is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrorLastName = screen.getByTestId("register-error-lastName");
+    const registerErrorLastName = screen.getByTestId("register-error-last_name");
     expect(registerErrorLastName).toHaveTextContent("formikErrors.lastNameReq");
   });
 });
@@ -120,10 +120,10 @@ test("register form works fine", () => {
   renderRegister();
 
   const registerFormFirstName = screen.getByTestId(
-    "register-firstName"
+    "register-first_name"
   ) as HTMLInputElement;
   const registerFormLastName = screen.getByTestId(
-    "register-lastName"
+    "register-last_name"
   ) as HTMLInputElement;
   const registerFormEmail = screen.getByTestId(
     "register-email"

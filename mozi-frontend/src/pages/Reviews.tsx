@@ -39,8 +39,8 @@ function Reviews() {
       const user = context.users.find((x) => x.id === userId);
       if (user !== undefined) {
         const userId = context.reviews[i].userId;
-        const firstName = user.firstName;
-        const lastName = user.lastName;
+        const first_name = user.first_name;
+        const last_name = user.last_name;
         const id = context.reviews[i].id;
         const description = context.reviews[i].description;
         const rating = context.reviews[i].rating;
@@ -48,8 +48,8 @@ function Reviews() {
           id,
           movieId,
           userId,
-          firstName,
-          lastName,
+          first_name,
+          last_name,
           description,
           rating,
         });

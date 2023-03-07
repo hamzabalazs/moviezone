@@ -44,8 +44,8 @@
             "email": "Email",
             "role": "Szerepkör"
         },
-        "firstName":"Keresztnév",
-        "lastName": "Vezetéknév",
+        "first_name":"Keresztnév",
+        "last_name": "Vezetéknév",
         "email": "Email",
         "password": "Jelszó",
         "role":"Szerepkör",
@@ -103,8 +103,8 @@
     },
     "register": {
         "register": "Regisztráció",
-        "firstName":"Keresztnév",
-        "lastName": "Vezetéknév",
+        "first_name":"Keresztnév",
+        "last_name": "Vezetéknév",
         "email": "Email",
         "password": "Jelszó",
         "hasAccount": "Van már felhasználoja? Kattintson a bejelentkezéshez!",

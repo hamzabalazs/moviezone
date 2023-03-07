@@ -14,7 +14,11 @@ import { Users } from "./pages/Users";
 import Reviews from "./pages/Reviews";
 import MoviePage from "./pages/MoviePage";
 import Account from "./pages/Account";
-
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+} from "@apollo/client";
 import { ApiContextProvider, useApiContext } from "./api/ApiContext";
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
@@ -23,10 +27,18 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
+export const client = new ApolloClient({
+  uri: "http://localhost:5000/graphql",
+  cache: new InMemoryCache(),
+});
+
+
+
 root.render(
   <React.StrictMode>
-    <MyThemeProvider>
-      <BrowserRouter>
+    <ApolloProvider client={client}>
+      <MyThemeProvider>
+        <BrowserRouter>
           <ApiContextProvider>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -61,8 +73,9 @@ root.render(
               <Route path="account" element={<Account />}></Route>
             </Routes>
           </ApiContextProvider>
-      </BrowserRouter>
-    </MyThemeProvider>
+        </BrowserRouter>
+      </MyThemeProvider>
+    </ApolloProvider>
   </React.StrictMode>
 );
 

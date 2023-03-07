@@ -16,8 +16,8 @@ export function MockedApiContext({
 
         user: {
           id: "idU1",
-          firstName: "admin",
-          lastName: "admin",
+          first_name: "admin",
+          last_name: "admin",
           email: "admin@example.com",
           password: "admin",
           role: "admin",
@@ -107,8 +107,8 @@ export function MockedApiContext({
         users: [
           {
             id: "idU1",
-            firstName: "admin",
-            lastName: "admin",
+            first_name: "admin",
+            last_name: "admin",
             email: "admin@example.com",
             password: "admin",
             role: "admin",
@@ -116,8 +116,8 @@ export function MockedApiContext({
           //EDITOR USER
           {
             id: "idU2",
-            firstName: "editor",
-            lastName: "editor",
+            first_name: "editor",
+            last_name: "editor",
             email: "editor@example.com",
             password: "editor",
             role: "editor",
@@ -126,8 +126,8 @@ export function MockedApiContext({
 
           {
             id: "idU3",
-            firstName: "viewer",
-            lastName: "viewer",
+            first_name: "viewer",
+            last_name: "viewer",
             email: "viewer@example.com",
             password: "viewer",
             role: "viewer",

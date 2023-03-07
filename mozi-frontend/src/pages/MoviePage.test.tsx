@@ -10,8 +10,8 @@ import MoviePage from "./MoviePage";
 
 const adminUser: CurrUser = {
   id: "idU1",
-  firstName: "admin",
-  lastName: "admin",
+  first_name: "admin",
+  last_name: "admin",
   email: "admin@example.com",
   password: "admin",
   role: "admin",

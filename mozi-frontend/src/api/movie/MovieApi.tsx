@@ -1,6 +1,8 @@
 import Resizer from "react-image-file-resizer";
-import { API_URL } from "../constants";
 import { Movie } from "../types";
+import { API_URL } from "../constants";
+
+
 // Movie DELETE by ID
 export async function DeleteMovieAPI(
   id: string,

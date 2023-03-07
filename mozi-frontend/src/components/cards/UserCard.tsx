@@ -42,7 +42,7 @@ export default function UserCard({ onEdit, onDelete, ...props }: Props) {
           marginLeft={3}
           sx={{ mt: "auto" }}
         >
-          {props.user.firstName} {props.user.lastName}
+          {props.user.first_name} {props.user.last_name}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("user.userCard.email")} :

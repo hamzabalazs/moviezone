@@ -3,18 +3,18 @@ import { CurrUser, User } from "../types";
 const USER_KEY = "user-info";
 
 interface AddUserProps {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
 }
 
 export async function PostUserAPI(props: AddUserProps) {
-  const firstName = props.firstName;
-  const lastName = props.lastName;
+  const first_name = props.first_name;
+  const last_name = props.last_name;
   const email = props.email;
   const password = props.password;
-  let item = { firstName, lastName, email, password };
+  let item = { first_name, last_name, email, password };
   try {
     const response = await fetch(API_URL + "/user", {
       method: "POST",
@@ -62,8 +62,8 @@ export async function UpdateUserAPI(user: Omit<User, "role"> & Partial<Pick<User
         "auth-token": token,
       },
       body: JSON.stringify({
-        firstName: user.firstName,
-        lastName: user.lastName,
+        first_name: user.first_name,
+        last_name: user.last_name,
         email: user.email,
         password: user.password,
         role: user.role,
@@ -83,8 +83,8 @@ export async function UpdateCurrentUserAPI(user: User, token: string) {
         "auth-token": token,
       },
       body: JSON.stringify({
-        firstName: user.firstName,
-        lastName: user.lastName,
+        first_name: user.first_name,
+        last_name: user.last_name,
         email: user.email,
         password: user.password,
       }),
@@ -92,8 +92,8 @@ export async function UpdateCurrentUserAPI(user: User, token: string) {
     if(response.status === 200){
       const currUser:CurrUser = {
         id:user.id,
-        firstName:user.firstName,
-        lastName:user.lastName,
+        first_name:user.first_name,
+        last_name:user.last_name,
         email:user.email,
         password:user.password,
         role:user.role,
@@ -129,7 +129,6 @@ export const getUserById = async (userId: string, token: string) => {
 
 //User GET ALL
 export async function getUserList() {
-  console.log(API_URL);
   const res = await fetch(API_URL + "/users", {
     method: "GET",
   });

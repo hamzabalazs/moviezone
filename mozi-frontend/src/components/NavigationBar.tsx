@@ -27,8 +27,8 @@ export default function NavigationBar() {
   const [userRole, setUserRole] = useState<"admin" | "editor" | "viewer">(
     "viewer"
   );
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -78,18 +78,18 @@ export default function NavigationBar() {
 
   useEffect(() => {
     if (currUser) {
-      setFirstName(currUser.firstName);
-      setLastName(currUser.lastName);
+      setFirstName(currUser.first_name);
+      setLastName(currUser.last_name);
       handleRole();
     }
   }, []);
 
-  useEffect(() => {
-    if (firstName !== "" && lastName !== "") {
-      setFirstName(firstName.toUpperCase());
-      setLastName(lastName.toUpperCase());
-    }
-  }, [firstName, lastName]);
+  // useEffect(() => {
+  //   if (first_name !== "" && last_name !== "") {
+  //     setFirstName(first_name.toUpperCase());
+  //     setLastName(last_name.toUpperCase());
+  //   }
+  // }, [first_name, last_name]);
 
   return (
     <Suspense fallback="Loading...">
@@ -251,8 +251,8 @@ export default function NavigationBar() {
               <Avatar
                 sx={{ width: 40, height: 40, backgroundColor: "primary.light" }}
               >
-                {firstName[0]}
-                {lastName[0]}
+                {first_name[0]}
+                {last_name[0]}
               </Avatar>
             </IconButton>
           </Tooltip>

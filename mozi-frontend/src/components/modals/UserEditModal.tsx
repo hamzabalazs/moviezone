@@ -23,7 +23,6 @@ interface Props {
   onClose?: () => void;
   allowEditRole?: boolean;
   setAlert: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
 // function AlertProvider() {
@@ -96,8 +95,8 @@ export default function UserEditModal({
   };
 
   const formikValues: Omit<User, "id"> = {
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
     email: user?.email || "",
     password: user?.password || "",
     role: user?.role || "viewer",
@@ -144,24 +143,24 @@ export default function UserEditModal({
           }}
         >
           <CardContent>
-            <Typography variant="subtitle1">{t("user.firstName")}: </Typography>
+            <Typography variant="subtitle1">{t("user.first_name")}: </Typography>
             <TextField
-              id="firstName"
+              id="first_name"
               variant="outlined"
-              value={formik.values.firstName}
+              value={formik.values.first_name}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "user-edit-modal-firstName" }}
-              error={formik.errors.firstName}
+              inputProps={{ "data-testid": "user-edit-modal-first_name" }}
+              error={formik.errors.first_name}
             />
-            <Typography variant="subtitle1">{t("user.lastName")}: </Typography>
+            <Typography variant="subtitle1">{t("user.last_name")}: </Typography>
             <TextField
-              id="lastName"
-              value={formik.values.lastName}
+              id="last_name"
+              value={formik.values.last_name}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "user-edit-modal-lastName" }}
-              error={formik.errors.lastName}
+              inputProps={{ "data-testid": "user-edit-modal-last_name" }}
+              error={formik.errors.last_name}
             />
             <Typography variant="subtitle1">{t("user.email")}: </Typography>
             <TextField
@@ -231,7 +230,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-firstName"
+          data-testid="register-error-first_name"
         >
           {error}
         </Typography>
@@ -244,8 +243,8 @@ function useEditUserSchema() {
   const { t } = useTranslation();
 
   return Yup.object({
-    firstName: Yup.string().required(t("formikErrors.firstNameReq") || ""),
-    lastName: Yup.string().required(t("formikErrors.lastNameReq") || ""),
+    first_name: Yup.string().required(t("formikErrors.firstNameReq") || ""),
+    last_name: Yup.string().required(t("formikErrors.lastNameReq") || ""),
     email: Yup.string()
       .required(t("formikErrors.emailReq") || "")
       .email(t("formikErrors.emailFormat") || ""),

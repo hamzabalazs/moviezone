@@ -12,8 +12,8 @@ global.fetch = jest.fn();
 
 const userObj = {
   id: "YWRtaW4=",
-  firstName: "admin",
-  lastName: "admin",
+  first_name: "admin",
+  last_name: "admin",
   email: "admin@example.com",
   role: "admin",
 };

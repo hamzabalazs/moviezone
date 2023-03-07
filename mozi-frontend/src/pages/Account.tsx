@@ -23,8 +23,8 @@ function Account() {
 
   const [user, setUser] = useState<User>({
     id: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     role: "viewer",

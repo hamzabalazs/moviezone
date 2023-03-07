@@ -35,19 +35,19 @@ function Register() {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
     },
     onSubmit: async (values) => {
-      const firstName = values.firstName;
-      const lastName = values.lastName;
+      const first_name = values.first_name;
+      const last_name = values.last_name;
       const email = values.email;
       const password = values.password;
       const result = await context.registerUser({
-        firstName,
-        lastName,
+        first_name,
+        last_name,
         email,
         password,
       });
@@ -90,33 +90,33 @@ function Register() {
                   borderRadius: 1,
                   width: 400,
                 }}
-                id="firstName"
-                name="firstName"
+                id="first_name"
+                name="first_name"
                 margin="normal"
                 multiline
                 required
-                label={t("register.firstName")}
+                label={t("register.first_name")}
                 onChange={formik.handleChange}
-                value={formik.values.firstName}
-                inputProps={{ "data-testid": "register-firstName" }}
-                error={formik.errors.firstName}
+                value={formik.values.first_name}
+                inputProps={{ "data-testid": "register-first_name" }}
+                error={formik.errors.first_name}
               />
               <TextField
                 sx={{
                   border: 1,
                   borderRadius: 1,
                 }}
-                id="lastName"
-                name="lastName"
+                id="last_name"
+                name="last_name"
                 margin="normal"
                 multiline
                 fullWidth
                 required
-                label={t("register.lastName")}
+                label={t("register.last_name")}
                 onChange={formik.handleChange}
-                value={formik.values.lastName}
-                inputProps={{ "data-testid": "register-lastName" }}
-                error={formik.errors.lastName}
+                value={formik.values.last_name}
+                inputProps={{ "data-testid": "register-last_name" }}
+                error={formik.errors.last_name}
               />
               <TextField
                 margin="normal"
@@ -186,7 +186,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-firstName"
+          data-testid="register-error-first_name"
         >
           {error}
         </Typography>
@@ -199,8 +199,8 @@ function useEditUserSchema() {
   const { t } = useTranslation();
 
   return Yup.object({
-    firstName: Yup.string().required(t("formikErrors.firstNameReq") || ""),
-    lastName: Yup.string().required(t("formikErrors.lastNameReq") || ""),
+    first_name: Yup.string().required(t("formikErrors.firstNameReq") || ""),
+    last_name: Yup.string().required(t("formikErrors.lastNameReq") || ""),
     email: Yup.string()
       .required(t("formikErrors.emailReq") || "")
       .email(t("formikErrors.emailFormat") || ""),

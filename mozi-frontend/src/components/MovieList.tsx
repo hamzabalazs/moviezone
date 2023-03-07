@@ -9,26 +9,9 @@ function MovieList() {
   const context = useApiContext();
   const { t } = useTranslation();
 
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
-  const [isOpenEdit, setIsOpenEdit] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
-  const [categoryId, setCategoryId] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string[] | undefined
   >([]);
-  const [rating, setRating] = useState(1);
-  const [isOpenReview, setIsOpenReview] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState<Movie>({
-    id: "",
-    title: "",
-    description: "",
-    poster: "",
-    releaseDate: "",
-    rating: 0,
-    categoryId: "",
-  });
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const movieListForAutocomplete: string[] = [];
   const categoryListForAutocomplete: string[] = [];

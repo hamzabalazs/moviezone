@@ -45,7 +45,7 @@ export default function ReviewCard({review,onEdit,onDelete}: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-name"
         >
-          {review.firstName} {review.lastName}
+          {review.first_name} {review.last_name}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("review.reviewCard.description")} :

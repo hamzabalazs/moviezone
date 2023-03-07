@@ -32,7 +32,7 @@ export default function ReviewEditModal({
   const { editReview } = useApiContext();
   const { t } = useTranslation();
   const updateReview = async (
-    editedReview: Omit<ReviewUpdated, "id" | "firstName" | "lastName"|"movieId"|"userId">
+    editedReview: Omit<ReviewUpdated, "id" | "first_name" | "last_name"|"movieId"|"userId">
   ) => {
     if (review === undefined) return;
     const result = await editReview({ id: review.id, ...editedReview });
@@ -136,7 +136,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-firstName"
+          data-testid="register-error-first_name"
         >
           {error}
         </Typography>

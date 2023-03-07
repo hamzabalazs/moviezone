@@ -26,8 +26,8 @@ test("user edit modal opens and shows correctly", () => {
   fireEvent.click(cardEditButtons[0]);
   const cardEditModal = screen.getByTestId("user-edit-modal");
   const cardEditModalButton = screen.getByRole("button", { name: "Edit" }); // not tested
-  const userFirstName = screen.getByTestId("user-edit-modal-firstName");
-  const userLastName = screen.getByTestId("user-edit-modal-lastName");
+  const userFirstName = screen.getByTestId("user-edit-modal-first_name");
+  const userLastName = screen.getByTestId("user-edit-modal-last_name");
   const userEmail = screen.getByTestId("user-edit-modal-email");
   const userPassword = screen.getByTestId("user-edit-modal-password");
   const userRole = screen.getByTestId("user-edit-modal-role");

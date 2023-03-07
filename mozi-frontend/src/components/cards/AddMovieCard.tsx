@@ -138,7 +138,7 @@ export default function AddMovieCard(props: Props) {
             <Typography
               variant="subtitle2"
               sx={{ color: "red" }}
-              data-testid="register-error-firstName"
+              data-testid="register-error-first_name"
             >
               {formik.errors.categoryId}
             </Typography>
@@ -208,7 +208,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-firstName"
+          data-testid="register-error-first_name"
         >
           {error}
         </Typography>

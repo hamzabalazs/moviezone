@@ -19,8 +19,8 @@ jest.mock("react-router-dom", () => ({
 
 const testUser: User = {
   id: "idU3",
-  firstName: "viewer",
-  lastName: "viewer",
+  first_name: "viewer",
+  last_name: "viewer",
   email: "viewer@example.com",
   password: "viewer",
   role: "viewer",
@@ -28,8 +28,8 @@ const testUser: User = {
 
 const newTestUser: User = {
   id: "idU3",
-  firstName: "New viewer",
-  lastName: "New viewer",
+  first_name: "New viewer",
+  last_name: "New viewer",
   email: "new_viewer@example.com",
   password: "New viewer",
   role: "editor",
@@ -65,18 +65,18 @@ test("If user is provided should show open modal with correct values", () => {
   const { queryByTestId } = renderUserEditModal({ user: testUser });
 
   const modal = queryByTestId("user-edit-modal");
-  const firstName = queryByTestId("user-edit-modal-firstName");
-  const lastName = queryByTestId("user-edit-modal-lastName");
+  const first_name = queryByTestId("user-edit-modal-first_name");
+  const last_name = queryByTestId("user-edit-modal-last_name");
   const email = queryByTestId("user-edit-modal-email");
   const password = queryByTestId("user-edit-modal-password");
   const role = queryByTestId("user-edit-modal-role");
   const submit = queryByTestId("user-edit-modal-submit");
 
   expect(modal).toBeInTheDocument();
-  expect(firstName).toBeInTheDocument();
-  expect(firstName).toHaveValue(testUser.firstName);
-  expect(lastName).toBeInTheDocument();
-  expect(lastName).toHaveValue(testUser.lastName);
+  expect(first_name).toBeInTheDocument();
+  expect(first_name).toHaveValue(testUser.first_name);
+  expect(last_name).toBeInTheDocument();
+  expect(last_name).toHaveValue(testUser.last_name);
   expect(email).toBeInTheDocument();
   expect(email).toHaveValue(testUser.email);
   expect(password).toBeInTheDocument();
@@ -103,15 +103,15 @@ test("Should call editUser with correct values", async () => {
     editUser: editUserSpy,
   });
 
-  const firstName = getByTestId("user-edit-modal-firstName");
-  const lastName = getByTestId("user-edit-modal-lastName");
+  const first_name = getByTestId("user-edit-modal-first_name");
+  const last_name = getByTestId("user-edit-modal-last_name");
   const email = getByTestId("user-edit-modal-email");
   const password = getByTestId("user-edit-modal-password");
   const role = within(getByTestId("user-edit-modal-role"));
   const submit = getByTestId("user-edit-modal-submit");
 
-  fireEvent.change(firstName, { target: { value: newTestUser.firstName } });
-  fireEvent.change(lastName, { target: { value: newTestUser.lastName } });
+  fireEvent.change(first_name, { target: { value: newTestUser.first_name } });
+  fireEvent.change(last_name, { target: { value: newTestUser.last_name } });
   fireEvent.change(email, { target: { value: newTestUser.email } });
   fireEvent.change(password, { target: { value: newTestUser.password } });
   fireEvent.mouseDown(role.getByRole("button"));

@@ -37,6 +37,8 @@ export function Home() {
     handleRole();
   }, []);
 
+  if(context.categoriesLoading) return <p>Loading..</p>
+
   return (
     <>
       <NavigationBar />

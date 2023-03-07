@@ -1,7 +1,7 @@
 export type User = {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   role: "admin" | "editor" | "viewer";
@@ -38,8 +38,8 @@ export type ReviewUpdated = {
   id: string;
   movieId: string;
   userId: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   description: string;
   rating: number;
 };

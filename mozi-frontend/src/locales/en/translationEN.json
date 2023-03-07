@@ -43,8 +43,8 @@
             "email": "Email",
             "role": "Role"
         },
-        "firstName":"First Name",
-        "lastName": "Last Name",
+        "first_name":"First Name",
+        "last_name": "Last Name",
         "email": "Email",
         "password": "Password",
         "role":"Role",
@@ -102,8 +102,8 @@
     },
     "register": {
         "register": "Register",
-        "firstName":"First Name",
-        "lastName": "Last Name",
+        "first_name":"First Name",
+        "last_name": "Last Name",
         "email": "Email",
         "password": "Password",
         "hasAccount": "Already have an account? Click to Login!",

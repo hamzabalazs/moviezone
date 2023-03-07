@@ -13,8 +13,8 @@ jest.mock("react-router-dom", () => ({
 
 const testUser: User = {
   id: "idU3",
-  firstName: "viewer",
-  lastName: "viewer",
+  first_name: "viewer",
+  last_name: "viewer",
   email: "viewer@example.com",
   password: "viewer",
   role: "viewer",

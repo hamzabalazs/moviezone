@@ -16,8 +16,8 @@ const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 const userlist: {
   data: {
     id: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     email: string;
     password: string;
     role: "admin" | "editor" | "viewer";
@@ -26,24 +26,24 @@ const userlist: {
   data: [
     {
       id: "idU1",
-      firstName: "Hamza",
-      lastName: "Balazs",
+      first_name: "Hamza",
+      last_name: "Balazs",
       email: "hamzabalazs99@gmail.com",
       password: "jelszo1234",
       role: "admin",
     },
     {
       id: "idU2",
-      firstName: "test",
-      lastName: "test2",
+      first_name: "test",
+      last_name: "test2",
       email: "testtest99@gmail.com",
       password: "jelszo1234",
       role: "editor",
     },
     {
       id: "idU3",
-      firstName: "Mittom",
-      lastName: "En",
+      first_name: "Mittom",
+      last_name: "En",
       email: "ionno99@gmail.com",
       password: "donno1234",
       role: "viewer",
@@ -53,8 +53,8 @@ const userlist: {
 
 const edituser: User = {
   id: "idU2",
-  firstName: "testEDITED",
-  lastName: "test2EDITED",
+  first_name: "testEDITED",
+  last_name: "test2EDITED",
   email: "testtest99@gmail.comEDITED",
   password: "jelszo1234EDITED",
   role: "admin",
@@ -62,8 +62,8 @@ const edituser: User = {
 
 const adduser: User = {
   id: "idU4",
-  firstName: "testADDED",
-  lastName: "testADDED",
+  first_name: "testADDED",
+  last_name: "testADDED",
   email: "testtest99@gmail.comADDED",
   password: "testADDED",
   role: "admin",
@@ -130,7 +130,7 @@ test("editusersTest", async () => {
 
   await waitFor(() => {
     expect(result.current.users).toHaveLength(3);
-    expect(result.current.users[1].firstName).toBe("testEDITED");
+    expect(result.current.users[1].first_name).toBe("testEDITED");
   });
 });
 
@@ -167,7 +167,7 @@ test("registerTest", async () => {
 
   await waitFor(() => {
     expect(result.current.users).toHaveLength(4);
-    expect(result.current.users[3].firstName).toBe("testADDED");
+    expect(result.current.users[3].first_name).toBe("testADDED");
   });
 });
 

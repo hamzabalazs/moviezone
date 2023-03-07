@@ -21,8 +21,8 @@ const testReview: ReviewUpdated = {
   id: "idR1",
   movieId: "idM2",
   userId: "idU1",
-  firstName: "admin",
-  lastName: "admin",
+  first_name: "admin",
+  last_name: "admin",
   description: "descriptiontest",
   rating: 3,
 };
