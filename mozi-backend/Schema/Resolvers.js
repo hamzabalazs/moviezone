@@ -4,6 +4,7 @@ const userModule = require("../utils/user");
 const movieModule = require("../utils/movie");
 const categoryModule = require("../utils/category");
 const reviewModule = require("../utils/review");
+const authModule = require("../utils/auth")
 
 const resolvers = {
   Query: {
@@ -16,6 +17,16 @@ const resolvers = {
     },
     async checkForUser(_, { input }, context) {
       return await userModule.checkForUser(input.email, context);
+    },
+    async getUserForLogin(_, {input},context){
+      return await userModule.getUserForLogin(input.email,context);
+    },
+    async logIn(_,{input},context){
+      await authModule.logIn(input,context);
+    },
+
+    async getExistingToken(_,{input},context){
+      await authModule.getExistingToken(input,context);
     },
     // Categories
     async getCategories(_, __, context) {
@@ -41,6 +52,7 @@ const resolvers = {
     async getMovieById(_, { input }, context) {
       return await movieModule.getMovieById(input.id, context);
     },
+    
   },
   Review: {
     async movie(review, __, context) {
@@ -82,7 +94,11 @@ const resolvers = {
         password: md5(newUser.password),
         role: "viewer",
       };
-      return await userModule.createUser(user, context);
+      const createdUser = await userModule.createUser(user, context);
+      if(createdUser === undefined){
+        throw new Error("User creation failed!")
+      }
+
     },
     async updateUser(_, args, context) {
       const updatedUser = args.input;
@@ -96,6 +112,7 @@ const resolvers = {
       if (user === undefined) throw new Error("User does not exist!");
       return await userModule.deleteUser(userId, context);
     },
+    
     // Categories
     async createCategory(_, args, context) {
       const newCategory = args.input;
@@ -198,6 +215,12 @@ const resolvers = {
       if (isReview === undefined) throw new Error("Review does not exist!");
       return await reviewModule.deleteReview(reviewId, context);
     },
+    // Authentication
+    async createToken(_,args,context){
+      const user = args.input;
+      return await authModule.createToken(user,context)
+    },
+    
   },
 };
 

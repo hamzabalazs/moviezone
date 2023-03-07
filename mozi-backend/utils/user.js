@@ -36,7 +36,19 @@ function checkForUser(email, context) {
   });
 }
 
-function createUser(user, context) {
+function getUserForLogin(email,context){
+  const sql = `SELECT * FROM user WHERE user.email = "${email}"`;
+  return new Promise((resolve, reject) => {
+    context.db.get(sql, (err, rows) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(rows);
+    });
+  });
+}
+
+async function createUser(user, context) {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES ("${user.id}","${user.first_name}","${user.last_name}","${user.email}","${user.password}","${user.role}")`;
   const returnUser = {
     id: user.id,
@@ -119,4 +131,4 @@ async function deleteUser(id, context) {
   });
 }
 
-module.exports = { createUser, deleteUser, updateUser, getUsers, checkForUser, getUserById };
+module.exports = { createUser, deleteUser, updateUser, getUsers, checkForUser, getUserById, getUserForLogin };
