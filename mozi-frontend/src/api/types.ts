@@ -30,8 +30,8 @@ export type Movie = {
   description: string;
   poster: string;
   rating: number;
-  releaseDate: string;
-  categoryId: string;
+  release_date: string;
+  category: Category;
 };
 
 export type ReviewUpdated = {

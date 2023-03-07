@@ -14,7 +14,7 @@ jest.mock("react-router-dom", () => ({
 const addMovie = {
   title: "title1",
   description: "description1",
-  releaseDate: "22/02/2023",
+  release_date: "22/02/2023",
   categoryId: "idC1",
   poster: "chucknorris.jpg"
 };
@@ -48,7 +48,7 @@ test("If isOpenAdd is true should show modal correctly",() => {
   const modal = queryByTestId("movie-add-modal")
   const title = queryByTestId("movie-add-title")
   const description = queryByTestId("movie-add-description")
-  const releaseDate = queryByTestId("movie-add-releaseDate")
+  const release_date = queryByTestId("movie-add-release_date")
   const category = queryByTestId("movie-add-category")
   const poster = queryByTestId("movie-add-poster")
   const addButton = queryByTestId("movie-add-button")
@@ -58,8 +58,8 @@ test("If isOpenAdd is true should show modal correctly",() => {
   expect(title).toHaveValue("")
   expect(description).toBeInTheDocument()
   expect(description).toHaveValue("")
-  expect(releaseDate).toBeInTheDocument()
-  expect(releaseDate).toHaveValue("")
+  expect(release_date).toBeInTheDocument()
+  expect(release_date).toHaveValue("")
   expect(category).toBeInTheDocument()
   expect(category).toHaveValue("")
   expect(poster).toBeInTheDocument()
@@ -74,14 +74,14 @@ test("calls addMovie with correct values when addButton is clicked", async() => 
 
   const title = getByTestId("movie-add-title")
   const description = getByTestId("movie-add-description")
-  const releaseDate = getByTestId("movie-add-releaseDate")
+  const release_date = getByTestId("movie-add-release_date")
   const category = getByTestId("movie-add-category")
   const poster = getByTestId("movie-add-poster") as HTMLInputElement;
   const addButton = getByTestId("movie-add-button")
 
   fireEvent.change(title,{target:{value:addMovie.title}})
   fireEvent.change(description,{target:{value:addMovie.description}})
-  fireEvent.change(releaseDate,{target:{value:addMovie.releaseDate}})
+  fireEvent.change(release_date,{target:{value:addMovie.release_date}})
   fireEvent.change(category,{target:{value:addMovie.categoryId}})
   fireEvent.change(poster,{ target: { files:[file] } })
 

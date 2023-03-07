@@ -48,10 +48,10 @@ export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {
           variant="h5"
           sx={{ mt: "auto" }}
           gutterBottom
-          data-testid="moviepage-releaseDate"
+          data-testid="moviepage-release_date"
         >
-          <span style={{ fontWeight: "bold" }}>{t("movie.releaseDate")}:</span>{" "}
-          {movie.releaseDate}
+          <span style={{ fontWeight: "bold" }}>{t("movie.release_date")}:</span>{" "}
+          {movie.release_date}
         </Typography>
         <Typography
           variant="h5"

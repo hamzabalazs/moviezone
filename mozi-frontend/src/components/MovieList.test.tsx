@@ -29,14 +29,14 @@ test("add movie modal opens and shows correctly", () => {
   const movieAddModal = screen.getByTestId("movie-add-modal");
   const movieAddTitle = screen.getByTestId("movie-add-modal-title");
   const movieAddDescription = screen.getByTestId("movie-add-modal-description");
-  const movieAddReleaseDate = screen.getByTestId("movie-add-modal-releaseDate");
+  const movieAddrelease_date = screen.getByTestId("movie-add-modal-release_date");
   const movieAddCategory = screen.getByTestId("movie-add-modal-category");
   const movieAddPoster = screen.getByTestId("movie-add-modal-poster");
 
   expect(movieAddModal).not.toHaveAttribute("aria-hidden", "true");
   expect(movieAddTitle).toBeInTheDocument();
   expect(movieAddDescription).toBeInTheDocument();
-  expect(movieAddReleaseDate).toBeInTheDocument();
+  expect(movieAddrelease_date).toBeInTheDocument();
   expect(movieAddCategory).toBeInTheDocument();
   expect(movieAddPoster).toBeInTheDocument();
 });

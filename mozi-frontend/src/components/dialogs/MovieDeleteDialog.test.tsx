@@ -16,9 +16,12 @@ const testMovie: Movie = {
   id: "idM1",
   title: "title1",
   description: "description1",
-  releaseDate: "22/02/2023",
+  release_date: "22/02/2023",
   poster: "poster1",
-  categoryId: "idC1",
+  category: {
+    id:"idC1",
+    name:"name1"
+  },
   rating: 3.5,
 };
 

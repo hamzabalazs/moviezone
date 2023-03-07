@@ -21,9 +21,12 @@ const testMovie: Movie = {
   id: "idM1",
   title: "title1",
   description: "description1",
-  releaseDate: "22/02/2023",
+  release_date: "22/02/2023",
   poster: "poster1",
-  categoryId: "idC1",
+  category: {
+    id:"idC1",
+    name:"name1"
+  },
   rating: 3.5,
 };
 
@@ -31,7 +34,7 @@ const testNewMovie = {
   id: "idM1",
   title: "titleEDITED",
   description: "descriptionEDITED",
-  releaseDate: "03/03/2023",
+  release_date: "03/03/2023",
   poster: "poster1",
   categoryId: "idC3",
 };
@@ -62,7 +65,7 @@ test("If movie is provided should open modal with correct values", () => {
   const modal = queryByTestId("movie-edit-modal");
   const title = queryByTestId("movie-edit-title");
   const description = queryByTestId("movie-edit-description");
-  const releaseDate = queryByTestId("movie-edit-releaseDate");
+  const release_date = queryByTestId("movie-edit-release_date");
   const categoryId = getByTestId("movie-edit-categoryId");
 
   expect(modal).toBeInTheDocument();
@@ -70,10 +73,10 @@ test("If movie is provided should open modal with correct values", () => {
   expect(title).toHaveValue(testMovie.title);
   expect(description).toBeInTheDocument();
   expect(description).toHaveValue(testMovie.description);
-  expect(releaseDate).toBeInTheDocument();
-  expect(releaseDate).toHaveValue(testMovie.releaseDate);
+  expect(release_date).toBeInTheDocument();
+  expect(release_date).toHaveValue(testMovie.release_date);
   expect(categoryId).toBeInTheDocument();
-  expect(categoryId).toHaveValue(testMovie.categoryId);
+  expect(categoryId).toHaveValue(testMovie.category.id);
 });
 
 test("calls editMovie with correct values", async () => {
@@ -85,7 +88,7 @@ test("calls editMovie with correct values", async () => {
 
   const title = getByTestId("movie-edit-title");
   const description = getByTestId("movie-edit-description");
-  const releaseDate = getByTestId("movie-edit-releaseDate");
+  const release_date = getByTestId("movie-edit-release_date");
   const editButton = getByTestId("movie-edit-button");
   const category = within(getByTestId("movie-edit-category"));
 
@@ -93,8 +96,8 @@ test("calls editMovie with correct values", async () => {
   fireEvent.change(description, {
     target: { value: testNewMovie.description },
   });
-  fireEvent.change(releaseDate, {
-    target: { value: testNewMovie.releaseDate },
+  fireEvent.change(release_date, {
+    target: { value: testNewMovie.release_date },
   });
 
   fireEvent.mouseDown(category.getByRole("button"));

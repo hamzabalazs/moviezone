@@ -51,9 +51,9 @@ export default function MovieListCard({movie}: Props) {
           <Typography
             variant="subtitle1"
             sx={{ mt: "auto" }}
-            data-testid="movie-list-card-releaseDate"
+            data-testid="movie-list-card-release_date"
           >
-            {t("movie.releaseDate")}: {movie.releaseDate}
+            {t("movie.release_date")}: {movie.release_date}
           </Typography>
           <Typography variant="subtitle2" gutterBottom sx={{ mt: "auto" }}>
             {t("movie.rating")}:{" "}

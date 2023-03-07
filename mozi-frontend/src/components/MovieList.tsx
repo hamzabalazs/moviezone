@@ -44,7 +44,7 @@ function MovieList() {
         categoryList.push(category.id);
       });
       const newMovies = context.movies.filter((x) =>
-        categoryList?.includes(x.categoryId)
+        categoryList?.includes(x.category.id)
       );
       setMovieList(newMovies);
     } else if (
@@ -62,7 +62,7 @@ function MovieList() {
         categoryList.push(category.id);
       });
       const newMovies = context.movies.filter(
-        (x) => title?.includes(x.title) && categoryList?.includes(x.categoryId)
+        (x) => title?.includes(x.title) && categoryList?.includes(x.category.id)
       );
       setMovieList(newMovies);
     }

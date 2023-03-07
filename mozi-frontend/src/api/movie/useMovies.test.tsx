@@ -20,8 +20,11 @@ const movielist = {
       title: "titlemovie",
       description: "descriptionmovie",
       poster: "postermovie",
-      releaseDate: "releasedatemovie",
-      categoryId: "idcategory2",
+      release_date: "release_datemovie",
+      category: {
+        id:"idC2",
+        name:"name2"
+      },
       rating: 0,
     },
     {
@@ -29,8 +32,11 @@ const movielist = {
       title: "titlemovie",
       description: "descriptionmovie",
       poster: "postermovie",
-      releaseDate: "releasedatemovie",
-      categoryId: "idcategory2",
+      release_date: "release_datemovie",
+      category: {
+        id:"idC2",
+        name:"name2"
+      },
       rating: 0,
     },
   ],
@@ -41,9 +47,12 @@ const editmovie: Movie = {
   title: "titlemovieEDITED",
   description: "descriptionmovieEDITED",
   poster: "postermovieEDITED",
-  releaseDate: "releasedatemovieEDITED",
+  release_date: "release_datemovieEDITED",
   rating: 3,
-  categoryId: "idcategory2",
+  category: {
+    id:"idC1",
+    name:"name1"
+  },
 };
 
 const movieadd: Movie = {
@@ -51,8 +60,11 @@ const movieadd: Movie = {
   title: "titlemovie",
   description: "descriptionmovie",
   poster: "postermovie",
-  releaseDate: "releasedatemovie",
-  categoryId: "idcategory2",
+  release_date: "release_datemovie",
+  category: {
+    id:"idC2",
+    name:"name2"
+  },
   rating: 0,
 };
 

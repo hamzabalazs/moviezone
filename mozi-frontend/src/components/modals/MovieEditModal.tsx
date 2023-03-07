@@ -55,8 +55,8 @@ export default function MovieEditModal({
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
     title: movie?.title || "",
     description: movie?.description || "",
-    releaseDate: movie?.releaseDate || "",
-    categoryId: movie?.categoryId || ""
+    release_date: movie?.release_date || "",
+    category: movie?.category || {id:"",name:""}
   };
   const schema = useEditMovieSchema();
 
@@ -123,23 +123,23 @@ export default function MovieEditModal({
             ></TextField>
             
             <Typography variant="subtitle1">
-              {t("movie.releaseDate")}:{" "}
+              {t("movie.release_date")}:{" "}
             </Typography>
             <TextField
-              id="releaseDate"
-              value={formik.values.releaseDate}
+              id="release_date"
+              value={formik.values.release_date}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "movie-edit-releaseDate" }}
-              error={formik.errors.releaseDate}
+              inputProps={{ "data-testid": "movie-edit-release_date" }}
+              error={formik.errors.release_date}
             ></TextField>
             
             <InputLabel id="category-select">{t("movie.category")}</InputLabel>
             <Select
               labelId="category-select"
               label={t("movie.category")}
-              name="categoryId"
-              value={formik.values.categoryId}
+              name="category.id"
+              value={formik.values.category.id}
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               data-testid="movie-edit-category"
@@ -192,8 +192,8 @@ function useEditMovieSchema() {
   return Yup.object({
     title: Yup.string().required(t("formikErrors.titleReq") || ""),
     description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
-    releaseDate: Yup.string()
-      .required(t("formikErrors.releaseDateReq") || "").matches(datevalidator,t("formikErrors.releaseDateFormat") || ""),
-    categoryId: Yup.string().required(),
+    release_date: Yup.string()
+      .required(t("formikErrors.release_dateReq") || "").matches(datevalidator,t("formikErrors.release_dateFormat") || ""),
+    
   });
 }

@@ -29,72 +29,96 @@ export function MockedApiContext({
             id: "idM1",
             title: "title1",
             description: "description1",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster1",
-            categoryId: "idC1",
+            category: {
+              id:"idC1",
+              name:"name1"
+            },
             rating: 3.5,
           },
           {
             id: "idM2",
             title: "title2",
             description: "description2",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster2",
-            categoryId: "idC2",
+            category: {
+              id:"idC2",
+              name:"name2"
+            },
             rating: 2,
           },
           {
             id: "idM3",
             title: "title3",
             description: "description3",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster3",
-            categoryId: "idC2",
+            category: {
+              id:"idC3",
+              name:"name3"
+            },
             rating: 1,
           },
           {
             id: "idM4",
             title: "title4",
             description: "description4",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster4",
-            categoryId: "idC1",
+            category: {
+              id:"idC1",
+              name:"name1"
+            },
             rating: 3,
           },
           {
             id: "idM5",
             title: "title5",
             description: "description5",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster5",
-            categoryId: "idC3",
+            category: {
+              id:"idC2",
+              name:"name2"
+            },
             rating: 5,
           },
           {
             id: "idM6",
             title: "title6",
             description: "description6",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster6",
-            categoryId: "idC5",
+            category: {
+              id:"idC2",
+              name:"name2"
+            },
             rating: 4.5,
           },
           {
             id: "idM7",
             title: "title7",
             description: "description7",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster7",
-            categoryId: "idC2",
+            category: {
+              id:"idC3",
+              name:"name3"
+            },
             rating: 1.5,
           },
           {
             id: "idM8",
             title: "title8",
             description: "description8",
-            releaseDate: "22/02/2023",
+            release_date: "22/02/2023",
             poster: "poster8",
-            categoryId: "idC2",
+            category: {
+              id:"idC3",
+              name:"name3"
+            },
             rating: 1,
           },
         ],

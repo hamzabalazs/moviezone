@@ -54,9 +54,12 @@ export default function MoviePage() {
     title: "",
     description: "",
     poster: "",
-    releaseDate: "",
+    release_date: "",
     rating: 0,
-    categoryId: "",
+    category: {
+      id:"",
+      name:""
+    },
   });
 
   const { currMovieId } = useParams();

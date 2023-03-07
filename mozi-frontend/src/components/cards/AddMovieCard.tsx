@@ -9,25 +9,42 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField as MuiTextField,
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { FormikErrors, useFormik } from "formik";
+import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
-import { resizeFile } from "../../api/movie/MovieApi";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
 import { AlertType, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
+import Resizer from "react-image-file-resizer";
+
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
+
+// File resizer for image compression
+export const resizeFile = (file: File) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      640,
+      480,
+      "JPEG",
+      60,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      "base64"
+    );
+  });
 
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();
@@ -48,8 +65,11 @@ export default function AddMovieCard(props: Props) {
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
     title: "",
     description: "",
-    releaseDate: "",
-    categoryId: "",
+    release_date: "",
+    category: {
+      id:"",
+      name:""
+    },
 
   };
 
@@ -104,26 +124,26 @@ export default function AddMovieCard(props: Props) {
             error={formik.errors.description}
           ></TextField>
           <Typography variant="subtitle1" sx={{ mt: "auto" }}>
-            {t("movie.releaseDate")}
+            {t("movie.release_date")}
           </Typography>
           <TextField
             fullWidth
             size="small"
-            id="releaseDate"
-            name="releaseDate"
+            id="release_date"
+            name="release_date"
             sx={{ marginBottom: 1, border: 1, borderRadius: 1 }}
-            value={formik.values.releaseDate}
+            value={formik.values.release_date}
             onChange={formik.handleChange}
-            inputProps={{ "data-testid": "movie-add-releaseDate" }}
-            error={formik.errors.releaseDate}
+            inputProps={{ "data-testid": "movie-add-release_date" }}
+            error={formik.errors.release_date}
           ></TextField>
           <InputLabel id="category-select">{t("movie.category")}</InputLabel>
           <Select
             labelId="category-select"
             label="Category"
-            value={formik.values.categoryId}
-            name="categoryId"
-            id="categoryId"
+            value={formik.values.category.id}
+            name="category.id"
+            id="category.id"
             onChange={formik.handleChange}
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-category" }}
@@ -134,15 +154,15 @@ export default function AddMovieCard(props: Props) {
               </MenuItem>
             ))}
           </Select>
-          {formik.errors.categoryId ? (
+          {/* {formik.errors.category ? (
             <Typography
               variant="subtitle2"
               sx={{ color: "red" }}
               data-testid="register-error-first_name"
             >
-              {formik.errors.categoryId}
+              {formik.errors.category}
             </Typography>
-          ) : null}
+          ) : null} */}
           <Typography variant="subtitle1" sx={{ mt: "auto", marginTop: 1 }}>
             {t("movie.poster")}
           </Typography>
@@ -223,7 +243,7 @@ function useAddMovieSchema() {
   return Yup.object({
     title: Yup.string().required(t("formikErrors.titleReq") || ""),
     description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
-    releaseDate: Yup.string().required(t("formikErrors.releaseDateReq") || "").matches(datevalidator,t("formikErrors.releaseDateFormat") || ""),
-    categoryId: Yup.string().required(t("formikErrors.categoryReq") || ""),
+    release_date: Yup.string().required(t("formikErrors.release_dateReq") || "").matches(datevalidator,t("formikErrors.release_dateFormat") || ""),
+    //category: Yup.string().required(t("formikErrors.categoryReq") || ""),
   });
 }
