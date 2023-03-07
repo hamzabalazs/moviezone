@@ -15,6 +15,7 @@ interface Props {
 
 export default function MovieListCard({movie}: Props) {
   const { t } = useTranslation();
+  const rating = parseInt(movie.rating)
   return (
     <Link
       href={"/movie/" + movie.id}
@@ -60,10 +61,10 @@ export default function MovieListCard({movie}: Props) {
             {
               <Rating
                 name="read-only"
-                value={parseInt(movie.rating)}
+                value={rating}
                 precision={0.5}
                 readOnly
-                data-value={parseInt(movie.rating)}
+                data-value={rating}
                 data-testid="movie-list-card-rating"
               />
             }

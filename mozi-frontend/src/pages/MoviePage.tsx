@@ -25,10 +25,12 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ReviewCard from "../components/cards/ReviewCard";
 import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
+import { useMovies } from "../api/movie/useMovies";
 
 export default function MoviePage() {
   const navigate = useNavigate();
   const context = useApiContext();
+  const {refetchData} = useMovies()
   const currUser = context.user;
   const { t } = useTranslation();
   const [editingMovie, setEditingMovie] = useState<Movie | undefined>(
@@ -70,6 +72,10 @@ export default function MoviePage() {
       (x) => x.user.id === currUser?.id
     );
     setUserReviewList(usersReviews);
+    if(currMovie){
+      setSelectedMovie(currMovie)
+      
+    }
   }, [context.reviews]);
 
   useEffect(() => {
@@ -139,6 +145,7 @@ export default function MoviePage() {
 
   useEffect(() => {
     updateReviewList();
+    refetchData();
   }, [context.reviews]);
 
   return (

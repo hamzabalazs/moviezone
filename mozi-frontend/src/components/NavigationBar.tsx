@@ -251,8 +251,7 @@ export default function NavigationBar() {
               <Avatar
                 sx={{ width: 40, height: 40, backgroundColor: "primary.light" }}
               >
-                {first_name[0]}
-                {last_name[0]}
+                
               </Avatar>
             </IconButton>
           </Tooltip>
