@@ -25,7 +25,7 @@ const movielist = {
         id:"idC2",
         name:"name2"
       },
-      rating: 0,
+      rating:"0"
     },
     {
       id: "idmovie2",
@@ -37,7 +37,7 @@ const movielist = {
         id:"idC2",
         name:"name2"
       },
-      rating: 0,
+      rating: "0",
     },
   ],
 };
@@ -48,7 +48,7 @@ const editmovie: Movie = {
   description: "descriptionmovieEDITED",
   poster: "postermovieEDITED",
   release_date: "release_datemovieEDITED",
-  rating: 3,
+  rating: "3",
   category: {
     id:"idC1",
     name:"name1"
@@ -65,7 +65,7 @@ const movieadd: Movie = {
     id:"idC2",
     name:"name2"
   },
-  rating: 0,
+  rating: "0",
 };
 
 const deletemovie: string = "idmovie3";

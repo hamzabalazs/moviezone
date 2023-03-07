@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertType, Movie, Review, ReviewUpdated } from "../api/types";
+import { AlertType, Movie, Review } from "../api/types";
 import AlertComponent from "../components/AlertComponent";
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
@@ -37,25 +37,25 @@ export default function MoviePage() {
   const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
     undefined
   );
-  const [editingReview, setEditingReview] = useState<ReviewUpdated | undefined>(
+  const [editingReview, setEditingReview] = useState<Review | undefined>(
     undefined
   );
   const [deletingReview, setDeletingReview] = useState<
-    ReviewUpdated | undefined
+    Review | undefined
   >(undefined);
 
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const [ratingDescription, setRatingDescription] = useState("");
   const [value, setValue] = useState<number | null>(0);
   const [userReviewList, setUserReviewList] = useState<Review[]>([]);
-  const [movieReviewList, setMovieReviewList] = useState<ReviewUpdated[]>([]);
+  const [movieReviewList, setMovieReviewList] = useState<Review[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie>({
     id: "",
     title: "",
     description: "",
     poster: "",
     release_date: "",
-    rating: 0,
+    rating: "0",
     category: {
       id:"",
       name:""
@@ -88,65 +88,49 @@ export default function MoviePage() {
 
   const handleAddReview = async () => {
     const movie_id = currmovie_id;
-    const rating = value as number;
-    const description = ratingDescription;
-    
-    if (
-      movie_id !== undefined &&
-      userReviewList.length === 0 &&
-      rating !== 0 &&
-      description !== "" &&
-      currUser
-    ) {
-      const result = await context.addReview(rating,description,movie_id);
-      if (!result) return;
-
-      
-      setAlert({isOpen:true,message:"Review success",type:"success"})
-      setRatingDescription("");
-      setValue(0);
-    } else if (movie_id === undefined) {
-      setAlert({isOpen:true,message:"There is no movie to be rated",type:"error"})
-    } else if (userReviewList.length !== 0) {
-      setAlert({isOpen:true,message:"You have already rated this movie!",type:"error"})
-    } else if (rating === 0) {
-      setAlert({isOpen:true,message:"No rating has been given!",type:"error"})
-
-    } else if (description === "") {
-      setAlert({isOpen:true,message:"No description has been given!",type:"error"})
-    } else {
-      setAlert({isOpen:true,message:"Some error",type:"error"})
+    let rating;
+    if(value){
+      rating = value.toString()
     }
+    else rating = "0"
+    const description = ratingDescription;
+    if(currUser){
+      const user_id = currUser.id
+      if (
+        movie_id !== undefined &&
+        userReviewList.length === 0 &&
+        rating !== "0" &&
+        description !== "" &&
+        currUser
+      ) {
+        const result = await context.addReview(rating,description,movie_id,user_id);
+        if (!result) return;
+  
+        
+        setAlert({isOpen:true,message:"Review success",type:"success"})
+        setRatingDescription("");
+        setValue(0);
+      } else if (movie_id === undefined) {
+        setAlert({isOpen:true,message:"There is no movie to be rated",type:"error"})
+      } else if (userReviewList.length !== 0) {
+        setAlert({isOpen:true,message:"You have already rated this movie!",type:"error"})
+      } else if (rating === "0") {
+        setAlert({isOpen:true,message:"No rating has been given!",type:"error"})
+  
+      } else if (description === "") {
+        setAlert({isOpen:true,message:"No description has been given!",type:"error"})
+      } else {
+        setAlert({isOpen:true,message:"Some error",type:"error"})
+      }
+    }
+    
   };
 
   async function updateReviewList() {
-    const updatedReviewList: ReviewUpdated[] = [];
-    for (let i = 0; i < context.reviews.length; i++) {
-      const user_id = context.reviews[i].user.id;
-      const user = context.users.find((x) => x.id === user_id);
-      if (user !== undefined) {
-        const movie = context.reviews[i].movie;
-        const user = context.reviews[i].user;
-        const first_name = user.first_name;
-        const last_name = user.last_name;
-        const id = context.reviews[i].id;
-        const description = context.reviews[i].description;
-        const rating = context.reviews[i].rating;
-        updatedReviewList.push({
-          id,
-          movie,
-          user,
-          first_name,
-          last_name,
-          description,
-          rating,
-        });
-      } else continue;
-    }
-    const userReviews = updatedReviewList.filter(
+    const userReviews = context.reviews.filter(
       (x) => x.movie.id === currmovie_id && x.user.id === currUser?.id
     );
-    const movieReviews = updatedReviewList.filter(
+    const movieReviews = context.reviews.filter(
       (x) => x.movie.id === currmovie_id
     );
     setUserReviewList(userReviews);

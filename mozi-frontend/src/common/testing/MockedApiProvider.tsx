@@ -35,7 +35,7 @@ export function MockedApiContext({
               id:"idC1",
               name:"name1"
             },
-            rating: 3.5,
+            rating: "3",
           },
           {
             id: "idM2",
@@ -47,7 +47,7 @@ export function MockedApiContext({
               id:"idC2",
               name:"name2"
             },
-            rating: 2,
+            rating: "2",
           },
           {
             id: "idM3",
@@ -59,7 +59,7 @@ export function MockedApiContext({
               id:"idC3",
               name:"name3"
             },
-            rating: 1,
+            rating: "1",
           },
           {
             id: "idM4",
@@ -71,7 +71,7 @@ export function MockedApiContext({
               id:"idC1",
               name:"name1"
             },
-            rating: 3,
+            rating: "3",
           },
           {
             id: "idM5",
@@ -83,7 +83,7 @@ export function MockedApiContext({
               id:"idC2",
               name:"name2"
             },
-            rating: 5,
+            rating: "5",
           },
           {
             id: "idM6",
@@ -95,7 +95,7 @@ export function MockedApiContext({
               id:"idC2",
               name:"name2"
             },
-            rating: 4.5,
+            rating: "4",
           },
           {
             id: "idM7",
@@ -107,7 +107,7 @@ export function MockedApiContext({
               id:"idC3",
               name:"name3"
             },
-            rating: 1.5,
+            rating: "1",
           },
           {
             id: "idM8",
@@ -119,7 +119,7 @@ export function MockedApiContext({
               id:"idC3",
               name:"name3"
             },
-            rating: 1,
+            rating: "1",
           },
         ],
         categories: [
@@ -179,10 +179,10 @@ export function MockedApiContext({
                 id:"idC1",
                 name:"name1"
               },
-              rating:0
+              rating:"0"
             } ,
             description: "description1EDITED",
-            rating: 5,
+            rating: "5",
           },
           {
             id: "idR2",
@@ -204,10 +204,10 @@ export function MockedApiContext({
                 id:"idC1",
                 name:"name1"
               },
-              rating:0
+              rating:"0"
             } ,
             description: "description1EDITED",
-            rating: 5,
+            rating: "5",
           },
           {
             id: "idR3",
@@ -229,10 +229,10 @@ export function MockedApiContext({
                 id:"idC1",
                 name:"name1"
               },
-              rating:0
+              rating:"0"
             } ,
             description: "description1EDITED",
-            rating: 5,
+            rating: "5",
           },
           {
             id: "idR4",
@@ -254,10 +254,10 @@ export function MockedApiContext({
                 id:"idC1",
                 name:"name1"
               },
-              rating:0
+              rating:"0"
             } ,
             description: "description1EDITED",
-            rating: 5,
+            rating: "5",
           },
           {
             id: "idR5",
@@ -279,10 +279,10 @@ export function MockedApiContext({
                 id:"idC1",
                 name:"name1"
               },
-              rating:0
+              rating:"0"
             } ,
             description: "description1EDITED",
-            rating: 5,
+            rating: "5",
           },
         ],
         usersLoading: false,

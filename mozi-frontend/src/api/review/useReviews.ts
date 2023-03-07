@@ -6,7 +6,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 export type ReviewData = {
   reviews: Review[];
   reviewsLoading: boolean;
-  addReview: (rating:number,description:string,movie_id:string) => Promise<boolean>;
+  addReview: (rating:string,description:string,movie_id:string,user_id:string) => Promise<boolean>;
   editReview: (
     review: Omit<Review, "user" | "movie">
   ) => Promise<boolean>;
@@ -100,7 +100,7 @@ export function useReviews(token?: string): ReviewData {
     setReviews(reviewsData.getReviews);
   }
 
-  async function addReview(rating:number,description:string,movie_id:string): Promise<boolean> {
+  async function addReview(rating:string,description:string,movie_id:string,user_id:string): Promise<boolean> {
     if (!token) return false;
     const result = await AddReviewAPI({
       variables: {
@@ -108,6 +108,7 @@ export function useReviews(token?: string): ReviewData {
           rating: rating,
           description: description,
           movie_id:movie_id,
+          user_id:user_id
         },
       },
     });
@@ -144,7 +145,6 @@ export function useReviews(token?: string): ReviewData {
 
   useEffect(() => {
     if (reviewsData) {
-      console.log(reviews)
       refetchData();
     }
   }, [reviewsData]);

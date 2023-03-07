@@ -68,7 +68,7 @@ export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {
             <Rating
               size="large"
               name="read-only"
-              value={movie.rating}
+              value={parseInt(movie.rating)}
               precision={0.5}
               readOnly
               data-testid="moviepage-rating"

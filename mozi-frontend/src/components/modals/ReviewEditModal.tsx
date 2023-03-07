@@ -48,7 +48,7 @@ export default function ReviewEditModal({
   const formik = useFormik({
     initialValues: {
       description: review?.description || "",
-      rating: review?.rating || 0
+      rating: review?.rating || "0"
     },
     onSubmit: updateReview,
     enableReinitialize: true,
@@ -104,7 +104,7 @@ export default function ReviewEditModal({
             <Rating
               name="rating"
               id="rating"
-              value={formik.values.rating}
+              value={parseInt(formik.values.rating)}
               onChange={formik.handleChange}
               data-value={formik.values.rating}
               data-testid="review-edit-modal-rating"

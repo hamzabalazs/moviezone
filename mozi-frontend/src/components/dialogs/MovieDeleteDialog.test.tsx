@@ -22,7 +22,7 @@ const testMovie: Movie = {
     id:"idC1",
     name:"name1"
   },
-  rating: 3.5,
+  rating: "3",
 };
 
 function renderMovieDeleteDialog(props:{

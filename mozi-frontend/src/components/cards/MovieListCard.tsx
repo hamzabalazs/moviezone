@@ -60,10 +60,10 @@ export default function MovieListCard({movie}: Props) {
             {
               <Rating
                 name="read-only"
-                value={movie.rating}
+                value={parseInt(movie.rating)}
                 precision={0.5}
                 readOnly
-                data-value={movie.rating}
+                data-value={parseInt(movie.rating)}
                 data-testid="movie-list-card-rating"
               />
             }

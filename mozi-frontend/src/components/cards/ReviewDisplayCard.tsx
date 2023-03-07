@@ -1,9 +1,9 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import { ReviewUpdated } from "../../api/types";
+import { Review} from "../../api/types";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-  review: ReviewUpdated;
+  review: Review;
 }
 
 export default function ReviewDisplayCard(props: Props) {
@@ -34,7 +34,7 @@ export default function ReviewDisplayCard(props: Props) {
           sx={{ mt: "auto" }}
           data-testid="review-card-name"
         >
-          {props.review.first_name} {props.review.last_name}
+          {props.review.user.first_name} {props.review.user.last_name}
         </Typography>
         <Typography variant="inherit" gutterBottom sx={{ mt: "auto" }}>
           {t("review.reviewCard.description")} :

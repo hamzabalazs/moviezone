@@ -16,7 +16,7 @@ export type Review = {
   user: User;
   movie: Movie;
   description: string;
-  rating: number;
+  rating: string;
 };
 
 export type Category = {
@@ -29,20 +29,11 @@ export type Movie = {
   title: string;
   description: string;
   poster: string;
-  rating: number;
+  rating: string;
   release_date: string;
   category: Category;
 };
 
-export type ReviewUpdated = {
-  id: string;
-  movie: Movie;
-  user: User;
-  first_name: string;
-  last_name: string;
-  description: string;
-  rating: number;
-};
 
 export type AlertType = {
   isOpen: boolean;

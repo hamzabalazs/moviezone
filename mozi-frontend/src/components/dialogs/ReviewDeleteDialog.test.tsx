@@ -37,10 +37,10 @@ const testReview: Review = {
       id:"idC1",
       name:"name1"
     },
-    rating:0
+    rating:"0"
   } ,
   description: "description1EDITED",
-  rating: 5,
+  rating: "5",
 };
 
 function renderReviewDeleteDialog(props: {

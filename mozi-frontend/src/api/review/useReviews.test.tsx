@@ -37,10 +37,10 @@ const reviewlist = {
           id:"idC1",
           name:"name1"
         },
-        rating:0
+        rating:"0"
       } ,
       description: "description1",
-      rating: 3,
+      rating: "3",
     },
     {
       id: "idC2",
@@ -62,10 +62,10 @@ const reviewlist = {
           id:"idC1",
           name:"name1"
         },
-        rating:0
+        rating:"0"
       } ,
       description: "description2",
-      rating: 3,
+      rating: "3",
     },
     {
       id: "idC3",
@@ -87,10 +87,10 @@ const reviewlist = {
           id:"idC1",
           name:"name1"
         },
-        rating:0
+        rating:"0"
       } ,
       description: "description3",
-      rating: 3,
+      rating: "3",
     },
     {
       id: "idC4",
@@ -112,10 +112,10 @@ const reviewlist = {
           id:"idC1",
           name:"name1"
         },
-        rating:0
+        rating:"0"
       } ,
       description: "description4",
-      rating: 3,
+      rating: "3",
     },
   ],
 };
@@ -140,10 +140,10 @@ const editreview: Review = {
       id:"idC1",
       name:"name1"
     },
-    rating:0
+    rating:"0"
   } ,
   description: "description1EDITED",
-  rating: 5,
+  rating: "5",
 };
 
 const addreview: Review = {
@@ -166,10 +166,10 @@ const addreview: Review = {
       id:"idC1",
       name:"name1"
     },
-    rating:0
+    rating:"0"
   } ,
   description: "description5ADDED",
-  rating: 5,
+  rating: "5",
 };
 
 const deletereview: string = "idC2";
@@ -265,7 +265,7 @@ test("addreviewsTest", async () => {
   });
 
   await act(async () => {
-    result.current.addReview(addreview.rating,addreview.description,addreview.id);
+    result.current.addReview(addreview.rating,addreview.description,addreview.id,addreview.user.id);
   });
 
   await waitFor(() => {

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import { ReviewData } from "../../api/review/useReviews";
-import { Review, ReviewUpdated } from "../../api/types";
+import { Review } from "../../api/types";
 import { MockedApiContext } from "../../common/testing/MockedApiProvider";
 import ReviewEditModal from "./ReviewEditModal";
 
@@ -32,10 +32,10 @@ const testReview: Review = {
       id:"idC1",
       name:"name1"
     },
-    rating:0
+    rating:"0"
   } ,
   description: "description1EDITED",
-  rating: 5,
+  rating: "5",
 };
 
 const newReview = {
