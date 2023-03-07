@@ -4,7 +4,7 @@ const userModule = require("../utils/user");
 const movieModule = require("../utils/movie");
 const categoryModule = require("../utils/category");
 const reviewModule = require("../utils/review");
-const authModule = require("../utils/auth")
+const authModule = require("../utils/auth");
 
 const resolvers = {
   Query: {
@@ -18,15 +18,15 @@ const resolvers = {
     async checkForUser(_, { input }, context) {
       return await userModule.checkForUser(input.email, context);
     },
-    async getUserForLogin(_, {input},context){
-      return await userModule.getUserForLogin(input.email,context);
+    async getUserForLogin(_, { input }, context) {
+      return await userModule.getUserForLogin(input.email, context);
     },
-    async logIn(_,{input},context){
-      await authModule.logIn(input,context);
+    async logIn(_, { input }, context) {
+      await authModule.logIn(input, context);
     },
 
-    async getExistingToken(_,{input},context){
-      await authModule.getExistingToken(input,context);
+    async getExistingToken(_, { input }, context) {
+      await authModule.getExistingToken(input, context);
     },
     // Categories
     async getCategories(_, __, context) {
@@ -45,6 +45,9 @@ const resolvers = {
     async getReviewById(_, { input }, context) {
       return await reviewModule.getReviewById(input.id, context);
     },
+    async getReviewsOfMovie(_,{input},context){
+      return await reviewModule.getReviewsOfMovie(input.movie_id,context)
+    },
     // Movies
     async getMovies(_, __, context) {
       return await movieModule.getMovies(_, context);
@@ -52,7 +55,6 @@ const resolvers = {
     async getMovieById(_, { input }, context) {
       return await movieModule.getMovieById(input.id, context);
     },
-    
   },
   Review: {
     async movie(review, __, context) {
@@ -65,7 +67,7 @@ const resolvers = {
   Movie: {
     async rating(movie, __, context) {
       input = { movie_id: movie.id };
-      const reviews = await reviewModule.getReviews(input, context);
+      const reviews = await reviewModule.getReviewsOfMovie(movie.id, context);
       let avg = 0;
       reviews.map((review) => (avg += parseInt(review.rating)));
       if (avg !== 0) {
@@ -95,10 +97,9 @@ const resolvers = {
         role: "viewer",
       };
       const createdUser = await userModule.createUser(user, context);
-      if(createdUser === undefined){
-        throw new Error("User creation failed!")
+      if (createdUser === undefined) {
+        throw new Error("User creation failed!");
       }
-
     },
     async updateUser(_, args, context) {
       const updatedUser = args.input;
@@ -112,7 +113,7 @@ const resolvers = {
       if (user === undefined) throw new Error("User does not exist!");
       return await userModule.deleteUser(user_id, context);
     },
-    
+
     // Categories
     async createCategory(_, args, context) {
       const newCategory = args.input;
@@ -216,11 +217,10 @@ const resolvers = {
       return await reviewModule.deleteReview(reviewId, context);
     },
     // Authentication
-    async createToken(_,args,context){
+    async createToken(_, args, context) {
       const user = args.input;
-      return await authModule.createToken(user,context)
+      return await authModule.createToken(user, context);
     },
-    
   },
 };
 

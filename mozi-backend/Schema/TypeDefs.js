@@ -163,6 +163,10 @@ const typeDefs = gql`
     movie_id: ID!
   }
 
+  input GetReviewsOfMovieInput{
+    movie_id:ID!
+  }
+
   input LoginInput{
     email:String!
     password:String!
@@ -196,6 +200,7 @@ const typeDefs = gql`
     getReviews: [Review!]!
     getReviewById(input: ReviewInput!): Review!
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
+    getReviewsOfMovie(input:GetReviewsOfMovieInput!): [Review!]!
     getExistingToken(input: GetTokenInput!): Session!
   }
 

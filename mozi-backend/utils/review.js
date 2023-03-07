@@ -34,6 +34,18 @@ function getReviewsOfUserForMovie(user_id, movie_id, context) {
   });
 }
 
+function getReviewsOfMovie(movie_id,context){
+  const sql = `SELECT * FROM review WHERE review.movie_id = "${movie_id}"`;
+  return new Promise((resolve, reject) => {
+    context.db.all(sql, (err, rows) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(rows);
+    });
+  });
+}
+
 function createReview(review, context) {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
     VALUES ("${review.id}","${review.rating}","${review.description}","${review.movie_id}","${review.user_id}")`;
@@ -82,6 +94,7 @@ module.exports = {
   getReviews,
   getReviewById,
   getReviewsOfUserForMovie,
+  getReviewsOfMovie,
   deleteReview,
   updateReview,
   createReview,
