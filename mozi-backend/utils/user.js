@@ -1,5 +1,5 @@
 const md5 = require("md5");
-const authModule = require("./auth");
+const tokenModule = require("./auth");
 
 function getUsers(__, context) {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
@@ -37,17 +37,7 @@ function checkForUser(email, context) {
   });
 }
 
-function getUserForLogin(email, context) {
-  const sql = `SELECT * FROM user WHERE user.email = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(sql,[email], (err, rows) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
-}
+
 
 async function createUser(user, context) {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
@@ -69,9 +59,9 @@ async function createUser(user, context) {
 }
 
 async function updateUser(user, context) {
-  const token = await authModule.getToken(user, context);
+  const token = await tokenModule.getToken(user, context);
   if (!token) throw new Error("No Token");
-  const role = await authModule.determineRole(context);
+  const role = await tokenModule.determineRole(context);
   if (
     token.token === context.req.headers["auth-token"] ||
     role.role === "admin"
@@ -129,9 +119,9 @@ async function updateUser(user, context) {
 }
 
 async function deleteUser(id, context) {
-  const token = await authModule.getToken(user, context);
+  const token = await tokenModule.getToken(user, context);
   if (!token) throw new Error("No Token");
-  const role = await authModule.determineRole(context);
+  const role = await tokenModule.determineRole(context);
   if (
     token.token === context.req.headers["auth-token"] ||
     role.role === "admin"
@@ -156,5 +146,5 @@ module.exports = {
   getUsers,
   checkForUser,
   getUserById,
-  getUserForLogin,
+  
 };

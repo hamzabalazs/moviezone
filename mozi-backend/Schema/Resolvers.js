@@ -5,6 +5,7 @@ const movieModule = require("../utils/movie");
 const categoryModule = require("../utils/category");
 const reviewModule = require("../utils/review");
 const authModule = require("../utils/auth");
+const tokenModule = require("../utils/token")
 
 const resolvers = {
   Query: {
@@ -26,10 +27,10 @@ const resolvers = {
       await authModule.logIn(input, context);
     },
     async getExistingToken(_, { input }, context) {
-      await authModule.getExistingToken(input, context);
+      await tokenModule.getExistingToken(input, context);
     },
     async determineRole(_,__,context){
-      await authModule.determineRole(_,context)
+      await tokenModule.determineRole(_,context)
     },
     // Categories
     async getCategories(_, __, context) {
@@ -120,8 +121,9 @@ const resolvers = {
     // Categories
     async createCategory(_, args, context) {
       const token = context.req.headers['auth-token']
+      console.log(token)
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const newCategory = args.input;
       const isCategory = await categoryModule.checkForCategory(
@@ -136,7 +138,8 @@ const resolvers = {
     async updateCategory(_, args, context) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
+      if(!role) throw new Error("Could not get role")
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedCategory = args.input;
       const isCategory = await categoryModule.getCategoryById(
@@ -149,7 +152,7 @@ const resolvers = {
     async deleteCategory(_, args, context) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const categoryId = args.input.id;
       const category = await categoryModule.getCategoryById(
@@ -163,7 +166,7 @@ const resolvers = {
     async createMovie(_, args, context) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const newMovie = args.input;
       const isCategory = await categoryModule.getCategoryById(
@@ -183,7 +186,7 @@ const resolvers = {
     async updateMovie(_, args, context) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedMovie = args.input;
       const isCategory = await categoryModule.getCategoryById(
@@ -198,7 +201,7 @@ const resolvers = {
     async deleteMovie(_, args, context) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role = await authModule.determineRole(_,context);
+      const role = await tokenModule.determineRole(context);
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const movie_id = args.input.id;
       const isMovie = await movieModule.getMovieById(movie_id, context);
@@ -246,7 +249,7 @@ const resolvers = {
     // Authentication
     async createToken(_, args, context) {
       const user = args.input;
-      return await authModule.createToken(user, context);
+      return await tokenModule.createToken(user, context);
     },
   },
 };

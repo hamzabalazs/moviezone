@@ -1,6 +1,6 @@
 import React from "react";
 import { API_URL } from "../constants";
-
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { CurrUser, User } from "../types";
 
 export type LogInData = {
@@ -10,37 +10,48 @@ export type LogInData = {
   hasRole: (role: User["role"]) => boolean;
 };
 
+const LOGIN = gql`
+  mutation CreateToken($input: AddTokenInput!) {
+    createToken(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+      token
+    }
+  }
+`;
+
 const USER_KEY = "user-info";
+const TOKEN_KEY = "token";
 
 export function useLogIn(): LogInData {
   const [user, setUser] = React.useState<CurrUser | undefined>(
     getPersistedUser()
   );
+  const [LoginAPI] = useMutation(LOGIN);
 
   async function logIn(email: string, password: string): Promise<boolean> {
-    try {
-      const response = await fetch(API_URL + "/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      if (response.status === 200) {
-        const res = await response.json();
-        const token = res.data.token;
-        const user = { ...res.data.user, token };
-        localStorage.setItem(USER_KEY, JSON.stringify(user));
-
-        setUser(user);
-        return true;
-      }
-    } catch (err) {}
-    return false;
+    const loggedUser = await LoginAPI({
+      variables: { input: { email, password } },
+    });
+    if (!loggedUser) return false;
+    else {
+      const token = loggedUser.data.createToken.token;
+      setUser(loggedUser.data.createToken);
+      localStorage.setItem(
+        USER_KEY,
+        JSON.stringify(loggedUser.data.createToken)
+      );
+      localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+      return true;
+    }
   }
 
   function logOut(): void {
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     setUser(undefined);
   }
 

@@ -24,18 +24,30 @@ import {
 import { ApiContextProvider, useApiContext } from "./api/ApiContext";
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
-import { setContext } from '@apollo/client/link/context'
+import { setContext } from "@apollo/client/link/context";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-export const client = new ApolloClient({
-  uri: "http://localhost:5000/graphql",
-  cache: new InMemoryCache(),
+const httpLink = createHttpLink({
+  uri: "http://localhost:5000/graphql"
 });
 
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("token");
+  return {
+    headers: {
+      ...headers,
+      'auth-token': token ? token : "",
+    },
+  };
+})
 
+export const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 root.render(
   <React.StrictMode>

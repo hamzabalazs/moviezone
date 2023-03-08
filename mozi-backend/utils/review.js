@@ -1,3 +1,5 @@
+const tokenModule = require("./token")
+
 function getReviews(_, context) {
   const sql = "SELECT * FROM review";
   return new Promise((resolve, reject) => {
@@ -60,7 +62,7 @@ function createReview(review, context) {
 }
 
 async function updateReview(review, context) {
-  const token = await authModule.getToken(user, context);
+  const token = await tokenModule.getToken(user, context);
   if (!token) throw new Error("No Token");
   if (token.token === context.req.headers["auth-token"]) {
     const updatedReview = await getReviewById(review.id, context);
@@ -86,9 +88,9 @@ async function updateReview(review, context) {
 }
 
 async function deleteReview(id, context) {
-  const token = await authModule.getToken(user, context);
+  const token = await tokenModule.getToken(user, context);
   if (!token) throw new Error("No Token");
-  const role = await authModule.determineRole(context);
+  const role = await tokenModule.determineRole(context);
   if (
     token.token === context.req.headers["auth-token"] ||
     role.role === "admin"
