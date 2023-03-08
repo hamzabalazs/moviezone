@@ -11,9 +11,9 @@ function getMovies(_, context) {
 }
 
 function getMovieById(id, context) {
-  const sql = `SELECT * FROM movie WHERE movie.id = "${id}"`;
+  const sql = `SELECT * FROM movie WHERE movie.id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql, (err, rows) => {
+    context.db.get(sql,[id], (err, rows) => {
       if (err) {
         reject(err);
       }
@@ -23,9 +23,9 @@ function getMovieById(id, context) {
 }
 
 function createMovie(movie, context) {
-  const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES ("${movie.id}","${movie.title}","${movie.description}","${movie.poster}","${movie.release_date}","${movie.category_id}")`;
+  const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
   return new Promise((resolve, reject) => {
-    context.db.run(sql, (err, rows) => {
+    context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category_id], err => {
       if (err) {
         reject(err);
       }
@@ -35,13 +35,13 @@ function createMovie(movie, context) {
 }
 
 function updateMovie(movie, context) {
-  const sql = `UPDATE movie SET title = "${movie.title}",
-    description = "${movie.description}",
-    poster = "${movie.poster}", 
-    release_date = "${movie.release_date}", 
-    category_id="${movie.category_id}" WHERE movie.id = "${movie.id}"`;
+  const sql = `UPDATE movie SET title = ?,
+    description = ?,
+    poster = ?, 
+    release_date = ?, 
+    category_id=? WHERE movie.id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.run(sql, (err, rows) => {
+    context.db.run(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id], err => {
       if (err) {
         reject(err);
       }
@@ -55,9 +55,9 @@ function deleteMovie(id, context) {
   if(movie === undefined){
     throw new Error("Movie not found!")
   }
-  const sql = `DELETE FROM movie WHERE movie.id = "${id}"`;
+  const sql = `DELETE FROM movie WHERE movie.id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.run(sql, (err, rows) => {
+    context.db.run(sql,[id], err => {
       if (err) {
         reject(err);
       }

@@ -8,9 +8,9 @@ async function logIn(loginDetails, context) {
   const user = await userModule.getUserForLogin(email,context)
   if(user === undefined) throw new Error("User does not exist!")
   if(md5(password) === user.password){
-    const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = "${user.id}"`
+    const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`
     return new Promise((resolve,reject) => {
-      context.db.get(sql,(err,rows) => {
+      context.db.get(sql,[user.id],(err,rows) => {
         if(err){
           reject(err)
         }
@@ -35,9 +35,9 @@ async function createToken(loginDetails, context) {
       token: token,
     };
     const sql = `INSERT INTO session (token,user_id)
-    VALUES ("${token}","${user.id}")`;
+    VALUES (?,?)`;
     return new Promise((resolve, reject) => {
-      context.db.run(sql, (err, rows) => {
+      context.db.run(sql,[token,user.id], err => {
         if (err) {
           reject(err);
         }
@@ -56,9 +56,9 @@ async function createToken(loginDetails, context) {
 
 function getToken(user, context) {
   const user_id = user.id;
-  const sql = `SELECT * FROM session where user_id = "${user_id}"`;
+  const sql = `SELECT * FROM session where user_id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql, (err, rows) => {
+    context.db.get(sql,[user_id], (err, rows) => {
       if (err) {
         reject(err);
       }
@@ -67,4 +67,19 @@ function getToken(user, context) {
   });
 }
 
-module.exports = { logIn, createToken, getToken };
+function determineRole(context){
+  const token = context.req.headers['auth-token']
+  if(token !== ""){
+    const sql = `SELECT u.role FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`
+    return new Promise((resolve, reject) => {
+      context.db.get(sql,[token], (err, row) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(row);
+      });
+    });
+  }
+}
+
+module.exports = { logIn, createToken, getToken,determineRole };
