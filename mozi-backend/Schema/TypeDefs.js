@@ -34,6 +34,10 @@ const typeDefs = gql`
     token: String!
   }
 
+  type Role {
+    role:UserRole!
+  }
+
   type Category {
     id: ID!
     name: String!
@@ -202,6 +206,7 @@ const typeDefs = gql`
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input:GetReviewsOfMovieInput!): [Review!]!
     getExistingToken(input: GetTokenInput!): Session!
+    determineRole: Role!
   }
 
   # Mutations

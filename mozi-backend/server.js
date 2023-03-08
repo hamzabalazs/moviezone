@@ -15,8 +15,8 @@ async function startApolloServer(typeDefs, resolvers) {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context() {
-      return { db };
+    context({req}) {
+      return { db,req };
     },
   });
   const app = express();

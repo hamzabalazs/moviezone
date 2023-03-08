@@ -18,10 +18,13 @@ import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
+  createHttpLink,
+  DefaultContext,
 } from "@apollo/client";
 import { ApiContextProvider, useApiContext } from "./api/ApiContext";
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
+import { setContext } from '@apollo/client/link/context'
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

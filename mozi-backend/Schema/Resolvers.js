@@ -21,12 +21,15 @@ const resolvers = {
     async getUserForLogin(_, { input }, context) {
       return await userModule.getUserForLogin(input.email, context);
     },
+    //Authentication
     async logIn(_, { input }, context) {
       await authModule.logIn(input, context);
     },
-
     async getExistingToken(_, { input }, context) {
       await authModule.getExistingToken(input, context);
+    },
+    async determineRole(_,__,context){
+      await authModule.determineRole(_,context)
     },
     // Categories
     async getCategories(_, __, context) {
@@ -116,6 +119,10 @@ const resolvers = {
 
     // Categories
     async createCategory(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const newCategory = args.input;
       const isCategory = await categoryModule.checkForCategory(
         newCategory.name,
@@ -127,6 +134,10 @@ const resolvers = {
       return await categoryModule.createCategory(newCategory, context);
     },
     async updateCategory(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedCategory = args.input;
       const isCategory = await categoryModule.getCategoryById(
         updatedCategory.id,
@@ -136,6 +147,10 @@ const resolvers = {
       return await categoryModule.updateCategory(updatedCategory, context);
     },
     async deleteCategory(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const categoryId = args.input.id;
       const category = await categoryModule.getCategoryById(
         categoryId,
@@ -146,6 +161,10 @@ const resolvers = {
     },
     // Movies
     async createMovie(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const newMovie = args.input;
       const isCategory = await categoryModule.getCategoryById(
         newMovie.category_id,
@@ -162,6 +181,10 @@ const resolvers = {
       return await movieModule.createMovie(movie, context);
     },
     async updateMovie(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedMovie = args.input;
       const isCategory = await categoryModule.getCategoryById(
         updatedMovie.category_id,
@@ -173,6 +196,10 @@ const resolvers = {
       return await movieModule.updateMovie(updatedMovie, context);
     },
     async deleteMovie(_, args, context) {
+      const token = context.req.headers['auth-token']
+      if(!token) throw new Error("No token")
+      const role = await authModule.determineRole(_,context);
+      if(role.role === "viewer") throw new Error("Unauthorized!")
       const movie_id = args.input.id;
       const isMovie = await movieModule.getMovieById(movie_id, context);
       if (isMovie === undefined) {
