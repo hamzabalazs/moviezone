@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { client } from "../../index";
 import { Review } from "../types";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
 
 export type ReviewData = {
   reviews: Review[];
@@ -14,7 +13,7 @@ export type ReviewData = {
   refetchData: () => Promise<void>;
 };
 
-const GET_REVIEWS = gql`
+export const GET_REVIEWS = gql`
   query GetReviews {
   getReviews {
     id
@@ -33,7 +32,7 @@ const GET_REVIEWS = gql`
 }
 `;
 
-const ADD_REVIEW = gql`
+export const ADD_REVIEW = gql`
   mutation CreateReview($input: AddReviewInput!) {
     createReview(input: $input) {
       id
@@ -51,7 +50,7 @@ const ADD_REVIEW = gql`
   }
 `;
 
-const UPDATE_REVIEW = gql`
+export const UPDATE_REVIEW = gql`
   mutation UpdateReview($input: UpdateReviewInput!) {
     updateReview(input: $input) {
       id
@@ -69,7 +68,7 @@ const UPDATE_REVIEW = gql`
   }
 `;
 
-const DELETE_REVIEW = gql`
+export const DELETE_REVIEW = gql`
   mutation DeleteReview($input: DeleteReviewInput!) {
     deleteReview(input: $input) {
       id
@@ -93,6 +92,8 @@ export function useReviews(token?: string): ReviewData {
   const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
   const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
   const { data: reviewsData, loading } = useQuery(GET_REVIEWS);
+  const client = useApolloClient()
+
   async function refetchData() {
     await client.refetchQueries({
       include: [GET_REVIEWS],

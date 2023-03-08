@@ -2,13 +2,14 @@
   "name": "graphserver",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "server.ts",
   "scripts": {
-    "devStart": "nodemon server.js"
+    "devStart": "nodemon server.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.4.1",
     "apollo-server": "^3.12.0",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
@@ -19,6 +20,9 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "@types/md5": "^2.3.2",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   }
 }

@@ -1,6 +1,6 @@
-const { gql } = require("apollo-server-express");
+import { gql } from "apollo-server-express";
 
-const typeDefs = gql`
+export const typeDefs = gql`
   # Database types
   enum UserRole {
     admin
@@ -35,7 +35,7 @@ const typeDefs = gql`
   }
 
   type Role {
-    role:UserRole!
+    role: UserRole!
   }
 
   type Category {
@@ -167,21 +167,21 @@ const typeDefs = gql`
     movie_id: ID!
   }
 
-  input GetReviewsOfMovieInput{
-    movie_id:ID!
+  input GetReviewsOfMovieInput {
+    movie_id: ID!
   }
 
-  input LoginInput{
-    email:String!
-    password:String!
-  }
-
-  input AddTokenInput{
+  input LoginInput {
     email: String!
     password: String!
   }
 
-  input GetTokenInput{
+  input AddTokenInput {
+    email: String!
+    password: String!
+  }
+
+  input GetTokenInput {
     id: ID!
     first_name: String!
     last_name: String!
@@ -194,6 +194,7 @@ const typeDefs = gql`
     getUsers: [User!]!
     getUserById(input: UserInput!): User!
     checkForUser(input: UserEmailInput!): User!
+    getCurrentUser:User!
     logIn(input: LoginInput!): CurrentUser!
     getUserForLogin(input: UserEmailInput!): FullUser!
     getMovies: [Movie!]!
@@ -204,8 +205,8 @@ const typeDefs = gql`
     getReviews: [Review!]!
     getReviewById(input: ReviewInput!): Review!
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
-    getReviewsOfMovie(input:GetReviewsOfMovieInput!): [Review!]!
-    getExistingToken(input: GetTokenInput!): Session!
+    getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
+    getToken(input: GetTokenInput!): Session!
     determineRole: Role!
   }
 
@@ -227,4 +228,3 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = { typeDefs };

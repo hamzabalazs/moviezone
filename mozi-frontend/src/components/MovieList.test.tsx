@@ -27,11 +27,11 @@ test("add movie modal opens and shows correctly", () => {
   fireEvent.click(addMovieButton);
 
   const movieAddModal = screen.getByTestId("movie-add-modal");
-  const movieAddTitle = screen.getByTestId("movie-add-modal-title");
-  const movieAddDescription = screen.getByTestId("movie-add-modal-description");
-  const movieAddrelease_date = screen.getByTestId("movie-add-modal-release_date");
-  const movieAddCategory = screen.getByTestId("movie-add-modal-category");
-  const movieAddPoster = screen.getByTestId("movie-add-modal-poster");
+  const movieAddTitle = screen.getByTestId("movie-add-title");
+  const movieAddDescription = screen.getByTestId("movie-add-description");
+  const movieAddrelease_date = screen.getByTestId("movie-add-release_date");
+  const movieAddCategory = screen.getByTestId("movie-add-category");
+  const movieAddPoster = screen.getByTestId("movie-add-poster");
 
   expect(movieAddModal).not.toHaveAttribute("aria-hidden", "true");
   expect(movieAddTitle).toBeInTheDocument();
@@ -90,7 +90,7 @@ test("category autocomplete works fine", async () => {
 
   await waitFor(() => {
     const movielistcard = screen.getAllByTestId("movie-list-card");
-    expect(movielistcard).toHaveLength(4);
+    expect(movielistcard).toHaveLength(3);
   });
 
   fireEvent.click(addedCategoryCancel);

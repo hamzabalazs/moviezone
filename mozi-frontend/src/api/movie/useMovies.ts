@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Movie } from "../types";
-import { useQuery, gql, useMutation } from "@apollo/client";
-import { client } from "../../index";
+import { useQuery, gql, useMutation, useApolloClient } from "@apollo/client";
+
 
 export type MovieData = {
   movies: Movie[];
@@ -86,6 +86,7 @@ export function useMovies(token?: string): MovieData {
   const [UpdateMovieAPI] = useMutation(UPDATE_MOVIE);
   const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
   const { data: moviesData, loading } = useQuery(GET_MOVIES);
+  const client = useApolloClient()
 
   async function refetchData() {
     await client.refetchQueries({

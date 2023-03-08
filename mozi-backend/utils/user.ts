@@ -1,10 +1,26 @@
 const md5 = require("md5");
-const tokenModule = require("./auth");
+import { MyContext } from "../server";
+import { determineRole, getToken, createToken } from "./token";
+import { User, FullUser } from "./types";
 
-function getUsers(__, context) {
+export function getCurrentUser(context:MyContext): Promise<User> {
+  const token = context.req.headers['auth-token'];
+  if (!token) throw new Error("Could not get token of current user");
+  const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.role FROM session s JOIN user u ON s.user_id = u.id WHERE s.token = ?`;
+  return new Promise((resolve, reject) => {
+    context.db.get(sql, [token], (err: any, rows: User) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(rows);
+    });
+  });
+}
+
+export function getUsers(__:any, context:MyContext): Promise<User[]> {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
   return new Promise((resolve, reject) => {
-    context.db.all(sql, [], (err, rows) => {
+    context.db.all(sql, [], (err: any, rows: User[]) => {
       if (err) {
         reject(err);
       }
@@ -13,10 +29,10 @@ function getUsers(__, context) {
   });
 }
 
-function getUserById(id, context) {
+export function getUserById(id:string, context:MyContext): Promise<User> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql,[id], (err, rows) => {
+    context.db.get(sql, [id], (err: any, rows: User) => {
       if (err) {
         reject(err);
       }
@@ -25,10 +41,10 @@ function getUserById(id, context) {
   });
 }
 
-function checkForUser(email, context) {
+export function checkForUser(email:string, context:MyContext): Promise<User> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.email = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql,[email], (err, rows) => {
+    context.db.get(sql, [email], (err: any, rows: User) => {
       if (err) {
         reject(err);
       }
@@ -37,9 +53,7 @@ function checkForUser(email, context) {
   });
 }
 
-
-
-async function createUser(user, context) {
+export async function createUser(user:FullUser, context:MyContext): Promise<User> {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
   const returnUser = {
     id: user.id,
@@ -49,21 +63,33 @@ async function createUser(user, context) {
     role: user.role,
   };
   return new Promise((resolve, reject) => {
-    context.db.run(sql,[user.id,user.first_name,user.last_name,user.email,user.password,user.role], (err, rows) => {
-      if (err) {
-        reject(err);
+    context.db.run(
+      sql,
+      [
+        user.id,
+        user.first_name,
+        user.last_name,
+        user.email,
+        user.password,
+        user.role,
+      ],
+      (err:any) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(returnUser);
       }
-      resolve(returnUser);
-    });
+    );
   });
 }
 
-async function updateUser(user, context) {
-  const token = await tokenModule.getToken(user, context);
-  if (!token) throw new Error("No Token");
-  const role = await tokenModule.determineRole(context);
+export async function updateUser(user: FullUser, context:MyContext): Promise<User> {
+  const token = await getToken(user, context);
+  if (!token) throw new Error("No Token/User has not logged in yet ( no token created )");
+  const role = await determineRole(context);
+  if (role === undefined) throw new Error("Role not found");
   if (
-    token.token === context.req.headers["auth-token"] ||
+    token.token === context.req.headers['auth-token'] ||
     role.role === "admin"
   ) {
     const currentUser = await getUserById(user.id, context);
@@ -82,7 +108,7 @@ async function updateUser(user, context) {
           role="${user.role}" WHERE user.id = "${user.id}"`;
 
     if (!user.role) {
-      const returnUser = {
+      const returnUser: User = {
         id: user.id,
         first_name: user.first_name,
         last_name: user.last_name,
@@ -90,7 +116,7 @@ async function updateUser(user, context) {
         role: currentUser.role,
       };
       return new Promise((resolve, reject) => {
-        context.db.run(sql, (err, rows) => {
+        context.db.run(sql, (err: any) => {
           if (err) {
             reject(err);
           }
@@ -106,7 +132,7 @@ async function updateUser(user, context) {
         role: user.role,
       };
       return new Promise((resolve, reject) => {
-        context.db.run(sql, (err, rows) => {
+        context.db.run(sql, (err: any) => {
           if (err) {
             reject(err);
           }
@@ -118,33 +144,25 @@ async function updateUser(user, context) {
   throw new Error("Unauthorized!");
 }
 
-async function deleteUser(id, context) {
-  const token = await tokenModule.getToken(user, context);
+export async function deleteUser(id: string, context:MyContext): Promise<User> {
+  const user = await getUserById(id, context);
+  const token = await getToken(user, context);
   if (!token) throw new Error("No Token");
-  const role = await tokenModule.determineRole(context);
+  const role = await determineRole(context);
+  if (role === undefined) throw new Error("Role not found");
   if (
-    token.token === context.req.headers["auth-token"] ||
+    token.token === context.req.headers['auth-token'] ||
     role.role === "admin"
   ) {
-    const user = await getUserById(id, context);
     const sql = `DELETE FROM user WHERE user.id = "${id}"`;
     return new Promise((resolve, reject) => {
-      context.db.run(sql, (err, rows) => {
+      context.db.run(sql, (err:any) => {
         if (err) {
           reject(err);
         }
         resolve(user);
       });
     });
-  } throw new Error("Unauthorized!")
+  }
+  throw new Error("Unauthorized!");
 }
-
-module.exports = {
-  createUser,
-  deleteUser,
-  updateUser,
-  getUsers,
-  checkForUser,
-  getUserById,
-  
-};

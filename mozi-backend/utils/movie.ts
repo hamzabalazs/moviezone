@@ -1,4 +1,7 @@
-function getMovies(_, context) {
+import { MyContext } from "../server";
+import { CreateMovieInput, Movie, UpdateMovieInput } from "./types";
+
+export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
   return new Promise((resolve, reject) => {
     context.db.all(sql, [], (err, rows) => {
@@ -10,7 +13,7 @@ function getMovies(_, context) {
   });
 }
 
-function getMovieById(id, context) {
+export function getMovieById(id:string, context:MyContext):Promise<Movie> {
   const sql = `SELECT * FROM movie WHERE movie.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql,[id], (err, rows) => {
@@ -22,10 +25,10 @@ function getMovieById(id, context) {
   });
 }
 
-function createMovie(movie, context) {
+export function createMovie(movie:Movie, context:MyContext):Promise<Movie> {
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
   return new Promise((resolve, reject) => {
-    context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category_id], err => {
+    context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id], err => {
       if (err) {
         reject(err);
       }
@@ -34,7 +37,7 @@ function createMovie(movie, context) {
   });
 }
 
-function updateMovie(movie, context) {
+export function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<UpdateMovieInput> {
   const sql = `UPDATE movie SET title = ?,
     description = ?,
     poster = ?, 
@@ -50,7 +53,7 @@ function updateMovie(movie, context) {
   });
 }
 
-function deleteMovie(id, context) {
+export function deleteMovie(id:string, context:MyContext):Promise<Movie> {
   const movie = Promise.resolve(getMovieById(id, context));
   if(movie === undefined){
     throw new Error("Movie not found!")
@@ -65,4 +68,4 @@ function deleteMovie(id, context) {
     });
   });
 }
-module.exports = { getMovies, getMovieById,deleteMovie,updateMovie,createMovie };
+

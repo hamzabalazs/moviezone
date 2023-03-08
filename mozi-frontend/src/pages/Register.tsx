@@ -186,7 +186,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="register-error-first_name"
+          data-testid="register-errors"
         >
           {error}
         </Typography>

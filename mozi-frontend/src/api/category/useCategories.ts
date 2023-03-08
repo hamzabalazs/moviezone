@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Category } from "../types";
-import { useQuery, gql, useMutation } from '@apollo/client'
-import { client } from "../../index";
+import { useQuery, gql, useMutation, useApolloClient } from '@apollo/client'
+
 
 export type CategoryData = {
   categories: Category[];
@@ -54,6 +54,8 @@ export function useCategories(token?: string): CategoryData {
   const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY)
   const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY)
   const {data:categoriesData,loading} = useQuery(GET_CATEGORIES)
+  const client = useApolloClient()
+
   async function refetchData() {
     await client.refetchQueries({
       include: [GET_CATEGORIES]

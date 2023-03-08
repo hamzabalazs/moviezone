@@ -38,10 +38,10 @@ test("register error if first_name is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrorFirstName = screen.getByTestId(
-      "register-error-first_name"
+    const registerErrors = screen.getAllByTestId(
+      "register-errors"
     );
-    expect(registerErrorFirstName).toHaveTextContent(
+    expect(registerErrors[0]).toHaveTextContent(
       "formikErrors.firstNameReq"
     );
   });
@@ -62,8 +62,12 @@ test("register error if last_name is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrorLastName = screen.getByTestId("register-error-last_name");
-    expect(registerErrorLastName).toHaveTextContent("formikErrors.lastNameReq");
+    const registerErrors = screen.getAllByTestId(
+      "register-errors"
+    );
+    expect(registerErrors[1]).toHaveTextContent(
+      "formikErrors.lastNameReq"
+    );
   });
 });
 
@@ -82,8 +86,12 @@ test("register error if email is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrorEmail = screen.getByTestId("register-error-email");
-    expect(registerErrorEmail).toHaveTextContent("formikErrors.emailReq");
+    const registerErrors = screen.getAllByTestId(
+      "register-errors"
+    );
+    expect(registerErrors[2]).toHaveTextContent(
+      "formikErrors.emailReq"
+    );
   });
 });
 
@@ -102,8 +110,12 @@ test("register error if password is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrorPassword = screen.getByTestId("register-error-password");
-    expect(registerErrorPassword).toHaveTextContent("formikErrors.passwordReq");
+    const registerErrors = screen.getAllByTestId(
+      "register-errors"
+    );
+    expect(registerErrors[3]).toHaveTextContent(
+      "formikErrors.passwordReq"
+    );
   });
 });
 

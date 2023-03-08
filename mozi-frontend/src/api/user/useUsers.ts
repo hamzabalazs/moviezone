@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { User } from "../types";
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { client } from "../../index";
+import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
+
 
 export type UserData = {
   users: User[];
@@ -14,7 +14,7 @@ export type UserData = {
   refetchData: () => Promise<void>;
 };
 
-const GET_USERS = gql`
+export const GET_USERS = gql`
   query GetUsers {
     getUsers {
       id
@@ -26,7 +26,7 @@ const GET_USERS = gql`
   }
 `;
 
-const ADD_USER = gql`
+export const ADD_USER = gql`
   mutation CreateUser($input: AddUserInput!) {
     createUser(input: $input) {
       id
@@ -38,7 +38,7 @@ const ADD_USER = gql`
   }
 `;
 
-const UPDATE_USER = gql`
+export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
       id
@@ -50,7 +50,7 @@ const UPDATE_USER = gql`
   }
 `;
 
-const DELETE_USER = gql`
+export const DELETE_USER = gql`
   mutation DeleteUser($input: DeleteUserInput!) {
     deleteUser(input: $input) {
       id
@@ -68,7 +68,7 @@ export function useUsers(token?: string): UserData {
   const [UpdateUserAPI] = useMutation(UPDATE_USER);
   const [DeleteUserAPI] = useMutation(DELETE_USER);
   const { data: usersData, loading } = useQuery(GET_USERS);
-
+  const client = useApolloClient()
   async function refetchData() {
     await client.refetchQueries({
       include: [GET_USERS],
