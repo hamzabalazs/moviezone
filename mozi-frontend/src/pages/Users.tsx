@@ -11,6 +11,7 @@ import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
 import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
+import LoadingComponent from "../components/LoadingComponent";
 
 
 export function Users() {
@@ -22,6 +23,7 @@ export function Users() {
 
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
+  if(context.usersLoading) return LoadingComponent(context.usersLoading)
 
   return (
     <>

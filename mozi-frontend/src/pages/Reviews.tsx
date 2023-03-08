@@ -11,6 +11,7 @@ import ReviewCard from "../components/cards/ReviewCard";
 import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
+import LoadingComponent from "../components/LoadingComponent";
 
 function Reviews() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ function Reviews() {
     }
   }
 
+  if(context.reviewsLoading) return LoadingComponent(context.reviewsLoading)
   return (
     <>
       <NavigationBar />

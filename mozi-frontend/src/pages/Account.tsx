@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";
 import { useApiContext } from "../api/ApiContext";
+import LoadingComponent from "../components/LoadingComponent";
 
 function Account() {
   const { t } = useTranslation();
@@ -42,6 +43,8 @@ function Account() {
     }
     
   },[context.users])
+
+  if(context.usersLoading) return LoadingComponent(context.usersLoading)
 
   return (
     <>

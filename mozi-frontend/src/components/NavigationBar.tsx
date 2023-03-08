@@ -84,13 +84,6 @@ export default function NavigationBar() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (first_name !== "" && last_name !== "") {
-  //     setFirstName(first_name.toUpperCase());
-  //     setLastName(last_name.toUpperCase());
-  //   }
-  // }, [first_name, last_name]);
-
   return (
     <Suspense fallback="Loading...">
       <AppBar

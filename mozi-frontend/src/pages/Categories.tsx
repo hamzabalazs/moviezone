@@ -13,14 +13,23 @@ import CategoryCard from "../components/cards/CategoryCard";
 import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
+import LoadingComponent from "../components/LoadingComponent";
 
 function Categories() {
   const { t } = useTranslation();
   const context = useApiContext();
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
-  
-  const [editingCategory,setEditingCategory] = useState<Category | undefined>(undefined)
-  const [deletingCategory,setDeletingCategory] = useState<Category | undefined>(undefined)
+  const [alert, setAlert] = useState<AlertType>({
+    isOpen: false,
+    message: "",
+    type: undefined,
+  });
+
+  const [editingCategory, setEditingCategory] = useState<Category | undefined>(
+    undefined
+  );
+  const [deletingCategory, setDeletingCategory] = useState<
+    Category | undefined
+  >(undefined);
 
   const [isOpenAdd, setIsOpenAdd] = useState(false);
 
@@ -28,14 +37,13 @@ function Categories() {
     setIsOpenAdd(true);
   };
 
+  if(context.categoriesLoading) return LoadingComponent(context.categoriesLoading)
+
   return (
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent
-          alert={alert}
-          setAlert={setAlert}
-        />
+        <AlertComponent alert={alert} setAlert={setAlert} />
         <CategoryEditModal
           category={editingCategory}
           onClose={() => setEditingCategory(undefined)}
@@ -75,29 +83,17 @@ function Categories() {
           </Container>
         </div>
         <div>
-          {context.categories.length !== 0 && (
-            <Grid container spacing={4}>
-              {context.categories.map((category) => (
-                <Grid item key={category.id} xs={12}>
-                  <CategoryCard
-                    category={category}
-                    onEdit={() => setEditingCategory(category)}
-                    onDelete={() => setDeletingCategory(category)}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-          {context.categories.length === 0 && (
-            <Typography
-              variant="h4"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              {t("category.noCategoryFound")}
-            </Typography>
-          )}
+          <Grid container spacing={4}>
+            {context.categories.map((category) => (
+              <Grid item key={category.id} xs={12}>
+                <CategoryCard
+                  category={category}
+                  onEdit={() => setEditingCategory(category)}
+                  onDelete={() => setDeletingCategory(category)}
+                />
+              </Grid>
+            ))}
+          </Grid>
         </div>
         <MyFooter />
       </main>

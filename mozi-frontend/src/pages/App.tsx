@@ -11,6 +11,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import AlertComponent from "../components/AlertComponent";
 import { useApiContext } from "../api/ApiContext";
 import { AlertType } from "../api/types";
+import LoadingComponent from "../components/LoadingComponent";
 
 export function Home() {
   const context = useApiContext();
@@ -37,7 +38,8 @@ export function Home() {
     handleRole();
   }, []);
 
-  if(context.categoriesLoading) return <p>Loading..</p>
+  if(context.categoriesLoading) return LoadingComponent(context.categoriesLoading)
+  if(context.moviesLoading) return LoadingComponent(context.moviesLoading)
 
   return (
     <>
