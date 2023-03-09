@@ -27,7 +27,10 @@ export function getReviewById(id: string, context: MyContext): Promise<Review> {
   });
 }
 
-export function getReviewForUpdate(id: string, context: MyContext): Promise<DbReview> {
+export function getReviewForUpdate(
+  id: string,
+  context: MyContext
+): Promise<DbReview> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: DbReview) => {
@@ -71,18 +74,11 @@ export function getReviewsOfMovie(
 }
 
 export function createReview(
-  review: Review,
+  review: any,
   context: MyContext
-): Promise<DbReview> {
+): Promise<Review> {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
     VALUES (?,?,?,?,?)`;
-  const returnReview:DbReview = {
-    id:review.id,
-    rating:review.rating,
-    description:review.description,
-    movie_id:review.movie.id,
-    user_id:review.user.id
-  }
   return new Promise((resolve, reject) => {
     context.db.run(
       sql,
@@ -90,29 +86,36 @@ export function createReview(
         review.id,
         review.rating,
         review.description,
-        review.movie.id,
-        review.user.id,
+        review.movie_id,
+        review.user_id,
       ],
       (err: any) => {
         if (err) {
           reject(err);
         }
-        resolve(returnReview);
+        resolve(review);
       }
     );
   });
-}
+}// WORKS
 
 export async function updateReview(
   review: any,
   context: MyContext
-): Promise<DbReview> {
+): Promise<Review> {
   const user: User = await getCurrentUser(context);
   const token: Token = await getToken(user, context);
   if (!token) throw new Error("No Token");
-  if (token.token === context.req.headers["auth-token"]) {
-    const updatedReview:DbReview = await getReviewForUpdate(review.id, context);
-    const returnReview:DbReview = {
+  const role = await determineRole(context);
+  if (role === undefined) throw new Error("Role not found");
+  const headerToken = context.req.headers["auth-token"] as string;
+  const contextToken = headerToken.replace(/['"]/g, "");
+  if (token.token === contextToken || role.role !== "viewer") {
+    const updatedReview: DbReview = await getReviewForUpdate(
+      review.id,
+      context
+    );
+    const returnReview: Review = {
       ...review,
       movie_id: updatedReview.movie_id,
       user_id: updatedReview.user_id,
@@ -132,7 +135,7 @@ export async function updateReview(
     });
   }
   throw new Error("Unauthorized!");
-}
+}// WORKS
 
 export async function deleteReview(
   id: string,
@@ -143,10 +146,9 @@ export async function deleteReview(
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
   if (role === undefined) throw new Error("Role not found");
-  if (
-    token.token === context.req.headers["auth-token"] ||
-    role.role === "admin"
-  ) {
+  const headerToken = context.req.headers["auth-token"] as string;
+  const contextToken = headerToken.replace(/['"]/g, "");
+  if (token.token === contextToken || role.role === "admin") {
     const review = await getReviewById(id, context);
     const sql = `DELETE FROM review WHERE review.id = ?`;
     return new Promise((resolve, reject) => {
@@ -159,4 +161,4 @@ export async function deleteReview(
     });
   }
   throw new Error("Unauthorized!");
-}
+}// WORKS

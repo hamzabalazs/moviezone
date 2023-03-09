@@ -2,6 +2,7 @@ import React from "react";
 import { API_URL } from "../constants";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { CurrUser, User } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export type LogInData = {
   user?: CurrUser;
@@ -30,6 +31,7 @@ export function useLogIn(): LogInData {
   const [user, setUser] = React.useState<CurrUser | undefined>(
     getPersistedUser()
   );
+  const navigate = useNavigate()
   const [LoginAPI] = useMutation(LOGIN);
 
   async function logIn(email: string, password: string): Promise<boolean> {
@@ -53,6 +55,7 @@ export function useLogIn(): LogInData {
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(TOKEN_KEY);
     setUser(undefined);
+    navigate("/login")
   }
 
   function hasRole(role: User["role"]): boolean {

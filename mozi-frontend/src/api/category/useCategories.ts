@@ -83,7 +83,6 @@ export function useCategories(token?: string): CategoryData {
   // Delete
   async function deleteCategory(id: string): Promise<boolean> {
     if (!token) return false;
-    console.log(id)
     const result = await DeleteCategoryAPI({variables:{input:{id}}});
     refetchData();
     if(result === undefined) return false;

@@ -80,7 +80,10 @@ export default function MoviePage() {
   }, [context.reviews]);
 
   useEffect(() => {
-    
+    if(!currUser) navigate("/login")
+  },[])
+
+  useEffect(() => {
     if (currMovie !== undefined) {
       setSelectedMovie(currMovie);
       updateReviewList();

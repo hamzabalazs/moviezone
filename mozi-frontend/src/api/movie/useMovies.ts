@@ -92,7 +92,10 @@ export function useMovies(token?: string): MovieData {
     await client.refetchQueries({
       include: [GET_MOVIES],
     });
-    setMovies(moviesData.getMovies);
+    if(moviesData){
+      setMovies(moviesData.getMovies);
+    }
+    
   }
 
   async function addMovie(

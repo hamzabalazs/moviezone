@@ -263,10 +263,7 @@ export const resolvers = {
         throw new Error("Movie already rated by User!");
       const review:Review = {
         id: uuidv4(),
-        description:newReview.description,
-        rating:newReview.rating,
-        movie:isMovie,
-        user:isUser
+        ...newReview
       };
       return await createReview(review, context);
     },
@@ -274,13 +271,13 @@ export const resolvers = {
       const updatedReview = args.input;
       if (updatedReview.rating === "0") throw new Error("Cannot rate with 0!");
       return await updateReview(updatedReview, context);
-    },
+    }, // WORKS
     async deleteReview(_:any, args:any, context:MyContext) {
       const reviewId = args.input.id;
       const isReview = await getReviewById(reviewId, context);
       if (isReview === undefined) throw new Error("Review does not exist!");
       return await deleteReview(reviewId, context);
-    },
+    },// WORKS
     // Authentication
     async createToken(_:any, args:any, context:MyContext) {
       const loginDetails = args.input;

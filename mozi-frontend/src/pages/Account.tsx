@@ -20,7 +20,11 @@ function Account() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
 
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
+  const [alert, setAlert] = useState<AlertType>({
+    isOpen: false,
+    message: "",
+    type: undefined,
+  });
 
   const [user, setUser] = useState<User>({
     id: "",
@@ -31,34 +35,28 @@ function Account() {
     role: "viewer",
   });
 
-  
-
   useEffect(() => {
-    if(context.user){
-      const displayUser = context.users.find(x => x.id === context.user?.id)
-      if(displayUser){
-        setUser(displayUser)
-      }
+    if (context.user) {
+      const displayUser = context.users.find((x) => x.id === context.user?.id);
+      if (displayUser) {
+        setUser(displayUser);
+      }else context.logOut()
       
-    }
-    
-  },[context.users])
+    }else context.logOut()
+  }, [context.users]);
 
-  if(context.usersLoading) return LoadingComponent(context.usersLoading)
+  if (context.usersLoading) return LoadingComponent(context.usersLoading);
 
   return (
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent
-          alert={alert}
-          setAlert={setAlert}
-        />
+        <AlertComponent alert={alert} setAlert={setAlert} />
         <UserDeleteDialog
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
         />
-        
+
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
@@ -79,12 +77,12 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {context.users.find(x => x.id === context.user?.id) && (
+              {context.users.find((x) => x.id === context.user?.id) && (
                 <UserCard
-                user={user}
-                onEdit={() => setEditingUser(user)}
-                onDelete={() => setDeletingUser(user)}
-              />
+                  user={user}
+                  onEdit={() => setEditingUser(user)}
+                  onDelete={() => setDeletingUser(user)}
+                />
               )}
             </Grid>
           </Grid>

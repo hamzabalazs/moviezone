@@ -239,17 +239,17 @@ export const typeDefs = gql`
   # Mutations
   type Mutation {
     createToken(input: AddTokenInput!): CurrentUser!
-    createUser(input: AddUserInput!): DbUser!
+    createUser(input: AddUserInput!): User!
     updateUser(input: UpdateUserInput!): User!
     deleteUser(input: DeleteUserInput!): User!
     createCategory(input: AddCategoryInput!): Category!
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
-    createMovie(input: AddMovieInput!): DbMovie!
+    createMovie(input: AddMovieInput!): Movie!
     updateMovie(input: UpdateMovieInput!): Movie!
     deleteMovie(input: DeleteMovieInput!): Movie!
-    createReview(input: AddReviewInput!): DbReview!
-    updateReview(input: UpdateReviewInput!): DbReview!
+    createReview(input: AddReviewInput!): Review!
+    updateReview(input: UpdateReviewInput!): Review!
     deleteReview(input: DeleteReviewInput!): Review!
   }
 `;

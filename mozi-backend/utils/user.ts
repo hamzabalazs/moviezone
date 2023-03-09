@@ -4,7 +4,8 @@ import { determineRole, getToken, createToken } from "./token";
 import { User, FullUser, DbUser } from "./types";
 
 export function getCurrentUser(context:MyContext): Promise<User> {
-  const token = context.req.headers['auth-token'];
+  const tokenString = context.req.headers['auth-token'] as string;
+  const token = tokenString.replace(/['"]/g, "");
   if (!token) throw new Error("Could not get token of current user");
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.role FROM session s JOIN user u ON s.user_id = u.id WHERE s.token = ?`;
   return new Promise((resolve, reject) => {
@@ -30,7 +31,6 @@ export function getUsers(__:any, context:MyContext): Promise<User[]> {
 }
 
 export function getUserById(id:string, context:MyContext): Promise<User> {
-  console.log(id)
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: User) => {
@@ -90,8 +90,10 @@ export async function updateUser(user: FullUser, context:MyContext): Promise<Use
   if (!token) throw new Error("No Token/User has not logged in yet ( no token created )");
   const role = await determineRole(context);
   if (role === undefined) throw new Error("Role not found");
+  const headerToken = context.req.headers['auth-token'] as string
+  const contextToken = headerToken.replace(/['"]/g, "");
   if (
-    token.token === context.req.headers['auth-token'] ||
+    token.token === contextToken ||
     role.role === "admin"
   ) {
     const currentUser = await getUserById(user.id, context);
@@ -151,9 +153,11 @@ export async function deleteUser(id: string, context:MyContext): Promise<User> {
   const token = await getToken(user, context);
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
+  const headerToken = context.req.headers['auth-token'] as string
+  const contextToken = headerToken.replace(/['"]/g, "");
   if (role === undefined) throw new Error("Role not found");
   if (
-    token.token === context.req.headers['auth-token'] ||
+    token.token === contextToken ||
     role.role === "admin"
   ) {
     const sql = `DELETE FROM user WHERE user.id = "${id}"`;
