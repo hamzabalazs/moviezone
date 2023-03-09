@@ -64,53 +64,79 @@ export type CurrentUser = {
 };
 
 export type IdInput = {
-  id:string;
-}
+  id: string;
+};
 
 export type EmailInput = {
-  email:string;
-}
+  email: string;
+};
 
 export type LoginInput = {
-  email:string;
-  password:string;
-}
+  email: string;
+  password: string;
+};
 
 export type NameInput = {
-  name:string;
-}
+  name: string;
+};
 
 export type ReviewForMovieInput = {
-  movie_id:string;
-}
+  movie_id: string;
+};
 
 export type CreateUserInput = {
-  first_name:string;
-  last_name:string;
-  email:string;
-  password:string
-}
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+};
 
 export type CreateMovieInput = {
-  title:string;
-  description:string;
-  poster:string;
-  release_date:string;
-  category_id:string;
-}
+  title: string;
+  description: string;
+  poster: string;
+  release_date: string;
+  category_id: string;
+};
 
 export type CreateReviewInput = {
-  rating:string;
-  description:string;
-  movie_id:string;
-  user_id:string
-}
+  rating: string;
+  description: string;
+  movie_id: string;
+  user_id: string;
+};
 
 export type UpdateMovieInput = {
-  id:string;
-  title:string;
-  description:string;
-  poster:string;
-  release_date:string;
-  category_id:string;
-}
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  release_date: string;
+  category_id: string;
+};
+
+export type DbReview = {
+  id: string;
+  rating: string;
+  description: string;
+  movie_id: string;
+  user_id: string;
+};
+
+export type DbMovie = {
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  release_date: string;
+  category_id: string;
+  rating: string;
+};
+
+export type DbUser = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  email: string;
+};

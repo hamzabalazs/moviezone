@@ -24,7 +24,7 @@ import { logIn,getUserForLogin } from "../utils/auth";
 import {determineRole,getToken,createToken} from "../utils/token"
 import {getCategories,getCategoryById,deleteCategory,updateCategory,createCategory,checkForCategory} from "../utils/category"
 import { MyContext } from "../server";
-import { Category, CreateMovieInput, CreateReviewInput, CreateUserInput, EmailInput, FullUser, IdInput, LoginInput, Movie, NameInput, Review, ReviewForMovieInput, Role, User, UserRole } from "../utils/types";
+import { Category, FullUser, Movie,  Review,  Role,  UserRole } from "../utils/types";
 
 export const resolvers = {
   Query: {
@@ -83,11 +83,11 @@ export const resolvers = {
     },
   },
   Review: {
-    async movie(review:Review, __:any, context:MyContext) {
-      return await getMovieById(review.movie.id, context);
+    async movie(review:any, __:any, context:MyContext) {
+      return await getMovieById(review.movie_id, context);
     },
-    async user(review:Review, __:any, context:MyContext) {
-      return await getUserById(review.user.id, context);
+    async user(review:any, __:any, context:MyContext) {
+      return await getUserById(review.user_id, context);
     },
   },
   Movie: {
@@ -125,6 +125,7 @@ export const resolvers = {
       if (createdUser === undefined) {
         throw new Error("User creation failed!");
       }
+      return createdUser
     },
     async updateUser(_:any, args:any, context:MyContext) {
       const updatedUser = args.input;
@@ -243,7 +244,7 @@ export const resolvers = {
     },
     // Reviews
     async createReview(_:any, args:any, context:MyContext) {
-      const newReview = args;
+      const newReview = args.input;
       const isUser = await getUserById(newReview.user_id, context);
       if (isUser === undefined)
         throw new Error("User not found! Cannot add review!");

@@ -1,5 +1,5 @@
 import { MyContext } from "../server";
-import { CreateMovieInput, Movie, UpdateMovieInput } from "./types";
+import { CreateMovieInput, DbMovie, Movie, UpdateMovieInput } from "./types";
 
 export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
@@ -25,14 +25,23 @@ export function getMovieById(id:string, context:MyContext):Promise<Movie> {
   });
 }
 
-export function createMovie(movie:Movie, context:MyContext):Promise<Movie> {
+export function createMovie(movie:Movie, context:MyContext):Promise<DbMovie> {
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
+  const returnMovie:DbMovie = {
+    id:movie.id,
+    title:movie.title,
+    description:movie.description,
+    poster:movie.poster,
+    release_date:movie.release_date,
+    category_id:movie.category.id,
+    rating:movie.rating,
+  }
   return new Promise((resolve, reject) => {
     context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id], err => {
       if (err) {
         reject(err);
       }
-      resolve(movie);
+      resolve(returnMovie);
     });
   });
 }

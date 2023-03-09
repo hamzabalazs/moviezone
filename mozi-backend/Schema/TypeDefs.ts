@@ -67,6 +67,32 @@ export const typeDefs = gql`
     user: User!
   }
 
+  type DbReview {
+    id: ID!
+    rating: String!
+    description: String!
+    movie_id: String!
+    user_id: String!
+  }
+
+  type DbMovie {
+    id: ID!
+    title: String!
+    description: String!
+    poster: String!
+    release_date: String!
+    category_id: String!
+    rating: String!
+  }
+
+  type DbUser {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    role: String!
+    email: String!
+  }
+
   input MovieInput {
     id: ID!
   }
@@ -213,17 +239,17 @@ export const typeDefs = gql`
   # Mutations
   type Mutation {
     createToken(input: AddTokenInput!): CurrentUser!
-    createUser(input: AddUserInput!): User!
+    createUser(input: AddUserInput!): DbUser!
     updateUser(input: UpdateUserInput!): User!
     deleteUser(input: DeleteUserInput!): User!
     createCategory(input: AddCategoryInput!): Category!
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
-    createMovie(input: AddMovieInput!): Movie!
+    createMovie(input: AddMovieInput!): DbMovie!
     updateMovie(input: UpdateMovieInput!): Movie!
     deleteMovie(input: DeleteMovieInput!): Movie!
-    createReview(input: AddReviewInput!): Review!
-    updateReview(input: UpdateReviewInput!): Review!
+    createReview(input: AddReviewInput!): DbReview!
+    updateReview(input: UpdateReviewInput!): DbReview!
     deleteReview(input: DeleteReviewInput!): Review!
   }
 `;

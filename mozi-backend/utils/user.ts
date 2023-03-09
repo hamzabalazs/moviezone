@@ -1,7 +1,7 @@
 const md5 = require("md5");
 import { MyContext } from "../server";
 import { determineRole, getToken, createToken } from "./token";
-import { User, FullUser } from "./types";
+import { User, FullUser, DbUser } from "./types";
 
 export function getCurrentUser(context:MyContext): Promise<User> {
   const token = context.req.headers['auth-token'];
@@ -30,6 +30,7 @@ export function getUsers(__:any, context:MyContext): Promise<User[]> {
 }
 
 export function getUserById(id:string, context:MyContext): Promise<User> {
+  console.log(id)
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: User) => {
@@ -53,14 +54,15 @@ export function checkForUser(email:string, context:MyContext): Promise<User> {
   });
 }
 
-export async function createUser(user:FullUser, context:MyContext): Promise<User> {
+export async function createUser(user:FullUser, context:MyContext): Promise<DbUser> {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
-  const returnUser = {
+  const role = user.role.toString()
+  const returnUser:DbUser = {
     id: user.id,
     first_name: user.first_name,
     last_name: user.last_name,
+    role: role,
     email: user.email,
-    role: user.role,
   };
   return new Promise((resolve, reject) => {
     context.db.run(
