@@ -15,14 +15,28 @@ import {
 import { useNavigate } from "react-router-dom";
 import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../api/ApiContext";
 import { AlertType } from "../api/types";
 import * as Yup from "yup";
+import { useSessionContext } from "../api/SessionContext";
+import { gql, useMutation } from "@apollo/client";
+
+const ADD_USER = gql`
+  mutation CreateUser($input: AddUserInput!) {
+    createUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
 
 function Register() {
   const { t } = useTranslation();
-  const context = useApiContext();
+  const context = useSessionContext();
   const navigate = useNavigate();
+  const [PostUserAPI] = useMutation(ADD_USER);
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
   useEffect(() => {
@@ -45,12 +59,7 @@ function Register() {
       const last_name = values.last_name;
       const email = values.email;
       const password = values.password;
-      const result = await context.registerUser({
-        first_name,
-        last_name,
-        email,
-        password,
-      });
+      const result = await PostUserAPI({variables:{input:{first_name,last_name,email,password}}});
       if (!result) {
         const msg = t("register.accountExists");
         setAlert({isOpen:true,message:msg,type:"error"})

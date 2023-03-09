@@ -9,15 +9,23 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { FormikErrors, useFormik } from "formik";
-import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { AlertType } from "../../api/types";
+import { gql, useMutation } from "@apollo/client";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
- 
 }
+
+const ADD_CATEGORY = gql`
+  mutation CreateCategory($input: AddCategoryInput!) {
+    createCategory(input: $input) {
+      id
+      name
+    }
+  }
+`;
 
 interface Values {
   name: string;
@@ -25,19 +33,17 @@ interface Values {
 
 export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
-  const { addCategory } = useApiContext();
+  const [AddCategoryAPI] = useMutation(ADD_CATEGORY);
 
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert= props.setAlert
+  const setAlert = props.setAlert;
   const handleAddCategory = async (name: string) => {
-    const result = await addCategory({
-      name,
-    });
+    const result = await AddCategoryAPI({variables:{input:{name:name}}});
     if (!result) return;
 
     const msg = t("successMessages.categoryAdd");
     setIsOpenAdd?.(false);
-    setAlert?.({isOpen:true,message:msg,type:"success"})
+    setAlert?.({ isOpen: true, message: msg, type: "success" });
   };
 
   const formik = useFormik({

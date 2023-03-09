@@ -40,3 +40,21 @@ export type AlertType = {
   message: string;
   type: "success" | "error" | undefined
 }
+
+export type MovieListMovie = {
+  id:string;
+  title:string;
+  poster:string;
+  release_date:string;
+  category: {id:string}
+  rating:string;
+}
+
+export type ReviewListReview = {
+  id:string;
+  user:{id:string,first_name:string,last_name:string}
+  description:string;
+  rating:string;
+  movie:{id:string};
+
+}

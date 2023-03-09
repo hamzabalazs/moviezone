@@ -10,15 +10,29 @@ import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";
-import { useApiContext } from "../api/ApiContext";
 import LoadingComponent from "../components/LoadingComponent";
+import { useSessionContext } from "../api/SessionContext";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
+
+export const GET_USERS = gql`
+  query GetUsers {
+    getUsers {
+      id
+      first_name
+      last_name
+      email
+      role
+    }
+  }
+`;
 
 function Account() {
   const { t } = useTranslation();
-  const context = useApiContext();
-
+  const context = useSessionContext();
+  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
+  const client = useApolloClient()
 
   const [alert, setAlert] = useState<AlertType>({
     isOpen: false,
@@ -35,17 +49,32 @@ function Account() {
     role: "viewer",
   });
 
+  async function refetchData(){
+    await client.refetchQueries({
+      include: [GET_USERS],
+    });
+  }
+
   useEffect(() => {
-    if (context.user) {
-      const displayUser = context.users.find((x) => x.id === context.user?.id);
+    if(alert.isOpen){
+      refetchData()
+    }
+  },[alert])
+
+  useEffect(() => {
+    if (context.user && !usersLoading) {
+      const displayUser = usersData.getUsers.find((x:User) => x.id === context.user?.id);
       if (displayUser) {
         setUser(displayUser);
       }else context.logOut()
       
-    }else context.logOut()
-  }, [context.users]);
+    }
+    if(!context.user && usersLoading){
+      context.logOut()
+    }
+  }, [usersData]);
 
-  if (context.usersLoading) return LoadingComponent(context.usersLoading);
+  if (usersLoading) return LoadingComponent(usersLoading);
 
   return (
     <>
@@ -55,6 +84,7 @@ function Account() {
         <UserDeleteDialog
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
+          setAlert={setAlert}
         />
 
         <UserEditModal
@@ -77,7 +107,7 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {context.users.find((x) => x.id === context.user?.id) && (
+              {usersData.getUsers.find((x:User) => x.id === context.user?.id) && (
                 <UserCard
                   user={user}
                   onEdit={() => setEditingUser(user)}

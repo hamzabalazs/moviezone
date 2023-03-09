@@ -9,14 +9,32 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
-import { AlertType, Review } from "../../api/types";
+import { AlertType, ReviewListReview } from "../../api/types";
+import { gql, useMutation } from "@apollo/client";
 
 interface Props {
-  review?: Review;
+  review?: ReviewListReview;
   onClose?: () => void;
   setAlert: Dispatch<SetStateAction<AlertType>>;
-  
 }
+
+const DELETE_REVIEW = gql`
+  mutation DeleteReview($input: DeleteReviewInput!) {
+    deleteReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
 
 export default function ReviewDeleteDialog({
   review,
@@ -24,11 +42,11 @@ export default function ReviewDeleteDialog({
   setAlert
 }: Props) {
   const { t } = useTranslation();
-  const { deleteReview } = useApiContext();
+  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
 
   const handleDeletion = async () => {
     if (review === undefined) return;
-    const result = await deleteReview(review.id);
+    const result = await DeleteReviewAPI({variables:{input:{id:review.id}}});
     if (result) {
       const msg = t("successMessages.reviewDelete");
       setAlert({isOpen:true,message:msg,type:"success"})

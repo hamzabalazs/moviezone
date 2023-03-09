@@ -11,10 +11,24 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../api/ApiContext";
 import { FormikErrors, useFormik } from "formik";
 import AlertComponent from "../components/AlertComponent";
-import { AlertType } from "../api/types";
+import { AlertType, User } from "../api/types";
+import { useSessionContext } from "../api/SessionContext";
+import { gql, useQuery } from "@apollo/client";
+import LoadingComponent from "../components/LoadingComponent";
+
+export const GET_USERS = gql`
+  query GetUsers {
+    getUsers {
+      id
+      first_name
+      last_name
+      email
+      role
+    }
+  }
+`;
 
 interface Values {
   email: string;
@@ -22,8 +36,9 @@ interface Values {
 
 function Forgotpass() {
   const { t } = useTranslation();
-  const context = useApiContext();
+  const context = useSessionContext();
   const navigate = useNavigate();
+  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   useEffect(() => {
@@ -38,7 +53,7 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const isUser = context.users.find((x) => x.email === email);
+      const isUser = usersData.getUsers.find((x:User) => x.email === email);
       if (!isUser) {
         const msg = t("forgotPass.noUser");
         setAlert({isOpen:true,message:msg,type:"error"})
@@ -54,6 +69,7 @@ function Forgotpass() {
     },
   });
 
+  if(usersLoading) return LoadingComponent(usersLoading)
   return (
     <>
       <AlertComponent

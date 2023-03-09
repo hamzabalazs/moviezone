@@ -7,12 +7,12 @@ interface Props {
   isOpenAdd: boolean;
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
 export default function MovieAddModal(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
   const setAlert = props.setAlert
+  
   return (
     <Modal
       open={props.isOpenAdd}

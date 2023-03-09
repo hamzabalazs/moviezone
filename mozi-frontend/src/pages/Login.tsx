@@ -14,15 +14,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../api/ApiContext";
-import { FormikErrors, useFormik } from "formik";
+import { useFormik } from "formik";
 import { AlertType } from "../api/types";
 import * as Yup from "yup";
+import { useSessionContext } from "../api/SessionContext";
 
 
 function Login() {
   const navigate = useNavigate();
-  const context = useApiContext();
+  const context = useSessionContext();
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   const { t } = useTranslation();
 

@@ -7,7 +7,6 @@ interface Props {
   isOpenAdd: boolean;
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
 export default function CategoryAddModal(props: Props) {

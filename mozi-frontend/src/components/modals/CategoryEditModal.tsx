@@ -8,12 +8,12 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { FormikErrors, useFormik } from "formik";
+import { useFormik } from "formik";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
 import { AlertType, Category } from "../../api/types";
 import * as Yup from "yup";
+import { gql, useMutation } from '@apollo/client'
 
 interface Props {
   category?: Category;
@@ -21,18 +21,27 @@ interface Props {
   setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
+const UPDATE_CATEGORY = gql`
+  mutation UpdateCategory($input: UpdateCategoryInput!) {
+  updateCategory(input: $input) {
+    id
+    name
+  }
+}
+`
+
 export default function CategoryEditModal({
   category,
   onClose,
   setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const { editCategory } = useApiContext();
+  const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY)
 
   const updateCategory = async (editedCategory: Omit<Category,"id">) => {
     if(category === undefined) return;
     const categoryId = category.id
-    const result = await editCategory({ id: categoryId, ...editedCategory });
+    const result = await UpdateCategoryAPI({variables:{input:{id:categoryId,name:editedCategory.name}}});
     if (result){
       const msg = t("successMessages.categoryEdit");
       setAlert?.({ isOpen: true, message: msg, type: "success" });

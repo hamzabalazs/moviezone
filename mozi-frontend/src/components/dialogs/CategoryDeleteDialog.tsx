@@ -7,9 +7,9 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { AlertType, Category } from "../../api/types";
+import { gql, useMutation} from '@apollo/client'
 
 interface Props {
   category?: Category;
@@ -17,19 +17,28 @@ interface Props {
   setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
+const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($input: DeleteCategoryInput!) {
+  deleteCategory(input: $input) {
+    id
+    name
+  }
+}
+`
+
 export default function CategoryDeleteDialog({
   category,
   onClose,
   setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const { deleteCategory } = useApiContext();
+  const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY)
 
   const handleDeletion = async () => {
     if (category === undefined) return;
     const categoryId = category.id;
 
-    const result = await deleteCategory(categoryId);
+    const result = await DeleteCategoryAPI({variables:{input:{id:categoryId}}});
     if (result){
       const msg = t("successMessages.categoryDelete");
       setAlert?.({ isOpen: true, message: msg, type: "success" });

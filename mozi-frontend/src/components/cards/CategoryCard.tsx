@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
 import { Category } from "../../api/types";
 import { useTranslation } from "react-i18next";
 

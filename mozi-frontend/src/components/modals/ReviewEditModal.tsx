@@ -10,45 +10,66 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import {  useFormik } from "formik";
-import { Dispatch, SetStateAction} from "react";
+import { useFormik } from "formik";
+import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
-import { AlertType, Review } from "../../api/types";
+import { gql, useMutation } from "@apollo/client";
+import { AlertType, ReviewListReview } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {
-  review?: Review;
+  review?: ReviewListReview;
   onClose?: () => void;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
-  
 }
 
-export default function ReviewEditModal({
-  review,
-  onClose,
-  setAlert
-}: Props) {
-  const { editReview } = useApiContext();
+export const UPDATE_REVIEW = gql`
+  mutation UpdateReview($input: UpdateReviewInput!) {
+    updateReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
+
+export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
+  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
   const { t } = useTranslation();
   const updateReview = async (
-    editedReview: Omit<Review, "id" | "movie"|"user">
+    editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {
     if (review === undefined) return;
-    const result = await editReview({ id:review.id, ...editedReview });
+    const result = await UpdateReviewAPI({
+      variables: {
+        input: {
+          id: review.id,
+          description: editedReview.description,
+          rating: editedReview.rating,
+        },
+      },
+    });
     if (result) {
       const msg = t("successMessages.reviewEdit");
-      setAlert?.({isOpen:true,message:msg,type:"success"})
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
     }
     onClose?.();
   };
-
+  // { id:review.id, ...editedReview }
   const schema = useEditReviewSchema();
 
   const formik = useFormik({
     initialValues: {
       description: review?.description || "",
-      rating: review?.rating || "0"
+      rating: review?.rating || "0",
     },
     onSubmit: updateReview,
     enableReinitialize: true,
@@ -108,7 +129,6 @@ export default function ReviewEditModal({
               onChange={formik.handleChange}
               data-value={formik.values.rating}
               data-testid="review-edit-modal-rating"
-              
             />
           </CardContent>
         </Card>

@@ -6,11 +6,11 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { Movie } from "../../api/types";
+import { Movie, MovieListMovie } from "../../api/types";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-  movie: Movie;
+  movie: MovieListMovie;
 }
 
 export default function MovieListCard({movie}: Props) {

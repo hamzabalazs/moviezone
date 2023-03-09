@@ -12,60 +12,93 @@ import {
   Typography,
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { useApiContext } from "../../api/ApiContext";
+import { gql, useMutation,useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { AlertType, Movie } from "../../api/types";
+import { AlertType, Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
+import LoadingComponent from "../LoadingComponent";
 
 interface Props {
   movie?: Movie;
   onClose?: () => void;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
-  
 }
-export default function MovieEditModal({
-  movie,
-  onClose,
-  setAlert
-}: Props) {
-  const { t } = useTranslation();
-  const context = useApiContext();
 
-  const updateMovie = async (editedMovie: Omit<Movie, "id" | "rating" | "poster">) => {
-    console.log(movie)
-    const poster = movie?.poster
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  getCategories {
+    id
+    name
+  }
+}
+`
+const UPDATE_MOVIE = gql`
+  mutation UpdateMovie($input: UpdateMovieInput!) {
+    updateMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+
+export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
+  const { t } = useTranslation();
+  const [UpdateReviewAPI] = useMutation(UPDATE_MOVIE);
+  const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
+
+  const updateMovie = async (
+    editedMovie: Omit<Movie, "id" | "rating" | "poster">
+  ) => {
+    console.log(movie);
+    const poster = movie?.poster;
     if (movie === undefined || poster === undefined) return;
 
-    const result = await context.editMovie({
-      id: movie?.id,
-      ...editedMovie,
-      poster
+    const result = await UpdateReviewAPI({
+      variables: {
+        input: {
+          id: movie.id,
+          title: editedMovie.title,
+          description: editedMovie.description,
+          poster: poster,
+          release_date: editedMovie.release_date,
+          category_id: editedMovie.category.id
+        },
+      },
     });
     if (result) {
       const msg = t("successMessages.movieEdit");
-      setAlert?.({isOpen:true,message:msg,type:"success"})
+      setAlert?.({ isOpen: true, message: msg, type: "success" });
     }
 
     onClose?.();
   };
 
-  
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
     title: movie?.title || "",
     description: movie?.description || "",
     release_date: movie?.release_date || "",
-    category: movie?.category || {id:"",name:""}
+    category: movie?.category || { id: "", name: "" },
   };
   const schema = useEditMovieSchema();
 
   const formik = useFormik({
     initialValues: formikValues,
-    onSubmit:updateMovie,
+    onSubmit: updateMovie,
     enableReinitialize: true,
-    validationSchema: schema
+    validationSchema: schema,
   });
+
+  if(categoriesLoading) return LoadingComponent(categoriesLoading)
 
   return (
     <Modal
@@ -109,7 +142,7 @@ export default function MovieEditModal({
               inputProps={{ "data-testid": "movie-edit-title" }}
               error={formik.errors.title}
             ></TextField>
-            
+
             <Typography variant="subtitle1">
               {t("movie.description")}:{" "}
             </Typography>
@@ -121,7 +154,7 @@ export default function MovieEditModal({
               inputProps={{ "data-testid": "movie-edit-description" }}
               error={formik.errors.description}
             ></TextField>
-            
+
             <Typography variant="subtitle1">
               {t("movie.release_date")}:{" "}
             </Typography>
@@ -133,7 +166,7 @@ export default function MovieEditModal({
               inputProps={{ "data-testid": "movie-edit-release_date" }}
               error={formik.errors.release_date}
             ></TextField>
-            
+
             <InputLabel id="category-select">{t("movie.category")}</InputLabel>
             <Select
               labelId="category-select"
@@ -143,9 +176,9 @@ export default function MovieEditModal({
               onChange={formik.handleChange}
               sx={{ border: 1, borderRadius: 1 }}
               data-testid="movie-edit-category"
-              inputProps={{"data-testid":"movie-edit-categoryId"}}
+              inputProps={{ "data-testid": "movie-edit-categoryId" }}
             >
-              {context.categories.map((category) => (
+              {categoriesData.getCategories.map((category:Category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>
@@ -193,7 +226,7 @@ function useEditMovieSchema() {
     title: Yup.string().required(t("formikErrors.titleReq") || ""),
     description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
     release_date: Yup.string()
-      .required(t("formikErrors.release_dateReq") || "").matches(datevalidator,t("formikErrors.release_dateFormat") || ""),
-    
+      .required(t("formikErrors.release_dateReq") || "")
+      .matches(datevalidator, t("formikErrors.release_dateFormat") || ""),
   });
 }

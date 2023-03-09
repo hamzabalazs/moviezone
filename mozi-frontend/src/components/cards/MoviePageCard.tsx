@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Movie } from "../../api/types";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   movie: Movie;
@@ -19,7 +19,7 @@ interface Props {
 
 export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {
   const { t } = useTranslation();
-  const { user } = useApiContext();
+  const { user } = useSessionContext();
 
   return (
     <Card

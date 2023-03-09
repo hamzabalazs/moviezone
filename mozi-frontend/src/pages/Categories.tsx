@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { AlertType, Category } from "../api/types";
 import CategoryDeleteDialog from "../components/dialogs/CategoryDeleteDialog";
@@ -11,13 +11,23 @@ import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CategoryCard from "../components/cards/CategoryCard";
 import AlertComponent from "../components/AlertComponent";
-import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
+import { useQuery, gql, useMutation, useApolloClient } from '@apollo/client'
+
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  getCategories {
+    id
+    name
+  }
+}
+`
 
 function Categories() {
   const { t } = useTranslation();
-  const context = useApiContext();
+  const {data:categoryData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
+  const client = useApolloClient()
   const [alert, setAlert] = useState<AlertType>({
     isOpen: false,
     message: "",
@@ -37,7 +47,21 @@ function Categories() {
     setIsOpenAdd(true);
   };
 
-  if(context.categoriesLoading) return LoadingComponent(context.categoriesLoading)
+  async function refetchData(){
+    await client.refetchQueries({
+      include: [GET_CATEGORIES]
+    })
+  }
+
+  useEffect(() => {
+    if(alert.isOpen){
+      refetchData()
+    }
+  },[alert])
+
+  if(categoriesLoading) return LoadingComponent(categoriesLoading)
+
+  
 
   return (
     <>
@@ -84,7 +108,7 @@ function Categories() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {context.categories.map((category) => (
+            {categoryData.getCategories.map((category:Category) => (
               <Grid item key={category.id} xs={12}>
                 <CategoryCard
                   category={category}

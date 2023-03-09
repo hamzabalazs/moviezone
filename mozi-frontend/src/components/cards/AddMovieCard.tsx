@@ -17,12 +17,12 @@ import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
-import { AlertType, Movie } from "../../api/types";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { AlertType, Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import Resizer from "react-image-file-resizer";
-
+import LoadingComponent from "../LoadingComponent";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -46,15 +46,51 @@ export const resizeFile = (file: File) =>
     );
   });
 
+const ADD_MOVIE = gql`
+  mutation CreateMovie($input: AddMovieInput!) {
+    createMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  getCategories {
+    id
+    name
+  }
+}
+`
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();
-  const context = useApiContext();
   const [poster, setPoster] = useState("");
-  const { addMovie } = useApiContext();
+  const [AddMovieAPI] = useMutation(ADD_MOVIE);
+  const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const setIsOpenAdd = props.setIsOpenAdd;
   const setAlert = props.setAlert;
-  const handleAddMovie = async (addedMovie: Omit<Movie, "id" | "rating" | "poster">) => {
-    const result = await addMovie({ ...addedMovie,poster });
+  const handleAddMovie = async (
+    addedMovie: Omit<Movie, "id" | "rating" | "poster">
+  ) => {
+    const result = await AddMovieAPI({
+      variables: {
+        input: {
+          title: addedMovie.title,
+          description: addedMovie.description,
+          poster: poster,
+          release_date: addedMovie.release_date,
+          category_id: addedMovie.category.id,
+        },
+      },
+    });
     if (result) {
       const msg = t("successMessages.movieAdd");
       setAlert?.({ isOpen: true, message: msg, type: "success" });
@@ -67,19 +103,20 @@ export default function AddMovieCard(props: Props) {
     description: "",
     release_date: "",
     category: {
-      id:"",
-      name:""
+      id: "",
+      name: "",
     },
-
   };
 
   const schema = useAddMovieSchema();
   const formik = useFormik({
     initialValues: formikValues,
-    onSubmit:handleAddMovie,
-    enableReinitialize:true,
+    onSubmit: handleAddMovie,
+    enableReinitialize: true,
     validationSchema: schema,
   });
+
+  if(categoriesLoading) return LoadingComponent(categoriesLoading);
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>
@@ -148,21 +185,12 @@ export default function AddMovieCard(props: Props) {
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-category" }}
           >
-            {context.categories.map((category) => (
+            {categoriesData.getCategories.map((category:Category) => (
               <MenuItem key={category.id} value={category.id}>
                 {category.name}
               </MenuItem>
             ))}
           </Select>
-          {/* {formik.errors.category ? (
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "red" }}
-              data-testid="register-error-first_name"
-            >
-              {formik.errors.category}
-            </Typography>
-          ) : null} */}
           <Typography variant="subtitle1" sx={{ mt: "auto", marginTop: 1 }}>
             {t("movie.poster")}
           </Typography>
@@ -184,7 +212,7 @@ export default function AddMovieCard(props: Props) {
                 console.log(file);
                 if (!file) return;
                 const image = await resizeFile(file);
-                if (isString(image)) setPoster(image)
+                if (isString(image)) setPoster(image);
               }}
               data-testid="movie-add-poster"
             />
@@ -243,7 +271,9 @@ function useAddMovieSchema() {
   return Yup.object({
     title: Yup.string().required(t("formikErrors.titleReq") || ""),
     description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
-    release_date: Yup.string().required(t("formikErrors.release_dateReq") || "").matches(datevalidator,t("formikErrors.release_dateFormat") || ""),
+    release_date: Yup.string()
+      .required(t("formikErrors.release_dateReq") || "")
+      .matches(datevalidator, t("formikErrors.release_dateFormat") || ""),
     //category: Yup.string().required(t("formikErrors.categoryReq") || ""),
   });
 }

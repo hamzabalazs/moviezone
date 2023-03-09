@@ -1,18 +1,21 @@
 import { Autocomplete, Grid, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useApiContext } from "../api/ApiContext";
-import { Movie } from "../api/types";
+import { Category, MovieListMovie } from "../api/types";
 import MovieListCard from "./cards/MovieListCard";
 import { useTranslation } from "react-i18next";
 
-function MovieList() {
-  const context = useApiContext();
+interface Props {
+  movieList: MovieListMovie[];
+  categoryList: Category[];
+}
+
+function MovieList(props: Props) {
   const { t } = useTranslation();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string[] | undefined
   >([]);
-  const [movieList, setMovieList] = useState<Movie[]>([]);
+  const [movieList, setMovieList] = useState<MovieListMovie[]>(props.movieList);
   const movieListForAutocomplete: string[] = [];
   const categoryListForAutocomplete: string[] = [];
   const [movieOptions, setMovieOptions] = useState<string[]>([]);
@@ -31,19 +34,19 @@ function MovieList() {
       (categoryId?.length === 0 || categoryId === undefined) &&
       (title?.length === 0 || title === undefined)
     ) {
-      setMovieList(context.movies);
+      setMovieList(props.movieList);
     } else if (
       (categoryId?.length !== 0 || categoryId !== undefined) &&
       (title?.length === 0 || title === undefined)
     ) {
-      const newCategories = context.categories.filter((x) =>
+      const newCategories = props.categoryList.filter((x: Category) =>
         categoryId?.includes(x.name)
       );
       const categoryList: string[] = [];
-      newCategories.forEach((category) => {
+      newCategories.forEach((category: Category) => {
         categoryList.push(category.id);
       });
-      const newMovies = context.movies.filter((x) =>
+      const newMovies = props.movieList.filter((x: any) =>
         categoryList?.includes(x.category.id)
       );
       setMovieList(newMovies);
@@ -51,28 +54,31 @@ function MovieList() {
       (categoryId?.length === 0 || categoryId === undefined) &&
       (title?.length !== 0 || title !== undefined)
     ) {
-      const newMovies = context.movies.filter((x) => title?.includes(x.title));
+      const newMovies = props.movieList.filter((x: any) =>
+        title?.includes(x.title)
+      );
       setMovieList(newMovies);
     } else {
-      const newCategories = context.categories.filter((x) =>
+      const newCategories = props.categoryList.filter((x: Category) =>
         categoryId?.includes(x.name)
       );
       const categoryList: string[] = [];
-      newCategories.forEach((category) => {
+      newCategories.forEach((category: Category) => {
         categoryList.push(category.id);
       });
-      const newMovies = context.movies.filter(
-        (x) => title?.includes(x.title) && categoryList?.includes(x.category.id)
+      const newMovies = props.movieList.filter(
+        (x: any) =>
+          title?.includes(x.title) && categoryList?.includes(x.category.id)
       );
       setMovieList(newMovies);
     }
   }
-
   useEffect(() => {
     const filteredMovieList: string[] = [];
     movieList.forEach((movie) => {
       filteredMovieList.push(movie.title);
     });
+    console.log(filteredMovieList)
     setMovieOptions(filteredMovieList);
   }, [movieList]);
 
@@ -82,19 +88,25 @@ function MovieList() {
 
   useEffect(() => {
     if (movieListForAutocomplete.length === 0) {
-      context.movies.forEach((movie) => {
+      props.movieList.forEach((movie: any) => {
         movieListForAutocomplete.push(movie.title);
       });
       setMovieOptions(movieListForAutocomplete);
     }
     if (categoryListForAutocomplete.length === 0) {
-      context.categories.forEach((category) => {
+      props.categoryList.forEach((category: Category) => {
         categoryListForAutocomplete.push(category.name);
       });
       setCategoryOptions(categoryListForAutocomplete);
     }
     filtering(selectedCategoryId, selectedMovieTitle);
-  }, [context.movies, context.categories]);
+  }, []);
+
+  useEffect(() => {
+    setMovieList(props.movieList)
+    filtering(selectedCategoryId,selectedMovieTitle)
+  },[props.movieList])
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "center" }}>
@@ -155,9 +167,7 @@ function MovieList() {
       <Grid container spacing={2}>
         {movieList.map((movie) => (
           <Grid item key={movie.id} xs={12} sm={6} md={4}>
-            <MovieListCard
-              movie={movie}
-            />
+            <MovieListCard movie={movie} />
           </Grid>
         ))}
       </Grid>

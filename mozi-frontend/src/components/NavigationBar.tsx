@@ -18,11 +18,11 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import Logout from "@mui/icons-material/Logout";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
-import { useApiContext } from "../api/ApiContext";
 import { themeSwitchContext } from "../themeSwitchContext";
+import { useSessionContext } from "../api/SessionContext";
 
 export default function NavigationBar() {
-  const context = useApiContext();
+  const context = useSessionContext();
   const currUser = context.user;
   const [userRole, setUserRole] = useState<"admin" | "editor" | "viewer">(
     "viewer"

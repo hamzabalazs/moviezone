@@ -19,19 +19,18 @@ import {
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
-  DefaultContext,
 } from "@apollo/client";
-import { ApiContextProvider, useApiContext } from "./api/ApiContext";
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
 import { setContext } from "@apollo/client/link/context";
+import { SessionContextProvider, useSessionContext } from "./api/SessionContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql"
+  uri: "http://localhost:5000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -39,10 +38,10 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      'auth-token': token ? token : "",
+      "auth-token": token ? token : "",
     },
   };
-})
+});
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
@@ -54,40 +53,43 @@ root.render(
     <ApolloProvider client={client}>
       <MyThemeProvider>
         <BrowserRouter>
-          <ApiContextProvider>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="forgotpass" element={<Forgotpass />} />
-              <Route
-                path="categories"
-                element={
-                  <RoleWrapper role="editor">
-                    <Categories />
-                  </RoleWrapper>
-                }
-              />
-              <Route
-                path="reviews"
-                element={
-                  <RoleWrapper role="viewer">
-                    <Reviews />
-                  </RoleWrapper>
-                }
-              />
-              <Route
-                path="users"
-                element={
-                  <RoleWrapper role="admin">
-                    <Users />
-                  </RoleWrapper>
-                }
-              ></Route>
-              <Route path="movie/:currmovie_id" element={<MoviePage />}></Route>
-              <Route path="account" element={<Account />}></Route>
-            </Routes>
-          </ApiContextProvider>
+          <SessionContextProvider>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="forgotpass" element={<Forgotpass />} />
+                <Route
+                  path="categories"
+                  element={
+                    <RoleWrapper role="editor">
+                      <Categories />
+                    </RoleWrapper>
+                  }
+                />
+                <Route
+                  path="reviews"
+                  element={
+                    <RoleWrapper role="viewer">
+                      <Reviews />
+                    </RoleWrapper>
+                  }
+                />
+                <Route
+                  path="users"
+                  element={
+                    <RoleWrapper role="admin">
+                      <Users />
+                    </RoleWrapper>
+                  }
+                ></Route>
+                <Route
+                  path="movie/:currmovie_id"
+                  element={<MoviePage />}
+                ></Route>
+                <Route path="account" element={<Account />}></Route>
+              </Routes>
+          </SessionContextProvider>
         </BrowserRouter>
       </MyThemeProvider>
     </ApolloProvider>
@@ -101,7 +103,7 @@ function RoleWrapper({
   children?: React.ReactNode;
   role?: User["role"];
 }): JSX.Element {
-  const { hasRole } = useApiContext();
+  const { hasRole } = useSessionContext();
 
   if (role && !hasRole(role)) {
     return <Navigate to="/"></Navigate>;

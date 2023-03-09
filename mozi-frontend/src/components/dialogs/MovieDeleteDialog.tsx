@@ -11,29 +11,46 @@ import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AlertType, Movie } from "../../api/types";
+import { gql, useMutation } from "@apollo/client";
 
 interface Props {
   movie?: Movie;
   onClose?: () => void;
   setAlert?: Dispatch<SetStateAction<AlertType>>;
-  
 }
+
+const DELETE_MOVIE = gql`
+  mutation DeleteMovie($input: DeleteMovieInput!) {
+    deleteMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
 
 export default function MovieDeleteDialog({
   movie,
   onClose,
   setAlert
 }: Props) {
-  const { deleteMovie } = useApiContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
 
   
   const handleDeletion = async () => {
     if(movie === undefined) return;
 
     const movie_id = movie.id;
-    const result = await deleteMovie(movie_id);
+    const result = await DeleteMovieAPI({variables:{input:{id:movie_id}}});
     if (result) {
       const msg = t("successMessages.movieDelete");
       setAlert?.({isOpen:true,message:msg,type:"success"})

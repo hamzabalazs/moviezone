@@ -5,19 +5,19 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { Review } from "../../api/types";
+import { ReviewListReview } from "../../api/types";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
-  review: Review;
+  review: ReviewListReview;
   onEdit:() => void;
   onDelete:() => void;
 }
 
 export default function ReviewCard({review,onEdit,onDelete}: Props) {
   const { t } = useTranslation();
-  const {user} = useApiContext()
+  const {user} = useSessionContext()
 
   return (
     <Card

@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useApiContext } from "../../api/ApiContext";
 import { AlertType, User } from "../../api/types";
 import * as Yup from "yup";
+import { gql, useMutation } from "@apollo/client";
 
 interface Props {
   user?: User;
@@ -25,6 +26,17 @@ interface Props {
   setAlert: Dispatch<SetStateAction<AlertType>>;
 }
 
+const UPDATE_USER = gql`
+  mutation UpdateUser($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
 // function AlertProvider() {
 //   const [alert, setAlert] = useSate();
 
@@ -72,23 +84,28 @@ export default function UserEditModal({
   user,
   onClose,
   allowEditRole,
-  setAlert
+  setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const { editUser } = useApiContext();
+  const [UpdateUserAPI] = useMutation(UPDATE_USER);
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
-
-    const result = await editUser({
-      id: user.id,
-      ...editedUser,
-      role: allowEditRole ? editedUser.role : undefined,
+    const result = await UpdateUserAPI({
+      variables: {
+        input: {
+          id: user.id,
+          first_name: editedUser.first_name,
+          last_name: editedUser.last_name,
+          email: editedUser.email,
+          password: editedUser.password,
+          role: allowEditRole ? editedUser.role : undefined
+        },
+      },
     });
-
     if (result) {
       const msg = t("successMessages.userEdit");
-      setAlert({isOpen:true,message:msg,type:"success"})
+      setAlert({ isOpen: true, message: msg, type: "success" });
     }
 
     onClose?.();
@@ -143,7 +160,9 @@ export default function UserEditModal({
           }}
         >
           <CardContent>
-            <Typography variant="subtitle1">{t("user.first_name")}: </Typography>
+            <Typography variant="subtitle1">
+              {t("user.first_name")}:{" "}
+            </Typography>
             <TextField
               id="first_name"
               variant="outlined"

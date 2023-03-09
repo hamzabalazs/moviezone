@@ -1,6 +1,6 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AlertType, Review } from "../api/types";
+import { AlertType, Review, ReviewListReview } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -9,37 +9,70 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import ReviewCard from "../components/cards/ReviewCard";
 import AlertComponent from "../components/AlertComponent";
-import { useApiContext } from "../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
+import { useSessionContext } from "../api/SessionContext";
+import { gql, useQuery, useApolloClient } from "@apollo/client";
+
+const GET_REVIEWS = gql`
+  query GetReviews {
+  getReviews {
+    id
+    rating
+    description
+    movie {
+      title
+      id
+    }
+    user {
+      id
+      first_name
+      last_name
+    }
+  }
+}
+`;
 
 function Reviews() {
   const { t } = useTranslation();
-  const context = useApiContext();
+  const context = useSessionContext();
   const currUser = context.user;
+  const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS);
+  const client = useApolloClient()
 
-  const [editingReview, setEditingReview] = useState<Review | undefined>(undefined);
-  const [deletingReview, setDeletingReview] = useState<Review | undefined>(undefined);
+  const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
+  const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
 
   const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
-  const [reviewListOfUser, setReviewListOfUser] = useState<Review[]>([]);
+  const [reviewListOfUser, setReviewListOfUser] = useState<ReviewListReview[]>([]);
   
+  async function refetchData(){
+    await client.refetchQueries({
+      include: [GET_REVIEWS]
+    })
+  }
 
   useEffect(() => {
-    fillUpdatedReviewList();
-  }, [context.reviews]);
+    if(alert.isOpen){
+      refetchData()
+    }
+  },[alert])
+
+  useEffect(() => {
+    if(!reviewsLoading) fillUpdatedReviewList();
+  }, [reviewsData]);
 
   async function fillUpdatedReviewList() {
     if (currUser) {
-      const usersReviews = context.reviews.filter(
-        (x) => x.user.id === currUser.id
+      const usersReviews = reviewsData.getReviews.filter(
+        (x:ReviewListReview) => x.user.id === currUser.id
       );
       setReviewListOfUser(usersReviews);
     }
   }
 
-  if(context.reviewsLoading) return LoadingComponent(context.reviewsLoading)
+  if(reviewsLoading) return LoadingComponent(reviewsLoading)
   return (
     <>
       <NavigationBar />

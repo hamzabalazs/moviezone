@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { useApiContext } from "../../api/ApiContext";
 import { AlertType, User } from "../../api/types";
+import { gql, useMutation} from "@apollo/client";
 
 interface Props {
   user?: User;
@@ -17,13 +17,25 @@ interface Props {
   setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
+const DELETE_USER = gql`
+  mutation DeleteUser($input: DeleteUserInput!) {
+    deleteUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
+
 export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
-  const { deleteUser } = useApiContext();
   const { t } = useTranslation();
+  const [DeleteUserAPI] = useMutation(DELETE_USER);
 
   const handleDeletion = async () => {
     if (user === undefined) return;
-    const result = await deleteUser(user.id);
+    const result = await DeleteUserAPI({variables:{input:{id:user.id}}});
     if (result) {
       const msg = t("successMessages.userDelete");
       setAlert?.({ isOpen: true, message: msg, type: "success" });

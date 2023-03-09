@@ -74,12 +74,15 @@ export const resolvers = {
     async getReviewsOfMovie(_:any,{input}:any,context:MyContext){
       return await getReviewsOfMovie(input.movie_id,context)
     },
+    async getReviewsOfUserForMovie(_:any,{input}:any,context:MyContext){
+      return await getReviewsOfUserForMovie(input.user_id,input.movie_id,context)
+    },
     // Movies
     async getMovies(_:any, __:any, context:MyContext) {
       return await getMovies(_, context);
     },
     async getMovieById(_:any, {input}:any, context:MyContext) {
-      return await getMovieById(input.input.id, context);
+      return await getMovieById(input.id, context);
     },
   },
   Review: {
