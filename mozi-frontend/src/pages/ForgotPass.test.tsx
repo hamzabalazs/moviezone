@@ -1,3 +1,4 @@
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -7,23 +8,35 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Forgotpass from "./Forgotpass";
 
 function renderForgotPass() {
   return render(
     <MemoryRouter>
-      <MockedApiContext>
-        <Forgotpass />
-      </MockedApiContext>
+      <MockedProvider addTypename={false}>
+        <MockedSessionContext>
+          <Forgotpass />
+        </MockedSessionContext>
+      </MockedProvider>
     </MemoryRouter>
   );
 }
 
+test("Should show LoadingComponent while loading, after loading should not show loadingcomponent",async() => {
+  renderForgotPass();
+
+  const loader = screen.queryByTestId("loader")
+  expect(loader).toBeInTheDocument()
+  await waitFor(() => {
+    expect(loader).not.toBeInTheDocument()
+  })
+})
+
 test("forgotpass error happens if email empty", async () => {
   renderForgotPass();
 
-  const forgotButton = screen.getByRole("button", {
+  const forgotButton = await screen.findByRole("button", {
     name: "forgotPass.passwordReset",
   });
   expect(forgotButton).toHaveAttribute("type", "submit");
@@ -37,7 +50,7 @@ test("forgotpass error happens if email empty", async () => {
 test("forgotpass form works fine", async () => {
   renderForgotPass();
 
-  const forgotFormEmail = screen.getByTestId(
+  const forgotFormEmail = await screen.findByTestId(
     "forgot-email"
   ) as HTMLInputElement;
   expect(forgotFormEmail.value).toBe("");
@@ -48,10 +61,10 @@ test("forgotpass form works fine", async () => {
   expect(forgotFormEmail.value).toBe("changeEmail");
 });
 
-test("forgotpass link has href", () => {
+test("forgotpass link has href", async() => {
   renderForgotPass();
 
-  const forgotLoginLink = screen.getByRole("link", {
+  const forgotLoginLink = await screen.findByRole("link", {
     name: "forgotPass.hasAccount",
   });
   expect(forgotLoginLink).toBeVisible();

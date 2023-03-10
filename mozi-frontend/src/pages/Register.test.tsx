@@ -1,3 +1,4 @@
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -6,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Register from "./Register";
 
 const mockedUsedNavigate = jest.fn();
@@ -17,9 +18,11 @@ jest.mock("react-router-dom", () => ({
 
 function renderRegister() {
   return render(
-    <MockedApiContext>
-      <Register />
-    </MockedApiContext>
+    <MockedProvider>
+      <MockedSessionContext>
+        <Register />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -38,12 +41,8 @@ test("register error if first_name is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrors = screen.getAllByTestId(
-      "register-errors"
-    );
-    expect(registerErrors[0]).toHaveTextContent(
-      "formikErrors.firstNameReq"
-    );
+    const registerErrors = screen.getAllByTestId("register-errors");
+    expect(registerErrors[0]).toHaveTextContent("formikErrors.firstNameReq");
   });
 });
 
@@ -62,12 +61,8 @@ test("register error if last_name is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrors = screen.getAllByTestId(
-      "register-errors"
-    );
-    expect(registerErrors[1]).toHaveTextContent(
-      "formikErrors.lastNameReq"
-    );
+    const registerErrors = screen.getAllByTestId("register-errors");
+    expect(registerErrors[1]).toHaveTextContent("formikErrors.lastNameReq");
   });
 });
 
@@ -86,12 +81,8 @@ test("register error if email is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrors = screen.getAllByTestId(
-      "register-errors"
-    );
-    expect(registerErrors[2]).toHaveTextContent(
-      "formikErrors.emailReq"
-    );
+    const registerErrors = screen.getAllByTestId("register-errors");
+    expect(registerErrors[2]).toHaveTextContent("formikErrors.emailReq");
   });
 });
 
@@ -110,12 +101,8 @@ test("register error if password is empty", async () => {
     userEvent.click(registerButton);
   });
   await waitFor(() => {
-    const registerErrors = screen.getAllByTestId(
-      "register-errors"
-    );
-    expect(registerErrors[3]).toHaveTextContent(
-      "formikErrors.passwordReq"
-    );
+    const registerErrors = screen.getAllByTestId("register-errors");
+    expect(registerErrors[3]).toHaveTextContent("formikErrors.passwordReq");
   });
 });
 

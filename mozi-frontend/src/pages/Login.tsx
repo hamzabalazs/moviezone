@@ -18,6 +18,7 @@ import { useFormik } from "formik";
 import { AlertType } from "../api/types";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
+import { isString } from "lodash";
 
 
 function Login() {
@@ -36,12 +37,12 @@ function Login() {
     onSubmit: async (values) => {
       const email = values.email;
       const password = values.password;
-      const logedIn = await context.logIn(email, password);
-      if (logedIn) navigate("/");
-      else {
-        const msg = t("login.invalidLogin");
+      const loggedUser =  await context.logIn(email, password);
+      if(isString(loggedUser)){
+        const msg = loggedUser;
         setAlert({isOpen:true,message:msg,type:"error"})
       }
+      else navigate("/");
     },
     validationSchema:schema
   });

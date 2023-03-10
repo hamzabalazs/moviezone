@@ -14,7 +14,7 @@ import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 
-export const GET_USERS = gql`
+const GET_USERS = gql`
   query GetUsers {
     getUsers {
       id

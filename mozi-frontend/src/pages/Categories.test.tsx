@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -5,36 +7,96 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
+import { CurrUser } from "../api/types";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Categories from "./Categories";
 
-function renderCategories() {
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  getCategories {
+    id
+    name
+  }
+}
+`
+
+const mockCategoryData = {
+  request:{
+    query:GET_CATEGORIES
+  },
+  result:{
+    data:{
+      getCategories:[
+        {
+          id:"idC1",
+          name:"name1"
+        },
+        {
+          id:"idC2",
+          name:"name2"
+        },
+        {
+          id:"idC3",
+          name:"name3"
+        },
+        {
+          id:"idC4",
+          name:"name4"
+        },
+      ]
+    }
+  }
+}
+
+const adminUser:CurrUser = {
+  id:"idU3",
+  first_name:"admin",
+  last_name:"admin",
+  email:"admin@example.com",
+  password:"admin",
+  role:"admin",
+  token:"token1"
+}
+
+function renderCategories(currUser?: CurrUser) {
   return render(
     <MemoryRouter>
-      <MockedApiContext>
-        <Categories />
-      </MockedApiContext>
+      <MockedProvider addTypename={false} mocks={[mockCategoryData]}>
+        <MockedSessionContext value={{user:currUser}}>
+          <Categories />
+        </MockedSessionContext>
+      </MockedProvider>
     </MemoryRouter>
   );
 }
 
-global.fetch = jest.fn();
+test("LoadingComponent should show while loading, after loading should not show",async() => {
+  const {queryByTestId} = renderCategories()
 
-test("same amount of cards as categories?", () => {
+  const loader = queryByTestId("loader")
+  expect(loader).toBeInTheDocument()
+
+  await waitFor(() => {
+    expect(loader).not.toBeInTheDocument()
+  })
+})
+
+
+test("Should have same amount of cards as categories", async() => {
   renderCategories();
 
-  const cards = screen.getAllByTestId("category-card");
-  expect(cards).toHaveLength(3);
-  //mock context has 3 categories
+  const cards = await screen.findAllByTestId("category-card");
+  expect(cards).toHaveLength(4);
 });
 
-test("category edit modal opens and shows correctly", () => {
+test("category edit modal opens and shows correctly", async() => {
   renderCategories();
 
-  const cardEditButtons = screen.getAllByRole("button", { name: "Edit" });
+  const cardEditButtons = await screen.findAllByRole("button", { name: "Edit" });
 
-  fireEvent.click(cardEditButtons[0]);
+  userEvent.click(cardEditButtons[0]);
   const cardEditModal = screen.getByTestId("category-edit-modal");
   const cardEditName = screen.getByTestId("category-edit-modal-name");
   const cardEditModalButton = screen.getByRole("button", { name: "Edit" });
@@ -43,11 +105,11 @@ test("category edit modal opens and shows correctly", () => {
   expect(cardEditModalButton).toBeInTheDocument();
 });
 
-test("category delete dialog opens and shows correctly", () => {
+test("category delete dialog opens and shows correctly", async() => {
   renderCategories();
-  const cardDeleteButtons = screen.getAllByRole("button", { name: "Delete" });
+  const cardDeleteButtons = await screen.findAllByRole("button", { name: "Delete" });
 
-  fireEvent.click(cardDeleteButtons[0]);
+  userEvent.click(cardDeleteButtons[0]);
   const cardDeleteDialog = screen.getByTestId("category-delete-dialog");
   const cardDeleteDialogAccept = screen.getByRole("button", { name: "Accept" });
   const cardDeleteDialogQuit = screen.getByRole("button", { name: "Quit" });
@@ -56,12 +118,12 @@ test("category delete dialog opens and shows correctly", () => {
   expect(cardDeleteDialogQuit).toBeInTheDocument();
 });
 
-test("category add modal opens and shows correctly", () => {
+test("category add modal opens and shows correctly", async() => {
   renderCategories();
 
-  const cardAddButton = screen.getByTestId("category-add-button");
+  const cardAddButton = await screen.findByTestId("category-add-button");
 
-  fireEvent.click(cardAddButton);
+  userEvent.click(cardAddButton);
   const cardAddModal = screen.getByTestId("category-add-modal");
   const cardAddModalName = screen.getByTestId("category-add-name");
   const cardAddModalButton = screen.getByRole("button", { name: "Add" });
@@ -73,9 +135,9 @@ test("category add modal opens and shows correctly", () => {
 test("category add modal works fine", async () => {
   renderCategories();
 
-  const cardAddButton = screen.getByTestId("category-add-button");
+  const cardAddButton = await screen.findByTestId("category-add-button");
 
-  fireEvent.click(cardAddButton);
+  userEvent.click(cardAddButton);
 
   await waitFor(async () => {
     const cardAddModalName = screen.getByTestId(

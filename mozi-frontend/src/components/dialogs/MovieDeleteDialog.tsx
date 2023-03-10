@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { useApiContext } from "../../api/ApiContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AlertType, Movie } from "../../api/types";

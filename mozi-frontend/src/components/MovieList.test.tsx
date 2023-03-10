@@ -1,14 +1,15 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { Home } from "../pages/App";
 
 function renderHome() {
   return render(
     <MemoryRouter>
-      <MockedApiContext>
+      <MockedSessionContext>
         <Home />
-      </MockedApiContext>
+      </MockedSessionContext>
     </MemoryRouter>
   );
 }
@@ -24,7 +25,7 @@ test("add movie modal opens and shows correctly", () => {
   renderHome();
 
   const addMovieButton = screen.getByTestId("movie-add-button");
-  fireEvent.click(addMovieButton);
+  userEvent.click(addMovieButton);
 
   const movieAddModal = screen.getByTestId("movie-add-modal");
   const movieAddTitle = screen.getByTestId("movie-add-title");
@@ -47,13 +48,13 @@ test("movie autocomplete works fine", async () => {
   const autocompleteDropdowns = screen.getAllByRole("button", { name: "Open" });
   const movieAutocompleteDropdown = autocompleteDropdowns[0];
 
-  fireEvent.click(movieAutocompleteDropdown);
+  userEvent.click(movieAutocompleteDropdown);
   expect(screen.getByRole("presentation")).toBeVisible();
   const movieOptions = screen.getAllByRole("option");
   expect(movieOptions).toHaveLength(8);
   expect(movieOptions[4]).toHaveTextContent("title5");
 
-  fireEvent.click(movieOptions[0]);
+  userEvent.click(movieOptions[0]);
   expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
   const addedMovie = screen.getByRole("button", { name: "title1" });
   expect(addedMovie).toHaveTextContent("title1");
@@ -64,7 +65,7 @@ test("movie autocomplete works fine", async () => {
     expect(movielistcard).toHaveLength(1);
   });
 
-  fireEvent.click(addedMovieCancel);
+  userEvent.click(addedMovieCancel);
   await waitFor(() => {
     expect(addedMovie).not.toBeInTheDocument();
   });
@@ -76,13 +77,13 @@ test("category autocomplete works fine", async () => {
   const autocompleteDropdowns = screen.getAllByRole("button", { name: "Open" });
   const categoryAutocompleteDropdown = autocompleteDropdowns[1];
 
-  fireEvent.click(categoryAutocompleteDropdown);
+  userEvent.click(categoryAutocompleteDropdown);
   expect(screen.getByRole("presentation")).toBeVisible();
   const categoryOptions = screen.getAllByRole("option");
   expect(categoryOptions).toHaveLength(3);
   expect(categoryOptions[1]).toHaveTextContent("name2");
 
-  fireEvent.click(categoryOptions[1]);
+  userEvent.click(categoryOptions[1]);
   expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
   const addedCategory = screen.getByRole("button", { name: "name2" });
   expect(addedCategory).toHaveTextContent("name2");
@@ -93,7 +94,7 @@ test("category autocomplete works fine", async () => {
     expect(movielistcard).toHaveLength(3);
   });
 
-  fireEvent.click(addedCategoryCancel);
+  userEvent.click(addedCategoryCancel);
   await waitFor(() => {
     expect(addedCategory).not.toBeInTheDocument();
   });

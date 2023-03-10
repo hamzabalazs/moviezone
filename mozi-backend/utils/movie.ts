@@ -62,8 +62,8 @@ export function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<U
   });
 }
 
-export function deleteMovie(id:string, context:MyContext):Promise<Movie> {
-  const movie = Promise.resolve(getMovieById(id, context));
+export async function deleteMovie(id:string, context:MyContext):Promise<Movie> {
+  const movie = await getMovieById(id, context);
   if(movie === undefined){
     throw new Error("Movie not found!")
   }

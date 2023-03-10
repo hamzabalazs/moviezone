@@ -61,8 +61,6 @@ function Categories() {
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
 
-  
-
   return (
     <>
       <NavigationBar />

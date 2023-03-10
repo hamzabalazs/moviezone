@@ -1,12 +1,14 @@
 import React from "react";
-import { API_URL } from "../constants";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, gql, useMutation, ApolloError } from "@apollo/client";
 import { CurrUser, User } from "../types";
 import { useNavigate } from "react-router-dom";
 
 export type LogInData = {
   user?: CurrUser;
-  logIn: (email: string, password: string) => Promise<boolean>;
+  logIn: (
+    email: string,
+    password: string
+  ) => Promise<User | undefined | string>;
   logOut: () => void;
   hasRole: (role: User["role"]) => boolean;
 };
@@ -31,15 +33,17 @@ export function useLogIn(): LogInData {
   const [user, setUser] = React.useState<CurrUser | undefined>(
     getPersistedUser()
   );
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [LoginAPI] = useMutation(LOGIN);
 
-  async function logIn(email: string, password: string): Promise<boolean> {
-    const loggedUser = await LoginAPI({
-      variables: { input: { email, password } },
-    });
-    if (!loggedUser) return false;
-    else {
+  async function logIn(
+    email: string,
+    password: string
+  ): Promise<User | string> {
+    try {
+      const loggedUser = await LoginAPI({
+        variables: { input: { email, password } },
+      });
       const token = loggedUser.data.createToken.token;
       setUser(loggedUser.data.createToken);
       localStorage.setItem(
@@ -47,7 +51,9 @@ export function useLogIn(): LogInData {
         JSON.stringify(loggedUser.data.createToken)
       );
       localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
-      return true;
+      return loggedUser.data.createToken;
+    } catch (error: any) {
+      return error.message;
     }
   }
 
@@ -55,7 +61,7 @@ export function useLogIn(): LogInData {
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(TOKEN_KEY);
     setUser(undefined);
-    navigate("/login")
+    navigate("/login");
   }
 
   function hasRole(role: User["role"]): boolean {

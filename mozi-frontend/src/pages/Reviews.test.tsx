@@ -1,10 +1,30 @@
+import { gql } from "@apollo/client";
+import {MockedProvider} from "@apollo/client/testing"
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { CurrUser } from "../api/types";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
-import { MockedProvider } from "@apollo/client/testing";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Reviews from "./Reviews";
-import { GET_REVIEWS } from "../api/review/useReviews";
+
+const GET_REVIEWS = gql`
+  query GetReviews {
+    getReviews {
+      id
+      rating
+      description
+      movie {
+        title
+        id
+      }
+      user {
+        id
+        first_name
+        last_name
+      }
+    }
+  }
+`;
 
 const mockReviewData = {
   request: {
@@ -22,8 +42,9 @@ const mockReviewData = {
             id: "idM1",
           },
           user: {
-            first_name: "user1",
-            last_name: "user1",
+            id:"idU3",
+            first_name: "viewer",
+            last_name: "viewer",
           },
         },
         {
@@ -35,6 +56,8 @@ const mockReviewData = {
             id: "idM1",
           },
           user: {
+
+            id:"idU2",
             first_name: "user2",
             last_name: "user2",
           },
@@ -48,6 +71,7 @@ const mockReviewData = {
             id: "idM2",
           },
           user: {
+            id:"idU1",
             first_name: "user1",
             last_name: "user1",
           },
@@ -58,11 +82,14 @@ const mockReviewData = {
 };
 
 function renderReviews(currUser?: CurrUser) {
+
   return render(
     <MemoryRouter>
-      <MockedApiContext value={{ user: currUser }}>
-        <Reviews />
-      </MockedApiContext>
+      <MockedProvider addTypename={false} mocks={[mockReviewData]}>
+        <MockedSessionContext value={{ user: currUser }}>
+          <Reviews />
+        </MockedSessionContext>
+      </MockedProvider>
     </MemoryRouter>
   );
 }
@@ -77,19 +104,28 @@ const viewerUser: CurrUser = {
   token: "token1",
 };
 
+test("Should show LoadingComponent at first, after loading should show review page",async() =>{
+  const {queryByTestId} = renderReviews(viewerUser)
+  const loader = queryByTestId("loader")
+  expect(loader).toBeInTheDocument()
+  await waitFor(() => {
+    expect(loader).not.toBeInTheDocument()
+  })
+})
+
 test("correct amount of reviews show up for user", async () => {
   renderReviews(viewerUser);
   await waitFor(() => {
     const cards = screen.getAllByTestId("review-card");
-    expect(cards).toHaveLength(2);
+    expect(cards).toHaveLength(1);
   });
 });
 
-test("review edit modal opens and shows correctly", () => {
+test("review edit modal opens and shows correctly", async() => {
   renderReviews(viewerUser);
 
-  const cardEditButtons = screen.getAllByRole("button", { name: "Edit" });
-  fireEvent.click(cardEditButtons[0]);
+  const cardEditButtons = await screen.findAllByRole("button", { name: "Edit" });
+  userEvent.click(cardEditButtons[0]);
   const reviewEditModal = screen.getByTestId("review-edit-modal");
   const reviewEditModalButton = screen.getByRole("button", { name: "Edit" });
   const reviewEditModalDescription = screen.getByTestId(
@@ -102,11 +138,11 @@ test("review edit modal opens and shows correctly", () => {
   expect(reviewEditModalButton).toBeInTheDocument();
 });
 
-test("review delete dialog opens and shows correctly", () => {
+test("review delete dialog opens and shows correctly", async() => {
   renderReviews(viewerUser);
-  const cardDeleteButtons = screen.getAllByRole("button", { name: "Delete" });
+  const cardDeleteButtons = await screen.findAllByRole("button", { name: "Delete" });
 
-  fireEvent.click(cardDeleteButtons[0]);
+  userEvent.click(cardDeleteButtons[0]);
   const reviewDeleteModal = screen.getByTestId("review-delete-dialog");
   const reviewDeleteDialogAcceptButton = screen.getByRole("button", {
     name: "Accept",

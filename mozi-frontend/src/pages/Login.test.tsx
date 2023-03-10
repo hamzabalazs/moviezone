@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -5,19 +7,97 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { GraphQLError } from "graphql";
 import { MemoryRouter } from "react-router-dom";
-import { MockedApiContext } from "../common/testing/MockedApiProvider";
+import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Login from "./Login";
 
-function renderLogin() {
+const LOGIN = gql`
+  mutation CreateToken($input: AddTokenInput!) {
+    createToken(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+      token
+    }
+  }
+`;
+
+const mockLoginData = {
+  request: {
+    query: LOGIN,
+    variables: { input: { email: "admin@example.com", password: "admin" } },
+  },
+  result: {
+    data: {
+      createToken: {
+        id: "idU1",
+        first_name: "admin",
+        last_name: "admin",
+        role: "admin",
+        email: "admin@example.com",
+        token: "token1",
+      },
+    },
+  },
+};
+
+const mockLoginErrorData = {
+  request:{
+    query: LOGIN,
+    variables:{input:{email:"admin@example.com",password:"adminbad"}}
+  },
+  result:{
+    errors: [new GraphQLError("User does not exist!")]
+  }
+}
+
+function renderLoginError() {
   return render(
     <MemoryRouter>
-      <MockedApiContext>
-        <Login />
-      </MockedApiContext>
+      <MockedProvider addTypename={false} mocks={[mockLoginErrorData]}>
+        <MockedSessionContext>
+          <Login />
+        </MockedSessionContext>
+      </MockedProvider>
     </MemoryRouter>
   );
 }
+
+function renderLogin(logInMock?:jest.Mock<any,any>) {
+  return render(
+    <MemoryRouter>
+      <MockedProvider addTypename={false} mocks={[mockLoginData]}>
+        <MockedSessionContext value={{logIn:logInMock}}>
+          <Login />
+        </MockedSessionContext>
+      </MockedProvider>
+    </MemoryRouter>
+  );
+}
+
+test("login is called if inputs are not empty",async() => {
+  const logInMock = jest.fn()
+  renderLogin(logInMock)
+
+  const loginFormEmail = screen.getByTestId("login-email") as HTMLInputElement;
+  const loginFormPassword = screen.getByTestId("login-password") as HTMLInputElement;
+  const loginButton = screen.getByRole("button", { name: "login.login" });
+
+  fireEvent.change(loginFormEmail,{target:{value:"admin@example.com"}})
+  fireEvent.change(loginFormPassword,{target:{value:"admin"}})
+
+  act(() => {
+    userEvent.click(loginButton);
+  });
+  
+  await waitFor(() => {
+    expect(logInMock).toHaveBeenCalled()
+  })
+})
 
 test("login error happens if email empty", async () => {
   renderLogin();
@@ -29,7 +109,7 @@ test("login error happens if email empty", async () => {
   expect(loginButton).toBeVisible();
 
   act(() => {
-    fireEvent.click(loginButton);
+    userEvent.click(loginButton);
   });
   await waitFor(() => {
     const loginErrors = screen.getAllByTestId("login-errors");
@@ -48,7 +128,7 @@ test("login error happens if password is empty", async () => {
   expect(loginFormPassword.value).toBe("");
 
   act(() => {
-    fireEvent.click(loginButton);
+    userEvent.click(loginButton);
   });
   await waitFor(() => {
     const loginErrors = screen.getAllByTestId("login-errors");

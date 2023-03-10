@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+import { v4 as uuidv4 } from "uuid";
 import { MyContext } from "../server";
 import { logIn } from "./auth";
 import { CurrentUser, Role, Token, User } from "./types";

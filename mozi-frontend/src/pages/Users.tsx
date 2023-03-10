@@ -8,13 +8,12 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import AlertComponent from "../components/AlertComponent";
-import { useApiContext } from "../api/ApiContext";
 import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 
-export const GET_USERS = gql`
+const GET_USERS = gql`
   query GetUsers {
     getUsers {
       id

@@ -2,6 +2,7 @@ import { Fab } from "@mui/material";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ScrollTop from "./ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import userEvent from "@testing-library/user-event";
 
 test("scrolltop calls scrollIntoView", async () => {
   render(
@@ -17,7 +18,7 @@ test("scrolltop calls scrollIntoView", async () => {
   let scrollIntoViewMock = jest.fn();
   window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
   const elementToClick = screen.getByLabelText("scroll back to top");
-  fireEvent.click(elementToClick);
+  userEvent.click(elementToClick);
 
   await waitFor(() => {
     expect(scrollIntoViewMock).toBeCalled();

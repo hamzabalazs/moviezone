@@ -97,7 +97,7 @@ export function createReview(
       }
     );
   });
-}// WORKS
+}
 
 export async function updateReview(
   review: any,
@@ -135,7 +135,7 @@ export async function updateReview(
     });
   }
   throw new Error("Unauthorized!");
-}// WORKS
+}
 
 export async function deleteReview(
   id: string,
@@ -161,4 +161,4 @@ export async function deleteReview(
     });
   }
   throw new Error("Unauthorized!");
-}// WORKS
+}
