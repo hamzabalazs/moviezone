@@ -20,14 +20,17 @@ import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { isString } from "lodash";
 
-
 function Login() {
   const navigate = useNavigate();
   const context = useSessionContext();
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
+  const [alert, setAlert] = useState<AlertType>({
+    isOpen: false,
+    message: "",
+    type: undefined,
+  });
   const { t } = useTranslation();
 
-  const schema = useEditUserSchema()
+  const schema = useEditUserSchema();
 
   const formik = useFormik({
     initialValues: {
@@ -37,14 +40,18 @@ function Login() {
     onSubmit: async (values) => {
       const email = values.email;
       const password = values.password;
-      const loggedUser =  await context.logIn(email, password);
-      if(isString(loggedUser)){
-        const msg = loggedUser;
-        setAlert({isOpen:true,message:msg,type:"error"})
-      }
-      else navigate("/");
+      const loggedUser = await context.logIn(email, password);
+      if (isString(loggedUser)) {
+        if (loggedUser === "User does not exist!") {
+          const msg = t("failMessages.loginFailedEmail");
+          setAlert({ isOpen: true, message: msg, type: "error" });
+        } else if (loggedUser === "Password not the same!") {
+          const msg = t("failMessages.loginFailedPassword");
+          setAlert({ isOpen: true, message: msg, type: "error" });
+        }
+      } else navigate("/");
     },
-    validationSchema:schema
+    validationSchema: schema,
   });
 
   useEffect(() => {
@@ -55,10 +62,7 @@ function Login() {
 
   return (
     <>
-      <AlertComponent
-        alert={alert}
-        setAlert={setAlert}
-      />
+      <AlertComponent alert={alert} setAlert={setAlert} />
       <Container component="main" maxWidth="xs">
         <Box
           sx={{

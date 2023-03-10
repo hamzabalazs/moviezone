@@ -53,7 +53,9 @@
     "failMessages" : {
         "reviewAddMultiple": "You have already rated this movie!",
         "reviewDescriptionMissing": "No description has been given!",
-        "reviewRatingMissing": "No rating has been given!"
+        "reviewRatingMissing": "No rating has been given!",
+        "loginFailedEmail":"Invalid Email! Could not log in!",
+        "loginFailedPassword":"Invalid Password! Could not log in!"
     },
     "successMessages": {
         "reviewAdd": "Review was added successfully!",

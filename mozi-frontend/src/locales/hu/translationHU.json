@@ -54,7 +54,9 @@
     "failMessages" : {
         "reviewAddMultiple": "Már van vélemény adva az adott filmről!",
         "reviewDescriptionMissing": "Nincs megadva a vélemény leirása!",
-        "reviewRatingMissing": "Nincs megadva a vélemény értékelése!"
+        "reviewRatingMissing": "Nincs megadva a vélemény értékelése!",
+        "loginFailedEmail":"Helytelen Email! Belépés sikertelen!",
+        "loginFailedPassword":"Helytelen Jelszó! Belépés sikertelen!"
     },
     "successMessages": {
         "reviewAdd": "A vélemény hozzáadása sikeres!",
