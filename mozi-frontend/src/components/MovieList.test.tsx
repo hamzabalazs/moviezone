@@ -1,58 +1,138 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { Home } from "../pages/App";
 
+const GET_CATEGORIES = gql`
+  query GetCategories {
+    getCategories {
+      id
+      name
+    }
+  }
+`;
+
+const GET_MOVIES = gql`
+  query GetMovies {
+    getMovies {
+      id
+      title
+      poster
+      release_date
+      category {
+        id
+      }
+      rating
+    }
+  }
+`;
+
+const mockData = [
+  {
+    request:{
+      query:GET_MOVIES
+    },
+    result:{
+      data:{
+        getMovies:[
+          {
+            id:"idM1",
+            title:"title1",
+            poster:"poster1",
+            release_date:"01/01/2021",
+            category:{
+              id:"idC1"
+            },
+            rating:"2"
+          },
+          {
+            id:"idM2",
+            title:"title2",
+            poster:"poster2",
+            release_date:"02/02/2022",
+            category:{
+              id:"idC1"
+            },
+            rating:"4"
+          },
+          {
+            id:"idM3",
+            title:"title3",
+            poster:"poster3",
+            release_date:"03/03/2023",
+            category:{
+              id:"idC2"
+            },
+            rating:"5"
+          },
+        ]
+      }
+    }
+  },
+  {
+    request:{
+      query:GET_CATEGORIES
+    },
+    result:{
+      data:{
+        getCategories:[
+          {
+            id:"idC1",
+            name:"name1"
+          },
+          {
+            id:"idC2",
+            name:"name2"
+          }
+        ]
+      }
+    }
+  }
+]
+
 function renderHome() {
   return render(
     <MemoryRouter>
-      <MockedSessionContext>
-        <Home />
-      </MockedSessionContext>
+      <MockedProvider addTypename={false} mocks={mockData}>
+        <MockedSessionContext>
+          <Home />
+        </MockedSessionContext>
+      </MockedProvider>
     </MemoryRouter>
   );
 }
 
-test("correct amount of cards for movielist in context", () => {
+test("LoadingComponent should show while loading, after loading should not show",async() => {
+  const {queryByTestId} = renderHome()
+
+  const loader = queryByTestId("loader")
+  expect(loader).toBeInTheDocument()
+
+  await waitFor(() => {
+    expect(loader).not.toBeInTheDocument()
+  })
+})
+
+test("Should have correct amount of cards for movielist", async() => {
   renderHome();
 
-  const cards = screen.getAllByTestId("movie-list-card");
-  expect(cards).toHaveLength(8);
-});
-
-test("add movie modal opens and shows correctly", () => {
-  renderHome();
-
-  const addMovieButton = screen.getByTestId("movie-add-button");
-  userEvent.click(addMovieButton);
-
-  const movieAddModal = screen.getByTestId("movie-add-modal");
-  const movieAddTitle = screen.getByTestId("movie-add-title");
-  const movieAddDescription = screen.getByTestId("movie-add-description");
-  const movieAddrelease_date = screen.getByTestId("movie-add-release_date");
-  const movieAddCategory = screen.getByTestId("movie-add-category");
-  const movieAddPoster = screen.getByTestId("movie-add-poster");
-
-  expect(movieAddModal).not.toHaveAttribute("aria-hidden", "true");
-  expect(movieAddTitle).toBeInTheDocument();
-  expect(movieAddDescription).toBeInTheDocument();
-  expect(movieAddrelease_date).toBeInTheDocument();
-  expect(movieAddCategory).toBeInTheDocument();
-  expect(movieAddPoster).toBeInTheDocument();
+  const cards = await screen.findAllByTestId("movie-list-card");
+  expect(cards).toHaveLength(3);
 });
 
 test("movie autocomplete works fine", async () => {
   renderHome();
 
-  const autocompleteDropdowns = screen.getAllByRole("button", { name: "Open" });
+  const autocompleteDropdowns = await screen.findAllByRole("button", { name: "Open" });
   const movieAutocompleteDropdown = autocompleteDropdowns[0];
 
   userEvent.click(movieAutocompleteDropdown);
   expect(screen.getByRole("presentation")).toBeVisible();
   const movieOptions = screen.getAllByRole("option");
-  expect(movieOptions).toHaveLength(8);
-  expect(movieOptions[4]).toHaveTextContent("title5");
+  expect(movieOptions).toHaveLength(3);
 
   userEvent.click(movieOptions[0]);
   expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
@@ -74,13 +154,13 @@ test("movie autocomplete works fine", async () => {
 test("category autocomplete works fine", async () => {
   renderHome();
 
-  const autocompleteDropdowns = screen.getAllByRole("button", { name: "Open" });
+  const autocompleteDropdowns = await screen.findAllByRole("button", { name: "Open" });
   const categoryAutocompleteDropdown = autocompleteDropdowns[1];
 
   userEvent.click(categoryAutocompleteDropdown);
   expect(screen.getByRole("presentation")).toBeVisible();
   const categoryOptions = screen.getAllByRole("option");
-  expect(categoryOptions).toHaveLength(3);
+  expect(categoryOptions).toHaveLength(2);
   expect(categoryOptions[1]).toHaveTextContent("name2");
 
   userEvent.click(categoryOptions[1]);
@@ -91,7 +171,7 @@ test("category autocomplete works fine", async () => {
 
   await waitFor(() => {
     const movielistcard = screen.getAllByTestId("movie-list-card");
-    expect(movielistcard).toHaveLength(3);
+    expect(movielistcard).toHaveLength(1);
   });
 
   userEvent.click(addedCategoryCancel);

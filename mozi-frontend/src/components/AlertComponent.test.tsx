@@ -15,9 +15,12 @@ function renderAlert(
   );
 }
 
+
+
 test("alert success renders correctly", async () => {
   jest.useFakeTimers();
-  const alert = {isOpen:true,message:"alertsuccessmessage",type:undefined}
+  const alertType:"error"|"success"|undefined = "success"
+  const alert = {isOpen:true,message:"alertsuccessmessage",type:alertType}
   const setAlert = jest.fn();
   renderAlert(alert,setAlert);
 
@@ -34,19 +37,18 @@ test("alert success renders correctly", async () => {
 
 test("alert error renders correctly", async () => {
   jest.useFakeTimers();
-  const isOpenAlert = true;
-  const alertType = "error";
-  const alertMessage = "alerterrormessage";
-  const setIsOpenAlert = jest.fn();
-  //renderAlert(isOpenAlert, alertType, alertMessage, setIsOpenAlert);
+  const alertType:"error"|"success"|undefined = "error"
+  const alert = {isOpen:true,message:"alerterrormessage",type:alertType}
+  const setAlert = jest.fn();
+  renderAlert(alert,setAlert);
 
   const alertdiv = screen.getByTestId("alert-error");
   expect(alertdiv).toBeInTheDocument();
   expect(alertdiv).toHaveTextContent("alerterrormessage");
   expect(screen.getByTestId("ErrorOutlineIcon")).toBeInTheDocument();
-  expect(setIsOpenAlert).toHaveBeenCalledTimes(0);
+  expect(setAlert).toHaveBeenCalledTimes(0);
 
   jest.runAllTimers();
 
-  expect(setIsOpenAlert).toHaveBeenCalledTimes(1);
+  expect(setAlert).toHaveBeenCalledTimes(1);
 });
