@@ -53,7 +53,7 @@ const UPDATE_MOVIE = gql`
 
 export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
   const { t } = useTranslation();
-  const [UpdateReviewAPI] = useMutation(UPDATE_MOVIE);
+  const [UpdateReviewAPI,{data}] = useMutation(UPDATE_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
 
   const updateMovie = async (
@@ -99,6 +99,7 @@ export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
   });
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

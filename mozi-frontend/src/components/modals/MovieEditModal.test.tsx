@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -10,12 +12,6 @@ import { Movie } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieEditModal from "./MovieEditModal";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
-
 const testMovie: Movie = {
   id: "idM1",
   title: "title1",
@@ -23,8 +19,8 @@ const testMovie: Movie = {
   release_date: "22/02/2023",
   poster: "poster1",
   category: {
-    id:"idC1",
-    name:"name1"
+    id: "idC1",
+    name: "name1",
   },
   rating: "3",
 };
@@ -38,14 +34,95 @@ const testNewMovie = {
   categoryId: "idC3",
 };
 
-function renderMovieEditModal(props: {
-  movie?: Movie;
-  onClose?: () => void;
-}) {
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  getCategories {
+    id
+    name
+  }
+}
+`
+const UPDATE_MOVIE = gql`
+  mutation UpdateMovie($input: UpdateMovieInput!) {
+    updateMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+
+const dataMock = [
+  {
+    request:{
+      query:GET_CATEGORIES
+    },
+    result:{
+      data:{
+        getCategories:[
+          {
+            id:"idC1",
+            name:"name1",
+          },
+          {
+            id:"idC2",
+            name:"name2",
+          },
+          {
+            id:"idC3",
+            name:"name3",
+          },
+        ]
+      }
+    }
+  },
+  {
+    request:{
+      query:UPDATE_MOVIE,
+      variables:{
+        input:{
+          id: testNewMovie.id,
+          title: testNewMovie.title,
+          description: testNewMovie.description,
+          poster: testNewMovie.poster,
+          release_date: testNewMovie.release_date,
+          category_id: testNewMovie.categoryId
+        }
+      }
+    },
+    result:{
+      data:{
+        updateMovie:{
+          id: testNewMovie.id,
+          title: testNewMovie.title,
+          description: testNewMovie.description,
+          poster: testNewMovie.poster,
+          release_date: testNewMovie.release_date,
+          category:{
+            id: testNewMovie.categoryId,
+            name: "name3"
+          },
+          rating: testMovie.rating
+        }
+      }
+    }
+  }
+]
+
+function renderMovieEditModal(props: { movie?: Movie; onClose?: () => void }) {
   return render(
-    <MockedSessionContext>
-      <MovieEditModal movie={props.movie} onClose={props.onClose} />
-    </MockedSessionContext>
+    <MockedProvider addTypename={false} mocks={dataMock}>
+      <MockedSessionContext>
+        <MovieEditModal movie={props.movie} onClose={props.onClose} />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -57,11 +134,24 @@ test("If movie is not provided should not open modal", () => {
   expect(modal).not.toBeInTheDocument();
 });
 
-test("If movie is provided should open modal with correct values", () => {
-  const { queryByTestId,getByTestId } = renderMovieEditModal({ movie: testMovie });
+test("if movie is provided, should show LoadingComponent while loading, after loading should not show",async() => {
+  const { queryByTestId } = renderMovieEditModal({movie:testMovie});
+  const loader = queryByTestId("loader")
 
-  const modal = queryByTestId("movie-edit-modal");
-  const title = queryByTestId("movie-edit-title");
+  expect(loader).toBeInTheDocument()
+
+  await waitFor(() => {
+    expect(loader).not.toBeInTheDocument()
+  })
+})
+
+test("If movie is provided should open modal with correct values", async() => {
+  const { queryByTestId, getByTestId, findByTestId } = renderMovieEditModal({
+    movie: testMovie,
+  });
+
+  const modal = await findByTestId("movie-edit-modal");
+  const title = await findByTestId("movie-edit-title");
   const description = queryByTestId("movie-edit-description");
   const release_date = queryByTestId("movie-edit-release_date");
   const categoryId = getByTestId("movie-edit-categoryId");
@@ -77,40 +167,39 @@ test("If movie is provided should open modal with correct values", () => {
   expect(categoryId).toHaveValue(testMovie.category.id);
 });
 
-// test("calls editMovie with correct values", async () => {
-//   const editMovieSpy = jest.fn();
-//   const { getByTestId, getByRole } = renderMovieEditModal({
-//     movie: testMovie,
-//     editMovie: editMovieSpy,
-//   });
+test("calls edit movie successfully", async () => {
+  const { getByTestId, getByRole, queryByText, findByTestId } = renderMovieEditModal({
+    movie: testMovie
+  });
 
-//   const title = getByTestId("movie-edit-title");
-//   const description = getByTestId("movie-edit-description");
-//   const release_date = getByTestId("movie-edit-release_date");
-//   const editButton = getByTestId("movie-edit-button");
-//   const category = within(getByTestId("movie-edit-category"));
+  const title = await findByTestId("movie-edit-title");
+  const description = getByTestId("movie-edit-description");
+  const release_date = getByTestId("movie-edit-release_date");
+  const editButton = getByTestId("movie-edit-button");
+  const category = within(getByTestId("movie-edit-category"));
+  expect(queryByText("Success")).not.toBeInTheDocument();
 
-//   fireEvent.change(title, { target: { value: testNewMovie.title } });
-//   fireEvent.change(description, {
-//     target: { value: testNewMovie.description },
-//   });
-//   fireEvent.change(release_date, {
-//     target: { value: testNewMovie.release_date },
-//   });
+  fireEvent.change(title, { target: { value: testNewMovie.title } });
+  fireEvent.change(description, {
+    target: { value: testNewMovie.description },
+  });
+  fireEvent.change(release_date, {
+    target: { value: testNewMovie.release_date },
+  });
 
-//   fireEvent.mouseDown(category.getByRole("button"));
-//   const listbox = within(getByRole("listbox"));
-//   userEvent.click(
-//     listbox
-//       .getAllByRole("option")
-//       .find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!
-//   );
+  fireEvent.mouseDown(category.getByRole("button"));
+  const listbox = within(getByRole("listbox"));
+  userEvent.click(
+    listbox
+      .getAllByRole("option")
+      .find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!
+  );
 
-//   act(() => {
-//     userEvent.click(editButton);
-//   });
+  act(() => {
+    userEvent.click(editButton);
+  });
 
-//   await waitFor(() => {
-//     expect(editMovieSpy).toHaveBeenCalledWith(testNewMovie);
-//   });
-// });
+  await waitFor(() => {
+    expect(queryByText("Success")).toBeInTheDocument();
+  });
+});

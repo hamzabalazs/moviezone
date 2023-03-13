@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
   fireEvent,
@@ -9,12 +11,6 @@ import userEvent from "@testing-library/user-event";
 import { User } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import UserEditModal from "./UserEditModal";
-
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
 
 const testUser: User = {
   id: "idU3",
@@ -34,20 +30,61 @@ const newTestUser: User = {
   role: "editor",
 };
 
+const UPDATE_USER = gql`
+  mutation UpdateUser($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
+
+const editMock = {
+  request:{
+    query:UPDATE_USER,
+    variables:{
+      input:{
+        id: testUser.id,
+        first_name: newTestUser.first_name,
+        last_name: newTestUser.last_name,
+        email: newTestUser.email,
+        password: newTestUser.password,
+        role: newTestUser.role
+      }
+    }
+  },
+  result:{
+    data:{
+      updateUser:{
+        id:testUser.id,
+        first_name: newTestUser.first_name,
+        last_name: newTestUser.last_name,
+        role: newTestUser.role,
+        email: newTestUser.email
+      }
+    }
+  }
+}
+
 function renderUserEditModal(props: {
   user?: User;
   onClose?: () => void;
   allowEditRole?: boolean;
 }) {
   return render(
-    <MockedSessionContext>
-      <UserEditModal
-        user={props.user}
-        onClose={props.onClose}
-        allowEditRole={props.allowEditRole}
-        setAlert={jest.fn()}
-      />
-    </MockedSessionContext>
+    <MockedProvider addTypename={false} mocks={[editMock]}>
+      <MockedSessionContext>
+        <UserEditModal
+          user={props.user}
+          onClose={props.onClose}
+          allowEditRole={props.allowEditRole}
+          setAlert={jest.fn()}
+        />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -93,56 +130,38 @@ test("If allowEditRole is set should show role selector", () => {
   expect(role).toBeInTheDocument();
 });
 
-// test("Should call editUser with correct values", async () => {
-//   const editUserSpy = jest.fn();
-//   const { getByTestId, getByRole } = renderUserEditModal({
-//     user: testUser,
-//     allowEditRole: true,
-//     editUser: editUserSpy,
-//   });
+test("Should call edit user successfully", async () => {
+  const { getByTestId, getByRole, queryByText } = renderUserEditModal({
+    user: testUser,
+    allowEditRole: true,
+  });
 
-//   const first_name = getByTestId("user-edit-modal-first_name");
-//   const last_name = getByTestId("user-edit-modal-last_name");
-//   const email = getByTestId("user-edit-modal-email");
-//   const password = getByTestId("user-edit-modal-password");
-//   const role = within(getByTestId("user-edit-modal-role"));
-//   const submit = getByTestId("user-edit-modal-submit");
+  const first_name = getByTestId("user-edit-modal-first_name");
+  const last_name = getByTestId("user-edit-modal-last_name");
+  const email = getByTestId("user-edit-modal-email");
+  const password = getByTestId("user-edit-modal-password");
+  const role = within(getByTestId("user-edit-modal-role"));
+  const submit = getByTestId("user-edit-modal-submit");
+  expect(queryByText("Success")).not.toBeInTheDocument();
 
-//   fireEvent.change(first_name, { target: { value: newTestUser.first_name } });
-//   fireEvent.change(last_name, { target: { value: newTestUser.last_name } });
-//   fireEvent.change(email, { target: { value: newTestUser.email } });
-//   fireEvent.change(password, { target: { value: newTestUser.password } });
-//   fireEvent.mouseDown(role.getByRole("button"));
-//   const listbox = within(getByRole("listbox"));
-//   userEvent.click(
-//     listbox
-//       .getAllByRole("option")
-//       .find((x) => x.getAttribute("data-value") === newTestUser.role)!
-//   );
+  fireEvent.change(first_name, { target: { value: newTestUser.first_name } });
+  fireEvent.change(last_name, { target: { value: newTestUser.last_name } });
+  fireEvent.change(email, { target: { value: newTestUser.email } });
+  fireEvent.change(password, { target: { value: newTestUser.password } });
+  fireEvent.mouseDown(role.getByRole("button"));
+  const listbox = within(getByRole("listbox"));
+  userEvent.click(
+    listbox
+      .getAllByRole("option")
+      .find((x) => x.getAttribute("data-value") === newTestUser.role)!
+  );
 
-//   act(() => {
-//     userEvent.click(submit);
-//   });
+  act(() => {
+    userEvent.click(submit);
+  });
 
-//   await waitFor(() => {
-//     expect(editUserSpy).toHaveBeenCalledWith(newTestUser);
-//   });
-// });
+  await waitFor(() => {
+    expect(queryByText("Success")).toBeInTheDocument();
+  });
+});
 
-// test("If allowEditRole not set should call editUser without role", async () => {
-//   const editUserSpy = jest.fn();
-//   const { getByTestId } = renderUserEditModal({
-//     user: testUser,
-//     editUser: editUserSpy,
-//   });
-
-//   const submit = getByTestId("user-edit-modal-submit");
-
-//   act(() => {
-//     userEvent.click(submit);
-//   });
-
-//   await waitFor(() => {
-//     expect(editUserSpy).toHaveBeenCalledWith({ ...testUser, role: undefined });
-//   });
-// });

@@ -73,7 +73,7 @@ const GET_CATEGORIES = gql`
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();
   const [poster, setPoster] = useState("");
-  const [AddMovieAPI] = useMutation(ADD_MOVIE);
+  const [AddMovieAPI,{data}] = useMutation(ADD_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const setIsOpenAdd = props.setIsOpenAdd;
   const setAlert = props.setAlert;
@@ -117,6 +117,8 @@ export default function AddMovieCard(props: Props) {
   });
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading);
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>

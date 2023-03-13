@@ -33,7 +33,7 @@ interface Values {
 
 export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
-  const [AddCategoryAPI] = useMutation(ADD_CATEGORY);
+  const [AddCategoryAPI,{data}] = useMutation(ADD_CATEGORY);
 
   const setIsOpenAdd = props.setIsOpenAdd;
   const setAlert = props.setAlert;
@@ -65,6 +65,8 @@ export default function AddCategoryCard(props: Props) {
       }
     },
   });
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>

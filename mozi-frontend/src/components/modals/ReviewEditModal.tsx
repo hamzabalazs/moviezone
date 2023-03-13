@@ -23,7 +23,7 @@ interface Props {
   setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
-export const UPDATE_REVIEW = gql`
+const UPDATE_REVIEW = gql`
   mutation UpdateReview($input: UpdateReviewInput!) {
     updateReview(input: $input) {
       id
@@ -42,7 +42,7 @@ export const UPDATE_REVIEW = gql`
 `;
 
 export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
-  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
+  const [UpdateReviewAPI,{data}] = useMutation(UPDATE_REVIEW);
   const { t } = useTranslation();
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
@@ -63,7 +63,6 @@ export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
     }
     onClose?.();
   };
-  // { id:review.id, ...editedReview }
   const schema = useEditReviewSchema();
 
   const formik = useFormik({
@@ -75,6 +74,8 @@ export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
     enableReinitialize: true,
     validationSchema: schema,
   });
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

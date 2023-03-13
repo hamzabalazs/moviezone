@@ -1,14 +1,16 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Category } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryEditModal from "./CategoryEditModal";
-
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
 
 const testCategory: Category = {
   id: "idC3",
@@ -20,14 +22,44 @@ const newtestCategory: Category = {
   name: "EDITED",
 };
 
+const UPDATE_CATEGORY = gql`
+  mutation UpdateCategory($input: UpdateCategoryInput!) {
+  updateCategory(input: $input) {
+    id
+    name
+  }
+}
+`
+const editMock = {
+  request:{
+    query:UPDATE_CATEGORY,
+    variables:{
+      input:{
+        id:testCategory.id,
+        name:newtestCategory.name,
+      }
+    }
+  },
+  result:{
+    data:{
+      updateCategory:{
+        id:testCategory.id,
+        name:newtestCategory.name,
+      }
+    }
+  }
+}
+
 function renderCategoryEditModal(props: {
   category?: Category;
   onClose?: () => void;
 }) {
   return render(
-    <MockedSessionContext>
-      <CategoryEditModal category={props.category} onClose={props.onClose} />
-    </MockedSessionContext>
+    <MockedProvider addTypename={false} mocks={[editMock]}>
+      <MockedSessionContext>
+        <CategoryEditModal category={props.category} onClose={props.onClose} />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -52,23 +84,26 @@ test("If category is provided should open modal with correct values", () => {
   expect(name).toHaveValue(testCategory.name);
 });
 
-// test("calls editcategory with correct values", async () => {
-//   const editCategorySpy = jest.fn();
-//   const { getByTestId } = renderCategoryEditModal({
-//     category: testCategory,
-//     editCategory: editCategorySpy,
-//   });
+test("calls editcategory with correct values", async () => {
+  const { getByTestId } = renderCategoryEditModal({
+    category: testCategory,
+  });
 
-//   const name = getByTestId("category-edit-modal-name")
-//   const editButton = getByTestId("category-edit-modal-edit")
+  const name = getByTestId("category-edit-modal-name") as HTMLInputElement;
+  const editButton = getByTestId("category-edit-modal-edit");
+  expect(screen.queryByText("Success")).not.toBeInTheDocument();
+  expect(name.value).toBe(testCategory.name)
 
-//   fireEvent.change(name,{target:{value:newtestCategory.name}})
+  fireEvent.change(name, { target: { value: newtestCategory.name } });
+  await waitFor(() => {
+    expect(name.value).toBe(newtestCategory.name)
+  })
 
-//   act(() => {
-//     userEvent.click(editButton)
-//   })
+  act(() => {
+    userEvent.click(editButton);
+  });
 
-//   await waitFor(() => {
-//     expect(editCategorySpy).toHaveBeenCalledWith(newtestCategory)
-//   })
-// });
+  await waitFor(() => {
+    expect(screen.queryByText("Success")).toBeInTheDocument();
+  });
+});

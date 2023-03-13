@@ -36,7 +36,7 @@ export default function CategoryEditModal({
   setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY)
+  const [UpdateCategoryAPI,{data}] = useMutation(UPDATE_CATEGORY)
 
   const updateCategory = async (editedCategory: Omit<Category,"id">) => {
     if(category === undefined) return;
@@ -64,6 +64,8 @@ export default function CategoryEditModal({
     enableReinitialize:true,
     validationSchema: schema
   });
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

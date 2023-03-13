@@ -86,7 +86,7 @@ export default function UserEditModal({
   setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const [UpdateUserAPI] = useMutation(UPDATE_USER);
+  const [UpdateUserAPI,{data}] = useMutation(UPDATE_USER);
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
@@ -126,6 +126,8 @@ export default function UserEditModal({
     enableReinitialize: true,
     validationSchema: schema,
   });
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal
