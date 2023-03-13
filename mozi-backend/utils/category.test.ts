@@ -169,7 +169,6 @@ test("Should not delete category if bad token was given",async() => {
             id:testCategory.id,
         }}
     })
-    console.log(result.errors)
     expect(result.errors).not.toBeUndefined()
     expect(result.data).toBeNull()
 })
@@ -181,7 +180,6 @@ test("Should not delete category if bad ID was given",async() => {
             id:"badID",
         }}
     })
-    console.log(result.errors)
     expect(result.errors).not.toBeUndefined()
     expect(result.data).toBeNull()
 })
