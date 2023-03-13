@@ -212,24 +212,23 @@ test("Should not have edit and delete button on moviecard if current user is vie
   const card = await screen.findByTestId("moviepage-card");
   const movieEditButton = screen.queryByTestId("moviepage-edit-button");
   const movieDeleteButton = screen.queryByTestId("moviepage-delete-button");
-  expect(movieDeleteButton).not.toBeInTheDocument()
-  expect(movieEditButton).not.toBeInTheDocument()
+  expect(movieDeleteButton).not.toBeInTheDocument();
+  expect(movieEditButton).not.toBeInTheDocument();
 });
 
-test("Should have edit and delete button on reviewcard where user is viewer and has review on movie",async() => {
-  renderMoviePage(viewerUser)
+test("Should have edit and delete button on reviewcard where user is viewer and has review on movie", async () => {
+  renderMoviePage(viewerUser);
 
-  const reviewCard = await screen.findAllByTestId("review-card")
-  const reviewEditButtons = screen.queryAllByTestId("review-edit-button")
+  const reviewCard = await screen.findAllByTestId("review-card");
+  const reviewEditButtons = screen.queryAllByTestId("review-edit-button");
   const reviewDeleteButtons = screen.getAllByTestId("review-delete-button");
 
-  expect(reviewCard).toHaveLength(2)
-  expect(reviewEditButtons).toBeTruthy()
-  expect(reviewDeleteButtons).toBeTruthy()
-  expect(reviewEditButtons).toHaveLength(1)
-  expect(reviewDeleteButtons).toHaveLength(1)
-
-})
+  expect(reviewCard).toHaveLength(2);
+  expect(reviewEditButtons).toBeTruthy();
+  expect(reviewDeleteButtons).toBeTruthy();
+  expect(reviewEditButtons).toHaveLength(1);
+  expect(reviewDeleteButtons).toHaveLength(1);
+});
 
 test("movie has correct amount of reviews", async () => {
   renderMoviePage(adminUser);
@@ -240,19 +239,19 @@ test("movie has correct amount of reviews", async () => {
 
 test("admin/editor should have edit and delete button for movies/reviews", async () => {
   renderMoviePage(adminUser);
-    const card = await screen.findByTestId("moviepage-card");
-    const cardCount = screen.getAllByTestId("moviepage-card");
-    const movieEditButton = screen.getByTestId("moviepage-edit-button");
-    const movieDeleteButton = screen.getByTestId("moviepage-delete-button");
-    const reviewEditButtons = screen.getAllByTestId("review-edit-button");
-    const reviewDeleteButtons = screen.getAllByTestId("review-delete-button");
+  const card = await screen.findByTestId("moviepage-card");
+  const cardCount = screen.getAllByTestId("moviepage-card");
+  const movieEditButton = screen.getByTestId("moviepage-edit-button");
+  const movieDeleteButton = screen.getByTestId("moviepage-delete-button");
+  const reviewEditButtons = screen.getAllByTestId("review-edit-button");
+  const reviewDeleteButtons = screen.getAllByTestId("review-delete-button");
 
-    expect(card).toBeInTheDocument();
-    expect(cardCount).toHaveLength(1);
-    expect(movieEditButton).toBeInTheDocument();
-    expect(movieDeleteButton).toBeInTheDocument();
-    expect(reviewEditButtons).toHaveLength(2);
-    expect(reviewDeleteButtons).toHaveLength(2);
+  expect(card).toBeInTheDocument();
+  expect(cardCount).toHaveLength(1);
+  expect(movieEditButton).toBeInTheDocument();
+  expect(movieDeleteButton).toBeInTheDocument();
+  expect(reviewEditButtons).toHaveLength(2);
+  expect(reviewDeleteButtons).toHaveLength(2);
 });
 
 test("review component works fine", async () => {
@@ -260,6 +259,7 @@ test("review component works fine", async () => {
   const moviePageReviewRating = await screen.findByTestId(
     "moviepage-review-rating"
   );
+  expect(moviePageReviewRating).toHaveAttribute("data-value", "0");
   const moviePageReviewDescription = screen.getByTestId(
     "moviepage-review-description"
   ) as HTMLInputElement;
@@ -269,22 +269,19 @@ test("review component works fine", async () => {
     target: { value: "changeDescription" },
   });
   const starRating = screen.getByRole("radio", { name: "4 Stars" });
-  userEvent.click(starRating);
+  fireEvent.click(starRating);
 
   expect(moviePageReviewDescription.value).toBe("changeDescription");
-  expect(screen.getByTestId("moviepage-review-rating")).toHaveAttribute(
-    "data-value",
-    "4"
-  );
+  expect(moviePageReviewRating).toHaveAttribute("data-value","4");
 });
 
-test("Loadingcomponent should be visible, after loading should disappear",async() => {
-  renderMoviePage(adminUser)
-  const loader = await screen.findByTestId("loader")
-  expect(loader).toBeInTheDocument()
+test("Loadingcomponent should be visible, after loading should disappear", async () => {
+  renderMoviePage(adminUser);
+  const loader = await screen.findByTestId("loader");
+  expect(loader).toBeInTheDocument();
   await waitFor(() => {
-    const card = screen.queryByTestId("moviepage-card")
-    expect(card).toBeInTheDocument()
-    expect(loader).not.toBeInTheDocument()
-  })
-})
+    const card = screen.queryByTestId("moviepage-card");
+    expect(card).toBeInTheDocument();
+    expect(loader).not.toBeInTheDocument();
+  });
+});

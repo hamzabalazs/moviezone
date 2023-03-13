@@ -295,7 +295,7 @@ export default function MoviePage() {
                   setValue(newValue);
                 }}
                 data-testid="moviepage-review-rating"
-                data-value={value}
+                data-value={value?.toString()}
               />
               <CardActions>
                 <Button
