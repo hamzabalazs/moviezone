@@ -32,7 +32,7 @@ export default function CategoryDeleteDialog({
   setAlert,
 }: Props) {
   const { t } = useTranslation();
-  const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY)
+  const [DeleteCategoryAPI,{data}] = useMutation(DELETE_CATEGORY)
 
   const handleDeletion = async () => {
     if (category === undefined) return;
@@ -47,6 +47,8 @@ export default function CategoryDeleteDialog({
     onClose?.()
 
   };
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog

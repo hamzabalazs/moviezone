@@ -41,7 +41,7 @@ export default function ReviewDeleteDialog({
   setAlert
 }: Props) {
   const { t } = useTranslation();
-  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
+  const [DeleteReviewAPI,{data}] = useMutation(DELETE_REVIEW);
 
   const handleDeletion = async () => {
     if (review === undefined) return;
@@ -52,6 +52,9 @@ export default function ReviewDeleteDialog({
     }
     onClose?.();
   };
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+
 
   return (
     <Dialog

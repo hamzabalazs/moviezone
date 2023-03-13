@@ -1,6 +1,7 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
-  fireEvent,
   render,
   screen,
   waitFor,
@@ -10,36 +11,76 @@ import { Review } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
+const DELETE_REVIEW = gql`
+  mutation DeleteReview($input: DeleteReviewInput!) {
+    deleteReview(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        first_name
+        last_name
+        id
+      }
+    }
+  }
+`;
 
 const testReview: Review = {
   id: "idC1",
-  user:{
-    id:"idU2",
-    first_name:"first",
-    last_name:"last",
-    email:"email",
-    role:"viewer",
-    password:"vivu"
-  } ,
-  movie:{
-    id:"idM2",
-    title:"title",
-    description:"WAAA",
-    poster:"posterket",
-    release_date:"awuuu",
-    category:{
-      id:"idC1",
-      name:"name1"
+  user: {
+    id: "idU2",
+    first_name: "first",
+    last_name: "last",
+    email: "email",
+    role: "viewer",
+    password: "vivu",
+  },
+  movie: {
+    id: "idM2",
+    title: "title",
+    description: "WAAA",
+    poster: "posterket",
+    release_date: "awuuu",
+    category: {
+      id: "idC1",
+      name: "name1",
     },
-    rating:"0"
-  } ,
+    rating: "0",
+  },
   description: "description1EDITED",
   rating: "5",
+};
+
+const deleteMock = {
+  request: {
+    query: DELETE_REVIEW,
+    variables: {
+      input: {
+        id: testReview.id,
+      },
+    },
+  },
+  result: {
+    data: {
+      deleteReview: {
+        id: testReview.id,
+        description: testReview.description,
+        rating: testReview.rating,
+        movie: {
+          id: testReview.movie.id,
+        },
+        user: {
+          id: testReview.user.id,
+          first_name: testReview.user.first_name,
+          last_name: testReview.user.last_name,
+        },
+      },
+    },
+  },
 };
 
 function renderReviewDeleteDialog(props: {
@@ -47,13 +88,15 @@ function renderReviewDeleteDialog(props: {
   onClose?: () => void;
 }) {
   return render(
-    <MockedSessionContext>
-      <ReviewDeleteDialog
-        review={props.review}
-        onClose={props.onClose}
-        setAlert={jest.fn()}
-      />
-    </MockedSessionContext>
+    <MockedProvider addTypename={false} mocks={[deleteMock]}>
+      <MockedSessionContext>
+        <ReviewDeleteDialog
+          review={props.review}
+          onClose={props.onClose}
+          setAlert={jest.fn()}
+        />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -95,21 +138,19 @@ test("calls onClose if quitButton is clicked", async () => {
   });
 });
 
-// test("calls deleteReview with correct values if acceptButton is clicked", async () => {
-//   const deleteReviewSpy = jest.fn();
-//   const { getByTestId } = renderReviewDeleteDialog({
-//     review: testReview,
-//     deleteReview: deleteReviewSpy,
-//   });
+test("Should call review delete successfully", async () => {
+  const { getByTestId } = renderReviewDeleteDialog({
+    review: testReview,
+  });
 
-//   const acceptButton = getByTestId("review-delete-dialog-accept")
-//   expect(deleteReviewSpy).not.toHaveBeenCalled()
+  const acceptButton = getByTestId("review-delete-dialog-accept");
+  expect(screen.queryByText("Success")).not.toBeInTheDocument();
 
-//   act(() => {
-//     userEvent.click(acceptButton)
-//   })
+  act(() => {
+    userEvent.click(acceptButton);
+  });
 
-//   await waitFor(() => {
-//     expect(deleteReviewSpy).toHaveBeenCalledWith(testReview.id)
-//   })
-// });
+  await waitFor(() => {
+    expect(screen.queryByText("Success")).toBeInTheDocument();
+  });
+});

@@ -42,7 +42,7 @@ export default function MovieDeleteDialog({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
+  const [DeleteMovieAPI,{data}] = useMutation(DELETE_MOVIE);
 
   
   const handleDeletion = async () => {
@@ -58,6 +58,8 @@ export default function MovieDeleteDialog({
 
     onClose?.();
   };
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog

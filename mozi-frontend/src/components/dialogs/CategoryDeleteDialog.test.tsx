@@ -1,6 +1,7 @@
+import { gql } from "@apollo/client";
+import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
-  fireEvent,
   render,
   screen,
   waitFor,
@@ -10,28 +11,48 @@ import { Category } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryDeleteDialog from "./CategoryDeleteDialog";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
-
 const testCategory: Category = {
   id: "idC3",
   name: "categoryName",
 };
+
+const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($input: DeleteCategoryInput!) {
+  deleteCategory(input: $input) {
+    id
+    name
+  }
+}
+`
+
+const deleteMock = {
+  request:{
+    query: DELETE_CATEGORY,
+    variables:{input:{id:testCategory.id}}
+  },
+  result:{
+    data:{
+      deleteCategory:{
+        id:testCategory.id,
+        name:testCategory.name
+      }
+    }
+  }
+}
 
 function renderCategoryDeleteDialog(props: {
   category?: Category;
   onClose?: () => void;
 }) {
   return render(
-    <MockedSessionContext>
-      <CategoryDeleteDialog
-        category={props.category}
-        onClose={props.onClose}
-      />
-    </MockedSessionContext>
+    <MockedProvider addTypename={false} mocks={[deleteMock]}>
+      <MockedSessionContext>
+        <CategoryDeleteDialog
+          category={props.category}
+          onClose={props.onClose}
+        />
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -75,22 +96,17 @@ test("Should call onClose when quit is clicked", async () => {
   });
 });
 
-// test("Should call deleteCategory and alert", async () => {
-//   const deleteCategorySpy = jest.fn();
-//   const { getByTestId } = renderCategoryDeleteDialog({
-//     category: testCategory,
-//     deleteCategory: deleteCategorySpy,
-//   });
+test("Should call category delete successfully", async () => {
+  renderCategoryDeleteDialog({category:testCategory});
 
-//   const acceptButton = getByTestId("category-delete-dialog-accept")
+  const acceptButton = screen.getByTestId(`category-delete-dialog-accept`)
+  expect(screen.queryByText("Success")).not.toBeInTheDocument()
+  act(() => {
+    userEvent.click(acceptButton)
+  })
 
-//   act(() => {
-//     userEvent.click(acceptButton)
-//   })
+  await waitFor(() => {
+    expect(screen.queryByText("Success")).toBeInTheDocument()
+  })
 
-//   await waitFor(() => {
-//     expect(deleteCategorySpy).toHaveBeenCalledWith(testCategory.id)
-//   })
-
-
-// });
+});

@@ -31,7 +31,7 @@ const DELETE_USER = gql`
 
 export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
   const { t } = useTranslation();
-  const [DeleteUserAPI] = useMutation(DELETE_USER);
+  const [DeleteUserAPI,{data}] = useMutation(DELETE_USER);
 
   const handleDeletion = async () => {
     if (user === undefined) return;
@@ -43,6 +43,9 @@ export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
 
     onClose?.();
   };
+
+  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+
 
   return (
     <Dialog
