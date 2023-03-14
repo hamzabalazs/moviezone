@@ -68,7 +68,6 @@ export function Home() {
 
   useEffect(() => {
     if(isOpenAdd === false){
-      console.log("refetched")
       refetchData();
     }
   }, [isOpenAdd]);

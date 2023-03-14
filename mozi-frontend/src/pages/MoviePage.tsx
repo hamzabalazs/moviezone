@@ -137,7 +137,6 @@ export default function MoviePage() {
   const [value, setValue] = useState<number | null>(0);
 
   async function refetchData() {
-    console.log(currmovie_id)
     await client.refetchQueries({
       include: [GET_REVIEWS_OF_MOVIE,GET_USERS_REVIEWS_OF_MOVIE,GET_MOVIE_BY_ID]
     })
