@@ -24,11 +24,7 @@ import { useSessionContext } from "../api/SessionContext";
 export default function NavigationBar() {
   const context = useSessionContext();
   const currUser = context.user;
-  const [userRole, setUserRole] = useState<"admin" | "editor" | "viewer">(
-    "viewer"
-  );
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -68,31 +64,17 @@ export default function NavigationBar() {
     localStorage.setItem("lang", "hu");
   };
 
-  const handleRole = () => {
-    if (currUser) {
-      if (currUser.role === "admin") setUserRole("admin");
-      else if (currUser.role === "editor") setUserRole("editor");
-      else setUserRole("viewer");
-    }
-  };
-
-  useEffect(() => {
-    if (currUser) {
-      setFirstName(currUser.first_name);
-      setLastName(currUser.last_name);
-      handleRole();
-    }
-  }, []);
-
   return (
     <Suspense fallback="Loading...">
+      {currUser && (
+        
       <AppBar
         position="relative"
         sx={{ backgroundColor: "primary.dark" }}
         data-testid="navbarcomponent"
       >
         <Toolbar id="back-to-top-anchor">
-          {userRole === "admin" && (
+          {currUser.role === "admin" && (
             <>
               <IconButton href="/">
                 <VideocamIcon
@@ -129,7 +111,7 @@ export default function NavigationBar() {
               </Link>
             </>
           )}
-          {userRole === "editor" && (
+          {currUser.role === "editor" && (
             <>
               <IconButton href="/">
                 <VideocamIcon
@@ -157,7 +139,7 @@ export default function NavigationBar() {
               </Link>
             </>
           )}
-          {userRole === "viewer" && (
+          {currUser.role === "viewer" && (
             <>
               <IconButton href="/" data-testid="navbar-home-icon">
                 <VideocamIcon sx={{ fontSize: 40 }} />
@@ -298,6 +280,7 @@ export default function NavigationBar() {
           </Menu>
         </Toolbar>
       </AppBar>
+      )}
     </Suspense>
   );
 }
