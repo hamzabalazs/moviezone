@@ -46,13 +46,13 @@ export const resolvers = {
     },
     //Authentication
     async logIn(_:any, {input}:any, context:MyContext) {
-      await logIn(input, context);
+      return await logIn(input, context);
     },
     async getToken(_:any, {input}:any, context:MyContext) {
-      await getToken(input, context);
+      return await getToken(input, context);
     },
     async determineRole(_:any,__:any,context:MyContext){
-      await determineRole(context)
+      return await determineRole(context)
     },
     // Categories
     async getCategories(_:any, __:any, context:MyContext) {

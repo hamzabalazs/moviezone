@@ -1,6 +1,6 @@
 import { MyContext } from "../server";
 import { determineRole, getToken } from "./token";
-import { DbReview, Review, Token, User } from "./types";
+import { DbReview, Review, Session, User } from "./types";
 import { getCurrentUser, getUserById } from "./user";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
@@ -108,7 +108,7 @@ export async function updateReview(
     context
   );
   const user: User = await getUserById(updatedReview.user_id,context);
-  const token: Token = await getToken(user, context);
+  const token: Session = await getToken(user, context);
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
   if (role === undefined) throw new Error("Role not found");
@@ -145,7 +145,7 @@ export async function deleteReview(
   const reviewToDelete = await getReviewForUpdate(id,context)
   console.log(reviewToDelete)
   const user: User = await getUserById(reviewToDelete.user_id,context);
-  const token: Token = await getToken(user, context);
+  const token: Session = await getToken(user, context);
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
   if (role === undefined) throw new Error("Role not found");

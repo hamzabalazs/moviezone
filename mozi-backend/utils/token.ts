@@ -1,15 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { MyContext } from "../server";
 import { logIn } from "./auth";
-import { CurrentUser, Role, Token, User } from "./types";
+import { CurrentUser, Role, Session, User } from "./types";
 
 export async function createToken(loginDetails:{email:string,password:string}, context:MyContext):Promise<CurrentUser> {
   const user = await logIn(loginDetails, context);
   const isToken = await getToken(user, context);
-
-  if (user === undefined) {
-    throw new Error("User does not exist");
-  }
   if (isToken === undefined) {
     const token:string = Buffer.from(uuidv4()).toString("base64");
     const currentUser:CurrentUser = {
@@ -36,15 +32,15 @@ export async function createToken(loginDetails:{email:string,password:string}, c
   }
 }
 
-export function getToken(user:User, context:MyContext):Promise<Token> {
+export function getToken(user:User, context:MyContext):Promise<Session> {
   const user_id:string = user.id;
   const sql = `SELECT * FROM session where user_id = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql, [user_id], (err: any, rows: Token) => {
+    context.db.get(sql, [user_id], (err: any, row: Session) => {
       if (err) {
         reject(err);
       }
-      resolve(rows);
+      resolve(row);
     });
   });
 }
@@ -55,11 +51,11 @@ export function determineRole(context:MyContext):Promise<Role> | undefined {
   if (token !== "") {
     const sql = `SELECT u.role FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`;
     return new Promise((resolve, reject) => {
-      context.db.get(sql, [token], (err: any, rows: Role) => {
+      context.db.get(sql, [token], (err: any, row: Role) => {
         if (err) {
           reject(err);
         }
-        resolve(rows);
+        resolve(row);
       });
     });
   }else return undefined

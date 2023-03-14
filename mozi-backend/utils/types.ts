@@ -48,8 +48,8 @@ export type Role = {
   role: string;
 };
 
-export type Token = {
-  id: string;
+export type Session = {
+  id: number;
   token: string;
   user_id: string;
 };
