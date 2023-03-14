@@ -18,7 +18,8 @@
         "Reviews": "Reviews",
         "Language": "Language",
         "English": "English",
-        "Hungarian": "Hungarian"
+        "Hungarian": "Hungarian",
+        "logoutSuccess":"Logout successful!"
     },
     "footer":"© 2023 MovieZone All rights reserved.",
     "review":{

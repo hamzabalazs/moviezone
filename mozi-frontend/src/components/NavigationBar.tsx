@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
 import { themeSwitchContext } from "../themeSwitchContext";
 import { useSessionContext } from "../api/SessionContext";
+import { useSnackbar } from 'notistack'
 
 export default function NavigationBar() {
   const context = useSessionContext();
@@ -27,9 +28,12 @@ export default function NavigationBar() {
   
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const {enqueueSnackbar} = useSnackbar();
 
   const handleLogout = () => {
     context.logOut();
+    const msg = t('navbar.logoutSuccess')
+    enqueueSnackbar(msg,{variant:"success"})
     navigate("/login");
   };
 

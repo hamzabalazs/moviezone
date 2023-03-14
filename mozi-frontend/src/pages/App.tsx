@@ -66,8 +66,6 @@ export function Home() {
     });
   }
 
-  // NEEDS FIXING
-
   useEffect(() => {
     if(isOpenAdd === false){
       console.log("refetched")

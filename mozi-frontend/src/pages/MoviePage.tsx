@@ -154,7 +154,6 @@ export default function MoviePage() {
   useEffect(() => {
     if(editingMovie === undefined && editingReview === undefined && deletingMovie === undefined && deletingReview === undefined){
       refetchData()
-      console.log("refetched")
     }
   }, [editingMovie,editingReview,deletingMovie,deletingReview]);
 
@@ -181,7 +180,16 @@ export default function MoviePage() {
         
         setRatingDescription("");
         setValue(0);
-      } 
+      } else if(description === ""){
+        const msg = t('failMessages.reviewDescriptionMissing')
+        enqueueSnackbar(msg,{variant:"error"})
+      } else if(rating === "0"){
+        const msg = t('failMessages.reviewRatingMissing')
+        enqueueSnackbar(msg,{variant:"error"})
+      } else if(userReviewsData.getReviewsOfUserForMovie.length !== 0){
+        const msg = t('failMessages.reviewAddMultiple')
+        enqueueSnackbar(msg,{variant:"error"})
+      }
     }
   };
 

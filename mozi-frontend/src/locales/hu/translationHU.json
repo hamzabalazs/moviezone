@@ -18,7 +18,8 @@
         "Reviews": "Vélemények",
         "Language": "Nyelv",
         "English": "Angol",
-        "Hungarian": "Magyar"
+        "Hungarian": "Magyar",
+        "logoutSuccess":"Sikeres kilépés!"
     },
     "footer":"© 2023 MovieZone Minden jog fenntartva.",
     "review":{

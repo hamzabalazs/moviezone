@@ -54,7 +54,7 @@ const client = new ApolloClient({
 
 root.render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider maxSnack={1}>
       <ApolloProvider client={client}>
         <MyThemeProvider>
           <BrowserRouter>
