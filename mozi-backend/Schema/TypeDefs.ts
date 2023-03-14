@@ -221,7 +221,7 @@ export const typeDefs = gql`
     getUserById(input: UserInput!): User!
     checkForUser(input: UserEmailInput!): User!
     getCurrentUser:User!
-    logIn(input: LoginInput!): CurrentUser!
+    logIn(input: LoginInput!): User!
     getUserForLogin(input: UserEmailInput!): FullUser!
     getMovies: [Movie!]!
     getMovieById(input: MovieInput!): Movie!

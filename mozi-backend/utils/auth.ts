@@ -5,9 +5,7 @@ import { User, FullUser } from './types';
 export async function logIn(loginDetails:{email:string,password:string}, context:MyContext):Promise<User> {
   const email:string = loginDetails.email;
   const password:string = loginDetails.password;
-  console.log(password)
   const user:FullUser = await getUserForLogin(email,context)
-  console.log(user)
   if(user === undefined) throw new Error("User does not exist!")
   if(md5(password) === user.password){
     const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`
