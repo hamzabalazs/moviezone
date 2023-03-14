@@ -1,15 +1,11 @@
 import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
-import {
-  act,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Review } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
+import { SnackbarProvider } from "notistack";
 
 const DELETE_REVIEW = gql`
   mutation DeleteReview($input: DeleteReviewInput!) {
@@ -88,14 +84,13 @@ function renderReviewDeleteDialog(props: {
   onClose?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[deleteMock]}>
-      <MockedSessionContext>
-        <ReviewDeleteDialog
-          review={props.review}
-          onClose={props.onClose}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[deleteMock]}>
+        <MockedSessionContext>
+          <ReviewDeleteDialog review={props.review} onClose={props.onClose} />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -150,6 +145,6 @@ test("Should call review delete successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument();
+    expect(screen.queryByText("successMessages.reviewDelete")).toBeInTheDocument();
   });
 });

@@ -1,15 +1,11 @@
 import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
-import {
-  act,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Category } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryDeleteDialog from "./CategoryDeleteDialog";
+import { SnackbarProvider } from "notistack";
 
 const testCategory: Category = {
   id: "idC3",
@@ -18,41 +14,43 @@ const testCategory: Category = {
 
 const DELETE_CATEGORY = gql`
   mutation DeleteCategory($input: DeleteCategoryInput!) {
-  deleteCategory(input: $input) {
-    id
-    name
-  }
-}
-`
-
-const deleteMock = {
-  request:{
-    query: DELETE_CATEGORY,
-    variables:{input:{id:testCategory.id}}
-  },
-  result:{
-    data:{
-      deleteCategory:{
-        id:testCategory.id,
-        name:testCategory.name
-      }
+    deleteCategory(input: $input) {
+      id
+      name
     }
   }
-}
+`;
+
+const deleteMock = {
+  request: {
+    query: DELETE_CATEGORY,
+    variables: { input: { id: testCategory.id } },
+  },
+  result: {
+    data: {
+      deleteCategory: {
+        id: testCategory.id,
+        name: testCategory.name,
+      },
+    },
+  },
+};
 
 function renderCategoryDeleteDialog(props: {
   category?: Category;
   onClose?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[deleteMock]}>
-      <MockedSessionContext>
-        <CategoryDeleteDialog
-          category={props.category}
-          onClose={props.onClose}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[deleteMock]}>
+        <MockedSessionContext>
+          <CategoryDeleteDialog
+            category={props.category}
+            onClose={props.onClose}
+          />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -97,16 +95,17 @@ test("Should call onClose when quit is clicked", async () => {
 });
 
 test("Should call category delete successfully", async () => {
-  renderCategoryDeleteDialog({category:testCategory});
+  renderCategoryDeleteDialog({ category: testCategory });
 
-  const acceptButton = screen.getByTestId(`category-delete-dialog-accept`)
-  expect(screen.queryByText("Success")).not.toBeInTheDocument()
+  const acceptButton = screen.getByTestId(`category-delete-dialog-accept`);
+  expect(screen.queryByText("Success")).not.toBeInTheDocument();
   act(() => {
-    userEvent.click(acceptButton)
-  })
+    userEvent.click(acceptButton);
+  });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument()
-  })
-
+    expect(
+      screen.queryByText("successMessages.categoryDelete")
+    ).toBeInTheDocument();
+  });
 });

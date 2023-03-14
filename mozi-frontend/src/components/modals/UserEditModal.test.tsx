@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { User } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import UserEditModal from "./UserEditModal";
+import { SnackbarProvider } from "notistack";
 
 const testUser: User = {
   id: "idU3",
@@ -43,31 +44,31 @@ const UPDATE_USER = gql`
 `;
 
 const editMock = {
-  request:{
-    query:UPDATE_USER,
-    variables:{
-      input:{
+  request: {
+    query: UPDATE_USER,
+    variables: {
+      input: {
         id: testUser.id,
         first_name: newTestUser.first_name,
         last_name: newTestUser.last_name,
         email: newTestUser.email,
         password: newTestUser.password,
-        role: newTestUser.role
-      }
-    }
+        role: newTestUser.role,
+      },
+    },
   },
-  result:{
-    data:{
-      updateUser:{
-        id:testUser.id,
+  result: {
+    data: {
+      updateUser: {
+        id: testUser.id,
         first_name: newTestUser.first_name,
         last_name: newTestUser.last_name,
         role: newTestUser.role,
-        email: newTestUser.email
-      }
-    }
-  }
-}
+        email: newTestUser.email,
+      },
+    },
+  },
+};
 
 function renderUserEditModal(props: {
   user?: User;
@@ -75,15 +76,17 @@ function renderUserEditModal(props: {
   allowEditRole?: boolean;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[editMock]}>
-      <MockedSessionContext>
-        <UserEditModal
-          user={props.user}
-          onClose={props.onClose}
-          allowEditRole={props.allowEditRole}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[editMock]}>
+        <MockedSessionContext>
+          <UserEditModal
+            user={props.user}
+            onClose={props.onClose}
+            allowEditRole={props.allowEditRole}
+          />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -160,7 +163,6 @@ test("Should call edit user successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(queryByText("Success")).toBeInTheDocument();
+    expect(queryByText("successMessages.userEdit")).toBeInTheDocument();
   });
 });
-

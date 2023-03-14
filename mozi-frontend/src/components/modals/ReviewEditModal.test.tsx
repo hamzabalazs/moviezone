@@ -6,6 +6,7 @@ import { act } from "react-dom/test-utils";
 import { Review } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import ReviewEditModal from "./ReviewEditModal";
+import { SnackbarProvider } from "notistack";
 
 const testReview: Review = {
   id: "idC1",
@@ -58,45 +59,47 @@ const UPDATE_REVIEW = gql`
 `;
 
 const editMock = {
-  request:{
-    query:UPDATE_REVIEW,
-    variables:{
-      input:{
+  request: {
+    query: UPDATE_REVIEW,
+    variables: {
+      input: {
         id: testReview.id,
         description: newReview.description,
-        rating: newReview.rating
-      }
-    }
+        rating: newReview.rating,
+      },
+    },
   },
-  result:{
-    data:{
-      updateReview:{
-        id:testReview.id,
-        rating:newReview.rating,
-        description:newReview.description,
-        movie:{
-          id:testReview.movie.id,
+  result: {
+    data: {
+      updateReview: {
+        id: testReview.id,
+        rating: newReview.rating,
+        description: newReview.description,
+        movie: {
+          id: testReview.movie.id,
         },
-        user:{
-          first_name:testReview.user.first_name,
+        user: {
+          first_name: testReview.user.first_name,
           last_name: testReview.user.last_name,
-          id:testReview.user.id,
-        }
-      }
-    }
-  }
-}
+          id: testReview.user.id,
+        },
+      },
+    },
+  },
+};
 
 function renderReviewEditModal(props: {
   review?: Review;
   onClose?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[editMock]}>
-      <MockedSessionContext>
-        <ReviewEditModal review={props.review} onClose={props.onClose} />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider>
+      <MockedProvider addTypename={false} mocks={[editMock]}>
+        <MockedSessionContext>
+          <ReviewEditModal review={props.review} onClose={props.onClose} />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -131,21 +134,21 @@ test("calls editReview with correct values", async () => {
     review: testReview,
   });
 
-  const description = getByTestId("review-edit-modal-description")
-  const editButton = getByTestId("review-edit-modal-edit")
-  const starRating5 = getByRole("radio",{name:"5 Stars"})
+  const description = getByTestId("review-edit-modal-description");
+  const editButton = getByTestId("review-edit-modal-edit");
+  const starRating5 = getByRole("radio", { name: "5 Stars" });
   expect(screen.queryByText("Success")).not.toBeInTheDocument();
 
-
-  fireEvent.change(description, {target: {value:newReview.description}})
-  userEvent.click(starRating5)
+  fireEvent.change(description, { target: { value: newReview.description } });
+  userEvent.click(starRating5);
 
   act(() => {
-    userEvent.click(editButton)
-  })
+    userEvent.click(editButton);
+  });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument();
-
-  })
+    expect(
+      screen.queryByText("successMessages.reviewEdit")
+    ).toBeInTheDocument();
+  });
 });

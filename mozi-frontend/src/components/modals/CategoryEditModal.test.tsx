@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { Category } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryEditModal from "./CategoryEditModal";
+import { SnackbarProvider } from "notistack";
 
 const testCategory: Category = {
   id: "idC3",
@@ -24,42 +25,47 @@ const newtestCategory: Category = {
 
 const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
-  updateCategory(input: $input) {
-    id
-    name
+    updateCategory(input: $input) {
+      id
+      name
+    }
   }
-}
-`
+`;
 const editMock = {
-  request:{
-    query:UPDATE_CATEGORY,
-    variables:{
-      input:{
-        id:testCategory.id,
-        name:newtestCategory.name,
-      }
-    }
+  request: {
+    query: UPDATE_CATEGORY,
+    variables: {
+      input: {
+        id: testCategory.id,
+        name: newtestCategory.name,
+      },
+    },
   },
-  result:{
-    data:{
-      updateCategory:{
-        id:testCategory.id,
-        name:newtestCategory.name,
-      }
-    }
-  }
-}
+  result: {
+    data: {
+      updateCategory: {
+        id: testCategory.id,
+        name: newtestCategory.name,
+      },
+    },
+  },
+};
 
 function renderCategoryEditModal(props: {
   category?: Category;
   onClose?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[editMock]}>
-      <MockedSessionContext>
-        <CategoryEditModal category={props.category} onClose={props.onClose} />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[editMock]}>
+        <MockedSessionContext>
+          <CategoryEditModal
+            category={props.category}
+            onClose={props.onClose}
+          />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -92,18 +98,18 @@ test("calls editcategory with correct values", async () => {
   const name = getByTestId("category-edit-modal-name") as HTMLInputElement;
   const editButton = getByTestId("category-edit-modal-edit");
   expect(screen.queryByText("Success")).not.toBeInTheDocument();
-  expect(name.value).toBe(testCategory.name)
+  expect(name.value).toBe(testCategory.name);
 
   fireEvent.change(name, { target: { value: newtestCategory.name } });
   await waitFor(() => {
-    expect(name.value).toBe(newtestCategory.name)
-  })
+    expect(name.value).toBe(newtestCategory.name);
+  });
 
   act(() => {
     userEvent.click(editButton);
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument();
+    expect(screen.queryByText("successMessages.categoryEdit")).toBeInTheDocument();
   });
 });

@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { User } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import UserDeleteDialog from "./UserDeleteDialog";
+import { SnackbarProvider } from "notistack";
 
 const testUser: User = {
   id: "idU3",
@@ -51,14 +52,13 @@ const deleteMock = {
 
 function renderUserDeleteDialog(props: { user?: User; onClose?: () => void }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[deleteMock]}>
-      <MockedSessionContext>
-        <UserDeleteDialog
-          user={props.user}
-          onClose={props.onClose}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[deleteMock]}>
+        <MockedSessionContext>
+          <UserDeleteDialog user={props.user} onClose={props.onClose} />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -113,6 +113,8 @@ test("Should call user delete successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("successMessages.userDelete")
+    ).toBeInTheDocument();
   });
 });

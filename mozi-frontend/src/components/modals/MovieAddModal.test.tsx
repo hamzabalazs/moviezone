@@ -1,10 +1,17 @@
 import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieAddModal from "./MovieAddModal";
 import { v4 as uuidv4 } from "uuid";
+import { SnackbarProvider } from "notistack";
 
 const addMovie = {
   title: "title1",
@@ -43,57 +50,57 @@ const GET_CATEGORIES = gql`
 const dataMock = [
   {
     request: {
-      query:GET_CATEGORIES
+      query: GET_CATEGORIES,
     },
-    result:{
-      data:{
-        getCategories:[
+    result: {
+      data: {
+        getCategories: [
           {
-            id:"idC1",
-            name:"name1",
+            id: "idC1",
+            name: "name1",
           },
           {
-            id:"idC2",
-            name:"name2",
+            id: "idC2",
+            name: "name2",
           },
           {
-            id:"idC3",
-            name:"name3",
+            id: "idC3",
+            name: "name3",
           },
-        ]
-      }
-    }
+        ],
+      },
+    },
   },
   {
-    request:{
-      query:ADD_MOVIE,
-      variables:{
-        input:{
+    request: {
+      query: ADD_MOVIE,
+      variables: {
+        input: {
           title: addMovie.title,
           description: addMovie.description,
           poster: "",
           release_date: addMovie.release_date,
-          category_id: addMovie.category_id
-        }
-      }
+          category_id: addMovie.category_id,
+        },
+      },
     },
-    result:{
-      data:{
-        createMovie:{
+    result: {
+      data: {
+        createMovie: {
           id: uuidv4(),
           title: addMovie.title,
           description: addMovie.description,
           poster: "",
           release_date: addMovie.release_date,
-          category:{
+          category: {
             id: addMovie.category_id,
-            name: "name1"
+            name: "name1",
           },
-          rating:0
-        }
-      }
-    }
-  }
+          rating: 0,
+        },
+      },
+    },
+  },
 ];
 
 function renderMovieAddModal(props: {
@@ -101,14 +108,16 @@ function renderMovieAddModal(props: {
   setIsOpenAdd?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={dataMock}>
-      <MockedSessionContext>
-        <MovieAddModal
-          isOpenAdd={props.isOpenAdd}
-          setIsOpenAdd={props.setIsOpenAdd}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider>
+      <MockedProvider addTypename={false} mocks={dataMock}>
+        <MockedSessionContext>
+          <MovieAddModal
+            isOpenAdd={props.isOpenAdd}
+            setIsOpenAdd={props.setIsOpenAdd}
+          />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -120,19 +129,21 @@ test("If isOpenAdd is false should not open modal", () => {
   expect(modal).not.toBeInTheDocument();
 });
 
-test("If isOpenAdd is true, should show LoadingComponent while loading, after loading should not show",async() => {
-  const { queryByTestId } = renderMovieAddModal({isOpenAdd:true})
+test("If isOpenAdd is true, should show LoadingComponent while loading, after loading should not show", async () => {
+  const { queryByTestId } = renderMovieAddModal({ isOpenAdd: true });
 
-  const loader = queryByTestId("loader")
-  expect(loader).toBeInTheDocument()
+  const loader = queryByTestId("loader");
+  expect(loader).toBeInTheDocument();
 
   await waitFor(() => {
-    expect(loader).not.toBeInTheDocument()
-  })
-})
+    expect(loader).not.toBeInTheDocument();
+  });
+});
 
-test("If isOpenAdd is true should show modal correctly", async() => {
-  const { queryByTestId,findByTestId } = renderMovieAddModal({ isOpenAdd: true });
+test("If isOpenAdd is true should show modal correctly", async () => {
+  const { queryByTestId, findByTestId } = renderMovieAddModal({
+    isOpenAdd: true,
+  });
 
   const modal = await findByTestId("movie-add-modal");
   const title = await findByTestId("movie-add-title");
@@ -157,10 +168,12 @@ test("If isOpenAdd is true should show modal correctly", async() => {
 });
 
 test("calls addMovie with correct values when addButton is clicked", async () => {
-  const { getByTestId,findByTestId } = renderMovieAddModal({ isOpenAdd: true });
+  const { getByTestId, findByTestId } = renderMovieAddModal({
+    isOpenAdd: true,
+  });
   const file = new File(["test"], "chucknorris.jpg", { type: "image/jpg" });
 
-  const title = await findByTestId("movie-add-title") as HTMLInputElement;
+  const title = (await findByTestId("movie-add-title")) as HTMLInputElement;
   const description = getByTestId("movie-add-description") as HTMLInputElement;
   const release_date = getByTestId(
     "movie-add-release_date"
@@ -168,8 +181,7 @@ test("calls addMovie with correct values when addButton is clicked", async () =>
   const category = getByTestId("movie-add-category") as HTMLInputElement;
   const poster = getByTestId("movie-add-poster") as HTMLInputElement;
   const addButton = getByTestId("movie-add-button") as HTMLInputElement;
-  expect(screen.queryByText("Success")).not.toBeInTheDocument()
-
+  expect(screen.queryByText("Success")).not.toBeInTheDocument();
 
   fireEvent.change(title, { target: { value: addMovie.title } });
   fireEvent.change(description, { target: { value: addMovie.description } });
@@ -182,6 +194,6 @@ test("calls addMovie with correct values when addButton is clicked", async () =>
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument()
+    expect(screen.queryByText("successMessages.movieAdd")).toBeInTheDocument();
   });
 });

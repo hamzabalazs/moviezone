@@ -7,6 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 import { Movie } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieDeleteDialog from "./MovieDeleteDialog";
+import { SnackbarProvider } from "notistack";
 
 const testMovie: Movie = {
   id: "idM1",
@@ -39,31 +40,31 @@ const DELETE_MOVIE = gql`
 `;
 
 const deleteMock = {
-  request:{
+  request: {
     query: DELETE_MOVIE,
-    variables:{
-      input:{
-        id:testMovie.id
-      }
-    }
+    variables: {
+      input: {
+        id: testMovie.id,
+      },
+    },
   },
-  result:{
-    data:{
-      deleteMovie:{
-        id:testMovie.id,
+  result: {
+    data: {
+      deleteMovie: {
+        id: testMovie.id,
         title: testMovie.title,
         description: testMovie.description,
         poster: testMovie.poster,
         release_date: testMovie.release_date,
-        category:{
+        category: {
           id: testMovie.category.id,
-          name: testMovie.category.name
+          name: testMovie.category.name,
         },
-        rating: testMovie.rating
-      }
-    }
-  }
-}
+        rating: testMovie.rating,
+      },
+    },
+  },
+};
 
 function renderMovieDeleteDialog(props: {
   movie?: Movie;
@@ -71,11 +72,13 @@ function renderMovieDeleteDialog(props: {
 }) {
   return render(
     <MemoryRouter>
-      <MockedProvider addTypename={false} mocks={[deleteMock]}>
-        <MockedSessionContext>
-          <MovieDeleteDialog movie={props.movie} onClose={props.onClose} />
-        </MockedSessionContext>
-      </MockedProvider>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider addTypename={false} mocks={[deleteMock]}>
+          <MockedSessionContext>
+            <MovieDeleteDialog movie={props.movie} onClose={props.onClose} />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
     </MemoryRouter>
   );
 }
@@ -119,16 +122,16 @@ test("calls onClose when quitButton is clicked", async () => {
   });
 });
 
-test("Should call delete movie successfully",async() => {
-  const {getByTestId} = renderMovieDeleteDialog({movie:testMovie})
+test("Should call delete movie successfully", async () => {
+  const { getByTestId } = renderMovieDeleteDialog({ movie: testMovie });
 
-  const acceptButton = getByTestId("movie-delete-accept")
+  const acceptButton = getByTestId("movie-delete-accept");
 
   act(() => {
-    userEvent.click(acceptButton)
-  })
+    userEvent.click(acceptButton);
+  });
 
   await waitFor(() => {
-    expect(screen.getByText("Success")).toBeInTheDocument()
-  })
-})
+    expect(screen.getByText("successMessages.movieDelete")).toBeInTheDocument();
+  });
+});

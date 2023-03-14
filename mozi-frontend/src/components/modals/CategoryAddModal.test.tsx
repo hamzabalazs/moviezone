@@ -1,11 +1,17 @@
 import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryAddModal from "./CategoryAddModal";
 import { v4 as uuidv4 } from "uuid";
-
+import { SnackbarProvider } from "notistack";
 const addCategory = {
   name: "ADDED",
 };
@@ -20,37 +26,39 @@ const ADD_CATEGORY = gql`
 `;
 
 const addMock = {
-  request:{
-    query:ADD_CATEGORY,
-    variables:{
-      input:{
-        name: addCategory.name
-      }
-    }
+  request: {
+    query: ADD_CATEGORY,
+    variables: {
+      input: {
+        name: addCategory.name,
+      },
+    },
   },
-  result:{
-    data:{
-      createCategory:{
+  result: {
+    data: {
+      createCategory: {
         id: uuidv4(),
-        name: addCategory.name
-      }
-    }
-  }
-}
+        name: addCategory.name,
+      },
+    },
+  },
+};
 
 function renderCategoryAddModal(props: {
   isOpenAdd: boolean;
   setIsOpenAdd?: () => void;
 }) {
   return render(
-    <MockedProvider addTypename={false} mocks={[addMock]}>
-      <MockedSessionContext>
-        <CategoryAddModal
-          isOpenAdd={props.isOpenAdd}
-          setIsOpenAdd={props.setIsOpenAdd}
-        />
-      </MockedSessionContext>
-    </MockedProvider>
+    <SnackbarProvider autoHideDuration={null}>
+      <MockedProvider addTypename={false} mocks={[addMock]}>
+        <MockedSessionContext>
+          <CategoryAddModal
+            isOpenAdd={props.isOpenAdd}
+            setIsOpenAdd={props.setIsOpenAdd}
+          />
+        </MockedSessionContext>
+      </MockedProvider>
+    </SnackbarProvider>
   );
 }
 
@@ -82,8 +90,7 @@ test("calls add category successfully", async () => {
 
   const name = getByTestId("category-add-name");
   const addButton = getByTestId("category-add-button");
-  expect(screen.queryByText("Success")).not.toBeInTheDocument()
-
+  expect(screen.queryByText("Success")).not.toBeInTheDocument();
 
   fireEvent.change(name, { target: { value: addCategory.name } });
 
@@ -92,6 +99,8 @@ test("calls add category successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Success")).toBeInTheDocument()
+    expect(
+      screen.queryByText("successMessages.categoryAdd")
+    ).toBeInTheDocument();
   });
 });
