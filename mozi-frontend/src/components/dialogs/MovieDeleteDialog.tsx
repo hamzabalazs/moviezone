@@ -6,16 +6,15 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { AlertType, Movie } from "../../api/types";
+import { Movie } from "../../api/types";
 import { gql, useMutation } from "@apollo/client";
 
 interface Props {
   movie?: Movie;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const DELETE_MOVIE = gql`
@@ -38,12 +37,11 @@ const DELETE_MOVIE = gql`
 export default function MovieDeleteDialog({
   movie,
   onClose,
-  setAlert
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [DeleteMovieAPI,{data}] = useMutation(DELETE_MOVIE);
-
+  const { enqueueSnackbar} = useSnackbar()
   
   const handleDeletion = async () => {
     if(movie === undefined) return;
@@ -52,14 +50,14 @@ export default function MovieDeleteDialog({
     const result = await DeleteMovieAPI({variables:{input:{id:movie_id}}});
     if (result) {
       const msg = t("successMessages.movieDelete");
-      setAlert?.({isOpen:true,message:msg,type:"success"})
+      enqueueSnackbar(msg,{variant:"success"})
       navigate("/");
     }
 
     onClose?.();
   };
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog

@@ -10,7 +10,6 @@ import MyFooter from "../components/MyFooter";
 import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CategoryCard from "../components/cards/CategoryCard";
-import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useQuery, gql, useMutation, useApolloClient } from '@apollo/client'
@@ -28,11 +27,6 @@ function Categories() {
   const { t } = useTranslation();
   const {data:categoryData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const client = useApolloClient()
-  const [alert, setAlert] = useState<AlertType>({
-    isOpen: false,
-    message: "",
-    type: undefined,
-  });
 
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined
@@ -54,10 +48,10 @@ function Categories() {
   }
 
   useEffect(() => {
-    if(alert.isOpen){
+    if(editingCategory === undefined && deletingCategory === undefined && isOpenAdd === false){
       refetchData()
     }
-  },[alert])
+  },[editingCategory,deletingCategory,isOpenAdd])
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
 
@@ -65,22 +59,20 @@ function Categories() {
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent alert={alert} setAlert={setAlert} />
         <CategoryEditModal
           category={editingCategory}
-          onClose={() => setEditingCategory(undefined)}
-          setAlert={setAlert}
+          onClose={() => {
+            setEditingCategory(undefined)
+          }}
         />
         <CategoryDeleteDialog
           category={deletingCategory}
           onClose={() => setDeletingCategory(undefined)}
-          setAlert={setAlert}
         />
         <div>
           <CategoryAddModal
             isOpenAdd={isOpenAdd}
             setIsOpenAdd={setIsOpenAdd}
-            setAlert={setAlert}
           />
           <IconButton
             sx={{

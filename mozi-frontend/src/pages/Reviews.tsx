@@ -1,6 +1,6 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AlertType, Review, ReviewListReview } from "../api/types";
+import { ReviewListReview } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -8,7 +8,6 @@ import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import ReviewCard from "../components/cards/ReviewCard";
-import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
@@ -42,8 +41,6 @@ function Reviews() {
 
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
-
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
   const [reviewListOfUser, setReviewListOfUser] = useState<ReviewListReview[]>([]);
   
@@ -52,12 +49,12 @@ function Reviews() {
       include: [GET_REVIEWS]
     })
   }
-
+  
   useEffect(() => {
-    if(alert.isOpen){
+    if(editingReview === undefined && deletingReview === undefined){
       refetchData()
     }
-  },[alert])
+  },[editingReview,deletingReview])
 
   useEffect(() => {
     if(!reviewsLoading) fillUpdatedReviewList();
@@ -77,19 +74,13 @@ function Reviews() {
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent
-          alert={alert}
-          setAlert={setAlert}
-        />
         <ReviewEditModal
           review={editingReview}
           onClose={() => setEditingReview(undefined)}
-          setAlert={setAlert}
         />
         <ReviewDeleteDialog
           review={deletingReview}
           onClose={() => setDeletingReview(undefined)}
-          setAlert={setAlert}
         />
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>

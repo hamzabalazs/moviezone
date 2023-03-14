@@ -6,12 +6,10 @@ import AddCategoryCard from "../cards/AddCategoryCard";
 interface Props {
   isOpenAdd: boolean;
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 export default function CategoryAddModal(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert = props.setAlert
   return (
     <Modal
       open={props.isOpenAdd}
@@ -33,7 +31,6 @@ export default function CategoryAddModal(props: Props) {
       >
         <AddCategoryCard
           setIsOpenAdd={setIsOpenAdd}
-          setAlert={setAlert}
         />
       </Box>
     </Modal>

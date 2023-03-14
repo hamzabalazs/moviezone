@@ -18,15 +18,15 @@ import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { AlertType, Category, Movie } from "../../api/types";
+import { Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
+import { useSnackbar } from 'notistack'
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 // File resizer for image compression
@@ -76,7 +76,7 @@ export default function AddMovieCard(props: Props) {
   const [AddMovieAPI,{data}] = useMutation(ADD_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert = props.setAlert;
+  const { enqueueSnackbar} = useSnackbar()
   const handleAddMovie = async (
     addedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
@@ -93,7 +93,7 @@ export default function AddMovieCard(props: Props) {
     });
     if (result) {
       const msg = t("successMessages.movieAdd");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
       setIsOpenAdd?.(false);
     }
   };

@@ -56,7 +56,6 @@ function renderUserDeleteDialog(props: { user?: User; onClose?: () => void }) {
         <UserDeleteDialog
           user={props.user}
           onClose={props.onClose}
-          setAlert={jest.fn()}
         />
       </MockedSessionContext>
     </MockedProvider>

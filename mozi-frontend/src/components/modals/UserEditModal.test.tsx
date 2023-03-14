@@ -81,7 +81,6 @@ function renderUserEditModal(props: {
           user={props.user}
           onClose={props.onClose}
           allowEditRole={props.allowEditRole}
-          setAlert={jest.fn()}
         />
       </MockedSessionContext>
     </MockedProvider>

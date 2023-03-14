@@ -56,7 +56,8 @@
         "reviewDescriptionMissing": "Nincs megadva a vélemény leirása!",
         "reviewRatingMissing": "Nincs megadva a vélemény értékelése!",
         "loginFailedEmail":"Helytelen Email! Belépés sikertelen!",
-        "loginFailedPassword":"Helytelen Jelszó! Belépés sikertelen!"
+        "loginFailedPassword":"Helytelen Jelszó! Belépés sikertelen!",
+        "addSameCategory":"A kategória már létezik!"
     },
     "successMessages": {
         "reviewAdd": "A vélemény hozzáadása sikeres!",
@@ -101,7 +102,8 @@
         "password":"Jelszó",
         "noAccount":"Nincs még felhasználója? Regisztráljon itt!",
         "forgotPass": "Elfelejtett jelszó?",
-        "invalidLogin": "Email vagy jelszó nem megfelelő!"
+        "invalidLogin": "Email vagy jelszó nem megfelelő!",
+        "success":"Sikeres bejelentkezés!"
     },
     "register": {
         "register": "Regisztráció",
@@ -110,7 +112,8 @@
         "email": "Email",
         "password": "Jelszó",
         "hasAccount": "Van már felhasználoja? Kattintson a bejelentkezéshez!",
-        "accountExists": "A felhasználó már létezik"
+        "accountExists": "A felhasználó már létezik",
+        "success":"Sikeres regisztráció!"
     },
     "forgotPass": {
         "passwordReset":"Jelszó visszaállítása",

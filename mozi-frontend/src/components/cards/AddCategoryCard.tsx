@@ -10,12 +10,11 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import { AlertType } from "../../api/types";
 import { gql, useMutation } from "@apollo/client";
+import { useSnackbar } from "notistack";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const ADD_CATEGORY = gql`
@@ -33,17 +32,23 @@ interface Values {
 
 export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
-  const [AddCategoryAPI,{data}] = useMutation(ADD_CATEGORY);
+  const [AddCategoryAPI, { data }] = useMutation(ADD_CATEGORY);
+  const { enqueueSnackbar } = useSnackbar();
 
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert = props.setAlert;
   const handleAddCategory = async (name: string) => {
-    const result = await AddCategoryAPI({variables:{input:{name:name}}});
-    if (!result) return;
+    try {
+      const result = await AddCategoryAPI({
+        variables: { input: { name: name } },
+      });
 
-    const msg = t("successMessages.categoryAdd");
-    setIsOpenAdd?.(false);
-    setAlert?.({ isOpen: true, message: msg, type: "success" });
+      const msg = t("successMessages.categoryAdd");
+      setIsOpenAdd?.(false);
+      enqueueSnackbar(msg, { variant: "success" });
+    } catch (error: any) {
+      const msg = t("failMessages.addSameCategory");
+      enqueueSnackbar(msg, { variant: "error" });
+    }
   };
 
   const formik = useFormik({
@@ -66,7 +71,7 @@ export default function AddCategoryCard(props: Props) {
     },
   });
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>

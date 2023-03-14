@@ -5,7 +5,6 @@ import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
-import AlertComponent from "../components/AlertComponent";
 import { AlertType, User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
@@ -34,12 +33,6 @@ function Account() {
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
   const client = useApolloClient()
 
-  const [alert, setAlert] = useState<AlertType>({
-    isOpen: false,
-    message: "",
-    type: undefined,
-  });
-
   const [user, setUser] = useState<User>({
     id: "",
     first_name: "",
@@ -56,10 +49,10 @@ function Account() {
   }
 
   useEffect(() => {
-    if(alert.isOpen){
+    if(editingUser === undefined && deletingUser === undefined){
       refetchData()
     }
-  },[alert])
+  },[editingUser,deletingUser])
 
   useEffect(() => {
     if (context.user && !usersLoading) {
@@ -80,17 +73,14 @@ function Account() {
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent alert={alert} setAlert={setAlert} />
         <UserDeleteDialog
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
-          setAlert={setAlert}
         />
 
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
-          setAlert={setAlert}
         />
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>

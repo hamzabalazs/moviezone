@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { AlertType, User } from "../../api/types";
 import { gql, useMutation} from "@apollo/client";
@@ -14,7 +14,6 @@ import { gql, useMutation} from "@apollo/client";
 interface Props {
   user?: User;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const DELETE_USER = gql`
@@ -29,22 +28,23 @@ const DELETE_USER = gql`
   }
 `;
 
-export default function UserDeleteDialog({ user, onClose, setAlert }: Props) {
+export default function UserDeleteDialog({ user, onClose }: Props) {
   const { t } = useTranslation();
   const [DeleteUserAPI,{data}] = useMutation(DELETE_USER);
+  const {enqueueSnackbar} = useSnackbar()
 
   const handleDeletion = async () => {
     if (user === undefined) return;
     const result = await DeleteUserAPI({variables:{input:{id:user.id}}});
     if (result) {
       const msg = t("successMessages.userDelete");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
     }
 
     onClose?.();
   };
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
 
   return (

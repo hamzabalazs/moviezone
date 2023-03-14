@@ -55,7 +55,8 @@
         "reviewDescriptionMissing": "No description has been given!",
         "reviewRatingMissing": "No rating has been given!",
         "loginFailedEmail":"Invalid Email! Could not log in!",
-        "loginFailedPassword":"Invalid Password! Could not log in!"
+        "loginFailedPassword":"Invalid Password! Could not log in!",
+        "addSameCategory":"Category already exists!"
     },
     "successMessages": {
         "reviewAdd": "Review was added successfully!",
@@ -100,7 +101,8 @@
         "password":"Password",
         "noAccount":"Don't have an account? Register here!",
         "forgotPass": "Forgot Password?",
-        "invalidLogin": "Email or password is not valid!"
+        "invalidLogin": "Email or password is not valid!",
+        "success":"Login successful!"
     },
     "register": {
         "register": "Register",
@@ -109,7 +111,8 @@
         "email": "Email",
         "password": "Password",
         "hasAccount": "Already have an account? Click to Login!",
-        "accountExists": "Account already exists!"
+        "accountExists": "Account already exists!",
+        "success":"Registration successful!"
     },
     "forgotPass": {
         "passwordReset":"Reset Password",

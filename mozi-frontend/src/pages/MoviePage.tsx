@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertType, Movie, ReviewListReview } from "../api/types";
-import AlertComponent from "../components/AlertComponent";
+import { Movie, ReviewListReview } from "../api/types";
+import { useSnackbar } from 'notistack'
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
@@ -103,15 +103,16 @@ export default function MoviePage() {
   const navigate = useNavigate();
   const context = useSessionContext();
   const currUser = context.user!;
-  const [AddReviewAPI] = useMutation(ADD_REVIEW);
+  const [AddReviewAPI] = useMutation(ADD_REVIEW,{refetchQueries:[{query:GET_REVIEWS_OF_MOVIE,variables:{input:{movie_id:currmovie_id}}},{query:GET_USERS_REVIEWS_OF_MOVIE,variables:{input:{movie_id:currmovie_id,user_id:currUser.id}}}]});
   const client = useApolloClient()
+  const {enqueueSnackbar} = useSnackbar();
 
   
   const { data: movieReviewsData, loading: movieReviewsLoading } = useQuery(
     GET_REVIEWS_OF_MOVIE,
     { variables: {input:{ movie_id: currmovie_id}} }
   );
-  const { data: movieData, loading: movieLoading } = useQuery(GET_MOVIE_BY_ID, {
+  const { data: movieData, loading: movieLoading, error: movieError } = useQuery(GET_MOVIE_BY_ID, {
     variables: {input:{ id: currmovie_id }},
   });
   const { data: userReviewsData, loading: userReviewsLoading } = useQuery(
@@ -132,16 +133,11 @@ export default function MoviePage() {
   const [deletingReview, setDeletingReview] = useState<
     ReviewListReview | undefined
   >(undefined);
-
-  const [alert, setAlert] = useState<AlertType>({
-    isOpen: false,
-    message: "",
-    type: undefined,
-  });
   const [ratingDescription, setRatingDescription] = useState("");
   const [value, setValue] = useState<number | null>(0);
 
   async function refetchData() {
+    console.log(currmovie_id)
     await client.refetchQueries({
       include: [GET_REVIEWS_OF_MOVIE,GET_USERS_REVIEWS_OF_MOVIE,GET_MOVIE_BY_ID]
     })
@@ -152,13 +148,15 @@ export default function MoviePage() {
   }, []);
 
   useEffect(() => {
-    if (alert.message === "Movie was deleted successfully!") {
-      navigate("/");
-    }
-    if(alert.isOpen && alert.type === "success"){
+    if(movieError) navigate("/")
+  },[movieError])
+
+  useEffect(() => {
+    if(editingMovie === undefined && editingReview === undefined && deletingMovie === undefined && deletingReview === undefined){
       refetchData()
+      console.log("refetched")
     }
-  }, [alert.message]);
+  }, [editingMovie,editingReview,deletingMovie,deletingReview]);
 
   const handleAddReview = async () => {
     const movie_id = currmovie_id;
@@ -178,8 +176,9 @@ export default function MoviePage() {
       ) {
         const result = await AddReviewAPI({variables:{input:{rating,description,movie_id,user_id}}});
         if (!result) return;
-
-        setAlert({ isOpen: true, message: "Review success", type: "success" });
+        const msg = t('successMessages.reviewAdd')
+        enqueueSnackbar(msg,{variant:"success"})
+        
         setRatingDescription("");
         setValue(0);
       } 
@@ -194,27 +193,22 @@ export default function MoviePage() {
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent alert={alert} setAlert={setAlert} />
         <div style={{ paddingBottom: "2.5rem" }}>
           <MovieDeleteDialog
             movie={deletingMovie}
             onClose={() => setDeletingMovie(undefined)}
-            setAlert={setAlert}
           />
           <MovieEditModal
             movie={editingMovie}
             onClose={() => setEditingMovie(undefined)}
-            setAlert={setAlert}
           />
           <ReviewEditModal
             review={editingReview}
             onClose={() => setEditingReview(undefined)}
-            setAlert={setAlert}
           />
           <ReviewDeleteDialog
             review={deletingReview}
             onClose={() => setDeletingReview(undefined)}
-            setAlert={setAlert}
           />
             <div style={{ display: "flex", justifyContent: "center" }}>
               <MoviePageCard

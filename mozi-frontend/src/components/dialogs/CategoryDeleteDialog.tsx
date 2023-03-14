@@ -10,11 +10,11 @@ import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertType, Category } from "../../api/types";
 import { gql, useMutation} from '@apollo/client'
+import { useSnackbar } from 'notistack'
 
 interface Props {
   category?: Category;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const DELETE_CATEGORY = gql`
@@ -29,10 +29,10 @@ const DELETE_CATEGORY = gql`
 export default function CategoryDeleteDialog({
   category,
   onClose,
-  setAlert,
 }: Props) {
   const { t } = useTranslation();
   const [DeleteCategoryAPI,{data}] = useMutation(DELETE_CATEGORY)
+  const {enqueueSnackbar} = useSnackbar()
 
   const handleDeletion = async () => {
     if (category === undefined) return;
@@ -41,14 +41,14 @@ export default function CategoryDeleteDialog({
     const result = await DeleteCategoryAPI({variables:{input:{id:categoryId}}});
     if (result){
       const msg = t("successMessages.categoryDelete");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
-
+      enqueueSnackbar(msg,{variant:"success"})
     }
     onClose?.()
+    
 
   };
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog

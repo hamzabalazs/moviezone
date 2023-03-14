@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { gql, useMutation } from "@apollo/client";
 import { AlertType, ReviewListReview } from "../../api/types";
@@ -20,7 +20,6 @@ import * as Yup from "yup";
 interface Props {
   review?: ReviewListReview;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const UPDATE_REVIEW = gql`
@@ -41,9 +40,10 @@ const UPDATE_REVIEW = gql`
   }
 `;
 
-export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
+export default function ReviewEditModal({ review, onClose }: Props) {
   const [UpdateReviewAPI,{data}] = useMutation(UPDATE_REVIEW);
   const { t } = useTranslation();
+  const {enqueueSnackbar} = useSnackbar()
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {
@@ -59,7 +59,7 @@ export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
     });
     if (result) {
       const msg = t("successMessages.reviewEdit");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
     }
     onClose?.();
   };
@@ -75,7 +75,7 @@ export default function ReviewEditModal({ review, onClose, setAlert }: Props) {
     validationSchema: schema,
   });
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

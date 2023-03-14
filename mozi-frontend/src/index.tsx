@@ -23,7 +23,11 @@ import {
 import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
 import { setContext } from "@apollo/client/link/context";
-import { SessionContextProvider, useSessionContext } from "./api/SessionContext";
+import {
+  SessionContextProvider,
+  useSessionContext,
+} from "./api/SessionContext";
+import { SnackbarProvider } from "notistack";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -50,10 +54,11 @@ const client = new ApolloClient({
 
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <MyThemeProvider>
-        <BrowserRouter>
-          <SessionContextProvider>
+    <SnackbarProvider maxSnack={3}>
+      <ApolloProvider client={client}>
+        <MyThemeProvider>
+          <BrowserRouter>
+            <SessionContextProvider>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="login" element={<Login />} />
@@ -89,10 +94,11 @@ root.render(
                 ></Route>
                 <Route path="account" element={<Account />}></Route>
               </Routes>
-          </SessionContextProvider>
-        </BrowserRouter>
-      </MyThemeProvider>
-    </ApolloProvider>
+            </SessionContextProvider>
+          </BrowserRouter>
+        </MyThemeProvider>
+      </ApolloProvider>
+    </SnackbarProvider>
   </React.StrictMode>
 );
 

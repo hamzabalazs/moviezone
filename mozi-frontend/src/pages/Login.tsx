@@ -12,23 +12,18 @@ import {
   TextFieldProps,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import AlertComponent from "../components/AlertComponent";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { AlertType } from "../api/types";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { isString } from "lodash";
+import { useSnackbar } from "notistack";
 
 function Login() {
   const navigate = useNavigate();
   const context = useSessionContext();
-  const [alert, setAlert] = useState<AlertType>({
-    isOpen: false,
-    message: "",
-    type: undefined,
-  });
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
 
   const schema = useEditUserSchema();
 
@@ -44,12 +39,16 @@ function Login() {
       if (isString(loggedUser)) {
         if (loggedUser === "User does not exist!") {
           const msg = t("failMessages.loginFailedEmail");
-          setAlert({ isOpen: true, message: msg, type: "error" });
+          enqueueSnackbar(msg, { variant: "error" });
         } else if (loggedUser === "Password not the same!") {
           const msg = t("failMessages.loginFailedPassword");
-          setAlert({ isOpen: true, message: msg, type: "error" });
+          enqueueSnackbar(msg, { variant: "error" });
         }
-      } else navigate("/");
+      } else {
+        const msg = t("login.success")
+        enqueueSnackbar(msg,{variant:"success"})
+        navigate("/");
+      }
     },
     validationSchema: schema,
   });
@@ -62,7 +61,6 @@ function Login() {
 
   return (
     <>
-      <AlertComponent alert={alert} setAlert={setAlert} />
       <Container component="main" maxWidth="xs">
         <Box
           sx={{

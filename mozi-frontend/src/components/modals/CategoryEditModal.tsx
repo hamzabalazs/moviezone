@@ -14,11 +14,11 @@ import { useTranslation } from "react-i18next";
 import { AlertType, Category } from "../../api/types";
 import * as Yup from "yup";
 import { gql, useMutation } from '@apollo/client'
+import { useSnackbar } from 'notistack'
 
 interface Props {
   category?: Category;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const UPDATE_CATEGORY = gql`
@@ -33,10 +33,10 @@ const UPDATE_CATEGORY = gql`
 export default function CategoryEditModal({
   category,
   onClose,
-  setAlert,
 }: Props) {
   const { t } = useTranslation();
   const [UpdateCategoryAPI,{data}] = useMutation(UPDATE_CATEGORY)
+  const { enqueueSnackbar} = useSnackbar()
 
   const updateCategory = async (editedCategory: Omit<Category,"id">) => {
     if(category === undefined) return;
@@ -44,10 +44,11 @@ export default function CategoryEditModal({
     const result = await UpdateCategoryAPI({variables:{input:{id:categoryId,name:editedCategory.name}}});
     if (result){
       const msg = t("successMessages.categoryEdit");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
+      onClose?.();
     }
 
-    onClose?.();
+    
   };
 
   interface Values {
@@ -65,7 +66,7 @@ export default function CategoryEditModal({
     validationSchema: schema
   });
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

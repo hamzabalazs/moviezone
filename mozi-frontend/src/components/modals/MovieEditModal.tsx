@@ -11,7 +11,7 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { gql, useMutation,useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
@@ -23,7 +23,6 @@ import LoadingComponent from "../LoadingComponent";
 interface Props {
   movie?: Movie;
   onClose?: () => void;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 const GET_CATEGORIES = gql`
@@ -51,10 +50,11 @@ const UPDATE_MOVIE = gql`
   }
 `;
 
-export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
+export default function MovieEditModal({ movie, onClose}: Props) {
   const { t } = useTranslation();
   const [UpdateReviewAPI,{data}] = useMutation(UPDATE_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
+  const {enqueueSnackbar} = useSnackbar()
 
   const updateMovie = async (
     editedMovie: Omit<Movie, "id" | "rating" | "poster">
@@ -76,7 +76,8 @@ export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
     });
     if (result) {
       const msg = t("successMessages.movieEdit");
-      setAlert?.({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
+
     }
 
     onClose?.();
@@ -98,7 +99,7 @@ export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
   });
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

@@ -93,7 +93,6 @@ function renderReviewDeleteDialog(props: {
         <ReviewDeleteDialog
           review={props.review}
           onClose={props.onClose}
-          setAlert={jest.fn()}
         />
       </MockedSessionContext>
     </MockedProvider>

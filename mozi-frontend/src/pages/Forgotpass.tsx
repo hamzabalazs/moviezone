@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FormikErrors, useFormik } from "formik";
-import AlertComponent from "../components/AlertComponent";
+import { useSnackbar } from 'notistack'
 import { AlertType, User } from "../api/types";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery } from "@apollo/client";
@@ -38,8 +38,8 @@ function Forgotpass() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const navigate = useNavigate();
+  const {enqueueSnackbar} = useSnackbar()
   const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
 
   useEffect(() => {
     if (context.user) {
@@ -56,7 +56,8 @@ function Forgotpass() {
       const isUser = usersData.getUsers.find((x:User) => x.email === email);
       if (!isUser) {
         const msg = t("forgotPass.noUser");
-        setAlert({isOpen:true,message:msg,type:"error"})
+        enqueueSnackbar(msg,{variant:"error"})
+        
       } else navigate("/login");
     },
     validate: (values) => {
@@ -72,10 +73,6 @@ function Forgotpass() {
   if(usersLoading) return LoadingComponent(usersLoading)
   return (
     <>
-      <AlertComponent
-        alert={alert}
-        setAlert={setAlert}
-      />
       <Container component="main" maxWidth="xs">
         <Box
           sx={{

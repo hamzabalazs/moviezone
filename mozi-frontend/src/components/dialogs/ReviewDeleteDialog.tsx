@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { AlertType, ReviewListReview } from "../../api/types";
 import { gql, useMutation } from "@apollo/client";
@@ -14,7 +14,6 @@ import { gql, useMutation } from "@apollo/client";
 interface Props {
   review?: ReviewListReview;
   onClose?: () => void;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
 }
 
 const DELETE_REVIEW = gql`
@@ -38,22 +37,22 @@ const DELETE_REVIEW = gql`
 export default function ReviewDeleteDialog({
   review,
   onClose,
-  setAlert
 }: Props) {
   const { t } = useTranslation();
   const [DeleteReviewAPI,{data}] = useMutation(DELETE_REVIEW);
+  const {enqueueSnackbar} = useSnackbar()
 
   const handleDeletion = async () => {
     if (review === undefined) return;
     const result = await DeleteReviewAPI({variables:{input:{id:review.id}}});
     if (result) {
       const msg = t("successMessages.reviewDelete");
-      setAlert({isOpen:true,message:msg,type:"success"})
+      enqueueSnackbar(msg,{variant:"success"})
     }
     onClose?.();
   };
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
 
   return (

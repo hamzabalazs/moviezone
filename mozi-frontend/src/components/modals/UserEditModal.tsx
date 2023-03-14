@@ -12,9 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
-import { AlertType, User } from "../../api/types";
+import { User } from "../../api/types";
 import * as Yup from "yup";
 import { gql, useMutation } from "@apollo/client";
 
@@ -22,7 +22,6 @@ interface Props {
   user?: User;
   onClose?: () => void;
   allowEditRole?: boolean;
-  setAlert: Dispatch<SetStateAction<AlertType>>;
 }
 
 const UPDATE_USER = gql`
@@ -36,57 +35,15 @@ const UPDATE_USER = gql`
     }
   }
 `;
-// function AlertProvider() {
-//   const [alert, setAlert] = useSate();
-
-// useEffect(() => {
-// if(alert ){
-//   const timer = setTimeout(3000, () => setAlert(undefined))
-//   return ()=>clearTimeout(timer);
-// }
-// }, [alert])
-
-//   function showMessage(alert){
-
-//   }
-
-//   return <context.provider value={{showMessage}}>
-//     {alert && (
-//       <Alert
-//       sx={{
-//         marginRight: 2,
-//         marginLeft: 2,
-//         marginTop: 3,
-//         marginBottom: 3,
-//         position: "sticky",
-//         top: 1,
-//       }}
-//       variant="filled"
-//       severity={alert.variant}
-//       data-testid="alert-success"
-//     >
-//       {alert.message}
-//     </Alert>
-//     )}
-//     {...}
-//   </context.provider>
-// }
-
-// Usage
-// const {showMessage} = useMyStack();
-// showMessage({
-//   message:  t("successMessages.userEdit"),
-//   variant: "success"
-// });
 
 export default function UserEditModal({
   user,
   onClose,
   allowEditRole,
-  setAlert,
 }: Props) {
   const { t } = useTranslation();
   const [UpdateUserAPI,{data}] = useMutation(UPDATE_USER);
+  const {enqueueSnackbar} = useSnackbar()
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
@@ -104,7 +61,7 @@ export default function UserEditModal({
     });
     if (result) {
       const msg = t("successMessages.userEdit");
-      setAlert({ isOpen: true, message: msg, type: "success" });
+      enqueueSnackbar(msg,{variant:"success"})
     }
 
     onClose?.();
@@ -127,7 +84,7 @@ export default function UserEditModal({
     validationSchema: schema,
   });
 
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal

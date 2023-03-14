@@ -7,8 +7,7 @@ import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
-import AlertComponent from "../components/AlertComponent";
-import { AlertType, User } from "../api/types";
+import { User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
@@ -32,8 +31,6 @@ export function Users() {
 
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
-
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
   
   async function refetchData(){
     await client.refetchQueries({
@@ -41,11 +38,12 @@ export function Users() {
     });
   }
 
+
   useEffect(() => {
-    if(alert.isOpen){
+    if(editingUser === undefined && deletingUser === undefined){
       refetchData()
     }
-  },[alert])
+  },[editingUser,deletingUser])
 
   if(usersLoading) return LoadingComponent(usersLoading)
 
@@ -53,21 +51,15 @@ export function Users() {
     <>
       <NavigationBar />
       <main style={{ position: "relative", minHeight: "100vh" }}>
-        <AlertComponent
-          alert={alert}
-          setAlert={setAlert}
-        />
         <UserDeleteDialog
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
-          setAlert={setAlert}
         />
         
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
           allowEditRole
-          setAlert={setAlert}
         />
         
         <div>

@@ -13,9 +13,8 @@ import {
   TextFieldProps,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import AlertComponent from "../components/AlertComponent";
+import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
-import { AlertType } from "../api/types";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useMutation } from "@apollo/client";
@@ -37,7 +36,7 @@ function Register() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const [PostUserAPI] = useMutation(ADD_USER);
-  const [alert,setAlert] = useState<AlertType>({isOpen:false,message:"",type:undefined})
+  const {enqueueSnackbar} = useSnackbar()
   
   useEffect(() => {
     if (context.user) {
@@ -62,9 +61,11 @@ function Register() {
       const result = await PostUserAPI({variables:{input:{first_name,last_name,email,password}}});
       if (!result) {
         const msg = t("register.accountExists");
-        setAlert({isOpen:true,message:msg,type:"error"})
+        enqueueSnackbar(msg,{variant:"error"})
         return;
       }
+      const msg = t("register.success")
+      enqueueSnackbar(msg,{variant:"success"})
       navigate("/login");
     },
     validationSchema:schema
@@ -72,10 +73,6 @@ function Register() {
 
   return (
     <>
-      <AlertComponent
-        alert={alert}
-        setAlert={setAlert}
-      />
       <Container component="main" maxWidth="xs">
         <Box
           sx={{

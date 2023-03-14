@@ -6,12 +6,10 @@ import AddMovieCard from "../cards/AddMovieCard";
 interface Props {
   isOpenAdd: boolean;
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
-  setAlert?: Dispatch<SetStateAction<AlertType>>;
 }
 
 export default function MovieAddModal(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
-  const setAlert = props.setAlert
   
   return (
     <Modal
@@ -34,7 +32,6 @@ export default function MovieAddModal(props: Props) {
       >
         <AddMovieCard
           setIsOpenAdd={setIsOpenAdd}
-          setAlert={setAlert}
         />
       </Box>
     </Modal>
