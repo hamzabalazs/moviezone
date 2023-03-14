@@ -1,7 +1,7 @@
 import { MyContext } from "../server";
 import { determineRole, getToken } from "./token";
 import { DbReview, Review, Token, User } from "./types";
-import { getCurrentUser } from "./user";
+import { getCurrentUser, getUserById } from "./user";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
@@ -103,7 +103,11 @@ export async function updateReview(
   review: any,
   context: MyContext
 ): Promise<Review> {
-  const user: User = await getCurrentUser(context);
+  const updatedReview: DbReview = await getReviewForUpdate(
+    review.id,
+    context
+  );
+  const user: User = await getUserById(updatedReview.user_id,context);
   const token: Token = await getToken(user, context);
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
@@ -111,10 +115,7 @@ export async function updateReview(
   const headerToken = context.req.headers["auth-token"] as string;
   const contextToken = headerToken.replace(/['"]/g, "");
   if (token.token === contextToken || role.role !== "viewer") {
-    const updatedReview: DbReview = await getReviewForUpdate(
-      review.id,
-      context
-    );
+    
     const returnReview: Review = {
       ...review,
       movie_id: updatedReview.movie_id,
@@ -141,7 +142,9 @@ export async function deleteReview(
   id: string,
   context: MyContext
 ): Promise<Review> {
-  const user: User = await getCurrentUser(context);
+  const reviewToDelete = await getReviewForUpdate(id,context)
+  console.log(reviewToDelete)
+  const user: User = await getUserById(reviewToDelete.user_id,context);
   const token: Token = await getToken(user, context);
   if (!token) throw new Error("No Token");
   const role = await determineRole(context);
