@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FormikErrors, useFormik } from "formik";
 import { useSnackbar } from 'notistack'
-import { AlertType, User } from "../api/types";
+import { User } from "../api/types";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery } from "@apollo/client";
 import LoadingComponent from "../components/LoadingComponent";

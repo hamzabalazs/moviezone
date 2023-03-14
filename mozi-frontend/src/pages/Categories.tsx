@@ -1,7 +1,7 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { AlertType, Category } from "../api/types";
+import { Category } from "../api/types";
 import CategoryDeleteDialog from "../components/dialogs/CategoryDeleteDialog";
 import CategoryAddModal from "../components/modals/CategoryAddModal";
 import CategoryEditModal from "../components/modals/CategoryEditModal";
@@ -12,7 +12,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CategoryCard from "../components/cards/CategoryCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
-import { useQuery, gql, useMutation, useApolloClient } from '@apollo/client'
+import { useQuery, gql, useApolloClient } from '@apollo/client'
 
 const GET_CATEGORIES = gql`
   query GetCategories {

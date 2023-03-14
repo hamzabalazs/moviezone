@@ -1,5 +1,5 @@
 import { Fab } from "@mui/material";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import ScrollTop from "./ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import userEvent from "@testing-library/user-event";

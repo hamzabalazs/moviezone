@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import {MockedProvider} from "@apollo/client/testing"
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { CurrUser } from "../api/types";

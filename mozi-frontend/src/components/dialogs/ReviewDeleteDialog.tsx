@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
-import { AlertType, ReviewListReview } from "../../api/types";
+import { ReviewListReview } from "../../api/types";
 import { gql, useMutation } from "@apollo/client";
 
 interface Props {
@@ -53,8 +53,6 @@ export default function ReviewDeleteDialog({
   };
 
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
-
-
   return (
     <Dialog
       open={Boolean(review)}

@@ -14,7 +14,7 @@ import { useFormik } from "formik";
 import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { gql, useMutation } from "@apollo/client";
-import { AlertType, ReviewListReview } from "../../api/types";
+import { ReviewListReview } from "../../api/types";
 import * as Yup from "yup";
 
 interface Props {

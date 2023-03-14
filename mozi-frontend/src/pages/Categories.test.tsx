@@ -50,21 +50,11 @@ const mockCategoryData = {
   }
 }
 
-const adminUser:CurrUser = {
-  id:"idU3",
-  first_name:"admin",
-  last_name:"admin",
-  email:"admin@example.com",
-  password:"admin",
-  role:"admin",
-  token:"token1"
-}
-
-function renderCategories(currUser?: CurrUser) {
+function renderCategories() {
   return render(
     <MemoryRouter>
       <MockedProvider addTypename={false} mocks={[mockCategoryData]}>
-        <MockedSessionContext value={{user:currUser}}>
+        <MockedSessionContext>
           <Categories />
         </MockedSessionContext>
       </MockedProvider>

@@ -1,6 +1,5 @@
 import { Box, Modal } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { AlertType } from "../../api/types";
 import AddCategoryCard from "../cards/AddCategoryCard";
 
 interface Props {

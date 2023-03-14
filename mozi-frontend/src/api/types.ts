@@ -34,13 +34,6 @@ export type Movie = {
   category: Category;
 };
 
-
-export type AlertType = {
-  isOpen: boolean;
-  message: string;
-  type: "success" | "error" | undefined
-}
-
 export type MovieListMovie = {
   id:string;
   title:string;

@@ -55,18 +55,6 @@ const mockLoginErrorData = {
   },
 };
 
-function renderLoginError() {
-  return render(
-    <MemoryRouter>
-      <MockedProvider addTypename={false} mocks={[mockLoginErrorData]}>
-        <MockedSessionContext>
-          <Login />
-        </MockedSessionContext>
-      </MockedProvider>
-    </MemoryRouter>
-  );
-}
-
 function renderLogin(logInMock?: jest.Mock<any, any>) {
   return render(
     <MemoryRouter>

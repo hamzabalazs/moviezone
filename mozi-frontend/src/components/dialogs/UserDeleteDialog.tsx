@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
-import { AlertType, User } from "../../api/types";
+import { User } from "../../api/types";
 import { gql, useMutation} from "@apollo/client";
 
 interface Props {

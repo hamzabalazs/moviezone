@@ -15,7 +15,7 @@ import { useSnackbar } from 'notistack'
 import { gql, useMutation,useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { AlertType, Category, Movie } from "../../api/types";
+import { Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";

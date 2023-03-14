@@ -7,22 +7,19 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Register from "./Register";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockedUsedNavigate,
-}));
-
 function renderRegister() {
   return render(
-    <MockedProvider>
-      <MockedSessionContext>
-        <Register />
-      </MockedSessionContext>
-    </MockedProvider>
+    <MemoryRouter>
+      <MockedProvider>
+        <MockedSessionContext>
+          <Register />
+        </MockedSessionContext>
+      </MockedProvider>
+    </MemoryRouter>
   );
 }
 

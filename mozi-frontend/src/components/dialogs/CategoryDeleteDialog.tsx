@@ -6,9 +6,8 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertType, Category } from "../../api/types";
+import { Category } from "../../api/types";
 import { gql, useMutation} from '@apollo/client'
 import { useSnackbar } from 'notistack'
 

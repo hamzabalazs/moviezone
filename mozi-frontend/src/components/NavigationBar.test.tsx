@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import "@testing-library/jest-dom/extend-expect";
 import NavigationBar from "./NavigationBar";
