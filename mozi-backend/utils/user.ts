@@ -6,7 +6,6 @@ import { User, FullUser, DbUser } from "./types";
 export function getCurrentUser(context:MyContext): Promise<User> {
   const tokenString = context.req.headers['auth-token'] as string;
   const token = tokenString.replace(/['"]/g, "");
-  console.log(token)
   if (!token) throw new Error("Could not get token of current user");
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.role FROM session s JOIN user u ON s.user_id = u.id WHERE s.token = ?`;
   return new Promise((resolve, reject) => {

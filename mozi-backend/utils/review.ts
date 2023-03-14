@@ -143,7 +143,6 @@ export async function deleteReview(
   context: MyContext
 ): Promise<Review> {
   const reviewToDelete = await getReviewForUpdate(id,context)
-  console.log(reviewToDelete)
   const user: User = await getUserById(reviewToDelete.user_id,context);
   const token: Session = await getToken(user, context);
   if (!token) throw new Error("No Token");

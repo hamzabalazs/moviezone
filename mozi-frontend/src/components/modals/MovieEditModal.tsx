@@ -59,7 +59,6 @@ export default function MovieEditModal({ movie, onClose, setAlert }: Props) {
   const updateMovie = async (
     editedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
-    console.log(movie);
     const poster = movie?.poster;
     if (movie === undefined || poster === undefined) return;
 

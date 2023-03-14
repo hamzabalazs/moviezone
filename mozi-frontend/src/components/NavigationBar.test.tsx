@@ -22,7 +22,6 @@ function renderNavbar(user?: CurrUser) {
 
 function DisplayRoute() {
   const location = useLocation();
-  console.log("location", location);
   return <div data-testid="test-location">{location.pathname}</div>;
 }
 

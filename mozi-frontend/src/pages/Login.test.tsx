@@ -46,14 +46,14 @@ const mockLoginData = {
 };
 
 const mockLoginErrorData = {
-  request:{
+  request: {
     query: LOGIN,
-    variables:{input:{email:"admin@example.com",password:"adminbad"}}
+    variables: { input: { email: "admin@example.com", password: "adminbad" } },
   },
-  result:{
-    errors: [new GraphQLError("User does not exist!")]
-  }
-}
+  result: {
+    errors: [new GraphQLError("User does not exist!")],
+  },
+};
 
 function renderLoginError() {
   return render(
@@ -67,11 +67,11 @@ function renderLoginError() {
   );
 }
 
-function renderLogin(logInMock?:jest.Mock<any,any>) {
+function renderLogin(logInMock?: jest.Mock<any, any>) {
   return render(
     <MemoryRouter>
       <MockedProvider addTypename={false} mocks={[mockLoginData]}>
-        <MockedSessionContext value={{logIn:logInMock}}>
+        <MockedSessionContext value={{ logIn: logInMock }}>
           <Login />
         </MockedSessionContext>
       </MockedProvider>
@@ -79,25 +79,28 @@ function renderLogin(logInMock?:jest.Mock<any,any>) {
   );
 }
 
-test("login is called if inputs are not empty",async() => {
-  const logInMock = jest.fn()
-  renderLogin(logInMock)
+test("login is called if inputs are not empty", async () => {
+  const logInMock = jest.fn();
+  renderLogin(logInMock);
 
   const loginFormEmail = screen.getByTestId("login-email") as HTMLInputElement;
-  const loginFormPassword = screen.getByTestId("login-password") as HTMLInputElement;
+  const loginFormPassword = screen.getByTestId(
+    "login-password"
+  ) as HTMLInputElement;
   const loginButton = screen.getByRole("button", { name: "login.login" });
 
-  fireEvent.change(loginFormEmail,{target:{value:"admin@example.com"}})
-  fireEvent.change(loginFormPassword,{target:{value:"admin"}})
-
   act(() => {
+    fireEvent.change(loginFormEmail, {
+      target: { value: "admin@example.com" },
+    });
+    fireEvent.change(loginFormPassword, { target: { value: "admin" } });
     userEvent.click(loginButton);
   });
-  
+
   await waitFor(() => {
-    expect(logInMock).toHaveBeenCalled()
-  })
-})
+    expect(logInMock).toHaveBeenCalled();
+  });
+});
 
 test("login error happens if email empty", async () => {
   renderLogin();

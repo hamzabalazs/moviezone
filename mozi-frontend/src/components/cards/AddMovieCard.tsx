@@ -211,7 +211,6 @@ export default function AddMovieCard(props: Props) {
               id="poster"
               onChange={async (e) => {
                 const file = e.target.files?.[0];
-                console.log(file);
                 if (!file) return;
                 const image = await resizeFile(file);
                 if (isString(image)) setPoster(image);

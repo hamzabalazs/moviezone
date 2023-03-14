@@ -78,7 +78,6 @@ function MovieList(props: Props) {
     movieList.forEach((movie) => {
       filteredMovieList.push(movie.title);
     });
-    console.log(filteredMovieList)
     setMovieOptions(filteredMovieList);
   }, [movieList]);
 
@@ -121,7 +120,6 @@ function MovieList(props: Props) {
               value={selectedMovieTitle}
               onChange={(event: any, newValue: string[] | undefined) => {
                 setSelectedMovieTitle(newValue);
-                console.log(newValue);
               }}
               inputValue={inputValueMovie}
               onInputChange={(event, newInputValue) => {
@@ -144,7 +142,6 @@ function MovieList(props: Props) {
               value={selectedCategoryId}
               onChange={(event: any, newValue: string[] | undefined) => {
                 setSelectedCategoryId(newValue);
-                console.log(newValue);
               }}
               inputValue={inputValueCategory}
               onInputChange={(event, newInputValue) => {

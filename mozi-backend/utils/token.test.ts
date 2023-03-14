@@ -174,7 +174,6 @@ test("Should not create new token for user that already has token", async () => 
         email:newTestUser2.email
     }}
   });
-  console.log(getUserResult.data)
   expect(getUserResult.errors).toBeUndefined()
   expect(getUserResult.data).not.toBeNull()
 
