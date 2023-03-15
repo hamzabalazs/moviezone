@@ -47,24 +47,32 @@ export default function UserEditModal({
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
-    const result = await UpdateUserAPI({
-      variables: {
-        input: {
-          id: user.id,
-          first_name: editedUser.first_name,
-          last_name: editedUser.last_name,
-          email: editedUser.email,
-          password: editedUser.password,
-          role: allowEditRole ? editedUser.role : undefined
+    try{
+      const result = await UpdateUserAPI({
+        variables: {
+          input: {
+            id: user.id,
+            first_name: editedUser.first_name,
+            last_name: editedUser.last_name,
+            email: editedUser.email,
+            password: editedUser.password,
+            role: allowEditRole ? editedUser.role : undefined
+          },
         },
-      },
-    });
-    if (result) {
-      const msg = t("successMessages.userEdit");
-      enqueueSnackbar(msg,{variant:"success"})
+      });
+      if (result) {
+        const msg = t("successMessages.userEdit");
+        enqueueSnackbar(msg,{variant:"success"})
+        onClose?.();
+      }
+    }catch(e:any){
+      if(e.message === "Cannot change email to already existing one!"){
+        const msg = t('user.emailExists')
+        enqueueSnackbar(msg,{variant:"error"})
+      }
     }
 
-    onClose?.();
+    
   };
 
   const formikValues: Omit<User, "id"> = {

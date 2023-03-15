@@ -37,7 +37,8 @@
         "categoryName": "Kategória neve",
         "selectedCategory": "Választott kategória",
         "name": "Név",
-        "noCategoryFound": "Nem találhatóak kategóriák! Adj hozzá a bal felső sarokban levő gomb lenyomásával!"
+        "noCategoryFound": "Nem találhatóak kategóriák! Adj hozzá a bal felső sarokban levő gomb lenyomásával!",
+        "categoryExists": "A kategória már létezik! Probálj meg egy másik nevet!"
     },
     "user":{
         "userCard":{
@@ -50,7 +51,8 @@
         "email": "Email",
         "password": "Jelszó",
         "role":"Szerepkör",
-        "selectedUser":"Választott felhasználó"
+        "selectedUser":"Választott felhasználó",
+        "emailExists":"Nem lehetséges az emailt egy már meglévőre cserélni!"
     },
     "failMessages" : {
         "reviewAddMultiple": "Már van vélemény adva az adott filmről!",
@@ -138,5 +140,6 @@
         "nameReq":"A név kötelező!",
         "ratingReq":"Az értékelés kötelező!",
         "posterReq": "A poszter kötelező!"
-    }
+    },
+    "someError": "Valami rosszul sült el, kérjük, próbálja meg később újra!"
 }

@@ -36,7 +36,8 @@
         "categoryName": "Category Name",
         "selectedCategory": "Selected Category",
         "name": "Name",
-        "noCategoryFound": "No categories found! Add one with the button in the upper left corner!"
+        "noCategoryFound": "No categories found! Add one with the button in the upper left corner!",
+        "categoryExists": "Category already exists! Try another name!"
     },
     "user":{
         "userCard":{
@@ -49,7 +50,8 @@
         "email": "Email",
         "password": "Password",
         "role":"Role",
-        "selectedUser":"Selected User"
+        "selectedUser":"Selected User",
+        "emailExists":"Cannot change email to already existing one!"
     },
     "failMessages" : {
         "reviewAddMultiple": "You have already rated this movie!",
@@ -137,5 +139,6 @@
         "nameReq":"Name is required!",
         "ratingReq":"Rating is required!",
         "posterReq": "Poster is required!"
-    }
+    },
+    "someError": "Something went wrong, please try again later!"
 }

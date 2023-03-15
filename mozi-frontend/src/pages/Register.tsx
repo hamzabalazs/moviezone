@@ -13,7 +13,7 @@ import {
   TextFieldProps,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
@@ -36,15 +36,15 @@ function Register() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const [PostUserAPI] = useMutation(ADD_USER);
-  const {enqueueSnackbar} = useSnackbar()
-  
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     if (context.user) {
       navigate("/");
     }
   });
 
-  const schema = useEditUserSchema()
+  const schema = useEditUserSchema();
 
   const formik = useFormik({
     initialValues: {
@@ -58,17 +58,26 @@ function Register() {
       const last_name = values.last_name;
       const email = values.email;
       const password = values.password;
-      const result = await PostUserAPI({variables:{input:{first_name,last_name,email,password}}});
-      if (!result) {
-        const msg = t("register.accountExists");
-        enqueueSnackbar(msg,{variant:"error"})
-        return;
+      try {
+        const result = await PostUserAPI({
+          variables: { input: { first_name, last_name, email, password } },
+        });
+        if (!result) {
+          const msg = t("someError");
+          enqueueSnackbar(msg, { variant: "error" });
+          return;
+        }
+        const msg = t("register.success");
+        enqueueSnackbar(msg, { variant: "success" });
+        navigate("/login");
+      } catch (e: any) {
+        if(e.message === "Email in use!"){
+          const msg = t('register.accountExists')
+          enqueueSnackbar(msg,{variant:"error"})
+        }
       }
-      const msg = t("register.success")
-      enqueueSnackbar(msg,{variant:"success"})
-      navigate("/login");
     },
-    validationSchema:schema
+    validationSchema: schema,
   });
 
   return (

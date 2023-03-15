@@ -45,16 +45,6 @@ const mockLoginData = {
   },
 };
 
-const mockLoginErrorData = {
-  request: {
-    query: LOGIN,
-    variables: { input: { email: "admin@example.com", password: "adminbad" } },
-  },
-  result: {
-    errors: [new GraphQLError("User does not exist!")],
-  },
-};
-
 function renderLogin(logInMock?: jest.Mock<any, any>) {
   return render(
     <MemoryRouter>

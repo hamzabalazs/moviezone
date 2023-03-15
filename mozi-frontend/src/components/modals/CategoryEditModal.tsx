@@ -12,8 +12,8 @@ import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
 import * as Yup from "yup";
-import { gql, useMutation } from '@apollo/client'
-import { useSnackbar } from 'notistack'
+import { gql, useMutation } from "@apollo/client";
+import { useSnackbar } from "notistack";
 
 interface Props {
   category?: Category;
@@ -22,32 +22,36 @@ interface Props {
 
 const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
-  updateCategory(input: $input) {
-    id
-    name
-  }
-}
-`
-
-export default function CategoryEditModal({
-  category,
-  onClose,
-}: Props) {
-  const { t } = useTranslation();
-  const [UpdateCategoryAPI,{data}] = useMutation(UPDATE_CATEGORY)
-  const { enqueueSnackbar} = useSnackbar()
-
-  const updateCategory = async (editedCategory: Omit<Category,"id">) => {
-    if(category === undefined) return;
-    const categoryId = category.id
-    const result = await UpdateCategoryAPI({variables:{input:{id:categoryId,name:editedCategory.name}}});
-    if (result){
-      const msg = t("successMessages.categoryEdit");
-      enqueueSnackbar(msg,{variant:"success"})
-      onClose?.();
+    updateCategory(input: $input) {
+      id
+      name
     }
+  }
+`;
 
-    
+export default function CategoryEditModal({ category, onClose }: Props) {
+  const { t } = useTranslation();
+  const [UpdateCategoryAPI, { data }] = useMutation(UPDATE_CATEGORY);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const updateCategory = async (editedCategory: Omit<Category, "id">) => {
+    if (category === undefined) return;
+    const categoryId = category.id;
+    try {
+      const result = await UpdateCategoryAPI({
+        variables: { input: { id: categoryId, name: editedCategory.name } },
+      });
+      if (result) {
+        const msg = t("successMessages.categoryEdit");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+      }
+    } catch (e: any) {
+      if(e.message === "Category already exists!"){
+        const msg = t('category.categoryExists');
+        enqueueSnackbar(msg,{variant:"error"})
+      }
+    }
   };
 
   interface Values {
@@ -60,9 +64,9 @@ export default function CategoryEditModal({
     initialValues: {
       name: category?.name || "",
     },
-    onSubmit:updateCategory,
-    enableReinitialize:true,
-    validationSchema: schema
+    onSubmit: updateCategory,
+    enableReinitialize: true,
+    validationSchema: schema,
   });
 
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
@@ -156,6 +160,5 @@ function useEditCategorySchema() {
 
   return Yup.object({
     name: Yup.string().required(t("formikErrors.nameReq") || ""),
-    
   });
 }
