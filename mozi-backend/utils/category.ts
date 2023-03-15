@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import { MyContext } from "../server";
-import { updateCategoryOfMovie } from "./movie";
 import { Category } from "./types";
 
 export function getCategories(_: any, context:MyContext):Promise<Category[]> {
@@ -63,11 +62,11 @@ export function updateCategory(category: Category, context:MyContext):Promise<Ca
 
 export async function deleteCategory(id: string, context:MyContext):Promise<Category> {
   const category:Category = await getCategoryById(id, context);
-  const sql = `DELETE FROM category WHERE category.id = ?`;
-  const result = await updateCategoryOfMovie(category.name,context);
-  if(!result) throw new Error("Could not update category of movies")
+  const sqlDelete = `DELETE FROM category WHERE category.id = ?`;
+  const sqlUpdate = `UPDATE movie SET category_id = "removedID" WHERE category_id = ?` ;
   return new Promise((resolve, reject) => {
-    context.db.run(sql, [id], (err: any) => {
+    context.db.run(sqlUpdate, [id]);
+    context.db.run(sqlDelete, [id], (err: any) => {
       if (err) {
         reject(err);
       }

@@ -8,9 +8,10 @@ import {
   checkForUser,
   getUserById,
   getCurrentUser,
+  getUserByToken,
   
 } from "../utils/user"
-import { getMovies, getMovieById,deleteMovie,updateMovie,createMovie, updateCategoryOfMovie, getMoviesByCategoryId } from "../utils/movie"
+import { getMovies, getMovieById,deleteMovie,updateMovie,createMovie, getMoviesByCategoryId } from "../utils/movie"
 import {
   getReviews,
   getReviewById,
@@ -19,10 +20,8 @@ import {
   deleteReview,
   updateReview,
   createReview,
-  deleteReviewsOfMovie,
 } from "../utils/review";
-import { logIn,getUserForLogin } from "../utils/auth";
-import {determineRole,getToken,createToken} from "../utils/token"
+import { getUserForLogin, logIn } from "../utils/auth";
 import {getCategories,getCategoryById,deleteCategory,updateCategory,createCategory,checkForCategory} from "../utils/category"
 import { MyContext } from "../server";
 import { Category, FullUser, Movie,  Review,  Role,  UserRole } from "../utils/types";
@@ -36,24 +35,14 @@ export const resolvers = {
     async getUserById(_:any,  {input}:any , context:MyContext) {
       return await getUserById(input.id, context);
     },
+    async getUserByToken(_:any, __:any, context:MyContext) {
+      return await getUserByToken(context)
+    },
     async checkForUser(_:any,  {input}:any , context:MyContext) {
       return await checkForUser(input.email, context);
     },
-    async getUserForLogin(_:any, {input}:any, context:MyContext) {
-      return await getUserForLogin(input.email, context);
-    },
     async getCurrentUser(_:any,__:any,context:MyContext){
       return await getCurrentUser(context)
-    },
-    //Authentication
-    async logIn(_:any, {input}:any, context:MyContext) {
-      return await logIn(input, context);
-    },
-    async getToken(_:any, {input}:any, context:MyContext) {
-      return await getToken(input, context);
-    },
-    async determineRole(_:any,__:any,context:MyContext){
-      return await determineRole(context)
     },
     // Categories
     async getCategories(_:any, __:any, context:MyContext) {
@@ -137,23 +126,27 @@ export const resolvers = {
     async updateUser(_:any, args:any, context:MyContext) {
       const updatedUser = args.input;
       const isUser = await getUserById(updatedUser.id, context);
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       if (isUser === undefined) throw new Error("User does not exist!");
       return await updateUser(updatedUser, context);
     },
     async deleteUser(_:any, args:any, context:MyContext) {
       const user_id = args.input.id;
-      const user = await getUserById(user_id, context);
-      if (user === undefined) throw new Error("User does not exist!");
+      const isUser = await getUserById(user_id, context);
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
+      if (isUser === undefined) throw new Error("User does not exist!");
       return await deleteUser(user_id, context);
     },
 
     // Categories
     async createCategory(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       const newCategory = args.input.name;
       const isCategory = await checkForCategory(
         newCategory,
@@ -165,14 +158,13 @@ export const resolvers = {
       return await createCategory(newCategory, context);
     },
     async updateCategory(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No token")
+      context.user = user
       const updatedCategory = args.input;
-      const categoryExists = await checkForCategory(updateCategory.name,context)
-      if(categoryExists !== null) throw new Error("Category already exists!")
+      const categoryExists = await checkForCategory(updatedCategory.name,context)
+      console.log(categoryExists)
+      if(categoryExists) throw new Error("Category already exists!")
       const isCategory = await getCategoryById(
         updatedCategory.id,
         context
@@ -181,11 +173,9 @@ export const resolvers = {
       return await updateCategory(updatedCategory, context);
     },
     async deleteCategory(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       const categoryId = args.input.id;
       const category = await getCategoryById(
         categoryId,
@@ -196,11 +186,9 @@ export const resolvers = {
     },
     // Movies
     async createMovie(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       const newMovie = args.input;
       const isCategory:Category = await getCategoryById(
         newMovie.category_id,
@@ -221,11 +209,9 @@ export const resolvers = {
       return await createMovie(movie, context);
     },
     async updateMovie(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       const updatedMovie = args.input;
       const isMovie = await getMovieById(updatedMovie.id,context)
       if(!isMovie) throw new Error("Movie not found")
@@ -238,16 +224,10 @@ export const resolvers = {
       }
       return await updateMovie(updatedMovie, context);
     },
-    async updateCategoryOfMovie(_:any,args:any,context:MyContext){
-      const name = args.input.name
-      return await updateCategoryOfMovie(name,context);
-    },
     async deleteMovie(_:any, args:any, context:MyContext) {
-      const token = context.req.headers['auth-token']
-      if(!token) throw new Error("No token")
-      const role = await determineRole(context);
-      if(role === undefined) throw new Error("Role not found")
-      if(role.role === "viewer") throw new Error("Unauthorized!")
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       const movie_id:string = args.input.id;
       const isMovie = await getMovieById(movie_id, context);
       if (isMovie === undefined) {
@@ -282,25 +262,25 @@ export const resolvers = {
     },
     async updateReview(_:any, args:any, context:MyContext) {
       const updatedReview = args.input;
+      const user = await getUserByToken(context)
+      context.user = user
       if (updatedReview.rating === "0") throw new Error("Cannot rate with 0!");
       return await updateReview(updatedReview, context);
     }, 
     async deleteReview(_:any, args:any, context:MyContext) {
       const reviewId = args.input.id;
       const isReview = await getReviewById(reviewId, context);
+      const user = await getUserByToken(context)
+      if(!user) throw new Error("No Token!")
+      context.user = user
       if (isReview === undefined) throw new Error("Review does not exist!");
       return await deleteReview(reviewId, context);
     },
-    async deleteReviewsOfMovie(_:any, args:any,context:MyContext){
-      const movieId = args.input.movie_id;
-      const isMovie = await getMovieById(movieId,context);
-      if(isMovie === undefined) throw new Error("Movie does not exist!");
-      return await deleteReviewsOfMovie(movieId,context);
-    },
     // Authentication
-    async createToken(_:any, args:any, context:MyContext) {
-      const loginDetails = args.input;
-      return await createToken(loginDetails, context);
+    async logIn(_:any, {input}:any, context:MyContext) {
+      const user = await getUserForLogin(input,context)
+      if(user) context.user = user
+      return await logIn(input, context);
     },
   },
 };

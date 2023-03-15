@@ -1,8 +1,5 @@
 import { MyContext } from "../server";
-import { checkForCategory } from "./category";
-import { deleteReviewsOfMovie } from "./review";
-import { determineRole } from "./token";
-import { CreateMovieInput, DbMovie, Movie, UpdateMovieInput } from "./types";
+import { DbMovie, Movie, UpdateMovieInput } from "./types";
 
 export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
@@ -77,35 +74,16 @@ export function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<U
   });
 }
 
-export async function updateCategoryOfMovie(name:string,context:MyContext): Promise<Movie[]>{
-  const role = await determineRole(context)
-  if(role === undefined) throw new Error("Role not found")
-  if(role.role !== "viewer"){
-    const category = await checkForCategory(name,context);
-    const sql = `UPDATE movie SET category_id = "removedID" WHERE category_id = ?` 
-    const movies = getMoviesByCategoryId(category.id,context);
-    return new Promise((resolve,reject) => {
-      context.db.run(sql,[category.id],(err:any) => {
-        if(err){
-          reject(err)
-        }
-        resolve(movies)
-      })
-    })
-  }
-  throw new Error("Unauthorized!")
-}
-
 export async function deleteMovie(id:string, context:MyContext):Promise<Movie> {
   const movie = await getMovieById(id, context);
   if(movie === undefined){
     throw new Error("Movie not found!")
   }
-  const sql = `DELETE FROM movie WHERE movie.id = ?`;
-  const result = await deleteReviewsOfMovie(id,context);
-  if(!result) throw new Error("Could not delete reviews of movie!")
+  const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;
+  const sqlReviewDelete = `DELETE FROM review WHERE review.movie_id = ?`
   return new Promise((resolve, reject) => {
-    context.db.run(sql,[id], err => {
+    context.db.run(sqlReviewDelete,[id]);
+    context.db.run(sqlDelete,[id], err => {
       if (err) {
         reject(err);
       }

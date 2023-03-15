@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+/lcov-report
+
 # production
 /build
 
@@ -17,6 +19,9 @@
 .env.development.local
 .env.test.local
 .env.production.local
+clover.xml
+coverage-final.json
+lcov.info
 
 npm-debug.log*
 yarn-debug.log*

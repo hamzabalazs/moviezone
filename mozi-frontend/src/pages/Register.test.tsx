@@ -8,14 +8,15 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Register from "./Register";
 
-function renderRegister() {
+function renderRegister(user?: CurrUser) {
   return render(
     <MemoryRouter>
       <MockedProvider>
-        <MockedSessionContext>
+        <MockedSessionContext value={{user}}>
           <Register />
         </MockedSessionContext>
       </MockedProvider>
@@ -24,7 +25,7 @@ function renderRegister() {
 }
 
 test("register error if first_name is empty", async () => {
-  renderRegister();
+  renderRegister(undefined);
 
   const registerFormFirstName = screen.getByTestId(
     "register-first_name"
@@ -44,7 +45,7 @@ test("register error if first_name is empty", async () => {
 });
 
 test("register error if last_name is empty", async () => {
-  renderRegister();
+  renderRegister(undefined);
 
   const registerFormLastName = screen.getByTestId(
     "register-last_name"
@@ -64,7 +65,7 @@ test("register error if last_name is empty", async () => {
 });
 
 test("register error if email is empty", async () => {
-  renderRegister();
+  renderRegister(undefined);
 
   const registerFormEmail = screen.getByTestId(
     "register-email"
@@ -84,7 +85,7 @@ test("register error if email is empty", async () => {
 });
 
 test("register error if password is empty", async () => {
-  renderRegister();
+  renderRegister(undefined);
 
   const registerFormPassword = screen.getByTestId(
     "register-password"
@@ -104,7 +105,7 @@ test("register error if password is empty", async () => {
 });
 
 test("register login link has correct href", async () => {
-  renderRegister();
+  renderRegister(undefined);
   const registerLoginLink = screen.getByRole("link", {
     name: "register.hasAccount",
   });

@@ -14,16 +14,16 @@ export type LogInData = {
 };
 
 const LOGIN = gql`
-  mutation CreateToken($input: AddTokenInput!) {
-    createToken(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-      token
-    }
+  mutation LogIn($input: LoginInput!) {
+  logIn(input: $input) {
+    id
+    first_name
+    last_name
+    role
+    email
+    token
   }
+}
 `;
 
 const USER_KEY = "user-info";
@@ -44,15 +44,16 @@ export function useLogIn(): LogInData {
       const loggedUser = await LoginAPI({
         variables: { input: { email, password } },
       });
-      const token = loggedUser.data.createToken.token;
-      setUser(loggedUser.data.createToken);
+      const token = loggedUser.data.logIn.token;
+      setUser(loggedUser.data.logIn);
       localStorage.setItem(
         USER_KEY,
-        JSON.stringify(loggedUser.data.createToken)
+        JSON.stringify(loggedUser.data.logIn)
       );
-      localStorage.setItem(TOKEN_KEY, JSON.stringify(token));
-      return loggedUser.data.createToken;
+      localStorage.setItem(TOKEN_KEY, token);
+      return loggedUser.data.logIn;
     } catch (error: any) {
+      console.log(error.message)
       return error.message;
     }
   }

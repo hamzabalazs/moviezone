@@ -215,36 +215,36 @@ export const typeDefs = gql`
     role: String!
   }
 
-  input DeleteReviewsOfMovieInput{
+  input DeleteReviewsOfMovieInput {
     movie_id: ID!
   }
 
-  input GetReviewsOfUserInput{
-    user_id:ID!
+  input GetReviewsOfUserInput {
+    user_id: ID!
   }
 
-  input DeleteReviewsOfUserInput{
-    user_id:ID!
+  input DeleteReviewsOfUserInput {
+    user_id: ID!
   }
 
-  input GetMoviesByCategoryIdInput{
-    category_id:ID!
+  input GetMoviesByCategoryIdInput {
+    category_id: ID!
   }
 
-  input UpdateCategoryOfMovieInput{
-    name:String!
+  input UpdateCategoryOfMovieInput {
+    name: String!
   }
 
   # Queries
   type Query {
     getUsers: [User!]!
     getUserById(input: UserInput!): User!
+    getUserByToken: CurrentUser!
     checkForUser(input: UserEmailInput!): User!
-    getCurrentUser:User!
-    logIn(input: LoginInput!): User!
-    getUserForLogin(input: UserEmailInput!): FullUser!
+    getUserForLogin(input: LoginInput!): CurrentUser
+    getCurrentUser: User!
     getMovies: [Movie!]!
-    getMoviesByCategoryId(input:GetMoviesByCategoryIdInput!): [Movie!]!
+    getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie!
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category!
@@ -264,6 +264,7 @@ export const typeDefs = gql`
     createUser(input: AddUserInput!): User!
     updateUser(input: UpdateUserInput!): User!
     deleteUser(input: DeleteUserInput!): User!
+    logIn(input: LoginInput!): CurrentUser
     createCategory(input: AddCategoryInput!): Category!
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
@@ -278,4 +279,3 @@ export const typeDefs = gql`
     deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): [Review!]!
   }
 `;
-

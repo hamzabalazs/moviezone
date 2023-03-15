@@ -1,34 +1,46 @@
-import md5 from 'md5'
-import { MyContext } from '../server';
-import { User, FullUser } from './types';
+import md5 from "md5";
+import { MyContext } from "../server";
+import { CurrentUser } from "./types";
+import { v4 as uuidv4 } from "uuid";
 
-export async function logIn(loginDetails:{email:string,password:string}, context:MyContext):Promise<User> {
-  const email:string = loginDetails.email;
-  const password:string = loginDetails.password;
-  const user:FullUser = await getUserForLogin(email,context)
-  if(user === undefined) throw new Error("User does not exist!")
-  if(md5(password) === user.password){
-    const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`
-    return new Promise((resolve,reject) => {
-      context.db.get(sql,[user.id],(err: any,rows: User) => {
-        if(err){
-          reject(err)
-        }
-        resolve(rows)
-      })
-    })
+export async function logIn(
+  loginDetails: { email: string; password: string },
+  context: MyContext
+): Promise<CurrentUser> {
+  const email: string = loginDetails.email;
+  const password: string = loginDetails.password;
+  let token = Buffer.from(uuidv4()).toString("base64");
+  const sqlSelect = `SELECT u.id,u.first_name,u.last_name,u.email,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE u.email = ? AND u.password = ?`
+  const sqlInsert = `INSERT INTO session (token,user_id) SELECT ?, id FROM user WHERE email = ? AND password = ?`
+  if(context.user){
   }
-  throw new Error("Password not the same!")
-}
-
-export function getUserForLogin(email:string, context:MyContext):Promise<FullUser> {
-  const sql = `SELECT * FROM user WHERE user.email = ?`;
   return new Promise((resolve, reject) => {
-    context.db.get(sql,[email], (err: any, rows: FullUser) => {
+    if(!context.user){
+      context.db.run(sqlInsert, [token,email,md5(password)]);
+    }
+    context.db.get(sqlSelect, [email,md5(password)], (err: any, row: CurrentUser) => {
       if (err) {
         reject(err);
       }
-      resolve(rows);
-    });
+      console.log(row)
+      resolve(row);
+    })
+  });
+}
+
+export async function getUserForLogin(loginDetails: { email: string; password: string },
+  context: MyContext
+): Promise<CurrentUser> {
+  const email: string = loginDetails.email;
+  const password: string = loginDetails.password;
+  const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE u.email = ? AND u.password = ?`
+  return new Promise((resolve, reject) => {
+    context.db.get(sql, [email,md5(password)], (err: any, row: CurrentUser) => {
+      if (err) {
+        reject(err);
+      }
+      console.log(row)
+      resolve(row);
+    })
   });
 }

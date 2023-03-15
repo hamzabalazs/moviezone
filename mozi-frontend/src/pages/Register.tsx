@@ -74,6 +74,7 @@ function Register() {
         if(e.message === "Email in use!"){
           const msg = t('register.accountExists')
           enqueueSnackbar(msg,{variant:"error"})
+          return;
         }
       }
     },

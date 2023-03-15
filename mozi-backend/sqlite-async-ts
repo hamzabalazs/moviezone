@@ -1,0 +1,77 @@
+import sqlite from "sqlite3";
+
+// Database class
+
+export class Database {
+  [x: string]: any;
+  static get OPEN_READONLY() {
+    return sqlite.OPEN_READONLY;
+  }
+
+  static get OPEN_READWRITE() {
+    return sqlite.OPEN_READWRITE;
+  }
+
+  static get OPEN_CREATE() {
+    return sqlite.OPEN_CREATE;
+  }
+
+  static get SQLITE3_VERSION() {
+    return "5.1.4";
+  }
+
+  run(...args: any) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        return reject(new Error("Database.run: database is not open"));
+      }
+      // Need a real function because 'this' is used.
+      let callback = function (err: any) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({
+            lastID: this.lastID,
+            changes: this.changes,
+          });
+        }
+      };
+      args.push(callback);
+      this.db.run.apply(this.db, args);
+    });
+  }
+
+  get(...args: any) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        return reject(new Error("Database.get: database is not open"));
+      }
+      let callback = (err: any, row: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      };
+      args.push(callback);
+      this.db.get.apply(this.db, args);
+    });
+  }
+
+  all(...args: any) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        return reject(new Error("Database.all: database is not open"));
+      }
+      let callback = (err: any, rows: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      };
+      args.push(callback);
+      this.db.all.apply(this.db, args);
+    });
+  }
+}

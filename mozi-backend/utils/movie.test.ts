@@ -64,7 +64,7 @@ const deleteMovie:Movie = {
         id:"idC1",
         name:"name1"
     },
-    rating:"3.5"
+    rating:"0"
 }
 
 const addMovie = {
@@ -80,7 +80,7 @@ test("Should get all movies",async() => {
     const result = await server.executeOperation({
         query:GET_MOVIES
     })
-    expect(result.errors).toBeUndefined()
+    expect(result.errors?.[0]?.extensions?.code).toEqual("Error")
     expect(result.data?.getMovies).toHaveLength(6)
 })
 

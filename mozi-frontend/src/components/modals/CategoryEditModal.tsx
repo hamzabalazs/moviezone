@@ -36,6 +36,7 @@ export default function CategoryEditModal({ category, onClose }: Props) {
 
   const updateCategory = async (editedCategory: Omit<Category, "id">) => {
     if (category === undefined) return;
+    console.log(editedCategory)
     const categoryId = category.id;
     try {
       const result = await UpdateCategoryAPI({
