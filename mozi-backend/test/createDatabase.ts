@@ -1,4 +1,11 @@
 import { Database } from "sqlite3";
+import {
+  categoryData,
+  movieData,
+  reviewData,
+  sessionData,
+  userData,
+} from "./mockedData";
 const sqlite3 = require("sqlite3").verbose();
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 
@@ -117,11 +124,10 @@ async function createSessionTable(db: Database) {
 }
 async function fillUserTable(db: Database) {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES 
-  ("idU1","Test","User1","testuser1@gmail.com","testtest1","viewer"),
-  ("idU2","Test","User2","testuser2@gmail.com","testtest2","editor"),
-  ("idU3","Test","User3","testuser3@gmail.com","testtest3","admin"),
-  ("idU4","Test","User4","testuser4@gmail.com","testtest4","viewer")`;
-
+  ("${userData[0].id}","${userData[0].first_name}","${userData[0].last_name}","${userData[0].email}","${userData[0].password}","${userData[0].role}"),
+  ("${userData[1].id}","${userData[1].first_name}","${userData[1].last_name}","${userData[1].email}","${userData[1].password}","${userData[1].role}"),
+  ("${userData[2].id}","${userData[2].first_name}","${userData[2].last_name}","${userData[2].email}","${userData[2].password}","${userData[2].role}"),
+  ("${userData[3].id}","${userData[3].first_name}","${userData[3].last_name}","${userData[3].email}","${userData[3].password}","${userData[3].role}")`;
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
       if (err) {
@@ -133,12 +139,12 @@ async function fillUserTable(db: Database) {
 }
 async function fillMovieTable(db: Database) {
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES
-  ("idM1","title1","description1","poster1","20/12/2020","idC2"),
-  ("idM2","title2","description2","poster2","30/06/2015","idC1"),
-  ("idM3","title3","description3","poster3","25/09/2000","idC1"),
-  ("idM4","title4","description4","poster4","02/01/2001","idC2"),
-  ("idM5","title5","description5","poster5","01/11/1998","idC3"),
-  ("idM6","title6","description6","poster6","11/03/2003","idC1")`;
+  ("${movieData[0].id}","${movieData[0].title}","${movieData[0].description}","${movieData[0].poster}","${movieData[0].release_date}","${movieData[0].category_id}"),
+  ("${movieData[1].id}","${movieData[1].title}","${movieData[1].description}","${movieData[1].poster}","${movieData[1].release_date}","${movieData[1].category_id}"),
+  ("${movieData[2].id}","${movieData[2].title}","${movieData[2].description}","${movieData[2].poster}","${movieData[2].release_date}","${movieData[2].category_id}"),
+  ("${movieData[3].id}","${movieData[3].title}","${movieData[3].description}","${movieData[3].poster}","${movieData[3].release_date}","${movieData[3].category_id}"),
+  ("${movieData[4].id}","${movieData[4].title}","${movieData[4].description}","${movieData[4].poster}","${movieData[4].release_date}","${movieData[4].category_id}"),
+  ("${movieData[5].id}","${movieData[5].title}","${movieData[5].description}","${movieData[5].poster}","${movieData[5].release_date}","${movieData[5].category_id}")`;
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
       if (err) {
@@ -150,9 +156,9 @@ async function fillMovieTable(db: Database) {
 }
 async function fillCategoryTable(db: Database) {
   const sql = `INSERT INTO category (id,name) VALUES
-  ("idC1","name1"),
-  ("idC2","name2"),
-  ("idC3","name3")`;
+  ("${categoryData[0].id}","${categoryData[0].name}"),
+  ("${categoryData[1].id}","${categoryData[1].name}"),
+  ("${categoryData[2].id}","${categoryData[2].name}")`;
 
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
@@ -165,13 +171,13 @@ async function fillCategoryTable(db: Database) {
 }
 async function fillReviewTable(db: Database) {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id) VALUES
-  ("idR1","5","Looked good","idM1","idU1"),
-  ("idR2","3","Was alright","idM3","idU1"),
-  ("idR3","1","Didnt like","idM2","idU2"),
-  ("idR4","5","Best","idM1","idU2"),
-  ("idR5","4","I mean its alright","idM4","idU2"),
-  ("idR6","4","IT WAS PERFECT","idM3","idU4"),
-  ("idR7","1","badbad","idM2","idU1")`;
+  ("${reviewData[0].id}","${reviewData[0].rating}","${reviewData[0].description}","${reviewData[0].movie_id}","${reviewData[0].user_id}"),
+  ("${reviewData[1].id}","${reviewData[1].rating}","${reviewData[1].description}","${reviewData[1].movie_id}","${reviewData[1].user_id}"),
+  ("${reviewData[2].id}","${reviewData[2].rating}","${reviewData[2].description}","${reviewData[2].movie_id}","${reviewData[2].user_id}"),
+  ("${reviewData[3].id}","${reviewData[3].rating}","${reviewData[3].description}","${reviewData[3].movie_id}","${reviewData[3].user_id}"),
+  ("${reviewData[4].id}","${reviewData[4].rating}","${reviewData[4].description}","${reviewData[4].movie_id}","${reviewData[4].user_id}"),
+  ("${reviewData[5].id}","${reviewData[5].rating}","${reviewData[5].description}","${reviewData[5].movie_id}","${reviewData[5].user_id}"),
+  ("${reviewData[6].id}","${reviewData[6].rating}","${reviewData[6].description}","${reviewData[6].movie_id}","${reviewData[6].user_id}")`;
 
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
@@ -184,10 +190,10 @@ async function fillReviewTable(db: Database) {
 }
 async function fillSessionTable(db: Database) {
   const sql = `INSERT INTO session (id,token,user_id) VALUES
-  (1,"viewertoken1234","idU1"),
-  (2,"editortoken4321","idU2"),
-  (3,"admintoken1423","idU3"),
-  (4,"tokenviewer4321","idU4")`;
+  ("${sessionData[0].id}","${sessionData[0].token}","${sessionData[0].user_id}"),
+  ("${sessionData[1].id}","${sessionData[1].token}","${sessionData[1].user_id}"),
+  ("${sessionData[2].id}","${sessionData[2].token}","${sessionData[2].user_id}"),
+  ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}")`;
 
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {

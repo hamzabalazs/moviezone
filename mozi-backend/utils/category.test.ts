@@ -3,7 +3,7 @@ import { resolvers } from "../Schema/Resolvers";
 import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import { CREATE_CATEGORY, DELETE_CATEGORY, GET_CATEGORIES, GET_CATEGORY_BY_ID, GET_CATEGORY_BY_NAME, UPDATE_CATEGORY } from "../test/Query_Category";
-import { Category } from "./types";
+import { addCategory, deleteCategory, editCategory, testCategory } from "./category.mocks";
 
 const db = createDatabase();
 let req = {
@@ -19,24 +19,7 @@ const server = new ApolloServer({
   },
 });
 
-const testCategory:Category = {
-    id:"idC1",
-    name:"name1"
-}
 
-const editCategory:Category = {
-    id:"idC1",
-    name:"nameEDITED"
-}
-
-const deleteCategory:Category = {
-    id:"idC3",
-    name:"name3"
-}
-
-const addCategory = {
-    name:"name4"
-}
 
 test("Should get all categories", async () => {
   await fillDatabase(db);

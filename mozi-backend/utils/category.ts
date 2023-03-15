@@ -14,7 +14,7 @@ export function getCategories(_: any, context:MyContext):Promise<Category[]> {
   });
 }
 
-export function getCategoryById(id: string, context:MyContext):Promise<Category> {
+export function getCategoryById(id: string, context:MyContext):Promise<Category>{
   if(id === "removedID"){
     return new Promise((resolve) => {
       const category:Category = {id:"removedID",name:"removedCategory"}
@@ -61,7 +61,7 @@ export function updateCategory(category: Category, context:MyContext):Promise<Ca
 }
 
 export async function deleteCategory(id: string, context:MyContext):Promise<Category> {
-  const category:Category = await getCategoryById(id, context);
+  const category = await getCategoryById(id, context);
   const sqlDelete = `DELETE FROM category WHERE category.id = ?`;
   const sqlUpdate = `UPDATE movie SET category_id = "removedID" WHERE category_id = ?` ;
   return new Promise((resolve, reject) => {

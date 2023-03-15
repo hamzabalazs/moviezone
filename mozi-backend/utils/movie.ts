@@ -38,6 +38,7 @@ export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movi
 }
 
 export function createMovie(movie:Movie, context:MyContext):Promise<DbMovie> {
+  if(context.user?.role.toString() === "viewer") throw new Error("Unauthorized!")
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
   const returnMovie:DbMovie = {
     id:movie.id,
@@ -59,6 +60,7 @@ export function createMovie(movie:Movie, context:MyContext):Promise<DbMovie> {
 }
 
 export function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<UpdateMovieInput> {
+  if(context.user?.role.toString() === "viewer") throw new Error("Unauthorized!")
   const sql = `UPDATE movie SET title = ?,
     description = ?,
     poster = ?, 
@@ -75,6 +77,7 @@ export function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<U
 }
 
 export async function deleteMovie(id:string, context:MyContext):Promise<Movie> {
+  if(context.user?.role.toString() === "viewer") throw new Error("Unauthorized!")
   const movie = await getMovieById(id, context);
   if(movie === undefined){
     throw new Error("Movie not found!")

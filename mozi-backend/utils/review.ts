@@ -1,7 +1,5 @@
 import { MyContext } from "../server";
-import { getToken } from "./token";
-import { DbReview, Review, Session, User } from "./types";
-import { getUserById } from "./user";
+import { DbReview, Review} from "./types";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
@@ -15,7 +13,7 @@ export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   });
 }
 
-export function getReviewById(id: string, context: MyContext): Promise<Review> {
+export function getReviewById(id: string, context: MyContext): Promise<Review>{
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: Review) => {

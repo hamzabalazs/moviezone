@@ -22,7 +22,6 @@ export async function logIn(
       if (err) {
         reject(err);
       }
-      console.log(row)
       resolve(row);
     })
   });

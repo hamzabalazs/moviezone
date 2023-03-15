@@ -25,6 +25,7 @@ import { getUserForLogin, logIn } from "../utils/auth";
 import {getCategories,getCategoryById,deleteCategory,updateCategory,createCategory,checkForCategory} from "../utils/category"
 import { MyContext } from "../server";
 import { Category, FullUser, Movie,  Review,  Role,  UserRole } from "../utils/types";
+import { NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE } from "../test/mockedData";
 
 export const resolvers = {
   Query: {
@@ -187,10 +188,11 @@ export const resolvers = {
     // Movies
     async createMovie(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
-      if(!user) throw new Error("No Token!")
+      if(!user) throw new Error(NO_TOKEN_MESSAGE)
       context.user = user
       const newMovie = args.input;
-      const isCategory:Category = await getCategoryById(
+      console.log(user)
+      const isCategory = await getCategoryById(
         newMovie.category_id,
         context
       );
@@ -210,28 +212,21 @@ export const resolvers = {
     },
     async updateMovie(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
-      if(!user) throw new Error("No Token!")
+      if(!user) throw new Error(NO_TOKEN_MESSAGE)
       context.user = user
       const updatedMovie = args.input;
       const isMovie = await getMovieById(updatedMovie.id,context)
-      if(!isMovie) throw new Error("Movie not found")
-      const isCategory = await getCategoryById(
-        updatedMovie.category_id,
-        context
-      );
-      if (isCategory === undefined) {
-        throw new Error("Invalid category_id, could not add movie!");
-      }
+      if(!isMovie) throw new Error(NO_MOVIE_MESSAGE)
       return await updateMovie(updatedMovie, context);
     },
     async deleteMovie(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
-      if(!user) throw new Error("No Token!")
+      if(!user) throw new Error(NO_TOKEN_MESSAGE)
       context.user = user
       const movie_id:string = args.input.id;
       const isMovie = await getMovieById(movie_id, context);
       if (isMovie === undefined) {
-        throw new Error("Movie not found!");
+        throw new Error(NO_MOVIE_MESSAGE);
       }
       return await deleteMovie(movie_id, context);
     },
@@ -279,7 +274,8 @@ export const resolvers = {
     // Authentication
     async logIn(_:any, {input}:any, context:MyContext) {
       const user = await getUserForLogin(input,context)
-      if(user) context.user = user
+      if(!user) throw new Error(NO_USER_MESSAGE)
+      context.user = user
       return await logIn(input, context);
     },
   },
