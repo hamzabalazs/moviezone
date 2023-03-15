@@ -73,6 +73,18 @@ export function getReviewsOfMovie(
   });
 }
 
+export function getReviewsOfUser(user_id:string,context:MyContext): Promise<Review[]> {
+  const sql = `SELECT * FROM review WHERE review.user_id = ?`;
+  return new Promise((resolve,reject) => {
+    context.db.all(sql,[user_id],(err:any,rows:Review[]) => {
+      if(err){
+        reject(err);
+      }
+      resolve(rows)
+    })
+  })
+}
+
 export function createReview(
   review: any,
   context: MyContext
@@ -150,7 +162,7 @@ export async function deleteReview(
   if (role === undefined) throw new Error("Role not found");
   const headerToken = context.req.headers["auth-token"] as string;
   const contextToken = headerToken.replace(/['"]/g, "");
-  if (token.token === contextToken || role.role === "admin") {
+  if (token.token === contextToken || role.role !== "viewer") {
     const review = await getReviewById(id, context);
     const sql = `DELETE FROM review WHERE review.id = ?`;
     return new Promise((resolve, reject) => {
@@ -163,4 +175,46 @@ export async function deleteReview(
     });
   }
   throw new Error("Unauthorized!");
+}
+
+export async function deleteReviewsOfMovie(id:string,context:MyContext): Promise<Review[]> {
+  const role = await determineRole(context);
+  if (role === undefined) throw new Error("Role not found");
+  if(role.role !== "viewer"){
+    const sql = `DELETE FROM review WHERE review.movie_id = ?`;
+    const reviews = await getReviewsOfMovie(id,context)
+    return new Promise((resolve,reject) => {
+      context.db.run(sql,[id],(err:any) => {
+        if(err){
+          reject(err);
+        }
+        resolve(reviews)
+      })
+    })
+  }
+  throw new Error("Unauthorized!")
+}
+
+export async function deleteReviewsOfUser(id:string,context:MyContext): Promise<Review[]>{
+  const user = await getUserById(id, context);
+  const token = await getToken(user, context);
+  if (!token) throw new Error("No Token");
+  const role = await determineRole(context);
+  console.log(role)
+  const headerToken = context.req.headers['auth-token'] as string
+  const contextToken = headerToken.replace(/['"]/g, "");
+  if(role === undefined) throw new Error(" Role not found");
+  if(token.token === contextToken || role.role === "admin"){
+    const sql = `DELETE FROM review WHERE review.user_id = ?`;
+    const reviews = await getReviewsOfUser(id,context)
+    return new Promise((resolve,reject) => {
+      context.db.run(sql,[id],(err:any) => {
+        if(err){
+          reject(err);
+        }
+        resolve(reviews)
+      })
+    })
+  }
+  throw new Error("Unauthorized")
 }

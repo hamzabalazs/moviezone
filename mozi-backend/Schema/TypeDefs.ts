@@ -215,6 +215,26 @@ export const typeDefs = gql`
     role: String!
   }
 
+  input DeleteReviewsOfMovieInput{
+    movie_id: ID!
+  }
+
+  input GetReviewsOfUserInput{
+    user_id:ID!
+  }
+
+  input DeleteReviewsOfUserInput{
+    user_id:ID!
+  }
+
+  input GetMoviesByCategoryIdInput{
+    category_id:ID!
+  }
+
+  input UpdateCategoryOfMovieInput{
+    name:String!
+  }
+
   # Queries
   type Query {
     getUsers: [User!]!
@@ -224,6 +244,7 @@ export const typeDefs = gql`
     logIn(input: LoginInput!): User!
     getUserForLogin(input: UserEmailInput!): FullUser!
     getMovies: [Movie!]!
+    getMoviesByCategoryId(input:GetMoviesByCategoryIdInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie!
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category!
@@ -232,6 +253,7 @@ export const typeDefs = gql`
     getReviewById(input: ReviewInput!): Review!
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
+    getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
     getToken(input: GetTokenInput!): Session!
     determineRole: Role!
   }
@@ -247,10 +269,13 @@ export const typeDefs = gql`
     deleteCategory(input: DeleteCategoryInput!): Category!
     createMovie(input: AddMovieInput!): Movie!
     updateMovie(input: UpdateMovieInput!): Movie!
+    updateCategoryOfMovie(input: UpdateCategoryOfMovieInput!): [Movie!]!
     deleteMovie(input: DeleteMovieInput!): Movie!
     createReview(input: AddReviewInput!): Review!
     updateReview(input: UpdateReviewInput!): Review!
     deleteReview(input: DeleteReviewInput!): Review!
+    deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): [Review!]!
+    deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): [Review!]!
   }
 `;
 

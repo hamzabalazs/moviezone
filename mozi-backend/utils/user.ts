@@ -1,5 +1,6 @@
 const md5 = require("md5");
 import { MyContext } from "../server";
+import { deleteReviewsOfUser } from "./review";
 import { determineRole, getToken, createToken } from "./token";
 import { User, FullUser, DbUser } from "./types";
 
@@ -97,19 +98,20 @@ export async function updateUser(user: FullUser, context:MyContext): Promise<Use
     role.role === "admin"
   ) {
     const currentUser = await getUserById(user.id, context);
+    const userExists = await checkForUser(user.email,context)
+    if(userExists !== null) throw new Error("Cannot change email to already existing one!")
     let newPass = md5(user.password);
-    //How to make it safe?
     const sql = !user.role
-      ? `UPDATE user SET first_name = "${user.first_name}",
-          last_name = "${user.last_name}",
-          email = "${user.email}", 
-          password = "${newPass}"
-          WHERE user.id = "${user.id}"`
-      : `UPDATE user SET first_name = "${user.first_name}",
-          last_name = "${user.last_name}",
-          email = "${user.email}", 
-          password = "${newPass}", 
-          role="${user.role}" WHERE user.id = "${user.id}"`;
+      ? `UPDATE user SET first_name = ?,
+          last_name = ?,
+          email = ?, 
+          password = ?
+          WHERE user.id = ?`
+      : `UPDATE user SET first_name = ?,
+          last_name = ?,
+          email = ?, 
+          password = ?, 
+          role=? WHERE user.id = ?`;
 
     if (!user.role) {
       const returnUser: User = {
@@ -120,7 +122,7 @@ export async function updateUser(user: FullUser, context:MyContext): Promise<Use
         role: currentUser.role,
       };
       return new Promise((resolve, reject) => {
-        context.db.run(sql, (err: any) => {
+        context.db.run(sql,[user.first_name,user.last_name,user.email,newPass,user.id], (err: any) => {
           if (err) {
             reject(err);
           }
@@ -136,7 +138,7 @@ export async function updateUser(user: FullUser, context:MyContext): Promise<Use
         role: user.role,
       };
       return new Promise((resolve, reject) => {
-        context.db.run(sql, (err: any) => {
+        context.db.run(sql,[user.first_name,user.last_name,user.email,newPass,user.role,user.id], (err: any) => {
           if (err) {
             reject(err);
           }
@@ -161,6 +163,8 @@ export async function deleteUser(id: string, context:MyContext): Promise<User> {
     role.role === "admin"
   ) {
     const sql = `DELETE FROM user WHERE user.id = "${id}"`;
+    const result = await deleteReviewsOfUser(id,context);
+    if(!result) throw new Error("Could not delete reviews of user!")
     return new Promise((resolve, reject) => {
       context.db.run(sql, (err:any) => {
         if (err) {

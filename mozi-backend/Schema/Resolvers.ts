@@ -10,7 +10,7 @@ import {
   getCurrentUser,
   
 } from "../utils/user"
-import { getMovies, getMovieById,deleteMovie,updateMovie,createMovie } from "../utils/movie"
+import { getMovies, getMovieById,deleteMovie,updateMovie,createMovie, updateCategoryOfMovie, getMoviesByCategoryId } from "../utils/movie"
 import {
   getReviews,
   getReviewById,
@@ -19,6 +19,7 @@ import {
   deleteReview,
   updateReview,
   createReview,
+  deleteReviewsOfMovie,
 } from "../utils/review";
 import { logIn,getUserForLogin } from "../utils/auth";
 import {determineRole,getToken,createToken} from "../utils/token"
@@ -84,6 +85,9 @@ export const resolvers = {
     async getMovieById(_:any, {input}:any, context:MyContext) {
       return await getMovieById(input.id, context);
     },
+    async getMoviesByCategoryId(_:any, {input}:any, context:MyContext){
+      return await getMoviesByCategoryId(input.id,context);
+    }
   },
   Review: {
     async movie(review:any, __:any, context:MyContext) {
@@ -167,6 +171,8 @@ export const resolvers = {
       if(role === undefined) throw new Error("Role not found")
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedCategory = args.input;
+      const categoryExists = await checkForCategory(updateCategory.name,context)
+      if(categoryExists !== null) throw new Error("Category already exists!")
       const isCategory = await getCategoryById(
         updatedCategory.id,
         context
@@ -217,7 +223,7 @@ export const resolvers = {
     async updateMovie(_:any, args:any, context:MyContext) {
       const token = context.req.headers['auth-token']
       if(!token) throw new Error("No token")
-      const role:Role|undefined = await determineRole(context);
+      const role = await determineRole(context);
       if(role === undefined) throw new Error("Role not found")
       if(role.role === "viewer") throw new Error("Unauthorized!")
       const updatedMovie = args.input;
@@ -231,6 +237,10 @@ export const resolvers = {
         throw new Error("Invalid category_id, could not add movie!");
       }
       return await updateMovie(updatedMovie, context);
+    },
+    async updateCategoryOfMovie(_:any,args:any,context:MyContext){
+      const name = args.input.name
+      return await updateCategoryOfMovie(name,context);
     },
     async deleteMovie(_:any, args:any, context:MyContext) {
       const token = context.req.headers['auth-token']
@@ -280,6 +290,12 @@ export const resolvers = {
       const isReview = await getReviewById(reviewId, context);
       if (isReview === undefined) throw new Error("Review does not exist!");
       return await deleteReview(reviewId, context);
+    },
+    async deleteReviewsOfMovie(_:any, args:any,context:MyContext){
+      const movieId = args.input.movie_id;
+      const isMovie = await getMovieById(movieId,context);
+      if(isMovie === undefined) throw new Error("Movie does not exist!");
+      return await deleteReviewsOfMovie(movieId,context);
     },
     // Authentication
     async createToken(_:any, args:any, context:MyContext) {
