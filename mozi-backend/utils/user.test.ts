@@ -2,16 +2,18 @@ import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
 import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
-import { FullUser, User, UserRole } from "./types";
 import {
   CREATE_USER,
   DELETE_USER,
-  GET_CURRENT_USER,
   GET_USERS,
   GET_USER_BY_EMAIL,
   GET_USER_BY_ID,
+  GET_USER_BY_TOKEN,
   UPDATE_USER,
 } from "../test/Query_User";
+import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testResponseUser2, testUser, testUser2 } from "./user.mocks";
+import { NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
+import { userData } from "../test/mockedData";
 
 const db = createDatabase();
 let req = {
@@ -26,66 +28,6 @@ const server = new ApolloServer({
     return { db, req };
   },
 });
-const viewerRole = UserRole["viewer"];
-const editorRole = UserRole["editor"];
-
-
-const adminUser: Omit<User, "role"> & { role: string } = {
-    id: "idU3",
-    first_name: "Test",
-    last_name: "User3",
-    email: "testuser3@gmail.com",
-    role: "admin",
-};
-
-const testUser: Omit<FullUser, "role"> & { role: string } = {
-    id: "idU1",
-    first_name: "Test",
-    last_name: "User1",
-    email: "testuser1@gmail.com",
-    password: "testtest1",
-    role: "viewer",
-};
-
-const testResponseUser: Omit<User, "role"> & { role: string } = {
-  id: "idU1",
-  first_name: "Test",
-  last_name: "User1",
-  email: "testuser1@gmail.com",
-  role: "viewer",
-};
-
-const editUser: Omit<FullUser, "role"> & { role: string } = {
-  id: "idU1",
-  first_name: "EDITED",
-  last_name: "User1EDIT",
-  email: "EDITEDuser1@gmail.com",
-  password: "EDITEDPASS",
-  role: "editor",
-};
-
-const editResponseUser: Omit<User, "role"> & { role: string } = {
-  id: "idU1",
-  first_name: "EDITED",
-  last_name: "User1EDIT",
-  email: "EDITEDuser1@gmail.com",
-  role: "editor",
-};
-
-const deleteUser: Omit<User, "role"> & { role: string } = {
-  id: "idU1",
-  first_name: "EDITED",
-  last_name: "User1EDIT",
-  email: "EDITEDuser1@gmail.com",
-  role: "editor",
-};
-
-const addUser = {
-  first_name: "Test",
-  last_name: "User5",
-  email: "testuser5@gmail.com",
-  password: "testtest5",
-};
 
 test("Should get all users", async () => {
   await fillDatabase(db);
@@ -135,7 +77,7 @@ test("Should get user if email is correct", async () => {
   expect(result.data?.checkForUser).toEqual(testResponseUser);
 });
 
-test("Should not get user if ID is incorrect", async () => {
+test("Should not get user if email is incorrect", async () => {
   const result = await server.executeOperation({
     query: GET_USER_BY_EMAIL,
     variables: {
@@ -151,16 +93,16 @@ test("Should not get user if ID is incorrect", async () => {
 test("Should get current user if token is given", async () => {
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
-    query: GET_CURRENT_USER,
+    query: GET_USER_BY_TOKEN,
   });
   expect(result.errors).toBeUndefined();
-  expect(result.data?.getCurrentUser).toEqual(adminUser);
+  expect(result.data?.getUserByToken).toEqual(adminUser);
 });
 
 test("Should not get current user if token is not given", async () => {
   req.headers["auth-token"] = "";
   const result = await server.executeOperation({
-    query: GET_CURRENT_USER,
+    query: GET_USER_BY_TOKEN,
   });
   expect(result.errors).not.toBeUndefined();
   expect(result.data).toBeNull();
@@ -189,7 +131,7 @@ test("Should not edit user, if bad token is given", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
 
@@ -208,9 +150,44 @@ test("Should not edit user, if user does not exist ( bad ID )", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors?.[0]?.message).toEqual(NO_USER_MESSAGE);
   expect(result.data).toBeNull();
 });
+
+test("Should not edit user, if user is not admin",async() => {
+  req.headers["auth-token"] = "tokenviewer4321";
+  const result = await server.executeOperation({
+    query: UPDATE_USER,
+    variables: {
+      input: {
+        ...editUser
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
+  expect(result.data).toBeNull();
+})
+
+test("Should not edit user, if email is already in database",async() => {
+  req.headers["auth-token"] = "admintoken1423";
+  const result = await server.executeOperation({
+    query: UPDATE_USER,
+    variables: {
+      input: {
+        id: editUser.id,
+        first_name: editUser.first_name,
+        last_name: editUser.last_name,
+        email: userData[2].email,
+        password: editUser.password,
+        role: editUser.role,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(USER_EMAIL_USED_MESSAGE);
+  expect(result.data).toBeNull();
+})
+
+
 
 test("Should edit user if token and ID is good", async () => {
   const beforeResult = await server.executeOperation({
@@ -246,6 +223,40 @@ test("Should edit user if token and ID is good", async () => {
   expect(afterResult.data?.getUserById).toEqual(editResponseUser);
 });
 
+test("Should edit user even if no role was given",async() => {
+  const beforeResult = await server.executeOperation({
+    query: GET_USER_BY_ID,
+    variables: {
+      input: {
+        id: testUser2.id,
+      },
+    },
+  });
+  expect(beforeResult.errors).toBeUndefined();
+  expect(beforeResult.data?.getUserById).toEqual(testResponseUser2);
+  req.headers["auth-token"] = "admintoken1423";
+  const result = await server.executeOperation({
+    query: UPDATE_USER,
+    variables: {
+      input: {
+        ...editUser2,
+      },
+    },
+  });
+  expect(result.errors).toBeUndefined();
+  expect(result.data?.updateUser).toEqual(editResponseUser2);
+  const afterResult = await server.executeOperation({
+    query: GET_USER_BY_ID,
+    variables: {
+      input: {
+        id: testUser.id,
+      },
+    },
+  });
+  expect(afterResult.errors).toBeUndefined();
+  expect(afterResult.data?.getUserById).toEqual(editResponseUser);
+})
+
 test("Should not delete user if bad token is given", async () => {
   req.headers["auth-token"] = "";
   const result = await server.executeOperation({
@@ -256,9 +267,23 @@ test("Should not delete user if bad token is given", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
+test("Should not delete user if current user is not admin",async() => {
+  req.headers["auth-token"] = "tokenviewer4321";
+  const result = await server.executeOperation({
+    query: DELETE_USER,
+    variables: {
+      input: {
+        id: deleteUser.id,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
+  expect(result.data).toBeNull();
+})
 
 test("Should not delete user if user does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
@@ -270,7 +295,7 @@ test("Should not delete user if user does not exist ( bad ID )", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors?.[0]?.message).toEqual(NO_USER_MESSAGE);
   expect(result.data).toBeNull();
 });
 

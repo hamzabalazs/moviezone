@@ -1,8 +1,3 @@
-export const NO_TOKEN_MESSAGE = "No Token!"
-export const UNAUTHORIZED_MESSAGE = "Unauthorized!"
-export const NO_MOVIE_MESSAGE = "Movie not found!"
-export const NO_USER_MESSAGE = "User does not exist!"
-
 export const movieData = [
     {
         id:"idM1",
@@ -102,6 +97,7 @@ export const categoryData = [
         id:"idC3",
         name:"name3"
     },
+    
 ]
 
 export const reviewData = [

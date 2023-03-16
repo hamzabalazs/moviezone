@@ -4,7 +4,7 @@ import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import { LOGIN } from "../test/Query_Auth";
 import { existingTestUser, newTestUser } from "./auth.mocks";
-import { NO_USER_MESSAGE } from "../test/mockedData";
+import { NO_USER_MESSAGE } from "../common/errorMessages";
 
 const db = createDatabase();
 let req = {

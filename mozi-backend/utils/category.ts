@@ -15,12 +15,6 @@ export function getCategories(_: any, context:MyContext):Promise<Category[]> {
 }
 
 export function getCategoryById(id: string, context:MyContext):Promise<Category>{
-  if(id === "removedID"){
-    return new Promise((resolve) => {
-      const category:Category = {id:"removedID",name:"removedCategory"}
-      resolve(category)
-    })
-  }
   const sql = `SELECT * FROM category WHERE category.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: Category) => {

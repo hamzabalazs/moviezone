@@ -16,6 +16,22 @@ export const GET_MOVIES = gql`
     }
   }
 `;
+export const GET_MOVIES_BY_CATEGORY = gql`
+  query GetMoviesByCategoryId($input: GetMoviesByCategoryIdInput!) {
+    getMoviesByCategoryId(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
 export const GET_MOVIE_BY_ID = gql`
   query GetMovieById($input: MovieInput!) {
     getMovieById(input: $input) {

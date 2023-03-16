@@ -33,14 +33,15 @@ export const GET_USER_BY_EMAIL = gql`
     }
   }
 `;
-export const GET_CURRENT_USER = gql`
-  query GetCurrentUser {
-    getCurrentUser {
+export const GET_USER_BY_TOKEN = gql`
+  query GetUserByToken {
+    getUserByToken {
       id
       first_name
       last_name
       role
       email
+      token
     }
   }
 `;

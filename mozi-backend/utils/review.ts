@@ -1,3 +1,4 @@
+import { NO_REVIEW_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { MyContext } from "../server";
 import { DbReview, Review} from "./types";
 
@@ -114,6 +115,7 @@ export async function updateReview(
   context: MyContext
 ): Promise<Review> {
   const updatedReview: DbReview = await getReviewForUpdate(review.id, context);
+  if(!updatedReview) throw new Error(NO_REVIEW_MESSAGE)
   if (context.user) {
     if (
       context.user.id === updatedReview.user_id ||
@@ -139,7 +141,7 @@ export async function updateReview(
       });
     }
   }
-  throw new Error("Unauthorized!");
+  throw new Error(UNAUTHORIZED_MESSAGE);
 }
 
 export async function deleteReview(
@@ -164,5 +166,5 @@ export async function deleteReview(
       });
     }
   }
-  throw new Error("Unauthorized!")
+  throw new Error(UNAUTHORIZED_MESSAGE)
 }

@@ -56,6 +56,34 @@ export const GET_REVIEW_BY_ID = gql`
     }
   }
 `;
+export const GET_REVIEWS_OF_USER = gql`
+  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
+    getReviewsOfUser(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
+      }
+      user {
+        id
+        first_name
+        last_name
+        role
+        email
+      }
+    }
+  }
+`;
 export const GET_REVIEWS_OF_USER_FOR_MOVIE = gql`
   query GetReviewsOfUserForMovie($input: GetReviewsOfUserForMovieInput!) {
     getReviewsOfUserForMovie(input: $input) {
@@ -156,6 +184,7 @@ export const UPDATE_REVIEW = gql`
           id
           name
         }
+        rating
       }
       user {
         id
@@ -183,6 +212,7 @@ export const DELETE_REVIEW = gql`
           id
           name
         }
+        rating
       }
       user {
         id

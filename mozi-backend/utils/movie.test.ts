@@ -2,9 +2,10 @@ import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
 import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
-import { CREATE_MOVIE, DELETE_MOVIE, GET_MOVIES, GET_MOVIE_BY_ID, UPDATE_MOVIE } from "../test/Query_Movie";
+import { CREATE_MOVIE, DELETE_MOVIE, GET_MOVIES, GET_MOVIES_BY_CATEGORY, GET_MOVIE_BY_ID, UPDATE_MOVIE } from "../test/Query_Movie";
 import { addMovie, deleteMovie, editMovie, editResponseMovie, testMovie} from "./movie.mocks";
-import { NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../test/mockedData";
+import { NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { categoryData } from "../test/mockedData";
 
 const db = createDatabase();
 let req = {
@@ -27,6 +28,16 @@ test("Should get all movies",async() => {
     })
     expect(result.errors).toBeUndefined()
     expect(result.data?.getMovies).toHaveLength(6)
+})
+
+test("Should get all movies of a given category",async() => {
+    console.log(categoryData[0].id)
+    const result = await server.executeOperation({
+        query:GET_MOVIES_BY_CATEGORY,
+        variables:{input:{category_id:categoryData[0].id}}
+    })
+    expect(result.errors).toBeUndefined()
+    expect(result.data?.getMoviesByCategoryId).toHaveLength(3)
 })
 
 test("Should not get movie, if ID is invalid",async() => {

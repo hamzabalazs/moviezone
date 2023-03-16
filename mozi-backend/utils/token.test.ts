@@ -4,6 +4,7 @@ import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import { CREATE_USER } from "../test/Query_User";
 import { GET_TOKEN } from "../test/Query_Session";
+import { NO_USER_MESSAGE } from "../common/errorMessages";
 
 const db = createDatabase();
 let req = {
@@ -54,7 +55,7 @@ test("Should not get token if user registered,but has not logged in yet", async 
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors).not.toBeUndefined()
   expect(result.data).toBeNull();
 });
 

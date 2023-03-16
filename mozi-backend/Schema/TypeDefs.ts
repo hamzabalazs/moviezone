@@ -31,7 +31,7 @@ export const typeDefs = gql`
     last_name: String!
     role: UserRole!
     email: String!
-    token: String!
+    token: String
   }
 
   type Role {
@@ -241,8 +241,7 @@ export const typeDefs = gql`
     getUserById(input: UserInput!): User!
     getUserByToken: CurrentUser!
     checkForUser(input: UserEmailInput!): User!
-    getUserForLogin(input: LoginInput!): CurrentUser
-    getCurrentUser: User!
+    getUserForLogin(input: LoginInput!): CurrentUser!
     getMovies: [Movie!]!
     getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie!
