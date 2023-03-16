@@ -21,7 +21,7 @@ import {
   createReview,
   getReviewsOfUser,
 } from "../utils/review";
-import { getUserForLogin, logIn } from "../utils/auth";
+import { getToken, getUserForLogin, logIn } from "../utils/auth";
 import {getCategories,getCategoryById,deleteCategory,updateCategory,createCategory,checkForCategory} from "../utils/category"
 import { MyContext } from "../server";
 import { FullUser, Movie,  Review,  Role,  UserRole } from "../utils/types";
@@ -80,6 +80,12 @@ export const resolvers = {
     },
     async getMoviesByCategoryId(_:any, {input}:any, context:MyContext){
       return await getMoviesByCategoryId(input.category_id,context);
+    },
+    // Authentication
+    async getToken(_:any,__:any,context:MyContext){
+      const user = await getUserByToken(context)
+      context.user = user
+      return await getToken(context);
     }
   },
   Review: {
@@ -149,6 +155,7 @@ export const resolvers = {
     async createCategory(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
       if(!user) throw new Error(NO_TOKEN_MESSAGE)
+      if(user.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
       context.user = user
       const newCategory = args.input.name;
       const isCategory = await checkForCategory(
@@ -163,6 +170,7 @@ export const resolvers = {
     async updateCategory(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
       if(!user) throw new Error(NO_TOKEN_MESSAGE)
+      if(user.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
       context.user = user
       const updatedCategory = args.input;
       const categoryExists = await checkForCategory(updatedCategory.name,context)
@@ -177,6 +185,7 @@ export const resolvers = {
     async deleteCategory(_:any, args:any, context:MyContext) {
       const user = await getUserByToken(context)
       if(!user) throw new Error(NO_TOKEN_MESSAGE)
+      if(user.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
       context.user = user
       const categoryId = args.input.id;
       const category = await getCategoryById(
@@ -259,11 +268,9 @@ export const resolvers = {
     }, 
     async deleteReview(_:any, args:any, context:MyContext) {
       const reviewId = args.input.id;
-      const isReview = await getReviewById(reviewId, context);
       const user = await getUserByToken(context)
       if(!user) throw new Error(NO_TOKEN_MESSAGE)
       context.user = user
-      if (isReview === undefined) throw new Error(NO_REVIEW_MESSAGE);
       return await deleteReview(reviewId, context);
     },
     // Authentication

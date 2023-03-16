@@ -1,6 +1,9 @@
-import { NO_REVIEW_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import {
+  NO_REVIEW_MESSAGE,
+  UNAUTHORIZED_MESSAGE,
+} from "../common/errorMessages";
 import { MyContext } from "../server";
-import { DbReview, Review} from "./types";
+import { DbReview, Review } from "./types";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
@@ -14,7 +17,7 @@ export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   });
 }
 
-export function getReviewById(id: string, context: MyContext): Promise<Review>{
+export function getReviewById(id: string, context: MyContext): Promise<Review> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [id], (err: any, rows: Review) => {
@@ -115,7 +118,7 @@ export async function updateReview(
   context: MyContext
 ): Promise<Review> {
   const updatedReview: DbReview = await getReviewForUpdate(review.id, context);
-  if(!updatedReview) throw new Error(NO_REVIEW_MESSAGE)
+  if (!updatedReview) throw new Error(NO_REVIEW_MESSAGE);
   if (context.user) {
     if (
       context.user.id === updatedReview.user_id ||
@@ -149,22 +152,24 @@ export async function deleteReview(
   context: MyContext
 ): Promise<Review> {
   const reviewToDelete = await getReviewForUpdate(id, context);
-  if (context.user) {
-    if (
-      context.user.id === reviewToDelete.user_id ||
-      context.user.role.toString() !== "viewer"
-    ) {
-      const review = await getReviewById(id, context);
-      const sql = `DELETE FROM review WHERE review.id = ?`;
-      return new Promise((resolve, reject) => {
-        context.db.run(sql, [review.id], (err: any) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(review);
-        });
+  if (!reviewToDelete) throw new Error(NO_REVIEW_MESSAGE);
+  if (
+    context.user!.id === reviewToDelete.user_id ||
+    context.user!.role.toString() !== "viewer"
+  ) {
+    const review = await getReviewById(id, context);
+    console.log("review",review)
+    console.log("reviewtodelete",reviewToDelete)
+    const sql = `DELETE FROM review WHERE review.id = ?`;
+    return new Promise((resolve, reject) => {
+      context.db.run(sql, [review.id], (err: any) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(review);
       });
-    }
+    });
   }
-  throw new Error(UNAUTHORIZED_MESSAGE)
+
+  throw new Error(UNAUTHORIZED_MESSAGE);
 }

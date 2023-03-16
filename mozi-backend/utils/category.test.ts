@@ -64,6 +64,7 @@ test("Should get category by name",async () => {
 })
 
 test("Should not add new category if no token was given",async () => {
+    req.headers['auth-token'] = ""
     const result = await server.executeOperation({
         query: CREATE_CATEGORY,
         variables:{input:{
@@ -72,6 +73,18 @@ test("Should not add new category if no token was given",async () => {
     })
     expect(result.data).toBeNull();
     expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE)
+})
+
+test("Should not add new category if user is viewer",async() => {
+    req.headers['auth-token'] = "viewertoken1234"
+    const result = await server.executeOperation({
+        query: CREATE_CATEGORY,
+        variables:{input:{
+            name: addCategory.name
+        }}
+    })
+    expect(result.data).toBeNull();
+    expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
 })
 
 test("Should add new category if good token was given",async() => {
@@ -132,6 +145,19 @@ test("Should not change category if category already exists",async() =>{
     expect(result.data).toBeNull()
 })
 
+test("Should not change category if user is viewer",async() => {
+    req.headers['auth-token'] = "viewertoken1234"
+    const result = await server.executeOperation({
+        query: UPDATE_CATEGORY,
+        variables:{input:{
+            id:testCategory.id,
+            name: editCategory.name
+        }}
+    })
+    expect(result.data).toBeNull();
+    expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
+})
+
 test("Should change category if good token was given",async() => {
     const beforeResult = await server.executeOperation({
         query: GET_CATEGORY_BY_ID,
@@ -182,6 +208,18 @@ test("Should not delete category if bad ID was given",async() => {
     })
     expect(result.errors?.[0]?.message).toEqual(NO_CATEGORY_MESSAGE)
     expect(result.data).toBeNull()
+})
+
+test("Should not delete category if user is viewer",async() => {
+    req.headers['auth-token'] = "viewertoken1234"
+    const result = await server.executeOperation({
+        query: DELETE_CATEGORY,
+        variables:{input:{
+            id:testCategory.id
+        }}
+    })
+    expect(result.data).toBeNull();
+    expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
 })
 
 test("Should delete category if good token was given",async() => {

@@ -235,6 +235,10 @@ export const typeDefs = gql`
     name: String!
   }
 
+  type Expiry {
+    expired: Int!
+  }
+
   # Queries
   type Query {
     getUsers: [User!]!
@@ -253,8 +257,8 @@ export const typeDefs = gql`
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
-    getToken(input: GetTokenInput!): Session!
-    determineRole: Role!
+    getToken: Expiry!
+    
   }
 
   # Mutations
