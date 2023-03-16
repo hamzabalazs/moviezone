@@ -178,8 +178,10 @@ export async function deleteUser(
   if (context.user!.id === id || context.user!.role.toString() === "admin") {
     const sqlDelete = `DELETE FROM user WHERE user.id = ?`;
     const sqlReviewDelete = `DELETE FROM review WHERE review.user_id = ?`;
+    const sqlTokenDelete = `DELETE from session WHERE user_id = ?`
     return new Promise((resolve, reject) => {
       context.db.run(sqlReviewDelete, [id]);
+      context.db.run(sqlTokenDelete,[id]);
       context.db.run(sqlDelete, [id], (err: any) => {
         if (err) {
           reject(err);
