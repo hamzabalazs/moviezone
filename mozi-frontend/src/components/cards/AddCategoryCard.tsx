@@ -10,8 +10,9 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
+import { GET_CATEGORIES } from "../../pages/Categories";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -34,12 +35,24 @@ export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
   const [AddCategoryAPI, { data }] = useMutation(ADD_CATEGORY);
   const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient()
 
   const setIsOpenAdd = props.setIsOpenAdd;
   const handleAddCategory = async (name: string) => {
     try {
       const result = await AddCategoryAPI({
         variables: { input: { name: name } },
+        update:(cache,{data}) => {
+          const { getCategories } = client.readQuery({
+            query: GET_CATEGORIES
+          })
+          cache.writeQuery({
+            query:GET_CATEGORIES,
+            data:{
+              getCategories:[...getCategories, data.createCategory]
+            }
+          })
+        }
       });
 
       const msg = t("successMessages.categoryAdd");

@@ -6,10 +6,11 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
-import { gql, useMutation} from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { GET_USERS } from "../../pages/Account";
 
 interface Props {
   user?: User;
@@ -30,22 +31,35 @@ const DELETE_USER = gql`
 
 export default function UserDeleteDialog({ user, onClose }: Props) {
   const { t } = useTranslation();
-  const [DeleteUserAPI,{data}] = useMutation(DELETE_USER);
-  const {enqueueSnackbar} = useSnackbar()
+  const [DeleteUserAPI, { data }] = useMutation(DELETE_USER);
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient()
 
   const handleDeletion = async () => {
     if (user === undefined) return;
-    const result = await DeleteUserAPI({variables:{input:{id:user.id}}});
+    const result = await DeleteUserAPI({
+      variables: { input: { id: user.id } },
+      update:(cache,{data}) => {
+        const { getUsers } = client.readQuery({
+          query: GET_USERS,
+        })
+        cache.writeQuery({
+          query: GET_USERS,
+          data:{
+            getUsers: getUsers.filter((x:any) => x.id != data.deleteUser.id)
+          }
+        })
+      }
+    });
     if (result) {
       const msg = t("successMessages.userDelete");
-      enqueueSnackbar(msg,{variant:"success"})
+      enqueueSnackbar(msg, { variant: "success" });
     }
 
     onClose?.();
   };
 
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
-
 
   return (
     <Dialog
@@ -71,7 +85,12 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
         >
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()} data-testid="user-delete-dialog-quit">{t("buttons.quit")}</Button>
+        <Button
+          onClick={() => onClose?.()}
+          data-testid="user-delete-dialog-quit"
+        >
+          {t("buttons.quit")}
+        </Button>
       </DialogActions>
     </Dialog>
   );

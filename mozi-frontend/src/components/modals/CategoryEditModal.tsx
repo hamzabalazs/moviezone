@@ -12,8 +12,9 @@ import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
 import * as Yup from "yup";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
+import { GET_CATEGORIES } from "../../pages/Categories";
 
 interface Props {
   category?: Category;
@@ -33,6 +34,7 @@ export default function CategoryEditModal({ category, onClose }: Props) {
   const { t } = useTranslation();
   const [UpdateCategoryAPI, { data }] = useMutation(UPDATE_CATEGORY);
   const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient()
 
   const updateCategory = async (editedCategory: Omit<Category, "id">) => {
     if (category === undefined) return;
@@ -41,6 +43,17 @@ export default function CategoryEditModal({ category, onClose }: Props) {
     try {
       const result = await UpdateCategoryAPI({
         variables: { input: { id: categoryId, name: editedCategory.name } },
+        update:(cache) => {
+          const { getCategories } = client.readQuery({
+            query:GET_CATEGORIES
+          })
+          cache.writeQuery({
+            query:GET_CATEGORIES,
+            data:{
+              getCategories:[...getCategories]
+            }
+          })
+        }
       });
       if (result) {
         const msg = t("successMessages.categoryEdit");

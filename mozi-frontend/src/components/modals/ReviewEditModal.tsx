@@ -11,11 +11,17 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { ReviewListReview } from "../../api/types";
 import * as Yup from "yup";
+import {
+  GET_MOVIE_BY_ID,
+  GET_REVIEWS_OF_MOVIE,
+  GET_USERS_REVIEWS_OF_MOVIE,
+} from "../../pages/MoviePage";
+import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
 
 interface Props {
   review?: ReviewListReview;
@@ -30,6 +36,15 @@ const UPDATE_REVIEW = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -41,13 +56,16 @@ const UPDATE_REVIEW = gql`
 `;
 
 export default function ReviewEditModal({ review, onClose }: Props) {
-  const [UpdateReviewAPI,{data}] = useMutation(UPDATE_REVIEW);
+  const [UpdateReviewAPI, { data }] = useMutation(UPDATE_REVIEW);
   const { t } = useTranslation();
-  const {enqueueSnackbar} = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient();
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {
     if (review === undefined) return;
+    const movie_id = review.movie.id;
+    const user_id = review.user.id;
     const result = await UpdateReviewAPI({
       variables: {
         input: {
@@ -56,10 +74,57 @@ export default function ReviewEditModal({ review, onClose }: Props) {
           rating: editedReview.rating,
         },
       },
+      update: (cache, { data }) => {
+        if (window.location.pathname === "/reviews") {
+          const { getReviewsOfUser } = client.readQuery({
+            query: GET_REVIEWS_OF_USER,
+            variables: { input: { user_id } },
+          });
+          cache.writeQuery({
+            query: GET_REVIEWS_OF_USER,
+            variables: { input: { user_id } },
+            data: {
+              getReviewsOfUser: [...getReviewsOfUser],
+            },
+          });
+        } else {
+          const { getReviewsOfMovie } = client.readQuery({
+            query: GET_REVIEWS_OF_MOVIE,
+            variables: { input: { movie_id } },
+          });
+          cache.writeQuery({
+            query: GET_REVIEWS_OF_MOVIE,
+            data: {
+              getReviewsOfMovie: [...getReviewsOfMovie],
+            },
+          });
+          const { getReviewsOfUserForMovie } = client.readQuery({
+            query: GET_USERS_REVIEWS_OF_MOVIE,
+            variables: { input: { movie_id, user_id } },
+          });
+          cache.writeQuery({
+            query: GET_USERS_REVIEWS_OF_MOVIE,
+            data: {
+              getReviewsOfUserForMovie: [...getReviewsOfUserForMovie],
+            },
+          });
+          const { getMovieById } = client.readQuery({
+            query: GET_MOVIE_BY_ID,
+            variables: { input: { id: movie_id } },
+          });
+          cache.writeQuery({
+            query: GET_MOVIE_BY_ID,
+            variables: { input: { id: movie_id } },
+            data: {
+              getMovieById: data.updateReview.movie,
+            },
+          });
+        }
+      },
     });
     if (result) {
       const msg = t("successMessages.reviewEdit");
-      enqueueSnackbar(msg,{variant:"success"})
+      enqueueSnackbar(msg, { variant: "success" });
     }
     onClose?.();
   };

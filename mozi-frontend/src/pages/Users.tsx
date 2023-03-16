@@ -32,19 +32,6 @@ export function Users() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
   
-  async function refetchData(){
-    await client.refetchQueries({
-      include: [GET_USERS],
-    });
-  }
-
-
-  useEffect(() => {
-    if(editingUser === undefined && deletingUser === undefined){
-      refetchData()
-    }
-  },[editingUser,deletingUser])
-
   if(usersLoading) return LoadingComponent(usersLoading)
 
   return (

@@ -158,8 +158,6 @@ export async function deleteReview(
     context.user!.role.toString() !== "viewer"
   ) {
     const review = await getReviewById(id, context);
-    console.log("review",review)
-    console.log("reviewtodelete",reviewToDelete)
     const sql = `DELETE FROM review WHERE review.id = ?`;
     return new Promise((resolve, reject) => {
       context.db.run(sql, [review.id], (err: any) => {

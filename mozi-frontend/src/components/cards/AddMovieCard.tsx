@@ -17,13 +17,14 @@ import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
 import { useSnackbar } from 'notistack'
+import { GET_MOVIES } from "../../pages/App";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -56,7 +57,6 @@ const ADD_MOVIE = gql`
       release_date
       category {
         id
-        name
       }
       rating
     }
@@ -77,6 +77,8 @@ export default function AddMovieCard(props: Props) {
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const setIsOpenAdd = props.setIsOpenAdd;
   const { enqueueSnackbar} = useSnackbar()
+  const client = useApolloClient()
+
   const handleAddMovie = async (
     addedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
@@ -90,6 +92,17 @@ export default function AddMovieCard(props: Props) {
           category_id: addedMovie.category.id,
         },
       },
+      update:(cache,{data}) => {
+        const { getMovies } = client.readQuery({
+          query: GET_MOVIES
+        })
+        cache.writeQuery({
+          query:GET_MOVIES,
+          data:{
+            getMovies:[...getMovies, data.createMovie]
+          }
+        })
+      }
     });
     if (result) {
       const msg = t("successMessages.movieAdd");

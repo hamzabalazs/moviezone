@@ -13,7 +13,7 @@ import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useApolloClient, useQuery } from "@apollo/client";
 
-const GET_USERS = gql`
+export const GET_USERS = gql`
   query GetUsers {
     getUsers {
       id
@@ -41,18 +41,6 @@ function Account() {
     password: "",
     role: "viewer",
   });
-
-  async function refetchData(){
-    await client.refetchQueries({
-      include: [GET_USERS],
-    });
-  }
-
-  useEffect(() => {
-    if(editingUser === undefined && deletingUser === undefined){
-      refetchData()
-    }
-  },[editingUser,deletingUser])
 
   useEffect(() => {
     if (context.user && !usersLoading) {

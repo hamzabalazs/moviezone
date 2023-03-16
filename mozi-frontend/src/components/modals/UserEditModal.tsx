@@ -16,7 +16,8 @@ import { useSnackbar } from 'notistack'
 import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
 import * as Yup from "yup";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { GET_USERS } from "../../pages/Account";
 
 interface Props {
   user?: User;
@@ -44,6 +45,7 @@ export default function UserEditModal({
   const { t } = useTranslation();
   const [UpdateUserAPI,{data}] = useMutation(UPDATE_USER);
   const {enqueueSnackbar} = useSnackbar()
+  const client = useApolloClient()
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
@@ -59,6 +61,17 @@ export default function UserEditModal({
             role: allowEditRole ? editedUser.role : undefined
           },
         },
+        update:(cache,{data}) => {
+          const { getUsers } = client.readQuery({
+            query: GET_USERS,
+          })
+          cache.writeQuery({
+            query: GET_USERS,
+            data:{
+              getUsers: getUsers
+            }
+          })
+        }
       });
       if (result) {
         const msg = t("successMessages.userEdit");

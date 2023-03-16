@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useQuery, gql, useApolloClient } from '@apollo/client'
 
-const GET_CATEGORIES = gql`
+export const GET_CATEGORIES = gql`
   query GetCategories {
   getCategories {
     id
@@ -26,8 +26,7 @@ const GET_CATEGORIES = gql`
 function Categories() {
   const { t } = useTranslation();
   const {data:categoryData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
-  const client = useApolloClient()
-
+  
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined
   );
@@ -40,18 +39,6 @@ function Categories() {
   const handleAddCategory = () => {
     setIsOpenAdd(true);
   };
-
-  async function refetchData(){
-    await client.refetchQueries({
-      include: [GET_CATEGORIES]
-    })
-  }
-
-  useEffect(() => {
-    if(editingCategory === undefined && deletingCategory === undefined && isOpenAdd === false){
-      refetchData()
-    }
-  },[editingCategory,deletingCategory,isOpenAdd])
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
 

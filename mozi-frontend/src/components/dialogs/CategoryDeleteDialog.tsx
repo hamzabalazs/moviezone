@@ -8,8 +8,9 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
-import { gql, useMutation} from '@apollo/client'
-import { useSnackbar } from 'notistack'
+import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { useSnackbar } from "notistack";
+import { GET_CATEGORIES } from "../../pages/Categories";
 
 interface Props {
   category?: Category;
@@ -18,33 +19,42 @@ interface Props {
 
 const DELETE_CATEGORY = gql`
   mutation DeleteCategory($input: DeleteCategoryInput!) {
-  deleteCategory(input: $input) {
-    id
-    name
+    deleteCategory(input: $input) {
+      id
+      name
+    }
   }
-}
-`
+`;
 
-export default function CategoryDeleteDialog({
-  category,
-  onClose,
-}: Props) {
+export default function CategoryDeleteDialog({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const [DeleteCategoryAPI,{data}] = useMutation(DELETE_CATEGORY)
-  const {enqueueSnackbar} = useSnackbar()
+  const [DeleteCategoryAPI, { data }] = useMutation(DELETE_CATEGORY);
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient();
 
   const handleDeletion = async () => {
     if (category === undefined) return;
     const categoryId = category.id;
 
-    const result = await DeleteCategoryAPI({variables:{input:{id:categoryId}}});
-    if (result){
+    const result = await DeleteCategoryAPI({
+      variables: { input: { id: categoryId } },
+      update:(cache,{data}) => {
+        const { getCategories } = client.readQuery({
+          query:GET_CATEGORIES
+        })
+        cache.writeQuery({
+          query:GET_CATEGORIES,
+          data:{
+            getCategories:getCategories.filter((x:any) => x.id != data.deleteCategory.id)
+          }
+        })
+      }
+    });
+    if (result) {
       const msg = t("successMessages.categoryDelete");
-      enqueueSnackbar(msg,{variant:"success"})
+      enqueueSnackbar(msg, { variant: "success" });
     }
-    onClose?.()
-    
-
+    onClose?.();
   };
 
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
@@ -66,10 +76,17 @@ export default function CategoryDeleteDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus data-testid="category-delete-dialog-accept">
+        <Button
+          onClick={handleDeletion}
+          autoFocus
+          data-testid="category-delete-dialog-accept"
+        >
           {t("buttons.accept")}
         </Button>
-        <Button onClick={() => onClose?.()} data-testid="category-delete-dialog-quit">
+        <Button
+          onClick={() => onClose?.()}
+          data-testid="category-delete-dialog-quit"
+        >
           {t("buttons.quit")}
         </Button>
       </DialogActions>

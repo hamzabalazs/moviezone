@@ -13,15 +13,23 @@ import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery, useApolloClient } from "@apollo/client";
 
-const GET_REVIEWS = gql`
-  query GetReviews {
-  getReviews {
+export const GET_REVIEWS_OF_USER = gql`
+  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
+  getReviewsOfUser(input: $input) {
     id
     rating
     description
     movie {
-      title
       id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
     }
     user {
       id
@@ -36,38 +44,12 @@ function Reviews() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const currUser = context.user;
-  const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS);
+  const user_id = currUser!.id
+  const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS_OF_USER,{variables:{input:{user_id}}});
   const client = useApolloClient()
 
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
-  
-  const [reviewListOfUser, setReviewListOfUser] = useState<ReviewListReview[]>([]);
-  
-  async function refetchData(){
-    await client.refetchQueries({
-      include: [GET_REVIEWS]
-    })
-  }
-  
-  useEffect(() => {
-    if(editingReview === undefined && deletingReview === undefined){
-      refetchData()
-    }
-  },[editingReview,deletingReview])
-
-  useEffect(() => {
-    if(!reviewsLoading) fillUpdatedReviewList();
-  }, [reviewsData]);
-
-  async function fillUpdatedReviewList() {
-    if (currUser) {
-      const usersReviews = reviewsData.getReviews.filter(
-        (x:ReviewListReview) => x.user.id === currUser.id
-      );
-      setReviewListOfUser(usersReviews);
-    }
-  }
 
   if(reviewsLoading) return LoadingComponent(reviewsLoading)
   return (
@@ -95,9 +77,9 @@ function Reviews() {
           </Container>
         </div>
         <div>
-          {reviewListOfUser.length !== 0 && (
+          {reviewsData.getReviewsOfUser.length !== 0 && (
             <Grid container spacing={4}>
-              {reviewListOfUser.map((review) => (
+              {reviewsData.getReviewsOfUser.map((review:ReviewListReview) => (
                 <Grid item key={review.id} xs={12}>
                   <ReviewCard
                     review={review}
@@ -108,7 +90,7 @@ function Reviews() {
               ))}
             </Grid>
           )}
-          {reviewListOfUser.length === 0 && (
+          {reviewsData.getReviewsOfUser.length === 0 && (
             <Typography
               variant="h4"
               align="center"

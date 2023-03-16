@@ -12,13 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from 'notistack'
-import { gql, useMutation,useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation,useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import { Category, Movie } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";
+import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
 
 interface Props {
   movie?: Movie;
@@ -55,13 +56,14 @@ export default function MovieEditModal({ movie, onClose}: Props) {
   const [UpdateReviewAPI,{data}] = useMutation(UPDATE_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const {enqueueSnackbar} = useSnackbar()
+  const client = useApolloClient()
 
   const updateMovie = async (
     editedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
     const poster = movie?.poster;
     if (movie === undefined || poster === undefined) return;
-
+    const id = movie.id
     const result = await UpdateReviewAPI({
       variables: {
         input: {
@@ -73,6 +75,19 @@ export default function MovieEditModal({ movie, onClose}: Props) {
           category_id: editedMovie.category.id
         },
       },
+      update:(cache) => {
+        const { getMovieById } = client.readQuery({
+          query:GET_MOVIE_BY_ID,
+          variables:{input:{id}}
+        })
+        cache.writeQuery({
+          query:GET_MOVIE_BY_ID,
+          variables:{input:{id}},
+          data:{
+            getMovieById:getMovieById
+          }
+        })
+      }
     });
     if (result) {
       const msg = t("successMessages.movieEdit");

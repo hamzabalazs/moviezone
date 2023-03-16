@@ -28,7 +28,7 @@ const GET_CATEGORIES = gql`
   }
 `;
 
-const GET_MOVIES = gql`
+export const GET_MOVIES = gql`
   query GetMovies {
     getMovies {
       id
@@ -54,23 +54,10 @@ export function Home() {
   const handleAddMovie = () => {
     setIsOpenAdd(true);
   };
-  const client = useApolloClient();
 
   useEffect(() => {
     if (!currUser) navigate("/login");
   }, []);
-
-  async function refetchData() {
-    await client.refetchQueries({
-      include: [GET_MOVIES, GET_CATEGORIES],
-    });
-  }
-
-  useEffect(() => {
-    if(isOpenAdd === false){
-      refetchData();
-    }
-  }, [isOpenAdd]);
 
   if (movieLoading) return LoadingComponent(movieLoading);
   if (categoryLoading) return LoadingComponent(categoryLoading);

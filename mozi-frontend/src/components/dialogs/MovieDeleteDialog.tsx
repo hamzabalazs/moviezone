@@ -6,11 +6,12 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Movie } from "../../api/types";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
 
 interface Props {
   movie?: Movie;
@@ -34,30 +35,28 @@ const DELETE_MOVIE = gql`
   }
 `;
 
-export default function MovieDeleteDialog({
-  movie,
-  onClose,
-}: Props) {
+export default function MovieDeleteDialog({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [DeleteMovieAPI,{data}] = useMutation(DELETE_MOVIE);
-  const { enqueueSnackbar} = useSnackbar()
-  
+  const [DeleteMovieAPI, { data }] = useMutation(DELETE_MOVIE);
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleDeletion = async () => {
-    if(movie === undefined) return;
+    if (movie === undefined) return;
 
     const movie_id = movie.id;
-    const result = await DeleteMovieAPI({variables:{input:{id:movie_id}}});
+    const result = await DeleteMovieAPI({
+      variables: { input: { id: movie_id } },
+    });
     if (result) {
       const msg = t("successMessages.movieDelete");
-      enqueueSnackbar(msg,{variant:"success"})
+      enqueueSnackbar(msg, { variant: "success" });
       navigate("/");
     }
 
     onClose?.();
   };
 
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog
@@ -76,7 +75,11 @@ export default function MovieDeleteDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDeletion} autoFocus data-testid="movie-delete-accept">
+        <Button
+          onClick={handleDeletion}
+          autoFocus
+          data-testid="movie-delete-accept"
+        >
           {t("buttons.accept")}
         </Button>
         <Button onClick={() => onClose?.()} data-testid="movie-delete-quit">
