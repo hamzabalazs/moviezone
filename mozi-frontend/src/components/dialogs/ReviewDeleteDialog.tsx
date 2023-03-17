@@ -17,6 +17,7 @@ import {
 } from "../../pages/MoviePage";
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
 
 interface Props {
   review?: ReviewListReview;
@@ -65,49 +66,67 @@ export default function ReviewDeleteDialog({ review, onClose }: Props) {
       await DeleteReviewAPI({
         variables: { input: { id: review.id } },
         update: (cache, { data }) => {
-          const { getReviewsOfMovie } = client.readQuery({
-            query: GET_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id } },
-          });
-          cache.writeQuery({
-            query: GET_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id } },
-            data: {
-              getReviewsOfMovie: getReviewsOfMovie.filter(
-                (x: any) => x.id != data.deleteReview.id
-              ),
-            },
-          });
-          const { getReviewsOfUserForMovie } = client.readQuery({
-            query: GET_USERS_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id, user_id } },
-          });
-          cache.writeQuery({
-            query: GET_USERS_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id, user_id } },
-            data: {
-              getReviewsOfUserForMovie: getReviewsOfUserForMovie.filter(
-                (x: any) => x.id != data.deleteReview.id
-              ),
-            },
-          });
-          client.readQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id: movie_id } },
-          });
-          cache.writeQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id: movie_id } },
-            data: {
-              getMovieById: data.deleteReview.movie,
-            },
-          });
+          if(window.location.pathname === "/reviews"){
+            const { getReviewsOfUser } = client.readQuery({
+              query: GET_REVIEWS_OF_USER,
+              variables: { input: { user_id } },
+            });
+            cache.writeQuery({
+              query: GET_REVIEWS_OF_USER,
+              variables: { input: { user_id } },
+              data: {
+                getReviewsOfUser: getReviewsOfUser.filter(
+                  (x: any) => x.id != data.deleteReview.id
+                ),
+              },
+            });
+          }
+          else{
+            const { getReviewsOfMovie } = client.readQuery({
+              query: GET_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id } },
+            });
+            cache.writeQuery({
+              query: GET_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id } },
+              data: {
+                getReviewsOfMovie: getReviewsOfMovie.filter(
+                  (x: any) => x.id != data.deleteReview.id
+                ),
+              },
+            });
+            const { getReviewsOfUserForMovie } = client.readQuery({
+              query: GET_USERS_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id, user_id } },
+            });
+            cache.writeQuery({
+              query: GET_USERS_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id, user_id } },
+              data: {
+                getReviewsOfUserForMovie: getReviewsOfUserForMovie.filter(
+                  (x: any) => x.id != data.deleteReview.id
+                ),
+              },
+            });
+            client.readQuery({
+              query: GET_MOVIE_BY_ID,
+              variables: { input: { id: movie_id } },
+            });
+            cache.writeQuery({
+              query: GET_MOVIE_BY_ID,
+              variables: { input: { id: movie_id } },
+              data: {
+                getMovieById: data.deleteReview.movie,
+              },
+            });
+          }
         },
       });
       const msg = t("successMessages.reviewDelete");
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
+      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

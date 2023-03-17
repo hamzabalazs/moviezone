@@ -10,8 +10,7 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Movie } from "../../api/types";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
-import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
+import { gql, useMutation } from "@apollo/client";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 

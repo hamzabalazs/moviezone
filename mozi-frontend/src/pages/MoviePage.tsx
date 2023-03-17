@@ -40,6 +40,7 @@ export const GET_MOVIE_BY_ID = gql`
       rating
       category {
         id
+        name
       }
     }
   }
@@ -53,6 +54,15 @@ export const GET_REVIEWS_OF_MOVIE = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -71,6 +81,15 @@ export const GET_USERS_REVIEWS_OF_MOVIE = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -184,6 +203,7 @@ export default function MoviePage() {
               });
               cache.writeQuery({
                 query: GET_REVIEWS_OF_MOVIE,
+                variables: { input: { movie_id } },
                 data: {
                   getReviewsOfMovie: [...getReviewsOfMovie, data.createReview],
                 },
@@ -194,6 +214,7 @@ export default function MoviePage() {
               });
               cache.writeQuery({
                 query: GET_USERS_REVIEWS_OF_MOVIE,
+                variables: { input: { movie_id, user_id } },
                 data: {
                   getReviewsOfUserForMovie: [
                     ...getReviewsOfUserForMovie,

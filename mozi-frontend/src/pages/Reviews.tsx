@@ -46,7 +46,6 @@ function Reviews() {
   const currUser = context.user;
   const user_id = currUser!.id
   const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS_OF_USER,{variables:{input:{user_id}}});
-  const client = useApolloClient()
 
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
