@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { GET_USERS } from "../../pages/Account";
+import { useSessionContext } from "../../api/SessionContext";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   user?: User;
@@ -31,32 +33,43 @@ const DELETE_USER = gql`
 
 export default function UserDeleteDialog({ user, onClose }: Props) {
   const { t } = useTranslation();
-  const [DeleteUserAPI, { data }] = useMutation(DELETE_USER);
+  const [DeleteUserAPI] = useMutation(DELETE_USER);
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient()
+  const { logOut } = useSessionContext()
 
   const handleDeletion = async () => {
     if (user === undefined) return;
-    const result = await DeleteUserAPI({
-      variables: { input: { id: user.id } },
-      update:(cache,{data}) => {
-        const { getUsers } = client.readQuery({
-          query: GET_USERS,
-        })
-        cache.writeQuery({
-          query: GET_USERS,
-          data:{
-            getUsers: getUsers.filter((x:any) => x.id != data.deleteUser.id)
-          }
-        })
-      }
-    });
-    if (result) {
-      const msg = t("successMessages.userDelete");
-      enqueueSnackbar(msg, { variant: "success" });
-    }
+    try{
+      await DeleteUserAPI({
+        variables: { input: { id: user.id } },
+        update:(cache,{data}) => {
+          const { getUsers } = client.readQuery({
+            query: GET_USERS,
+          })
+          cache.writeQuery({
+            query: GET_USERS,
+            data:{
+              getUsers: getUsers.filter((x:any) => x.id != data.deleteUser.id)
+            }
+          })
+        }
+      });
+        const msg = t("successMessages.userDelete");
+        enqueueSnackbar(msg, { variant: "success" });
+      onClose?.();
 
-    onClose?.();
+    }catch(error:any){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg,{variant:"error"})
+      }
+    }
   };
 
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>

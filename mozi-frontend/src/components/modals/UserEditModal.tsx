@@ -12,12 +12,17 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
 import * as Yup from "yup";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { GET_USERS } from "../../pages/Account";
+import {
+  EXPIRED_TOKEN_MESSAGE,
+  USER_EMAIL_USED_MESSAGE,
+} from "../../common/errorMessages";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   user?: User;
@@ -37,19 +42,16 @@ const UPDATE_USER = gql`
   }
 `;
 
-export default function UserEditModal({
-  user,
-  onClose,
-  allowEditRole,
-}: Props) {
+export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
   const { t } = useTranslation();
-  const [UpdateUserAPI,{data}] = useMutation(UPDATE_USER);
-  const {enqueueSnackbar} = useSnackbar()
-  const client = useApolloClient()
+  const [UpdateUserAPI] = useMutation(UPDATE_USER);
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient();
+  const { logOut } = useSessionContext();
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
-    try{
+    try {
       const result = await UpdateUserAPI({
         variables: {
           input: {
@@ -58,34 +60,39 @@ export default function UserEditModal({
             last_name: editedUser.last_name,
             email: editedUser.email,
             password: editedUser.password,
-            role: allowEditRole ? editedUser.role : undefined
+            role: allowEditRole ? editedUser.role : undefined,
           },
         },
-        update:(cache,{data}) => {
+        update: (cache) => {
           const { getUsers } = client.readQuery({
             query: GET_USERS,
-          })
+          });
           cache.writeQuery({
             query: GET_USERS,
-            data:{
-              getUsers: getUsers
-            }
-          })
-        }
+            data: {
+              getUsers: getUsers,
+            },
+          });
+        },
       });
       if (result) {
         const msg = t("successMessages.userEdit");
-        enqueueSnackbar(msg,{variant:"success"})
+        enqueueSnackbar(msg, { variant: "success" });
         onClose?.();
       }
-    }catch(e:any){
-      if(e.message === "Cannot change email to already existing one!"){
-        const msg = t('user.emailExists')
-        enqueueSnackbar(msg,{variant:"error"})
+    } catch (e: any) {
+      if (e.message === USER_EMAIL_USED_MESSAGE) {
+        const msg = t("user.emailExists");
+        enqueueSnackbar(msg, { variant: "error" });
+      } else if (e.message === EXPIRED_TOKEN_MESSAGE) {
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      } else {
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
       }
     }
-
-    
   };
 
   const formikValues: Omit<User, "id"> = {
