@@ -86,7 +86,7 @@ export default function AddMovieCard(props: Props) {
     addedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
     try{
-      const result = await AddMovieAPI({
+      await AddMovieAPI({
         variables: {
           input: {
             title: addedMovie.title,
@@ -97,13 +97,14 @@ export default function AddMovieCard(props: Props) {
           },
         },
         update:(cache,{data}) => {
-          const { getMovies } = client.readQuery({
+          const moviesData = client.readQuery({
             query: GET_MOVIES
           })
+          if(!moviesData) return;
           cache.writeQuery({
             query:GET_MOVIES,
             data:{
-              getMovies:[...getMovies, data.createMovie]
+              getMovies:[...moviesData.getMovies, data.createMovie]
             }
           })
         }
@@ -112,6 +113,7 @@ export default function AddMovieCard(props: Props) {
       enqueueSnackbar(msg,{variant:"success"})
       setIsOpenAdd?.(false);
     }catch(error:any){
+      console.log(error.message)
       if(error.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
@@ -144,7 +146,6 @@ export default function AddMovieCard(props: Props) {
   });
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading);
-  if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
 
   return (

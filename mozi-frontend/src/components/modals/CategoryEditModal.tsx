@@ -46,13 +46,14 @@ export default function CategoryEditModal({ category, onClose }: Props) {
       const result = await UpdateCategoryAPI({
         variables: { input: { id: categoryId, name: editedCategory.name } },
         update:(cache) => {
-          const { getCategories } = client.readQuery({
+          const data = client.readQuery({
             query:GET_CATEGORIES
           })
+          if(!data) return;
           cache.writeQuery({
             query:GET_CATEGORIES,
             data:{
-              getCategories:[...getCategories]
+              getCategories:[...data.getCategories]
             }
           })
         }

@@ -78,49 +78,53 @@ export default function ReviewEditModal({ review, onClose }: Props) {
             rating: editedReview.rating,
           },
         },
-        update: (cache, { data }) => {
+        update: (cache) => {
           if (window.location.pathname === "/reviews") {
-            const { getReviewsOfUser } = client.readQuery({
+            const data = client.readQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
             });
+            if(!data) return;
             cache.writeQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
               data: {
-                getReviewsOfUser: [...getReviewsOfUser],
+                getReviewsOfUser: [...data.getReviewsOfUser],
               },
             });
           } else {
-            const { getReviewsOfMovie } = client.readQuery({
+            const reviewsOfMovieData = client.readQuery({
               query: GET_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id } },
             });
+            if(!reviewsOfMovieData) return;
             cache.writeQuery({
               query: GET_REVIEWS_OF_MOVIE,
               data: {
-                getReviewsOfMovie: [...getReviewsOfMovie],
+                getReviewsOfMovie: [...reviewsOfMovieData.getReviewsOfMovie],
               },
             });
-            const { getReviewsOfUserForMovie } = client.readQuery({
+            const reviewsOfUserData = client.readQuery({
               query: GET_USERS_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id, user_id } },
             });
+            if(!reviewsOfUserData) return;
             cache.writeQuery({
               query: GET_USERS_REVIEWS_OF_MOVIE,
               data: {
-                getReviewsOfUserForMovie: [...getReviewsOfUserForMovie],
+                getReviewsOfUserForMovie: [...reviewsOfUserData.getReviewsOfUserForMovie],
               },
             });
-            client.readQuery({
+            const movieData = client.readQuery({
               query: GET_MOVIE_BY_ID,
               variables: { input: { id: movie_id } },
             });
+            if(!movieData) return;
             cache.writeQuery({
               query: GET_MOVIE_BY_ID,
               variables: { input: { id: movie_id } },
               data: {
-                getMovieById: data.updateReview.movie,
+                getMovieById: movieData.updateReview.movie,
               },
             });
           }
@@ -130,6 +134,7 @@ export default function ReviewEditModal({ review, onClose }: Props) {
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
+      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

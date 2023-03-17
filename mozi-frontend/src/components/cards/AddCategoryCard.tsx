@@ -46,13 +46,14 @@ export default function AddCategoryCard(props: Props) {
       await AddCategoryAPI({
         variables: { input: { name: name } },
         update:(cache,{data}) => {
-          const { getCategories } = client.readQuery({
+          const categoriesData = client.readQuery({
             query: GET_CATEGORIES
           })
+          if(!categoriesData) return
           cache.writeQuery({
             query:GET_CATEGORIES,
             data:{
-              getCategories:[...getCategories, data.createCategory]
+              getCategories:[...categoriesData.getCategories, data.createCategory]
             }
           })
         }

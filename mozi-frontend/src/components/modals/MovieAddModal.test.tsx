@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -31,7 +31,6 @@ const ADD_MOVIE = gql`
       release_date
       category {
         id
-        name
       }
       rating
     }
@@ -103,13 +102,15 @@ const dataMock = [
   },
 ];
 
+const cache = new InMemoryCache();
+
 function renderMovieAddModal(props: {
   isOpenAdd: boolean;
   setIsOpenAdd?: () => void;
 }) {
   return render(
     <SnackbarProvider>
-      <MockedProvider addTypename={false} mocks={dataMock}>
+      <MockedProvider cache={cache} mocks={dataMock}>
         <MockedSessionContext>
           <MovieAddModal
             isOpenAdd={props.isOpenAdd}
@@ -194,6 +195,6 @@ test("calls addMovie with correct values when addButton is clicked", async () =>
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("successMessages.movieAdd")).toBeInTheDocument();
+    expect(screen.queryByText("Movie was added successfully!")).toBeInTheDocument();
   });
 });

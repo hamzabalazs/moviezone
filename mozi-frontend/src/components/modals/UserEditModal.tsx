@@ -64,13 +64,14 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
           },
         },
         update: (cache) => {
-          const { getUsers } = client.readQuery({
+          const data = client.readQuery({
             query: GET_USERS,
           });
+          if(!data) return
           cache.writeQuery({
             query: GET_USERS,
             data: {
-              getUsers: getUsers,
+              getUsers: data.getUsers,
             },
           });
         },
@@ -81,6 +82,7 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
         onClose?.();
       }
     } catch (e: any) {
+      console.log(e.message)
       if (e.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

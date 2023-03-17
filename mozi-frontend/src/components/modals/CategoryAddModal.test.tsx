@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -44,13 +44,15 @@ const addMock = {
   },
 };
 
+const cache = new InMemoryCache()
+
 function renderCategoryAddModal(props: {
   isOpenAdd: boolean;
   setIsOpenAdd?: () => void;
 }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={[addMock]}>
+      <MockedProvider cache={cache} mocks={[addMock]}>
         <MockedSessionContext>
           <CategoryAddModal
             isOpenAdd={props.isOpenAdd}
@@ -100,7 +102,7 @@ test("calls add category successfully", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("successMessages.categoryAdd")
+      screen.queryByText("Category was added successfully!")
     ).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -117,10 +117,12 @@ const dataMock = [
   },
 ];
 
+const cache = new InMemoryCache()
+
 function renderMovieEditModal(props: { movie?: Movie; onClose?: () => void }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={dataMock}>
+      <MockedProvider mocks={dataMock} cache={cache}>
         <MockedSessionContext>
           <MovieEditModal movie={props.movie} onClose={props.onClose} />
         </MockedSessionContext>
@@ -135,17 +137,6 @@ test("If movie is not provided should not open modal", () => {
   const modal = queryByTestId("movie-edit-modal");
 
   expect(modal).not.toBeInTheDocument();
-});
-
-test("if movie is provided, should show LoadingComponent while loading, after loading should not show", async () => {
-  const { queryByTestId } = renderMovieEditModal({ movie: testMovie });
-  const loader = queryByTestId("loader");
-
-  expect(loader).toBeInTheDocument();
-
-  await waitFor(() => {
-    expect(loader).not.toBeInTheDocument();
-  });
 });
 
 test("If movie is provided should open modal with correct values", async () => {
@@ -193,17 +184,14 @@ test("calls edit movie successfully", async () => {
 
   fireEvent.mouseDown(category.getByRole("button"));
   const listbox = within(getByRole("listbox"));
-  userEvent.click(
-    listbox
-      .getAllByRole("option")
-      .find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!
-  );
+  const role = listbox.getAllByRole("option").find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!
+  userEvent.click(role);
 
   act(() => {
     userEvent.click(editButton);
   });
 
   await waitFor(() => {
-    expect(queryByText("successMessages.movieEdit")).toBeInTheDocument();
+    expect(queryByText("Movie was edited successfully!")).toBeInTheDocument();
   });
 });

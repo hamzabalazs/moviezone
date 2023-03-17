@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -48,6 +48,15 @@ const UPDATE_REVIEW = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -77,6 +86,15 @@ const editMock = {
         description: newReview.description,
         movie: {
           id: testReview.movie.id,
+          title: testReview.movie.title,
+          description: testReview.movie.description,
+          poster: testReview.movie.poster,
+          release_date: testReview.movie.release_date,
+          category:{
+            id:testReview.movie.category.id,
+            name:testReview.movie.category.name,
+          },
+          rating:testReview.movie.rating,
         },
         user: {
           first_name: testReview.user.first_name,
@@ -88,13 +106,15 @@ const editMock = {
   },
 };
 
+const cache = new InMemoryCache()
+
 function renderReviewEditModal(props: {
   review?: Review;
   onClose?: () => void;
 }) {
   return render(
     <SnackbarProvider>
-      <MockedProvider addTypename={false} mocks={[editMock]}>
+      <MockedProvider mocks={[editMock]} cache={cache}>
         <MockedSessionContext>
           <ReviewEditModal review={props.review} onClose={props.onClose} />
         </MockedSessionContext>
@@ -148,7 +168,7 @@ test("calls editReview with correct values", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("successMessages.reviewEdit")
+      screen.queryByText("Review was edited successfully!")
     ).toBeInTheDocument();
   });
 });

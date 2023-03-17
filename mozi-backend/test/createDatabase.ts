@@ -106,13 +106,15 @@ async function createReviewTable(db: Database) {
   });
 }
 async function createSessionTable(db: Database) {
-  const sql = `CREATE TABLE session (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        token text UNIQUE,
-        user_id text,
-        CONSTRAINT token_unique UNIQUE (token)
-        FOREIGN KEY(user_id) REFERENCES user(id)
-        )`;
+  const sql = `CREATE TABLE "session" (
+    "id"	INTEGER,
+    "token"	text UNIQUE,
+    "user_id"	text,
+    "expiry"	TEXT,
+    CONSTRAINT "token_unique" UNIQUE("token"),
+    FOREIGN KEY("user_id") REFERENCES "user"("id"),
+    PRIMARY KEY("id" AUTOINCREMENT)
+  )`;
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
       if (err) {
@@ -189,11 +191,11 @@ async function fillReviewTable(db: Database) {
   });
 }
 async function fillSessionTable(db: Database) {
-  const sql = `INSERT INTO session (id,token,user_id) VALUES
-  ("${sessionData[0].id}","${sessionData[0].token}","${sessionData[0].user_id}"),
-  ("${sessionData[1].id}","${sessionData[1].token}","${sessionData[1].user_id}"),
-  ("${sessionData[2].id}","${sessionData[2].token}","${sessionData[2].user_id}"),
-  ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}")`;
+  const sql = `INSERT INTO session (id,token,user_id,expiry) VALUES
+  ("${sessionData[0].id}","${sessionData[0].token}","${sessionData[0].user_id}","${sessionData[0].expiry}"),
+  ("${sessionData[1].id}","${sessionData[1].token}","${sessionData[1].user_id}","${sessionData[1].expiry}"),
+  ("${sessionData[2].id}","${sessionData[2].token}","${sessionData[2].user_id}","${sessionData[2].expiry}"),
+  ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}","${sessionData[3].expiry}")`;
 
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {

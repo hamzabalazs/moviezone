@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -8,14 +8,14 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Category } from "../../api/types";
+import { Category, CurrUser } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryEditModal from "./CategoryEditModal";
 import { SnackbarProvider } from "notistack";
 
 const testCategory: Category = {
   id: "idC3",
-  name: "categoryName",
+  name: "name3",
 };
 
 const newtestCategory: Category = {
@@ -51,21 +51,24 @@ const editMock = {
   },
 };
 
+const cache = new InMemoryCache()
+
 function renderCategoryEditModal(props: {
   category?: Category;
   onClose?: () => void;
+  user?: CurrUser;
 }) {
   return render(
-    <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={[editMock]}>
-        <MockedSessionContext>
-          <CategoryEditModal
-            category={props.category}
-            onClose={props.onClose}
-          />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider mocks={[editMock]} cache={cache}>
+          <MockedSessionContext value={{ user: props.user }}>
+            <CategoryEditModal
+              category={props.category}
+              onClose={props.onClose}
+            />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
   );
 }
 
@@ -104,12 +107,13 @@ test("calls editcategory with correct values", async () => {
   await waitFor(() => {
     expect(name.value).toBe(newtestCategory.name);
   });
-
   act(() => {
     userEvent.click(editButton);
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("successMessages.categoryEdit")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Category was edited successfully!")
+    ).toBeInTheDocument();
   });
 });

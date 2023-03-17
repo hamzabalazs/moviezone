@@ -31,7 +31,7 @@ import {
   REVIEW_EXISTS_MESSAGE,
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
-import { movieData, userData } from "../test/mockedData";
+import { movieData, sessionData, userData } from "../test/mockedData";
 
 const db = createDatabase();
 let req = {
@@ -96,6 +96,7 @@ test("Should get review if ID is valid", async () => {
   expect(result.data?.getReviewById).toEqual(testReviewEdit);
 });
 test("Should not add review if movie already rated by user", async () => {
+  req.headers['auth-token'] = sessionData[0].token
   const testResult = await server.executeOperation({
     query: GET_REVIEWS_OF_USER_FOR_MOVIE,
     variables: {
@@ -120,6 +121,7 @@ test("Should not add review if movie already rated by user", async () => {
   expect(result.data).toBeNull();
 });
 test("Should not add review if movie does not exist ( bad ID )", async () => {
+  req.headers['auth-token'] = sessionData[3].token
   const result = await server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
@@ -135,6 +137,7 @@ test("Should not add review if movie does not exist ( bad ID )", async () => {
   expect(result.data).toBeNull();
 });
 test("Should not add review if user does not exist ( bad ID )", async () => {
+  req.headers['auth-token'] = sessionData[3].token
   const result = await server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
@@ -150,6 +153,7 @@ test("Should not add review if user does not exist ( bad ID )", async () => {
   expect(result.data).toBeNull();
 });
 test("Should add review if user and movie exists, and movie has not been rated by user", async () => {
+  req.headers['auth-token'] = sessionData[3].token
   const beforeResult = await server.executeOperation({
     query: GET_REVIEWS,
   });

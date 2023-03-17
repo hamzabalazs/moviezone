@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -70,6 +70,8 @@ const editMock = {
   },
 };
 
+const cache = new InMemoryCache()
+
 function renderUserEditModal(props: {
   user?: User;
   onClose?: () => void;
@@ -77,7 +79,7 @@ function renderUserEditModal(props: {
 }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={[editMock]}>
+      <MockedProvider mocks={[editMock]} cache={cache}>
         <MockedSessionContext>
           <UserEditModal
             user={props.user}
@@ -163,6 +165,6 @@ test("Should call edit user successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(queryByText("successMessages.userEdit")).toBeInTheDocument();
+    expect(queryByText("User was edited successfully")).toBeInTheDocument();
   });
 });

@@ -11,8 +11,8 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import { useSnackbar } from 'notistack'
-import { gql, useApolloClient, useMutation,useQuery } from "@apollo/client";
+import { useSnackbar } from "notistack";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import { Category, Movie } from "../../api/types";
@@ -30,12 +30,12 @@ interface Props {
 
 const GET_CATEGORIES = gql`
   query GetCategories {
-  getCategories {
-    id
-    name
+    getCategories {
+      id
+      name
+    }
   }
-}
-`
+`;
 const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
     updateMovie(input: $input) {
@@ -53,12 +53,13 @@ const UPDATE_MOVIE = gql`
   }
 `;
 
-export default function MovieEditModal({ movie, onClose}: Props) {
+export default function MovieEditModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const [UpdateReviewAPI] = useMutation(UPDATE_MOVIE);
-  const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
-  const {enqueueSnackbar} = useSnackbar()
-  const client = useApolloClient()
+  const { data: categoriesData, loading: categoriesLoading } =
+    useQuery(GET_CATEGORIES);
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient();
   const { logOut } = useSessionContext();
 
   const updateMovie = async (
@@ -66,8 +67,8 @@ export default function MovieEditModal({ movie, onClose}: Props) {
   ) => {
     const poster = movie?.poster;
     if (movie === undefined || poster === undefined) return;
-    const id = movie.id
-    try{
+    const id = movie.id;
+    try {
       await UpdateReviewAPI({
         variables: {
           input: {
@@ -76,39 +77,38 @@ export default function MovieEditModal({ movie, onClose}: Props) {
             description: editedMovie.description,
             poster: poster,
             release_date: editedMovie.release_date,
-            category_id: editedMovie.category.id
+            category_id: editedMovie.category.id,
           },
         },
-        update:(cache) => {
-          const { getMovieById } = client.readQuery({
-            query:GET_MOVIE_BY_ID,
-            variables:{input:{id}}
-          })
+        update: (cache) => {
+          const movieData = client.readQuery({
+            query: GET_MOVIE_BY_ID,
+            variables: { input: { id } },
+          });
+          if (!movieData) return;
           cache.writeQuery({
-            query:GET_MOVIE_BY_ID,
-            variables:{input:{id}},
-            data:{
-              getMovieById:getMovieById
-            }
-          })
-        }
+            query: GET_MOVIE_BY_ID,
+            variables: { input: { id } },
+            data: {
+              getMovieById: movieData.getMovieById,
+            },
+          });
+        },
       });
       const msg = t("successMessages.movieEdit");
-      enqueueSnackbar(msg,{variant:"success"})
+      enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
-    }catch(error:any){
-      if(error.message === EXPIRED_TOKEN_MESSAGE){
+    } catch (error: any) {
+      console.log("error", error.message);
+      if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
-      }
-      else{
+      } else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }
     }
-
-    
   };
 
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
@@ -126,7 +126,7 @@ export default function MovieEditModal({ movie, onClose}: Props) {
     validationSchema: schema,
   });
 
-  if(categoriesLoading) return LoadingComponent(categoriesLoading)
+  if (categoriesLoading) return LoadingComponent(categoriesLoading);
   //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
@@ -207,7 +207,7 @@ export default function MovieEditModal({ movie, onClose}: Props) {
               data-testid="movie-edit-category"
               inputProps={{ "data-testid": "movie-edit-categoryId" }}
             >
-              {categoriesData.getCategories.map((category:Category) => (
+              {categoriesData.getCategories.map((category: Category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>
