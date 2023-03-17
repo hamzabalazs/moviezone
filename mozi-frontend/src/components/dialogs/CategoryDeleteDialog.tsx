@@ -42,13 +42,14 @@ export default function CategoryDeleteDialog({ category, onClose }: Props) {
       await DeleteCategoryAPI({
       variables: { input: { id: categoryId } },
         update:(cache,{data}) => {
-          const { getCategories } = client.readQuery({
+          const categoriesData = client.readQuery({
             query:GET_CATEGORIES
           })
+          if(!categoriesData) return;
           cache.writeQuery({
             query:GET_CATEGORIES,
             data:{
-              getCategories:getCategories.filter((x:any) => x.id != data.deleteCategory.id)
+              getCategories:categoriesData.getCategories.filter((x:any) => x.id != data.deleteCategory.id)
             }
           })
         }

@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -50,10 +50,12 @@ const deleteMock = {
   },
 };
 
+const cache = new InMemoryCache();
+
 function renderUserDeleteDialog(props: { user?: User; onClose?: () => void }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={[deleteMock]}>
+      <MockedProvider cache={cache} mocks={[deleteMock]}>
         <MockedSessionContext>
           <UserDeleteDialog user={props.user} onClose={props.onClose} />
         </MockedSessionContext>
@@ -114,7 +116,7 @@ test("Should call user delete successfully", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("successMessages.userDelete")
+      screen.queryByText("User was deleted successfully!")
     ).toBeInTheDocument();
   });
 });

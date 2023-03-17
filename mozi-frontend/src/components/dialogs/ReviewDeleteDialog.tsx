@@ -67,48 +67,51 @@ export default function ReviewDeleteDialog({ review, onClose }: Props) {
         variables: { input: { id: review.id } },
         update: (cache, { data }) => {
           if(window.location.pathname === "/reviews"){
-            const { getReviewsOfUser } = client.readQuery({
+            const reviewsOfUserData = client.readQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
             });
+            if(!reviewsOfUserData) return
             cache.writeQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
               data: {
-                getReviewsOfUser: getReviewsOfUser.filter(
+                getReviewsOfUser: reviewsOfUserData.getReviewsOfUser.filter(
                   (x: any) => x.id != data.deleteReview.id
                 ),
               },
             });
           }
           else{
-            const { getReviewsOfMovie } = client.readQuery({
+            const reviewsOfMovieData = client.readQuery({
               query: GET_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id } },
             });
+            if(!reviewsOfMovieData) return
             cache.writeQuery({
               query: GET_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id } },
               data: {
-                getReviewsOfMovie: getReviewsOfMovie.filter(
+                getReviewsOfMovie: reviewsOfMovieData.getReviewsOfMovie.filter(
                   (x: any) => x.id != data.deleteReview.id
                 ),
               },
             });
-            const { getReviewsOfUserForMovie } = client.readQuery({
+            const reviewsOfUserForMovieData = client.readQuery({
               query: GET_USERS_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id, user_id } },
             });
+            if(!reviewsOfUserForMovieData) return
             cache.writeQuery({
               query: GET_USERS_REVIEWS_OF_MOVIE,
               variables: { input: { movie_id, user_id } },
               data: {
-                getReviewsOfUserForMovie: getReviewsOfUserForMovie.filter(
+                getReviewsOfUserForMovie: reviewsOfUserForMovieData.getReviewsOfUserForMovie.filter(
                   (x: any) => x.id != data.deleteReview.id
                 ),
               },
             });
-            client.readQuery({
+              client.readQuery({
               query: GET_MOVIE_BY_ID,
               variables: { input: { id: movie_id } },
             });

@@ -39,7 +39,7 @@ const DELETE_MOVIE = gql`
 export default function MovieDeleteDialog({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [DeleteMovieAPI, { data }] = useMutation(DELETE_MOVIE);
+  const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext()
 

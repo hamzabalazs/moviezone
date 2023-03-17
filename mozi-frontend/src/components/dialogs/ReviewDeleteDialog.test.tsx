@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -15,6 +15,15 @@ const DELETE_REVIEW = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -79,13 +88,15 @@ const deleteMock = {
   },
 };
 
+const cache = new InMemoryCache();
+
 function renderReviewDeleteDialog(props: {
   review?: Review;
   onClose?: () => void;
 }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider addTypename={false} mocks={[deleteMock]}>
+      <MockedProvider cache={cache} mocks={[deleteMock]}>
         <MockedSessionContext>
           <ReviewDeleteDialog review={props.review} onClose={props.onClose} />
         </MockedSessionContext>
@@ -145,6 +156,6 @@ test("Should call review delete successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("successMessages.reviewDelete")).toBeInTheDocument();
+    expect(screen.queryByText("Review was deleted successfully!")).toBeInTheDocument();
   });
 });

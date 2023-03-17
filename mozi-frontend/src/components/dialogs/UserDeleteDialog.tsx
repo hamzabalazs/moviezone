@@ -44,13 +44,14 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
       await DeleteUserAPI({
         variables: { input: { id: user.id } },
         update:(cache,{data}) => {
-          const { getUsers } = client.readQuery({
+          const usersData = client.readQuery({
             query: GET_USERS,
           })
+          if(!usersData) return;
           cache.writeQuery({
             query: GET_USERS,
             data:{
-              getUsers: getUsers.filter((x:any) => x.id != data.deleteUser.id)
+              getUsers: usersData.getUsers.filter((x:any) => x.id != data.deleteUser.id)
             }
           })
         }
@@ -72,7 +73,6 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
     }
   };
 
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Dialog
