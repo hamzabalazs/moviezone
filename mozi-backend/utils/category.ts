@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { EXPIRED_TOKEN_MESSAGE } from "../common/errorMessages";
 import { MyContext } from "../server";
-import { getToken } from "./auth";
 import { Category } from "./types";
 
 export function getCategories(_: any, context:MyContext):Promise<Category[]> {

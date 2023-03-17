@@ -24,6 +24,7 @@ import {
   testReviewEdit,
 } from "./review.mocks";
 import {
+  EXPIRED_TOKEN_MESSAGE,
   NO_MOVIE_MESSAGE,
   NO_REVIEW_MESSAGE,
   NO_TOKEN_MESSAGE,
@@ -136,6 +137,22 @@ test("Should not add review if movie does not exist ( bad ID )", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_MOVIE_MESSAGE);
   expect(result.data).toBeNull();
 });
+test("Should not add review if user session has expired", async () => {
+  req.headers['auth-token'] = "expiredToken"
+  const result = await server.executeOperation({
+    query: CREATE_REVIEW,
+    variables: {
+      input: {
+        rating: addReview.rating,
+        description: addReview.description,
+        movie_id: "badID",
+        user_id: addReview.user_id,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
+  expect(result.data).toBeNull();
+});
 test("Should not add review if user does not exist ( bad ID )", async () => {
   req.headers['auth-token'] = sessionData[3].token
   const result = await server.executeOperation({
@@ -205,6 +222,21 @@ test("Should not edit review if no token is provided", async () => {
     },
   });
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
+  expect(result.data).toBeNull();
+});
+test("Should not edit review if user session has expired", async () => {
+  req.headers["auth-token"] = "expiredToken";
+  const result = await server.executeOperation({
+    query: UPDATE_REVIEW,
+    variables: {
+      input: {
+        id: testReviewEdit.id,
+        description: editReview.description,
+        rating: editReview.rating,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
 test("Should not edit review if review does not exist ( bad ID )", async () => {
@@ -319,7 +351,20 @@ test("Should not delete review if no token is provided", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
+  expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
+  expect(result.data).toBeNull();
+});
+test("Should not delete review if user session has expired", async () => {
+  req.headers["auth-token"] = "expiredToken";
+  const result = await server.executeOperation({
+    query: DELETE_REVIEW,
+    variables: {
+      input: {
+        id: testReviewDelete.id,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
 test("Should not delete review if review does not exist ( bad ID )", async () => {

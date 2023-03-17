@@ -4,8 +4,8 @@ import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import { CREATE_CATEGORY, DELETE_CATEGORY, GET_CATEGORIES, GET_CATEGORY_BY_ID, GET_CATEGORY_BY_NAME, UPDATE_CATEGORY } from "../test/Query_Category";
 import { addCategory, deleteCategory, editCategory, testCategory } from "./category.mocks";
-import { CATEGORY_EXISTS_MESSAGE, NO_CATEGORY_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
-import { categoryData } from "../test/mockedData";
+import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NO_CATEGORY_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { categoryData, sessionData, userData } from "../test/mockedData";
 
 const db = createDatabase();
 let req = {
@@ -87,6 +87,18 @@ test("Should not add new category if user is viewer",async() => {
     expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
 })
 
+test("Should not add new category if user session has expired",async() => {
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query: CREATE_CATEGORY,
+        variables:{input:{
+            name: addCategory.name
+        }}
+    })
+    expect(result.data).toBeNull();
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
+})
+
 test("Should add new category if good token was given",async() => {
     const beforeResult = await server.executeOperation({
         query: GET_CATEGORIES,
@@ -137,7 +149,7 @@ test("Should not change category if category already exists",async() =>{
     const result = await server.executeOperation({
         query: UPDATE_CATEGORY,
         variables:{input:{
-            id:"newID",
+            id:testCategory.id,
             name:categoryData[1].name
         }}
     })
@@ -156,6 +168,20 @@ test("Should not change category if user is viewer",async() => {
     })
     expect(result.data).toBeNull();
     expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
+})
+
+test("Should not change category if user session has expired",async() => {
+    console.log(sessionData[4].token)
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query: UPDATE_CATEGORY,
+        variables:{input:{
+            id:testCategory.id,
+            name: editCategory.name
+        }}
+    })
+    expect(result.data).toBeNull();
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
 })
 
 test("Should change category if good token was given",async() => {
@@ -195,6 +221,18 @@ test("Should not delete category if no token was given",async() => {
         }}
     })
     expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE)
+    expect(result.data).toBeNull()
+})
+
+test("Should not delete category if user session has expired",async() => {
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query: DELETE_CATEGORY,
+        variables:{input:{
+            id:testCategory.id,
+        }}
+    })
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
     expect(result.data).toBeNull()
 })
 

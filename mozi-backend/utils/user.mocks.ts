@@ -86,7 +86,7 @@ export const deleteUser: Omit<User, "role"> & { role: string } = {
 
 export const addUser = {
   first_name: "Test",
-  last_name: "User5",
-  email: "testuser5@gmail.com",
-  password: "testtest5",
+  last_name: "User6",
+  email: "testuser6@gmail.com",
+  password: "testtest6",
 };

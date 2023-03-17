@@ -129,7 +129,8 @@ async function fillUserTable(db: Database) {
   ("${userData[0].id}","${userData[0].first_name}","${userData[0].last_name}","${userData[0].email}","${userData[0].password}","${userData[0].role}"),
   ("${userData[1].id}","${userData[1].first_name}","${userData[1].last_name}","${userData[1].email}","${userData[1].password}","${userData[1].role}"),
   ("${userData[2].id}","${userData[2].first_name}","${userData[2].last_name}","${userData[2].email}","${userData[2].password}","${userData[2].role}"),
-  ("${userData[3].id}","${userData[3].first_name}","${userData[3].last_name}","${userData[3].email}","${userData[3].password}","${userData[3].role}")`;
+  ("${userData[3].id}","${userData[3].first_name}","${userData[3].last_name}","${userData[3].email}","${userData[3].password}","${userData[3].role}"),
+  ("${userData[4].id}","${userData[4].first_name}","${userData[4].last_name}","${userData[4].email}","${userData[4].password}","${userData[4].role}")`;
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {
       if (err) {
@@ -195,7 +196,8 @@ async function fillSessionTable(db: Database) {
   ("${sessionData[0].id}","${sessionData[0].token}","${sessionData[0].user_id}","${sessionData[0].expiry}"),
   ("${sessionData[1].id}","${sessionData[1].token}","${sessionData[1].user_id}","${sessionData[1].expiry}"),
   ("${sessionData[2].id}","${sessionData[2].token}","${sessionData[2].user_id}","${sessionData[2].expiry}"),
-  ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}","${sessionData[3].expiry}")`;
+  ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}","${sessionData[3].expiry}"),
+  ("${sessionData[4].id}","${sessionData[4].token}","${sessionData[4].user_id}","${sessionData[4].expiry}")`;
 
   return new Promise((resolve, reject) => {
     db.run(sql, (err: any, rows: any) => {

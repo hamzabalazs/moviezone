@@ -4,7 +4,7 @@ import { createDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import { CREATE_MOVIE, DELETE_MOVIE, GET_MOVIES, GET_MOVIES_BY_CATEGORY, GET_MOVIE_BY_ID, UPDATE_MOVIE } from "../test/Query_Movie";
 import { addMovie, deleteMovie, editMovie, editResponseMovie, testMovie} from "./movie.mocks";
-import { NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 
 const db = createDatabase();
@@ -62,7 +62,6 @@ test("Should get movie,if ID is valid",async() => {
 })
 
 test("Should not add movie, if token is invalid",async() => {
-    
     req.headers['auth-token'] = ""
     const result = await server.executeOperation({
         query:CREATE_MOVIE,
@@ -76,7 +75,6 @@ test("Should not add movie, if token is invalid",async() => {
 })
 
 test("Should not add movie, if token is valid but not admin/editor",async() => {
-    
     req.headers['auth-token'] = "viewertoken1234"
     const result = await server.executeOperation({
         query:CREATE_MOVIE,
@@ -85,6 +83,18 @@ test("Should not add movie, if token is valid but not admin/editor",async() => {
         }}
     })
     expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
+    expect(result.data).toBeNull()
+})
+
+test("Should not add movie, if token is valid but session has expired",async() => {
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query:CREATE_MOVIE,
+        variables:{input:{
+            ...addMovie
+        }}
+    })
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
     expect(result.data).toBeNull()
 })
 
@@ -132,6 +142,18 @@ test("Should not edit movie, if token is valid, but not admin/editor",async() =>
         }}
     })
     expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
+    expect(result.data).toBeNull()
+})
+
+test("Should not edit movie, if token is valid, but session has expired",async() => {
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query:UPDATE_MOVIE,
+        variables:{input:{
+            ...editMovie
+        }}
+    })
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
     expect(result.data).toBeNull()
 })
 
@@ -203,6 +225,18 @@ test("Should not delete movie, if token is valid, but not admin/editor",async() 
         }}
     })
     expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE)
+    expect(result.data).toBeNull()
+})
+
+test("Should not delete movie, if token is valid, but session has expired",async() => {
+    req.headers['auth-token'] = "expiredToken"
+    const result = await server.executeOperation({
+        query:DELETE_MOVIE,
+        variables:{input:{
+            id:deleteMovie.id,
+        }}
+    })
+    expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE)
     expect(result.data).toBeNull()
 })
 

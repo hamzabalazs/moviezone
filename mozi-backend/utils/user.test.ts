@@ -12,7 +12,7 @@ import {
   UPDATE_USER,
 } from "../test/Query_User";
 import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testResponseUser2, testUser, testUser2 } from "./user.mocks";
-import { NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 import { userData } from "../test/mockedData";
 
 const db = createDatabase();
@@ -35,7 +35,7 @@ test("Should get all users", async () => {
     query: GET_USERS,
   });
   expect(result.errors).toBeUndefined();
-  expect(result.data?.getUsers).toHaveLength(4);
+  expect(result.data?.getUsers).toHaveLength(5);
 });
 
 test("Should get user if ID is correct", async () => {
@@ -132,6 +132,20 @@ test("Should not edit user, if bad token is given", async () => {
     },
   });
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
+  expect(result.data).toBeNull();
+});
+
+test("Should not edit user, if user session has expired", async () => {
+  req.headers["auth-token"] = "expiredToken";
+  const result = await server.executeOperation({
+    query: UPDATE_USER,
+    variables: {
+      input: {
+        ...editUser,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
 
@@ -271,6 +285,20 @@ test("Should not delete user if bad token is given", async () => {
   expect(result.data).toBeNull();
 });
 
+test("Should not delete user if user session has expired", async () => {
+  req.headers["auth-token"] = "expiredToken";
+  const result = await server.executeOperation({
+    query: DELETE_USER,
+    variables: {
+      input: {
+        id: deleteUser.id,
+      },
+    },
+  });
+  expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
+  expect(result.data).toBeNull();
+});
+
 test("Should not delete user if current user is not admin",async() => {
   req.headers["auth-token"] = "tokenviewer4321";
   const result = await server.executeOperation({
@@ -304,7 +332,7 @@ test("Should delete user if token and ID is good", async () => {
     query: GET_USERS,
   });
   expect(beforeResult.errors).toBeUndefined();
-  expect(beforeResult.data?.getUsers).toHaveLength(5);
+  expect(beforeResult.data?.getUsers).toHaveLength(6);
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
     query: DELETE_USER,
@@ -320,5 +348,5 @@ test("Should delete user if token and ID is good", async () => {
     query: GET_USERS,
   });
   expect(afterResult.errors).toBeUndefined();
-  expect(afterResult.data?.getUsers).toHaveLength(4);
+  expect(afterResult.data?.getUsers).toHaveLength(5);
 });

@@ -82,6 +82,14 @@ export const userData = [
         password:"5bd81d5fecc184e59cad0931fd66e95f",
         role:"viewer",
     },
+    {
+        id:"idU5",
+        first_name:"Test",
+        last_name:"User5",
+        email:"testuser5@gmail.com",
+        password:"699bf56f37394791f36f154ee3aa56a6",
+        role:"admin"
+    }
 ]
 
 export const categoryData = [
@@ -179,7 +187,7 @@ export const sessionData = [
     },
     {
         id:5,
-        token:"tokenviewer12345",
+        token:"expiredToken",
         user_id:"idU5",
         expiry:"2023-03-16 18:20:05"
     }
