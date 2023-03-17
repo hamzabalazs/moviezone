@@ -53,7 +53,6 @@ export function useLogIn(): LogInData {
       localStorage.setItem(TOKEN_KEY, token);
       return loggedUser.data.logIn;
     } catch (error: any) {
-      console.log(error.message)
       return error.message;
     }
   }

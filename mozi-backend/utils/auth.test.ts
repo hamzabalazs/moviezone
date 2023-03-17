@@ -37,8 +37,6 @@ test("Should not login, if user does not exist", async () => {
   expect(result.data?.logIn).toBeNull();
 });
 test("Should login, if user exists and login details match",async() => {
-  console.log(existingTestUser.email)
-  console.log(existingTestUser.password)
     const result = await server.executeOperation({
         query: LOGIN,
         variables: {

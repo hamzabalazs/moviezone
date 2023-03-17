@@ -55,7 +55,7 @@ const UPDATE_MOVIE = gql`
 
 export default function MovieEditModal({ movie, onClose}: Props) {
   const { t } = useTranslation();
-  const [UpdateReviewAPI,{data}] = useMutation(UPDATE_MOVIE);
+  const [UpdateReviewAPI] = useMutation(UPDATE_MOVIE);
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const {enqueueSnackbar} = useSnackbar()
   const client = useApolloClient()

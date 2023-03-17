@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { EXPIRED_TOKEN_MESSAGE } from "../common/errorMessages";
 
 export const GET_MOVIE_BY_ID = gql`
   query GetMovieById($input: MovieInput!) {
@@ -173,49 +174,61 @@ export default function MoviePage() {
         description !== "" &&
         currUser
       ) {
-        const result = await AddReviewAPI({
-          variables: { input: { rating, description, movie_id, user_id } },
-          update:(cache,{data}) => {
-            const { getReviewsOfMovie } = client.readQuery({
-              query: GET_REVIEWS_OF_MOVIE,
-              variables:{input:{movie_id}}
-            })
-            cache.writeQuery({
-              query:GET_REVIEWS_OF_MOVIE,
-              data:{
-                getReviewsOfMovie:[...getReviewsOfMovie, data.createReview]
-              }
-            })
-            const { getReviewsOfUserForMovie} = client.readQuery({
-              query: GET_USERS_REVIEWS_OF_MOVIE,
-              variables:{input:{movie_id,user_id}}
-            })
-            cache.writeQuery({
-              query:GET_USERS_REVIEWS_OF_MOVIE,
-              data:{
-                getReviewsOfUserForMovie:[...getReviewsOfUserForMovie,data.createReview]
-              }
-            })
-            const { getMovieById } = client.readQuery({
-              query: GET_MOVIE_BY_ID,
-              variables:{input:{id:movie_id}},
-            })
-            cache.writeQuery({
-              query: GET_MOVIE_BY_ID,
-              variables:{input:{id:movie_id}},
-              data:{
-                getMovieById:data.createReview.movie
-              }
-            })
-            
-          }
-        });
-        if (!result) return;
-        const msg = t("successMessages.reviewAdd");
-        enqueueSnackbar(msg, { variant: "success" });
+        try {
+          await AddReviewAPI({
+            variables: { input: { rating, description, movie_id, user_id } },
+            update: (cache, { data }) => {
+              const { getReviewsOfMovie } = client.readQuery({
+                query: GET_REVIEWS_OF_MOVIE,
+                variables: { input: { movie_id } },
+              });
+              cache.writeQuery({
+                query: GET_REVIEWS_OF_MOVIE,
+                data: {
+                  getReviewsOfMovie: [...getReviewsOfMovie, data.createReview],
+                },
+              });
+              const { getReviewsOfUserForMovie } = client.readQuery({
+                query: GET_USERS_REVIEWS_OF_MOVIE,
+                variables: { input: { movie_id, user_id } },
+              });
+              cache.writeQuery({
+                query: GET_USERS_REVIEWS_OF_MOVIE,
+                data: {
+                  getReviewsOfUserForMovie: [
+                    ...getReviewsOfUserForMovie,
+                    data.createReview,
+                  ],
+                },
+              });
+              client.readQuery({
+                query: GET_MOVIE_BY_ID,
+                variables: { input: { id: movie_id } },
+              });
+              cache.writeQuery({
+                query: GET_MOVIE_BY_ID,
+                variables: { input: { id: movie_id } },
+                data: {
+                  getMovieById: data.createReview.movie,
+                },
+              });
+            },
+          });
+          const msg = t("successMessages.reviewAdd");
+          enqueueSnackbar(msg, { variant: "success" });
 
-        setRatingDescription("");
-        setValue(0);
+          setRatingDescription("");
+          setValue(0);
+        } catch (error: any) {
+          if (error.message === EXPIRED_TOKEN_MESSAGE) {
+            const msg = t("failMessages.expiredToken");
+            enqueueSnackbar(msg, { variant: "error" });
+            context.logOut();
+          } else {
+            const msg = t("someError");
+            enqueueSnackbar(msg, { variant: "error" });
+          }
+        }
       } else if (description === "") {
         const msg = t("failMessages.reviewDescriptionMissing");
         enqueueSnackbar(msg, { variant: "error" });

@@ -62,14 +62,14 @@ export default function AddCategoryCard(props: Props) {
       setIsOpenAdd?.(false);
       enqueueSnackbar(msg, { variant: "success" });
     } catch (error: any) {
-      if(error.message === CATEGORY_EXISTS_MESSAGE){
-        const msg = t("failMessages.addSameCategory");
-        enqueueSnackbar(msg, { variant: "error" });
-      }
-      else if(error.message === EXPIRED_TOKEN_MESSAGE){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
+      }
+      else if(error.message === CATEGORY_EXISTS_MESSAGE){
+        const msg = t("failMessages.addSameCategory");
+        enqueueSnackbar(msg, { variant: "error" });
       }
       else{
         const msg = t("someError");

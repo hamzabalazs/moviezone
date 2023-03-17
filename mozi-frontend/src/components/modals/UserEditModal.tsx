@@ -81,14 +81,15 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
         onClose?.();
       }
     } catch (e: any) {
-      if (e.message === USER_EMAIL_USED_MESSAGE) {
-        const msg = t("user.emailExists");
-        enqueueSnackbar(msg, { variant: "error" });
-      } else if (e.message === EXPIRED_TOKEN_MESSAGE) {
+      if (e.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
-      } else {
+      }
+      else if (e.message === USER_EMAIL_USED_MESSAGE) {
+        const msg = t("user.emailExists");
+        enqueueSnackbar(msg, { variant: "error" });
+      }  else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }
@@ -258,7 +259,7 @@ function useEditUserSchema() {
       .test(
         "len",
         t("formikErrors.passwordLength") || "",
-        (val) => val.length > 5
+        (val) => val.length >= 5
       ),
     role: Yup.string().required(),
   });

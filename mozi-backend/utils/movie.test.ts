@@ -31,7 +31,6 @@ test("Should get all movies",async() => {
 })
 
 test("Should get all movies of a given category",async() => {
-    console.log(categoryData[0].id)
     const result = await server.executeOperation({
         query:GET_MOVIES_BY_CATEGORY,
         variables:{input:{category_id:categoryData[0].id}}

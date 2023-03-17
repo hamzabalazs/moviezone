@@ -31,7 +31,6 @@ function Account() {
   const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
-  const client = useApolloClient()
 
   const [user, setUser] = useState<User>({
     id: "",

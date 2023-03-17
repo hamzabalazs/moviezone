@@ -41,7 +41,6 @@ export default function CategoryEditModal({ category, onClose }: Props) {
 
   const updateCategory = async (editedCategory: Omit<Category, "id">) => {
     if (category === undefined) return;
-    console.log(editedCategory)
     const categoryId = category.id;
     try {
       const result = await UpdateCategoryAPI({
@@ -64,14 +63,14 @@ export default function CategoryEditModal({ category, onClose }: Props) {
         onClose?.();
       }
     } catch (e: any) {
-      if(e.message === CATEGORY_EXISTS_MESSAGE){
-        const msg = t('category.categoryExists');
-        enqueueSnackbar(msg,{variant:"error"})
-      }
-      else if(e.message === EXPIRED_TOKEN_MESSAGE){
+      if(e.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg,{variant:"error"})
         logOut()
+      }
+      else if(e.message === CATEGORY_EXISTS_MESSAGE){
+        const msg = t('category.categoryExists');
+        enqueueSnackbar(msg,{variant:"error"})
       }
       else{
         const msg = t("someError");

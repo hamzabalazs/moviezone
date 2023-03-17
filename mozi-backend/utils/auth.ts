@@ -12,7 +12,6 @@ export async function logIn(
   const password: string = loginDetails.password;
   let isExpired = false;
   const tokenExpired = await getToken(context);
-  console.log(tokenExpired)
   if(tokenExpired){
     if (tokenExpired.expired === 0) isExpired = false;
     else isExpired = true;
@@ -36,7 +35,6 @@ export async function logIn(
         if (err) {
           reject(err);
         }
-        console.log(row);
         resolve(row);
       }
     );
@@ -84,7 +82,6 @@ export async function getUserForLogin(
 
 export async function getToken(context: MyContext): Promise<any> {
   const token = context.user!.token;
-  console.log(context.user)
   const sql = `SELECT expiry < datetime("now","localtime") as expired FROM session WHERE token = ?`;
   return new Promise((resolve, reject) => {
     context.db.get(sql, [token], (err: any, row: any) => {
