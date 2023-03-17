@@ -22,6 +22,8 @@ import {
   GET_USERS_REVIEWS_OF_MOVIE,
 } from "../../pages/MoviePage";
 import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   review?: ReviewListReview;
@@ -56,77 +58,87 @@ const UPDATE_REVIEW = gql`
 `;
 
 export default function ReviewEditModal({ review, onClose }: Props) {
-  const [UpdateReviewAPI, { data }] = useMutation(UPDATE_REVIEW);
+  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient();
+  const { logOut } = useSessionContext();
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {
     if (review === undefined) return;
     const movie_id = review.movie.id;
     const user_id = review.user.id;
-    const result = await UpdateReviewAPI({
-      variables: {
-        input: {
-          id: review.id,
-          description: editedReview.description,
-          rating: editedReview.rating,
+    try {
+      await UpdateReviewAPI({
+        variables: {
+          input: {
+            id: review.id,
+            description: editedReview.description,
+            rating: editedReview.rating,
+          },
         },
-      },
-      update: (cache, { data }) => {
-        if (window.location.pathname === "/reviews") {
-          const { getReviewsOfUser } = client.readQuery({
-            query: GET_REVIEWS_OF_USER,
-            variables: { input: { user_id } },
-          });
-          cache.writeQuery({
-            query: GET_REVIEWS_OF_USER,
-            variables: { input: { user_id } },
-            data: {
-              getReviewsOfUser: [...getReviewsOfUser],
-            },
-          });
-        } else {
-          const { getReviewsOfMovie } = client.readQuery({
-            query: GET_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id } },
-          });
-          cache.writeQuery({
-            query: GET_REVIEWS_OF_MOVIE,
-            data: {
-              getReviewsOfMovie: [...getReviewsOfMovie],
-            },
-          });
-          const { getReviewsOfUserForMovie } = client.readQuery({
-            query: GET_USERS_REVIEWS_OF_MOVIE,
-            variables: { input: { movie_id, user_id } },
-          });
-          cache.writeQuery({
-            query: GET_USERS_REVIEWS_OF_MOVIE,
-            data: {
-              getReviewsOfUserForMovie: [...getReviewsOfUserForMovie],
-            },
-          });
-          const { getMovieById } = client.readQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id: movie_id } },
-          });
-          cache.writeQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id: movie_id } },
-            data: {
-              getMovieById: data.updateReview.movie,
-            },
-          });
-        }
-      },
-    });
-    if (result) {
+        update: (cache, { data }) => {
+          if (window.location.pathname === "/reviews") {
+            const { getReviewsOfUser } = client.readQuery({
+              query: GET_REVIEWS_OF_USER,
+              variables: { input: { user_id } },
+            });
+            cache.writeQuery({
+              query: GET_REVIEWS_OF_USER,
+              variables: { input: { user_id } },
+              data: {
+                getReviewsOfUser: [...getReviewsOfUser],
+              },
+            });
+          } else {
+            const { getReviewsOfMovie } = client.readQuery({
+              query: GET_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id } },
+            });
+            cache.writeQuery({
+              query: GET_REVIEWS_OF_MOVIE,
+              data: {
+                getReviewsOfMovie: [...getReviewsOfMovie],
+              },
+            });
+            const { getReviewsOfUserForMovie } = client.readQuery({
+              query: GET_USERS_REVIEWS_OF_MOVIE,
+              variables: { input: { movie_id, user_id } },
+            });
+            cache.writeQuery({
+              query: GET_USERS_REVIEWS_OF_MOVIE,
+              data: {
+                getReviewsOfUserForMovie: [...getReviewsOfUserForMovie],
+              },
+            });
+            client.readQuery({
+              query: GET_MOVIE_BY_ID,
+              variables: { input: { id: movie_id } },
+            });
+            cache.writeQuery({
+              query: GET_MOVIE_BY_ID,
+              variables: { input: { id: movie_id } },
+              data: {
+                getMovieById: data.updateReview.movie,
+              },
+            });
+          }
+        },
+      });
       const msg = t("successMessages.reviewEdit");
       enqueueSnackbar(msg, { variant: "success" });
+      onClose?.();
+    } catch (error: any) {
+      if (error.message === EXPIRED_TOKEN_MESSAGE) {
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      } else {
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
-    onClose?.();
   };
   const schema = useEditReviewSchema();
 
