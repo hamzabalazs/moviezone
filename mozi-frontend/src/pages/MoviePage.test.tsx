@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
@@ -17,6 +17,7 @@ const GET_MOVIE_BY_ID = gql`
       rating
       category {
         id
+        name
       }
     }
   }
@@ -30,6 +31,15 @@ const GET_REVIEWS_OF_MOVIE = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -48,6 +58,15 @@ const GET_USERS_REVIEWS_OF_MOVIE = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
       }
       user {
         first_name
@@ -284,6 +303,8 @@ const viewerUser: CurrUser = {
   token: "token1",
 };
 
+const cache = new InMemoryCache();
+
 function renderMoviePage(currUser?: CurrUser,mockData?:any) {
   const FAKE_EVENT = { name: "test event" };
   const routes = [
@@ -301,7 +322,7 @@ function renderMoviePage(currUser?: CurrUser,mockData?:any) {
 
   return render(
     <MockedSessionContext value={{ user: currUser }}>
-      <MockedProvider addTypename={false} mocks={mockData}>
+      <MockedProvider cache={cache} mocks={mockData}>
         <RouterProvider router={router} />
       </MockedProvider>
     </MockedSessionContext>

@@ -197,27 +197,29 @@ export default function MoviePage() {
           await AddReviewAPI({
             variables: { input: { rating, description, movie_id, user_id } },
             update: (cache, { data }) => {
-              const { getReviewsOfMovie } = client.readQuery({
+              const reviewsOfMovieData = client.readQuery({
                 query: GET_REVIEWS_OF_MOVIE,
                 variables: { input: { movie_id } },
               });
+              if(!reviewsOfMovieData) return;
               cache.writeQuery({
                 query: GET_REVIEWS_OF_MOVIE,
                 variables: { input: { movie_id } },
                 data: {
-                  getReviewsOfMovie: [...getReviewsOfMovie, data.createReview],
+                  getReviewsOfMovie: [...reviewsOfMovieData.getReviewsOfMovie, data.createReview],
                 },
               });
-              const { getReviewsOfUserForMovie } = client.readQuery({
+              const reviewsOfUserForMovieData = client.readQuery({
                 query: GET_USERS_REVIEWS_OF_MOVIE,
                 variables: { input: { movie_id, user_id } },
               });
+              if(!reviewsOfUserForMovieData) return;
               cache.writeQuery({
                 query: GET_USERS_REVIEWS_OF_MOVIE,
                 variables: { input: { movie_id, user_id } },
                 data: {
                   getReviewsOfUserForMovie: [
-                    ...getReviewsOfUserForMovie,
+                    ...reviewsOfUserForMovieData.getReviewsOfUserForMovie,
                     data.createReview,
                   ],
                 },
@@ -241,6 +243,7 @@ export default function MoviePage() {
           setRatingDescription("");
           setValue(0);
         } catch (error: any) {
+          console.log(error.message)
           if (error.message === EXPIRED_TOKEN_MESSAGE) {
             const msg = t("failMessages.expiredToken");
             enqueueSnackbar(msg, { variant: "error" });

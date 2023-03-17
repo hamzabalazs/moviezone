@@ -7,61 +7,43 @@ import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Reviews from "./Reviews";
 
-const GET_REVIEWS = gql`
-  query GetReviews {
-    getReviews {
+const GET_REVIEWS_OF_USER = gql`
+  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
+  getReviewsOfUser(input: $input) {
+    id
+    rating
+    description
+    movie {
       id
-      rating
+      title
       description
-      movie {
-        title
+      poster
+      release_date
+      category {
         id
+        name
       }
-      user {
-        id
-        first_name
-        last_name
-      }
+      rating
+    }
+    user {
+      id
+      first_name
+      last_name
     }
   }
+}
 `;
 
 const mockReviewData = {
   request: {
-    query: GET_REVIEWS,
+    query: GET_REVIEWS_OF_USER,
+    variables:{input:{
+      user_id:"idU1"
+    }}
   },
   result: {
     data: {
-      getReviews: [
-        {
-          id: "idR1",
-          rating: "4",
-          description: "Loved it, so good!",
-          movie: {
-            title: "MovieTitle1",
-            id: "idM1",
-          },
-          user: {
-            id:"idU3",
-            first_name: "viewer",
-            last_name: "viewer",
-          },
-        },
-        {
-          id: "idR2",
-          rating: "1",
-          description: "Bad!",
-          movie: {
-            title: "MovieTitle1",
-            id: "idM1",
-          },
-          user: {
-
-            id:"idU2",
-            first_name: "user2",
-            last_name: "user2",
-          },
-        },
+      getReviewsOfUser: [
         {
           id: "idR3",
           rating: "3",
@@ -81,6 +63,8 @@ const mockReviewData = {
   },
 };
 
+
+
 function renderReviews(currUser?: CurrUser) {
 
   return render(
@@ -95,7 +79,7 @@ function renderReviews(currUser?: CurrUser) {
 }
 
 const viewerUser: CurrUser = {
-  id: "idU3",
+  id: "idU1",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",

@@ -11,7 +11,7 @@ import ReviewCard from "../components/cards/ReviewCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import { gql, useQuery, useApolloClient } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 
 export const GET_REVIEWS_OF_USER = gql`
   query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
