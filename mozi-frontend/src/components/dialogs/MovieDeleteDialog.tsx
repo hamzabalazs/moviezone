@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { Movie } from "../../api/types";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   movie?: Movie;
@@ -40,21 +42,34 @@ export default function MovieDeleteDialog({ movie, onClose }: Props) {
   const navigate = useNavigate();
   const [DeleteMovieAPI, { data }] = useMutation(DELETE_MOVIE);
   const { enqueueSnackbar } = useSnackbar();
+  const { logOut } = useSessionContext()
 
   const handleDeletion = async () => {
     if (movie === undefined) return;
 
     const movie_id = movie.id;
-    const result = await DeleteMovieAPI({
-      variables: { input: { id: movie_id } },
-    });
-    if (result) {
-      const msg = t("successMessages.movieDelete");
-      enqueueSnackbar(msg, { variant: "success" });
-      navigate("/");
+    try{
+      await DeleteMovieAPI({
+        variables: { input: { id: movie_id } },
+      });
+        const msg = t("successMessages.movieDelete");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+        navigate("/");
+
+        
+    }catch(error:any){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
 
-    onClose?.();
   };
 
 

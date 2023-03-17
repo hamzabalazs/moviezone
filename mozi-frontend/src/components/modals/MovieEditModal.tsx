@@ -20,6 +20,8 @@ import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";
 import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
+import { useSessionContext } from "../../api/SessionContext";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   movie?: Movie;
@@ -57,6 +59,7 @@ export default function MovieEditModal({ movie, onClose}: Props) {
   const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const {enqueueSnackbar} = useSnackbar()
   const client = useApolloClient()
+  const { logOut } = useSessionContext();
 
   const updateMovie = async (
     editedMovie: Omit<Movie, "id" | "rating" | "poster">
@@ -64,38 +67,48 @@ export default function MovieEditModal({ movie, onClose}: Props) {
     const poster = movie?.poster;
     if (movie === undefined || poster === undefined) return;
     const id = movie.id
-    const result = await UpdateReviewAPI({
-      variables: {
-        input: {
-          id: movie.id,
-          title: editedMovie.title,
-          description: editedMovie.description,
-          poster: poster,
-          release_date: editedMovie.release_date,
-          category_id: editedMovie.category.id
+    try{
+      await UpdateReviewAPI({
+        variables: {
+          input: {
+            id: movie.id,
+            title: editedMovie.title,
+            description: editedMovie.description,
+            poster: poster,
+            release_date: editedMovie.release_date,
+            category_id: editedMovie.category.id
+          },
         },
-      },
-      update:(cache) => {
-        const { getMovieById } = client.readQuery({
-          query:GET_MOVIE_BY_ID,
-          variables:{input:{id}}
-        })
-        cache.writeQuery({
-          query:GET_MOVIE_BY_ID,
-          variables:{input:{id}},
-          data:{
-            getMovieById:getMovieById
-          }
-        })
-      }
-    });
-    if (result) {
+        update:(cache) => {
+          const { getMovieById } = client.readQuery({
+            query:GET_MOVIE_BY_ID,
+            variables:{input:{id}}
+          })
+          cache.writeQuery({
+            query:GET_MOVIE_BY_ID,
+            variables:{input:{id}},
+            data:{
+              getMovieById:getMovieById
+            }
+          })
+        }
+      });
       const msg = t("successMessages.movieEdit");
       enqueueSnackbar(msg,{variant:"success"})
-
+      onClose?.();
+    }catch(error:any){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
 
-    onClose?.();
+    
   };
 
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {

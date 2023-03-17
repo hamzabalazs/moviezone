@@ -25,6 +25,8 @@ import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
 import { useSnackbar } from 'notistack'
 import { GET_MOVIES } from "../../pages/App";
+import { useSessionContext } from "../../api/SessionContext";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -78,37 +80,49 @@ export default function AddMovieCard(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
   const { enqueueSnackbar} = useSnackbar()
   const client = useApolloClient()
+  const { logOut } = useSessionContext()
 
   const handleAddMovie = async (
     addedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
-    const result = await AddMovieAPI({
-      variables: {
-        input: {
-          title: addedMovie.title,
-          description: addedMovie.description,
-          poster: poster,
-          release_date: addedMovie.release_date,
-          category_id: addedMovie.category.id,
+    try{
+      const result = await AddMovieAPI({
+        variables: {
+          input: {
+            title: addedMovie.title,
+            description: addedMovie.description,
+            poster: poster,
+            release_date: addedMovie.release_date,
+            category_id: addedMovie.category.id,
+          },
         },
-      },
-      update:(cache,{data}) => {
-        const { getMovies } = client.readQuery({
-          query: GET_MOVIES
-        })
-        cache.writeQuery({
-          query:GET_MOVIES,
-          data:{
-            getMovies:[...getMovies, data.createMovie]
-          }
-        })
-      }
-    });
-    if (result) {
+        update:(cache,{data}) => {
+          const { getMovies } = client.readQuery({
+            query: GET_MOVIES
+          })
+          cache.writeQuery({
+            query:GET_MOVIES,
+            data:{
+              getMovies:[...getMovies, data.createMovie]
+            }
+          })
+        }
+      });
       const msg = t("successMessages.movieAdd");
       enqueueSnackbar(msg,{variant:"success"})
       setIsOpenAdd?.(false);
+    }catch(error:any){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
+      
   };
 
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
