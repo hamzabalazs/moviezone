@@ -17,7 +17,7 @@ import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import { useQuery, gql, useApolloClient } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 
 const GET_CATEGORIES = gql`
   query GetCategories {

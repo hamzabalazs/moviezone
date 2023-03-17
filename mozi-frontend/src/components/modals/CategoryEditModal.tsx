@@ -15,6 +15,8 @@ import * as Yup from "yup";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { GET_CATEGORIES } from "../../pages/Categories";
+import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   category?: Category;
@@ -32,9 +34,10 @@ const UPDATE_CATEGORY = gql`
 
 export default function CategoryEditModal({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const [UpdateCategoryAPI, { data }] = useMutation(UPDATE_CATEGORY);
+  const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY);
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient()
+  const { logOut } = useSessionContext()
 
   const updateCategory = async (editedCategory: Omit<Category, "id">) => {
     if (category === undefined) return;
@@ -61,9 +64,18 @@ export default function CategoryEditModal({ category, onClose }: Props) {
         onClose?.();
       }
     } catch (e: any) {
-      if(e.message === "Category already exists!"){
+      if(e.message === CATEGORY_EXISTS_MESSAGE){
         const msg = t('category.categoryExists');
         enqueueSnackbar(msg,{variant:"error"})
+      }
+      else if(e.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg,{variant:"error"})
+        logOut()
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
       }
     }
   };

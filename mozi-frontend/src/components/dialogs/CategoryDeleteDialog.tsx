@@ -11,6 +11,8 @@ import { Category } from "../../api/types";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { GET_CATEGORIES } from "../../pages/Categories";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   category?: Category;
@@ -28,36 +30,40 @@ const DELETE_CATEGORY = gql`
 
 export default function CategoryDeleteDialog({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const [DeleteCategoryAPI, { data }] = useMutation(DELETE_CATEGORY);
+  const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY);
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient();
+  const { logOut } = useSessionContext()
 
   const handleDeletion = async () => {
     if (category === undefined) return;
     const categoryId = category.id;
-
-    const result = await DeleteCategoryAPI({
+    try{
+      await DeleteCategoryAPI({
       variables: { input: { id: categoryId } },
-      update:(cache,{data}) => {
-        const { getCategories } = client.readQuery({
-          query:GET_CATEGORIES
-        })
-        cache.writeQuery({
-          query:GET_CATEGORIES,
-          data:{
-            getCategories:getCategories.filter((x:any) => x.id != data.deleteCategory.id)
-          }
-        })
-      }
-    });
-    if (result) {
+        update:(cache,{data}) => {
+          const { getCategories } = client.readQuery({
+            query:GET_CATEGORIES
+          })
+          cache.writeQuery({
+            query:GET_CATEGORIES,
+            data:{
+              getCategories:getCategories.filter((x:any) => x.id != data.deleteCategory.id)
+            }
+          })
+        }
+      });
       const msg = t("successMessages.categoryDelete");
       enqueueSnackbar(msg, { variant: "success" });
+      onClose?.();
+    }catch(error:any){
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
     }
-    onClose?.();
-  };
-
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  }
 
   return (
     <Dialog

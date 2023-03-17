@@ -1,5 +1,5 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { CurrUser, User } from "../types";
 import { useNavigate } from "react-router-dom";
 

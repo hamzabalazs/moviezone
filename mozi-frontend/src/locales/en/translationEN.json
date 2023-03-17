@@ -59,7 +59,8 @@
         "reviewRatingMissing": "No rating has been given!",
         "loginFailedEmail":"Invalid Email! Could not log in!",
         "loginFailedPassword":"Invalid Password! Could not log in!",
-        "addSameCategory":"Category already exists!"
+        "addSameCategory":"Category already exists!",
+        "expiredToken":"Session expired! Please log in again!"
     },
     "successMessages": {
         "reviewAdd": "Review was added successfully!",

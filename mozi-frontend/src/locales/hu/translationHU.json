@@ -60,7 +60,8 @@
         "reviewRatingMissing": "Nincs megadva a vélemény értékelése!",
         "loginFailedEmail":"Helytelen Email! Belépés sikertelen!",
         "loginFailedPassword":"Helytelen Jelszó! Belépés sikertelen!",
-        "addSameCategory":"A kategória már létezik!"
+        "addSameCategory":"A kategória már létezik!",
+        "expiredToken":"A munkamenet lejárt! Kérjük jelentkezzen be újra!"
     },
     "successMessages": {
         "reviewAdd": "A vélemény hozzáadása sikeres!",

@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
+import { EXPIRED_TOKEN_MESSAGE } from "../common/errorMessages";
 import { MyContext } from "../server";
+import { getToken } from "./auth";
 import { Category } from "./types";
 
 export function getCategories(_: any, context:MyContext):Promise<Category[]> {
@@ -26,7 +28,7 @@ export function getCategoryById(id: string, context:MyContext):Promise<Category>
   });
 }
 
-export function createCategory(name:string, context:MyContext):Promise<Category> {
+export async function createCategory(name:string, context:MyContext):Promise<Category> {
   const newCategory:Category = {
     id: uuidv4(),
     name: name,

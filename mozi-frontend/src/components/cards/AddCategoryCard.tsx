@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { GET_CATEGORIES } from "../../pages/Categories";
+import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../../common/errorMessages"
+import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -33,14 +35,15 @@ interface Values {
 
 export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
-  const [AddCategoryAPI, { data }] = useMutation(ADD_CATEGORY);
+  const [AddCategoryAPI] = useMutation(ADD_CATEGORY);
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient()
+  const { logOut } = useSessionContext()
 
   const setIsOpenAdd = props.setIsOpenAdd;
   const handleAddCategory = async (name: string) => {
     try {
-      const result = await AddCategoryAPI({
+      await AddCategoryAPI({
         variables: { input: { name: name } },
         update:(cache,{data}) => {
           const { getCategories } = client.readQuery({
@@ -59,8 +62,19 @@ export default function AddCategoryCard(props: Props) {
       setIsOpenAdd?.(false);
       enqueueSnackbar(msg, { variant: "success" });
     } catch (error: any) {
-      const msg = t("failMessages.addSameCategory");
-      enqueueSnackbar(msg, { variant: "error" });
+      if(error.message === CATEGORY_EXISTS_MESSAGE){
+        const msg = t("failMessages.addSameCategory");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
+      else if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
+      else{
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
   };
 
