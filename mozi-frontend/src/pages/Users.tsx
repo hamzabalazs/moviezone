@@ -10,7 +10,9 @@ import UserCard from "../components/cards/UserCard";
 import { User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
-import { gql, useQuery, useApolloClient } from "@apollo/client";
+import { gql, useQuery} from "@apollo/client";
+import { useSessionContext } from "../api/SessionContext";
+import { useSnackbar } from "notistack";
 
 const GET_USERS = gql`
   query GetUsers {
@@ -25,14 +27,20 @@ const GET_USERS = gql`
 `;
 
 export function Users() {
-  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
+  const { data: usersData, loading:usersLoading,error } = useQuery(GET_USERS);
   const { t } = useTranslation();
-  const client = useApolloClient()
+  const context = useSessionContext()
+  const {enqueueSnackbar} = useSnackbar()
 
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
   
   if(usersLoading) return LoadingComponent(usersLoading)
+  if (error?.message === "Expired token!") {
+    const msg = t("failMessages.expiredToken")
+    enqueueSnackbar(msg,{variant:"error"})
+    context.logOut()
+  }
 
   return (
     <>

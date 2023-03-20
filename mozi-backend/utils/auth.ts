@@ -19,7 +19,7 @@ export async function logIn(
   if(isExpired) deleteToken(context.user!.token,context)
   const token = Buffer.from(uuidv4()).toString("base64");
   const sqlSelect = `SELECT u.id,u.first_name,u.last_name,u.email,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE u.email = ? AND u.password = ?`;
-  const sqlInsert = `INSERT INTO session (token,user_id,expiry) SELECT ?, id, datetime("now","+30 minute","localtime") FROM user WHERE email = ? AND password = ?`;
+  const sqlInsert = `INSERT INTO session (token,user_id,expiry) SELECT ?, id, datetime("now","+1 hour","localtime") FROM user WHERE email = ? AND password = ?`;
   if(!context.user!.token) context.db.run(sqlInsert,[token,email,md5(password)]);
   if(isExpired) context.db.run(sqlInsert,[token,email,md5(password)])
   return context.db.get<CurrentUser>(sqlSelect,[email,md5(password)])

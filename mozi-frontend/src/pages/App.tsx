@@ -18,6 +18,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { useQuery, gql } from "@apollo/client";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
 
 const GET_CATEGORIES = gql`
   query GetCategories {
@@ -45,7 +47,9 @@ export const GET_MOVIES = gql`
 
 export function Home() {
   const context = useSessionContext();
-  const { data: categoryData, loading: categoryLoading } =
+  const {enqueueSnackbar} = useSnackbar()
+  const {t} = useTranslation()
+  const { data: categoryData, loading: categoryLoading ,error} =
     useQuery(GET_CATEGORIES);
   const { data: movieData, loading: movieLoading } = useQuery(GET_MOVIES);
   const currUser = context.user;
@@ -61,6 +65,12 @@ export function Home() {
 
   if (movieLoading) return LoadingComponent(movieLoading);
   if (categoryLoading) return LoadingComponent(categoryLoading);
+  if (error?.message === "Expired token!") {
+    const msg = t("failMessages.expiredToken")
+    enqueueSnackbar(msg,{variant:"error"})
+    context.logOut()
+  }
+
 
   return (
     <>
