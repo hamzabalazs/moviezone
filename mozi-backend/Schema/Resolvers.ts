@@ -27,7 +27,7 @@ import {
   createReview,
   getReviewsOfUser,
 } from "../utils/review";
-import { getToken, getUserForLogin, logIn } from "../utils/auth";
+import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
   getCategories,
   getCategoryById,
@@ -115,7 +115,8 @@ export const resolvers = {
     async getToken(_: any, __: any, context: MyContext) {
       const user = await getUserByToken(context);
       context.user = user;
-      return await getToken(context);
+      const token = await getToken(context);
+      return token
     },
   },
   Review: {
@@ -323,5 +324,8 @@ export const resolvers = {
       context.user = user;
       return await logIn(input, context);
     },
+    async deleteToken(_:any, {input}:any, context:MyContext){
+      return await deleteToken(input.token,context)
+    }
   },
 };

@@ -7,26 +7,12 @@ import { DbReview, Review } from "./types";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
-  return new Promise((resolve, reject) => {
-    context.db.all(sql, [], (err: any, rows: Review[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.all<Review>(sql);
 }
 
 export function getReviewById(id: string, context: MyContext): Promise<Review> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(sql, [id], (err: any, rows: Review) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.get<Review>(sql, [id]);
 }
 
 export function getReviewForUpdate(
@@ -34,14 +20,7 @@ export function getReviewForUpdate(
   context: MyContext
 ): Promise<DbReview> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(sql, [id], (err: any, rows: DbReview) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.get<DbReview>(sql, [id]);
 }
 
 export function getReviewsOfUserForMovie(
@@ -50,14 +29,7 @@ export function getReviewsOfUserForMovie(
   context: MyContext
 ): Promise<Review[]> {
   const sql = `SELECT * FROM review WHERE review.user_id = ? AND review.movie_id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.all(sql, [user_id, movie_id], (err: any, rows: Review[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.all<Review>(sql, [user_id, movie_id]);
 }
 
 export function getReviewsOfMovie(
@@ -65,14 +37,7 @@ export function getReviewsOfMovie(
   context: MyContext
 ): Promise<Review[]> {
   const sql = `SELECT * FROM review WHERE review.movie_id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.all(sql, [movie_id], (err: any, rows: Review[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.all<Review>(sql, [movie_id]);
 }
 
 export function getReviewsOfUser(
@@ -80,37 +45,23 @@ export function getReviewsOfUser(
   context: MyContext
 ): Promise<Review[]> {
   const sql = `SELECT * FROM review WHERE review.user_id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.all(sql, [user_id], (err: any, rows: Review[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.all<Review>(sql, [user_id]);
 }
 
-export function createReview(review: any, context: MyContext): Promise<Review> {
+export async function createReview(
+  review: any,
+  context: MyContext
+): Promise<Review> {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
     VALUES (?,?,?,?,?)`;
-  return new Promise((resolve, reject) => {
-    context.db.run(
-      sql,
-      [
-        review.id,
-        review.rating,
-        review.description,
-        review.movie_id,
-        review.user_id,
-      ],
-      (err: any) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(review);
-      }
-    );
-  });
+  context.db.run(sql, [
+    review.id,
+    review.rating,
+    review.description,
+    review.movie_id,
+    review.user_id,
+  ]);
+  return getReviewById(review.id,context)
 }
 
 export async function updateReview(
@@ -124,24 +75,9 @@ export async function updateReview(
       context.user.id === updatedReview.user_id ||
       context.user.role.toString() !== "viewer"
     ) {
-      const returnReview: Review = {
-        ...review,
-        movie_id: updatedReview.movie_id,
-        user_id: updatedReview.user_id,
-      };
       const sql = `UPDATE review SET rating=?, description=? WHERE review.id = ?`;
-      return new Promise((resolve, reject) => {
-        context.db.run(
-          sql,
-          [review.rating, review.description, review.id],
-          (err: any) => {
-            if (err) {
-              reject(err);
-            }
-            resolve(returnReview);
-          }
-        );
-      });
+      context.db.run(sql,[review.rating, review.description, review.id])
+      return getReviewById(review.id,context)
     }
   }
   throw new Error(UNAUTHORIZED_MESSAGE);
@@ -157,16 +93,10 @@ export async function deleteReview(
     context.user!.id === reviewToDelete.user_id ||
     context.user!.role.toString() !== "viewer"
   ) {
-    const review = await getReviewById(id, context);
+    const review = getReviewById(id, context);
     const sql = `DELETE FROM review WHERE review.id = ?`;
-    return new Promise((resolve, reject) => {
-      context.db.run(sql, [review.id], (err: any) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(review);
-      });
-    });
+    context.db.run(sql,[id])
+    return review
   }
 
   throw new Error(UNAUTHORIZED_MESSAGE);

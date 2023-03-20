@@ -231,12 +231,17 @@ export const typeDefs = gql`
     category_id: ID!
   }
 
-  input UpdateCategoryOfMovieInput {
-    name: String!
-  }
-
   type Expiry {
     expired: Int!
+  }
+
+  input DeleteTokenInput {
+    token: String!
+  }
+
+  type RunResult {
+    lastID: Int!
+    changes: Int!
   }
 
   # Queries
@@ -258,27 +263,26 @@ export const typeDefs = gql`
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
     getToken: Expiry!
-    
   }
 
   # Mutations
   type Mutation {
-    createToken(input: AddTokenInput!): CurrentUser!
+    createToken(input: AddTokenInput!): RunResult!
     createUser(input: AddUserInput!): User!
     updateUser(input: UpdateUserInput!): User!
     deleteUser(input: DeleteUserInput!): User!
-    logIn(input: LoginInput!): CurrentUser
+    logIn(input: LoginInput!): CurrentUser!
     createCategory(input: AddCategoryInput!): Category!
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
     createMovie(input: AddMovieInput!): Movie!
     updateMovie(input: UpdateMovieInput!): Movie!
-    updateCategoryOfMovie(input: UpdateCategoryOfMovieInput!): [Movie!]!
     deleteMovie(input: DeleteMovieInput!): Movie!
     createReview(input: AddReviewInput!): Review!
     updateReview(input: UpdateReviewInput!): Review!
     deleteReview(input: DeleteReviewInput!): Review!
-    deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): [Review!]!
-    deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): [Review!]!
+    deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): RunResult!
+    deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): RunResult!
+    deleteToken(input: DeleteTokenInput!): RunResult!
   }
 `;

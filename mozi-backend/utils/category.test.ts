@@ -171,7 +171,6 @@ test("Should not change category if user is viewer",async() => {
 })
 
 test("Should not change category if user session has expired",async() => {
-    console.log(sessionData[4].token)
     req.headers['auth-token'] = "expiredToken"
     const result = await server.executeOperation({
         query: UPDATE_CATEGORY,

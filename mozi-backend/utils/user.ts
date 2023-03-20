@@ -1,95 +1,46 @@
 import md5 from "md5";
+import { RunResult } from "sqlite3";
 import {
   UNAUTHORIZED_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
 } from "../common/errorMessages";
 import { MyContext } from "../server";
-import { User, FullUser, DbUser, CurrentUser } from "./types";
+import { User, FullUser, CurrentUser } from "./types";
 
 export function getUsers(__: any, context: MyContext): Promise<User[]> {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
-  return new Promise((resolve, reject) => {
-    context.db.all(sql, [], (err: any, rows: User[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.all<User>(sql, []);
 }
 
 export function getUserById(id: string, context: MyContext): Promise<User> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(sql, [id], (err: any, rows: User) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.get<User>(sql, [id]);
 }
 
-export function getUserByToken(context: MyContext): Promise<CurrentUser> {
+export async function getUserByToken(context: MyContext): Promise<CurrentUser> {
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.password,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(
-      sql,
-      [context.req.headers["auth-token"]],
-      (err: any, row: CurrentUser) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(row);
-      }
-    );
-  });
+  return context.db.get<CurrentUser>(sql, [context.req.headers["auth-token"]]);
 }
 
 export function checkForUser(email: string, context: MyContext): Promise<User> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.email = ?`;
-  return new Promise((resolve, reject) => {
-    context.db.get(sql, [email], (err: any, rows: User) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  return context.db.get<User>(sql, [email]);
 }
 
 export async function createUser(
   user: FullUser,
   context: MyContext
-): Promise<DbUser> {
+): Promise<User> {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
-  const role = user.role.toString();
-  const returnUser: DbUser = {
-    id: user.id,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    role: role,
-    email: user.email,
-  };
-  return new Promise((resolve, reject) => {
-    context.db.run(
-      sql,
-      [
-        user.id,
-        user.first_name,
-        user.last_name,
-        user.email,
-        user.password,
-        user.role,
-      ],
-      (err: any) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(returnUser);
-      }
-    );
-  });
+  context.db.run(sql, [
+    user.id,
+    user.first_name,
+    user.last_name,
+    user.email,
+    user.password,
+    user.role,
+  ]);
+  return getUserById(user.id,context);
 }
 
 export async function updateUser(
@@ -118,54 +69,24 @@ export async function updateUser(
             password = ?, 
             role=? WHERE user.id = ?`;
 
-    if (!user.role) {
-      const returnUser: User = {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        role: currentUser.role,
-      };
-      return new Promise((resolve, reject) => {
-        context.db.run(
-          sql,
-          [user.first_name, user.last_name, user.email, newPass, user.id],
-          (err: any) => {
-            if (err) {
-              reject(err);
-            }
-            resolve(returnUser);
-          }
-        );
-      });
-    } else {
-      const returnUser = {
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        role: user.role,
-      };
-      return new Promise((resolve, reject) => {
-        context.db.run(
-          sql,
-          [
-            user.first_name,
-            user.last_name,
-            user.email,
-            newPass,
-            user.role,
-            user.id,
-          ],
-          (err: any) => {
-            if (err) {
-              reject(err);
-            }
-            resolve(returnUser);
-          }
-        );
-      });
-    }
+    if (!user.role)
+      context.db.run(sql, [
+        user.first_name,
+        user.last_name,
+        user.email,
+        newPass,
+        user.id,
+      ]);
+    else
+      context.db.run(sql, [
+        user.first_name,
+        user.last_name,
+        user.email,
+        newPass,
+        user.role,
+        user.id,
+      ]);
+    return getUserById(user.id,context)
   }
   throw new Error(UNAUTHORIZED_MESSAGE);
 }
@@ -174,21 +95,15 @@ export async function deleteUser(
   id: string,
   context: MyContext
 ): Promise<User> {
-  const user = await getUserById(id, context);
   if (context.user!.id === id || context.user!.role.toString() === "admin") {
     const sqlDelete = `DELETE FROM user WHERE user.id = ?`;
     const sqlReviewDelete = `DELETE FROM review WHERE review.user_id = ?`;
-    const sqlTokenDelete = `DELETE from session WHERE user_id = ?`
-    return new Promise((resolve, reject) => {
-      context.db.run(sqlReviewDelete, [id]);
-      context.db.run(sqlTokenDelete,[id]);
-      context.db.run(sqlDelete, [id], (err: any) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(user);
-      });
-    });
+    const sqlTokenDelete = `DELETE from session WHERE user_id = ?`;
+    const user = getUserById(id,context)
+    context.db.run(sqlReviewDelete,[id])
+    context.db.run(sqlTokenDelete, [id]);
+    context.db.run(sqlDelete,[id])
+    return user;
   }
 
   throw new Error(UNAUTHORIZED_MESSAGE);

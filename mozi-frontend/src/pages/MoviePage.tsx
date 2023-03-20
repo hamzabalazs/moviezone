@@ -243,12 +243,12 @@ export default function MoviePage() {
           setRatingDescription("");
           setValue(0);
         } catch (error: any) {
-          console.log(error.message)
           if (error.message === EXPIRED_TOKEN_MESSAGE) {
             const msg = t("failMessages.expiredToken");
             enqueueSnackbar(msg, { variant: "error" });
             context.logOut();
           } else {
+            
             const msg = t("someError");
             enqueueSnackbar(msg, { variant: "error" });
           }

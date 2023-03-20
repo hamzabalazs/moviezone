@@ -78,18 +78,18 @@ export default function ReviewEditModal({ review, onClose }: Props) {
             rating: editedReview.rating,
           },
         },
-        update: (cache) => {
+        update: (cache,{data}) => {
           if (window.location.pathname === "/reviews") {
-            const data = client.readQuery({
+            const reviewData = client.readQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
             });
-            if(!data) return;
+            if(!reviewData) return;
             cache.writeQuery({
               query: GET_REVIEWS_OF_USER,
               variables: { input: { user_id } },
               data: {
-                getReviewsOfUser: [...data.getReviewsOfUser],
+                getReviewsOfUser: [...reviewData.getReviewsOfUser],
               },
             });
           } else {
@@ -124,7 +124,7 @@ export default function ReviewEditModal({ review, onClose }: Props) {
               query: GET_MOVIE_BY_ID,
               variables: { input: { id: movie_id } },
               data: {
-                getMovieById: movieData.updateReview.movie,
+                getMovieById: data.updateReview.movie,
               },
             });
           }
@@ -134,7 +134,6 @@ export default function ReviewEditModal({ review, onClose }: Props) {
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
-      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

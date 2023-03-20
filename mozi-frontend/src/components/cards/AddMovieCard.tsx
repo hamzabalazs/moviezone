@@ -113,7 +113,6 @@ export default function AddMovieCard(props: Props) {
       enqueueSnackbar(msg,{variant:"success"})
       setIsOpenAdd?.(false);
     }catch(error:any){
-      console.log(error.message)
       if(error.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

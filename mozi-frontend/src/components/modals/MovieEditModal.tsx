@@ -41,21 +41,21 @@ const UPDATE_MOVIE = gql`
     updateMovie(input: $input) {
       id
       title
-      description
       poster
+      description
       release_date
+      rating
       category {
         id
         name
       }
-      rating
     }
   }
 `;
 
 export default function MovieEditModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
-  const [UpdateReviewAPI] = useMutation(UPDATE_MOVIE);
+  const [UpdateMovieAPI] = useMutation(UPDATE_MOVIE);
   const { data: categoriesData, loading: categoriesLoading } =
     useQuery(GET_CATEGORIES);
   const { enqueueSnackbar } = useSnackbar();
@@ -69,7 +69,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
     if (movie === undefined || poster === undefined) return;
     const id = movie.id;
     try {
-      await UpdateReviewAPI({
+      await UpdateMovieAPI({
         variables: {
           input: {
             id: movie.id,
@@ -80,7 +80,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
             category_id: editedMovie.category.id,
           },
         },
-        update: (cache) => {
+        update: (cache,{data}) => {
           const movieData = client.readQuery({
             query: GET_MOVIE_BY_ID,
             variables: { input: { id } },
@@ -90,7 +90,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
             query: GET_MOVIE_BY_ID,
             variables: { input: { id } },
             data: {
-              getMovieById: movieData.getMovieById,
+              getMovieById: data.updateMovie,
             },
           });
         },
@@ -99,7 +99,6 @@ export default function MovieEditModal({ movie, onClose }: Props) {
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
-      console.log("error", error.message);
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
