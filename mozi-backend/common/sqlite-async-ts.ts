@@ -269,9 +269,9 @@ export class Statement {
     });
   }
 
-  get(...args:any[]) {
+  get<T>(...args:any[]):Promise<T> {
     return new Promise((resolve:(value:any) => void, reject) => {
-      let callback = (err:any, row:any) => {
+      let callback = (err:any, row:T) => {
         if (err) {
           reject(err);
         } else {
@@ -283,9 +283,9 @@ export class Statement {
     });
   }
 
-  all(...args:any[]) {
+  all<T>(...args:any[]):Promise<T[]> {
     return new Promise((resolve:(value:any) => void, reject) => {
-      let callback = (err:any, rows:any) => {
+      let callback = (err:any, rows:T[]) => {
         if (err) {
           reject(err);
         } else {

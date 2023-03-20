@@ -99,7 +99,6 @@ export default function MovieEditModal({ movie, onClose }: Props) {
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
-      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

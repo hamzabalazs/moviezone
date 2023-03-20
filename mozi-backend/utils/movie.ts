@@ -20,8 +20,8 @@ export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movi
 export async function createMovie(movie:Movie, context:MyContext):Promise<Movie> {
   if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
-  await context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
-  return await getMovieById(movie.id,context)
+  context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
+  return getMovieById(movie.id,context)
 }
 
 export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<Movie> {

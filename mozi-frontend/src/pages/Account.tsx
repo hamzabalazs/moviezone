@@ -12,7 +12,6 @@ import UserEditModal from "../components/modals/UserEditModal";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery } from "@apollo/client";
-import { useSnackbar } from "notistack";
 
 export const GET_USERS = gql`
   query GetUsers {
@@ -29,8 +28,7 @@ export const GET_USERS = gql`
 function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
-  const {enqueueSnackbar} = useSnackbar()
-  const { data: usersData, loading:usersLoading, error } = useQuery(GET_USERS);
+  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
 
@@ -57,11 +55,7 @@ function Account() {
   }, [usersData]);
 
   if (usersLoading) return LoadingComponent(usersLoading);
-  if (error?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken")
-    enqueueSnackbar(msg,{variant:"error"})
-    context.logOut()
-  }
+  
 
   return (
     <>

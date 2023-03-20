@@ -8,25 +8,12 @@ import { NO_USER_MESSAGE } from "../common/errorMessages";
 import { Database } from "../common/sqlite-async-ts";
 
 let db:Database
-// Database.open(":memory").then((_db:Database) => {
-//   db = _db
-// })
-
 let req = {
   headers: {
     "auth-token": "",
   },
 };
 let server:ApolloServer
-// const server = new ApolloServer({
-//   typeDefs,
-//   resolvers,
-//   context: async () => {
-//     return { db, req };
-//   },
-// });
-
-
 
 test("Should not login, if user does not exist", async () => {
   await Database.open(":memory:").then((_db:Database) => {

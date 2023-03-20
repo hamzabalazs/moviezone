@@ -269,11 +269,6 @@ export default function MoviePage() {
   if (movieLoading) return LoadingComponent(movieLoading);
   if (movieReviewsLoading) return LoadingComponent(movieReviewsLoading);
   if (userReviewsLoading) return LoadingComponent(userReviewsLoading);
-  if (movieError?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken")
-    enqueueSnackbar(msg,{variant:"error"})
-    context.logOut()
-  }
 
   return (
     <>

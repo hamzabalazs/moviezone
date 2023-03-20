@@ -12,9 +12,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CategoryCard from "../components/cards/CategoryCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
-import { useQuery, gql, useApolloClient } from '@apollo/client'
+import { useQuery, gql} from '@apollo/client'
 import { useSessionContext } from "../api/SessionContext";
-import { useSnackbar } from "notistack";
 
 export const GET_CATEGORIES = gql`
   query GetCategories {
@@ -27,8 +26,7 @@ export const GET_CATEGORIES = gql`
 
 function Categories() {
   const { t } = useTranslation();
-  const {enqueueSnackbar} = useSnackbar()
-  const {data:categoryData,loading:categoriesLoading,error} = useQuery(GET_CATEGORIES)
+  const {data:categoryData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const context = useSessionContext()
   
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
@@ -45,11 +43,6 @@ function Categories() {
   };
 
   if(categoriesLoading) return LoadingComponent(categoriesLoading)
-  if (error?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken")
-    enqueueSnackbar(msg,{variant:"error"})
-    context.logOut()
-  }
 
   return (
     <>

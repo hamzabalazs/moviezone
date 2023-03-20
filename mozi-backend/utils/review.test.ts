@@ -38,12 +38,12 @@ import { Database } from "../common/sqlite-async-ts";
 let db:Database
 let req = {
     headers:{
-        'auth-token':""
+        'auth-token':"admintoken1423"
     }
 }
 let server:ApolloServer
 
-test("Should get all reviews", async () => {
+test("Should open database",async() => {
   await Database.open(":memory:").then((_db:Database) => {
     db = _db
   })
@@ -55,13 +55,20 @@ test("Should get all reviews", async () => {
     }
   })
   await fillDatabase(db)
+  expect(db).not.toBeUndefined()
+})
+
+test("Should get all reviews", async () => {
+  req.headers['auth-token'] = "admintoken1423"
   const result = await server.executeOperation({
     query: GET_REVIEWS,
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.getReviews).toHaveLength(7);
 });
+
 test("Should get all reviews of User", async () => {
+  req.headers['auth-token'] = "admintoken1423"
   const result = await server.executeOperation({
     query: GET_REVIEWS_OF_USER,
     variables: { input: { user_id: userData[1].id } },
@@ -69,7 +76,9 @@ test("Should get all reviews of User", async () => {
   expect(result.errors).toBeUndefined();
   expect(result.data?.getReviewsOfUser).toHaveLength(3);
 });
+
 test("Should get all reviews of Movie", async () => {
+  req.headers['auth-token'] = "admintoken1423"
   const result = await server.executeOperation({
     query: GET_REVIEWS_OF_MOVIE,
     variables: { input: { movie_id: movieData[1].id } },
@@ -77,6 +86,7 @@ test("Should get all reviews of Movie", async () => {
   expect(result.errors).toBeUndefined();
   expect(result.data?.getReviewsOfMovie).toHaveLength(2);
 });
+
 test("Should not get review if ID is invalid", async () => {
   const result = await server.executeOperation({
     query: GET_REVIEW_BY_ID,
@@ -89,6 +99,7 @@ test("Should not get review if ID is invalid", async () => {
   expect(result.errors).not.toBeUndefined();
   expect(result.data).toBeNull();
 });
+
 test("Should get review if ID is valid", async () => {
   const result = await server.executeOperation({
     query: GET_REVIEW_BY_ID,
@@ -101,6 +112,7 @@ test("Should get review if ID is valid", async () => {
   expect(result.errors).toBeUndefined();
   expect(result.data?.getReviewById).toEqual(testReviewEdit);
 });
+
 test("Should not add review if movie already rated by user", async () => {
   req.headers['auth-token'] = sessionData[0].token
   const testResult = await server.executeOperation({
@@ -126,6 +138,7 @@ test("Should not add review if movie already rated by user", async () => {
   expect(result.errors?.[0]?.message).toEqual(REVIEW_EXISTS_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not add review if movie does not exist ( bad ID )", async () => {
   req.headers['auth-token'] = sessionData[3].token
   const result = await server.executeOperation({
@@ -142,6 +155,7 @@ test("Should not add review if movie does not exist ( bad ID )", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_MOVIE_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not add review if user session has expired", async () => {
   req.headers['auth-token'] = "expiredToken"
   const result = await server.executeOperation({
@@ -158,6 +172,7 @@ test("Should not add review if user session has expired", async () => {
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not add review if user does not exist ( bad ID )", async () => {
   req.headers['auth-token'] = sessionData[3].token
   const result = await server.executeOperation({
@@ -174,8 +189,9 @@ test("Should not add review if user does not exist ( bad ID )", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_USER_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should add review if user and movie exists, and movie has not been rated by user", async () => {
-  req.headers['auth-token'] = sessionData[3].token
+  req.headers['auth-token'] = "admintoken1423"
   const beforeResult = await server.executeOperation({
     query: GET_REVIEWS,
   });
@@ -199,6 +215,7 @@ test("Should add review if user and movie exists, and movie has not been rated b
   expect(afterResult.errors).toBeUndefined();
   expect(afterResult.data?.getReviews).toHaveLength(8);
 });
+
 test("Should not edit review if user does not own said review", async () => {
   req.headers["auth-token"] = "tokenviewer4321";
   const result = await server.executeOperation({
@@ -214,6 +231,7 @@ test("Should not edit review if user does not own said review", async () => {
   expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not edit review if no token is provided", async () => {
   req.headers["auth-token"] = "";
   const result = await server.executeOperation({
@@ -229,6 +247,7 @@ test("Should not edit review if no token is provided", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not edit review if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
   const result = await server.executeOperation({
@@ -244,6 +263,7 @@ test("Should not edit review if user session has expired", async () => {
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not edit review if review does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
@@ -259,6 +279,7 @@ test("Should not edit review if review does not exist ( bad ID )", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_REVIEW_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should edit review if user owns said review", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_REVIEW_BY_ID,
@@ -296,6 +317,7 @@ test("Should edit review if user owns said review", async () => {
   expect(afterResult.errors).toBeUndefined();
   expect(afterResult.data?.getReviewById).toEqual(editReview);
 });
+
 test("Should edit review if user does not own review,but is admin/editor", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_REVIEW_BY_ID,
@@ -333,6 +355,7 @@ test("Should edit review if user does not own review,but is admin/editor", async
   expect(afterResult.errors).toBeUndefined();
   expect(afterResult.data?.getReviewById).toEqual(editReview2);
 });
+
 test("Should not delete review if user does not own said review", async () => {
   req.headers["auth-token"] = "tokenviewer4321";
   const result = await server.executeOperation({
@@ -346,6 +369,7 @@ test("Should not delete review if user does not own said review", async () => {
   expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not delete review if no token is provided", async () => {
   req.headers["auth-token"] = "";
   const result = await server.executeOperation({
@@ -359,6 +383,7 @@ test("Should not delete review if no token is provided", async () => {
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not delete review if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
   const result = await server.executeOperation({
@@ -372,6 +397,7 @@ test("Should not delete review if user session has expired", async () => {
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should not delete review if review does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
@@ -385,6 +411,7 @@ test("Should not delete review if review does not exist ( bad ID )", async () =>
   expect(result.errors?.[0]?.message).toEqual(NO_REVIEW_MESSAGE);
   expect(result.data).toBeNull();
 });
+
 test("Should delete review if user does own said review", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_REVIEW_BY_ID,
@@ -419,6 +446,7 @@ test("Should delete review if user does own said review", async () => {
   expect(afterResult.errors).not.toBeUndefined();
   expect(afterResult.data).toBeNull();
 });
+
 test("Should delete review if user does not own review,but is admin/editor", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_REVIEW_BY_ID,

@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ReviewListReview } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
@@ -12,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery } from "@apollo/client";
-import { useSnackbar } from "notistack";
 
 export const GET_REVIEWS_OF_USER = gql`
   query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
@@ -44,20 +43,14 @@ export const GET_REVIEWS_OF_USER = gql`
 function Reviews() {
   const { t } = useTranslation();
   const context = useSessionContext();
-  const {enqueueSnackbar} = useSnackbar()
   const currUser = context.user;
   const user_id = currUser!.id
-  const { data: reviewsData, loading:reviewsLoading,error } = useQuery(GET_REVIEWS_OF_USER,{variables:{input:{user_id}}});
+  const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS_OF_USER,{variables:{input:{user_id}}});
 
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
 
   if(reviewsLoading) return LoadingComponent(reviewsLoading)
-  if (error?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken")
-    enqueueSnackbar(msg,{variant:"error"})
-    context.logOut()
-  }
   return (
     <>
       <NavigationBar />

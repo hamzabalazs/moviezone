@@ -57,10 +57,6 @@ export const resolvers = {
   Query: {
     // Users
     async getUsers(_: any, __: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getUsers(_, context);
     },
     async getUserById(_: any, { input }: any, context: MyContext) {
@@ -77,10 +73,6 @@ export const resolvers = {
     },
     // Categories
     async getCategories(_: any, __: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getCategories(_, context);
     },
     async getCategoryById(_: any, { input }: any, context: MyContext) {
@@ -91,20 +83,12 @@ export const resolvers = {
     },
     // Reviews
     async getReviews(_: any, __: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getReviews(_, context);
     },
     async getReviewById(_: any, { input }: any, context: MyContext) {
       return await getReviewById(input.id, context);
     },
     async getReviewsOfMovie(_: any, { input }: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getReviewsOfMovie(input.movie_id, context);
     },
     async getReviewsOfUserForMovie(_: any, { input }: any, context: MyContext) {
@@ -115,25 +99,13 @@ export const resolvers = {
       );
     },
     async getReviewsOfUser(_: any, { input }: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getReviewsOfUser(input.user_id, context);
     },
     // Movies
     async getMovies(_: any, __: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getMovies(_, context);
     },
     async getMovieById(_: any, { input }: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
       return await getMovieById(input.id, context);
     },
     async getMoviesByCategoryId(_: any, { input }: any, context: MyContext) {

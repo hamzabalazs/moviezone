@@ -29,28 +29,34 @@ import { Database } from "../common/sqlite-async-ts";
 let db: Database;
 let req = {
   headers: {
-    "auth-token": "",
+    "auth-token": "admintoken1423",
   },
 };
 let server: ApolloServer;
 
-test("Should get all categories", async () => {
-  await Database.open(":memory:").then((_db: Database) => {
-    db = _db;
-  });
+test("Should open database",async() => {
+  await Database.open(":memory:").then((_db:Database) => {
+    db = _db
+  })
   server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: async () => {
-      return { db, req };
-    },
-  });
-  await fillDatabase(db);
+    context:async() => {
+      return {db,req}
+    }
+  })
+  await fillDatabase(db)
+  expect(db).not.toBeUndefined()
+})
+
+test("Should get all categories", async () => {
+  req.headers['auth-token'] = "admintoken1423"
   const result = await server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(result.data?.getCategories).toHaveLength(3);
 });
+
 
 test("Should get category if ID is correct", async () => {
   const result = await server.executeOperation({
@@ -133,6 +139,7 @@ test("Should not add new category if user session has expired", async () => {
 });
 
 test("Should add new category if good token was given", async () => {
+  req.headers['auth-token'] = "admintoken1423"
   const beforeResult = await server.executeOperation({
     query: GET_CATEGORIES,
   });
@@ -321,8 +328,8 @@ test("Should delete category if good token was given", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_CATEGORIES,
   });
+  req.headers['auth-token'] = "admintoken1423"
   expect(beforeResult.data?.getCategories).toHaveLength(4);
-  req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {

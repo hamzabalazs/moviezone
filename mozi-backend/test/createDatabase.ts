@@ -15,7 +15,6 @@ export async function createServer() {
   let db: Database;
   Database.open(":memory").then((_db: Database) => {
     db = _db;
-    console.log("kesz")
     return {server,db}
   });
 
