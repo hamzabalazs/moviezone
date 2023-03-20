@@ -247,18 +247,18 @@ export const typeDefs = gql`
   # Queries
   type Query {
     getUsers: [User!]!
-    getUserById(input: UserInput!): User!
+    getUserById(input: UserInput!): User
     getUserByToken: CurrentUser!
-    checkForUser(input: UserEmailInput!): User!
+    checkForUser(input: UserEmailInput!): User
     getUserForLogin(input: LoginInput!): CurrentUser!
     getMovies: [Movie!]!
     getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
-    getMovieById(input: MovieInput!): Movie!
+    getMovieById(input: MovieInput!): Movie
     getCategories: [Category!]!
-    getCategoryById(input: CategoryInput!): Category!
+    getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
     getReviews: [Review!]!
-    getReviewById(input: ReviewInput!): Review!
+    getReviewById(input: ReviewInput!): Review
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!

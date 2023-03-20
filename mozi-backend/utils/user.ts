@@ -12,17 +12,17 @@ export function getUsers(__: any, context: MyContext): Promise<User[]> {
   return context.db.all<User>(sql, []);
 }
 
-export function getUserById(id: string, context: MyContext): Promise<User> {
+export function getUserById(id: string, context: MyContext): Promise<User|null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
   return context.db.get<User>(sql, [id]);
 }
 
-export async function getUserByToken(context: MyContext): Promise<CurrentUser> {
+export async function getUserByToken(context: MyContext): Promise<CurrentUser|null> {
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.password,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`;
   return context.db.get<CurrentUser>(sql, [context.req.headers["auth-token"]]);
 }
 
-export function checkForUser(email: string, context: MyContext): Promise<User> {
+export function checkForUser(email: string, context: MyContext): Promise<User|null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.email = ?`;
   return context.db.get<User>(sql, [email]);
 }
@@ -30,7 +30,7 @@ export function checkForUser(email: string, context: MyContext): Promise<User> {
 export async function createUser(
   user: FullUser,
   context: MyContext
-): Promise<User> {
+): Promise<User|null> {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
   context.db.run(sql, [
     user.id,
@@ -46,14 +46,14 @@ export async function createUser(
 export async function updateUser(
   user: FullUser,
   context: MyContext
-): Promise<User> {
+): Promise<User|null> {
   if (
     context.user!.id === user.id ||
     context.user!.role.toString() === "admin"
   ) {
     const currentUser = await getUserById(user.id, context);
     const userExists = await checkForUser(user.email, context);
-    if (userExists)
+    if (userExists !== null && currentUser !== null)
       if (userExists.email !== currentUser.email)
         throw new Error(USER_EMAIL_USED_MESSAGE);
     let newPass = md5(user.password);
@@ -94,7 +94,7 @@ export async function updateUser(
 export async function deleteUser(
   id: string,
   context: MyContext
-): Promise<User> {
+): Promise<User|null> {
   if (context.user!.id === id || context.user!.role.toString() === "admin") {
     const sqlDelete = `DELETE FROM user WHERE user.id = ?`;
     const sqlReviewDelete = `DELETE FROM review WHERE review.user_id = ?`;

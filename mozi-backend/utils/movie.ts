@@ -7,7 +7,7 @@ export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   return context.db.all<Movie>(sql)
 }
 
-export function getMovieById(id:string, context:MyContext):Promise<Movie> {
+export function getMovieById(id:string, context:MyContext):Promise<Movie|null> {
   const sql = `SELECT * FROM movie WHERE id = ?`;
   return context.db.get<Movie>(sql,[id])
 }
@@ -17,14 +17,14 @@ export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movi
   return context.db.all<Movie>(sql,[id])
 }
 
-export async function createMovie(movie:Movie, context:MyContext):Promise<Movie> {
+export async function createMovie(movie:Movie, context:MyContext):Promise<Movie|null> {
   if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
   context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
   return getMovieById(movie.id,context)
 }
 
-export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<Movie> {
+export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<Movie|null> {
   const isMovie = await getMovieById(movie.id,context)
       if(!isMovie) throw new Error(NO_MOVIE_MESSAGE)
   if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
@@ -37,7 +37,7 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
     return getMovieById(movie.id,context)
 }
 
-export async function deleteMovie(id:string, context:MyContext):Promise<Movie> {
+export async function deleteMovie(id:string, context:MyContext):Promise<Movie|null> {
   if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
   const movie = await getMovieById(id, context);
   if(movie === undefined){

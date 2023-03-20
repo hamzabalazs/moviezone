@@ -52,6 +52,7 @@ import {
   USER_CREATION_FAILED_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
 } from "../common/errorMessages";
+import { createReviewErrorHandling, tokenChecker } from "../common/validation";
 
 export const resolvers = {
   Query: {
@@ -114,6 +115,7 @@ export const resolvers = {
     // Authentication
     async getToken(_: any, __: any, context: MyContext) {
       const user = await getUserByToken(context);
+      if(!user) throw new Error(NO_TOKEN_MESSAGE)
       context.user = user;
       return await getToken(context);
     },
@@ -166,22 +168,14 @@ export const resolvers = {
     async updateUser(_: any, args: any, context: MyContext) {
       const updatedUser = args.input;
       const isUser = await getUserById(updatedUser.id, context);
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
       return await updateUser(updatedUser, context);
     },
     async deleteUser(_: any, args: any, context: MyContext) {
       const user_id = args.input.id;
       const isUser = await getUserById(user_id, context);
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
       return await deleteUser(user_id, context);
     },
@@ -202,13 +196,10 @@ export const resolvers = {
       return await createCategory(newCategory, context);
     },
     async updateCategory(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      if (user.role.toString() === "viewer")
-        throw new Error(UNAUTHORIZED_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
+      // if (user.role.toString() === "viewer")
+      //   throw new Error(UNAUTHORIZED_MESSAGE);
+      
       const updatedCategory = args.input;
       const categoryExists = await checkForCategory(
         updatedCategory.name,
@@ -220,13 +211,9 @@ export const resolvers = {
       return await updateCategory(updatedCategory, context);
     },
     async deleteCategory(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      if (user.role.toString() === "viewer")
-        throw new Error(UNAUTHORIZED_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
+      // if (user.role.toString() === "viewer")
+      //   throw new Error(UNAUTHORIZED_MESSAGE);
       const categoryId = args.input.id;
       const category = await getCategoryById(categoryId, context);
       if (category === undefined) throw new Error(NO_CATEGORY_MESSAGE);
@@ -234,14 +221,10 @@ export const resolvers = {
     },
     // Movies
     async createMovie(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       const newMovie = args.input;
       const isCategory = await getCategoryById(newMovie.category_id, context);
-      if (isCategory === undefined) {
+      if (isCategory === null) {
         throw new Error(BAD_CATEGORYID_MESSAGE);
       }
       const movie: Movie = {
@@ -256,41 +239,20 @@ export const resolvers = {
       return await createMovie(movie, context);
     },
     async updateMovie(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       const updatedMovie = args.input;
       return await updateMovie(updatedMovie, context);
     },
     async deleteMovie(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       const movie_id: string = args.input.id;
       return await deleteMovie(movie_id, context);
     },
     // Reviews
     async createReview(_: any, args: any, context: MyContext) {
       const newReview = args.input;
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
-      const isUser = await getUserById(newReview.user_id, context);
-      if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
-      const isMovie = await getMovieById(newReview.movie_id, context);
-      if (isMovie === undefined) throw new Error(NO_MOVIE_MESSAGE);
-      const hasReview = await getReviewsOfUserForMovie(
-        newReview.user_id,
-        newReview.movie_id,
-        context
-      );
-      if (hasReview.length !== 0) throw new Error(REVIEW_EXISTS_MESSAGE);
+      context.user = await tokenChecker(context)
+      await createReviewErrorHandling(newReview,context)
       const review: Review = {
         id: uuidv4(),
         ...newReview,
@@ -299,22 +261,14 @@ export const resolvers = {
     },
     async updateReview(_: any, args: any, context: MyContext) {
       const updatedReview = args.input;
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       if (updatedReview.rating === "0")
         throw new Error(REVIEW_INVALID_RATING_MESSAGE);
       return await updateReview(updatedReview, context);
     },
     async deleteReview(_: any, args: any, context: MyContext) {
       const reviewId = args.input.id;
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       return await deleteReview(reviewId, context);
     },
     // Authentication

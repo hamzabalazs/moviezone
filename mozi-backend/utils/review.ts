@@ -7,18 +7,20 @@ import { DbReview, Review } from "./types";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
-  return context.db.all<Review>(sql);
+  return context.db.all(sql);
 }
 
-export function getReviewById(id: string, context: MyContext): Promise<Review> {
+export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
-  return context.db.get<Review>(sql, [id]);
+  const result = await context.db.get<Review>(sql, [id]);
+  // if(!result) throw new Error(NO_REVIEW_MESSAGE)
+  return result;
 }
 
 export function getReviewForUpdate(
   id: string,
   context: MyContext
-): Promise<DbReview> {
+): Promise<DbReview|null> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   return context.db.get<DbReview>(sql, [id]);
 }
@@ -51,7 +53,7 @@ export function getReviewsOfUser(
 export async function createReview(
   review: any,
   context: MyContext
-): Promise<Review> {
+): Promise<Review|null> {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
     VALUES (?,?,?,?,?)`;
   context.db.run(sql, [
@@ -67,9 +69,9 @@ export async function createReview(
 export async function updateReview(
   review: any,
   context: MyContext
-): Promise<Review> {
-  const updatedReview: DbReview = await getReviewForUpdate(review.id, context);
-  if (!updatedReview) throw new Error(NO_REVIEW_MESSAGE);
+): Promise<Review|null> {
+  const updatedReview: DbReview|null = await getReviewForUpdate(review.id, context);
+  if (updatedReview === null) throw new Error(NO_REVIEW_MESSAGE);
   if (context.user) {
     if (
       context.user.id === updatedReview.user_id ||
@@ -86,7 +88,7 @@ export async function updateReview(
 export async function deleteReview(
   id: string,
   context: MyContext
-): Promise<Review> {
+): Promise<Review|null> {
   const reviewToDelete = await getReviewForUpdate(id, context);
   if (!reviewToDelete) throw new Error(NO_REVIEW_MESSAGE);
   if (

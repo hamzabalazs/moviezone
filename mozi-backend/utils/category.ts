@@ -7,7 +7,7 @@ export function getCategories(_: any, context:MyContext):Promise<Category[]> {
   return context.db.all<Category>(sql)
 }
 
-export function getCategoryById(id: string, context:MyContext):Promise<Category>{
+export function getCategoryById(id: string, context:MyContext):Promise<Category|null>{
   const sql = `SELECT * FROM category WHERE category.id = ?`;
   return context.db.get<Category>(sql,[id])
 }
@@ -22,13 +22,13 @@ export async function createCategory(name:string, context:MyContext):Promise<Cat
   return newCategory
 }
 
-export async function updateCategory(category: Category, context:MyContext):Promise<Category> {
+export async function updateCategory(category: Category, context:MyContext):Promise<Category|null> {
   const sql = `UPDATE category SET name = ? WHERE category.id = ?`;
   context.db.run(sql,[category.name,category.id])
   return getCategoryById(category.id,context)
 }
 
-export async function deleteCategory(id: string, context:MyContext):Promise<Category> {
+export async function deleteCategory(id: string, context:MyContext):Promise<Category|null> {
   const sqlDelete = `DELETE FROM category WHERE category.id = ?`;
   const sqlUpdate = `UPDATE movie SET category_id = "removedID" WHERE category_id = ?` ;
   const category = getCategoryById(id,context)
@@ -37,7 +37,7 @@ export async function deleteCategory(id: string, context:MyContext):Promise<Cate
   return category
 }
 
-export function checkForCategory(name: string, context:MyContext):Promise<Category> {
+export function checkForCategory(name: string, context:MyContext):Promise<Category|null> {
   const sql = `SELECT * FROM category WHERE category.name = ?`;
   return context.db.get<Category>(sql,[name])
 }

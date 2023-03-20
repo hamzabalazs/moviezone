@@ -7,7 +7,7 @@ import { NO_USER_MESSAGE } from "../common/errorMessages";
 export async function logIn(
   loginDetails: { email: string; password: string },
   context: MyContext
-): Promise<CurrentUser> {
+): Promise<CurrentUser|null> {
   const email: string = loginDetails.email;
   const password: string = loginDetails.password;
   let isExpired = false;
@@ -33,9 +33,9 @@ export async function getUserForLogin(
   const password: string = loginDetails.password;
   const sqlToken = `SELECT u.id,u.first_name,u.last_name,u.email,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE u.email = ? AND u.password = ?`;
   const sqlNoToken = `SELECT id,first_name,last_name,email,role FROM user WHERE email = ? AND password = ?`;
-  const isToken:CurrentUser = await context.db.get(sqlToken,[email,md5(password)])
+  const isToken:CurrentUser|null = await context.db.get(sqlToken,[email,md5(password)])
   if (!isToken) {
-    const result: CurrentUser = await context.db.get(sqlNoToken,[email,md5(password)])
+    const result: CurrentUser|null = await context.db.get(sqlNoToken,[email,md5(password)])
     if (!result) throw new Error(NO_USER_MESSAGE);
     return result;
   }
