@@ -119,7 +119,7 @@ export class Database extends events.EventEmitter{
     });
   }
 
-  all<T>(...args: [sql:string, ...params:any[]]) {
+  all<T>(...args: [sql:string, ...params:any[]]):Promise<T[]> {
     return new Promise((resolve:(value:any) => void, reject) => {
       if (!this.db) {
         return reject(new Error("Database.all: database is not open"));

@@ -38,19 +38,19 @@ const GET_CATEGORIES = gql`
 `;
 const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
-    updateMovie(input: $input) {
+  updateMovie(input: $input) {
+    id
+    title
+    description
+    poster
+    release_date
+    category {
       id
-      title
-      poster
-      description
-      release_date
-      rating
-      category {
-        id
-        name
-      }
+      name
     }
+    rating
   }
+}
 `;
 
 export default function MovieEditModal({ movie, onClose }: Props) {
@@ -99,6 +99,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
       enqueueSnackbar(msg, { variant: "success" });
       onClose?.();
     } catch (error: any) {
+      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });

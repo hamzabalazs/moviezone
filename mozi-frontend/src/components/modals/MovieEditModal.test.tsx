@@ -45,19 +45,19 @@ const GET_CATEGORIES = gql`
 `;
 const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
-    updateMovie(input: $input) {
+  updateMovie(input: $input) {
+    id
+    title
+    description
+    poster
+    release_date
+    category {
       id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
+      name
     }
+    rating
   }
+}
 `;
 
 const dataMock = [
@@ -89,10 +89,10 @@ const dataMock = [
       query: UPDATE_MOVIE,
       variables: {
         input: {
-          id: testNewMovie.id,
+          id: testMovie.id,
           title: testNewMovie.title,
           description: testNewMovie.description,
-          poster: testNewMovie.poster,
+          poster: testMovie.poster,
           release_date: testNewMovie.release_date,
           category_id: testNewMovie.categoryId,
         },
@@ -101,10 +101,10 @@ const dataMock = [
     result: {
       data: {
         updateMovie: {
-          id: testNewMovie.id,
+          id: testMovie.id,
           title: testNewMovie.title,
           description: testNewMovie.description,
-          poster: testNewMovie.poster,
+          poster: testMovie.poster,
           release_date: testNewMovie.release_date,
           category: {
             id: testNewMovie.categoryId,

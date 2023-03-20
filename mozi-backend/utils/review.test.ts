@@ -33,23 +33,28 @@ import {
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
 import { movieData, sessionData, userData } from "../test/mockedData";
+import { Database } from "../common/sqlite-async-ts";
 
-const db = createDatabase();
+let db:Database
 let req = {
-  headers: {
-    "auth-token": "",
-  },
-};
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: async () => {
-    return { db, req };
-  },
-});
+    headers:{
+        'auth-token':""
+    }
+}
+let server:ApolloServer
 
 test("Should get all reviews", async () => {
-  await fillDatabase(db);
+  await Database.open(":memory:").then((_db:Database) => {
+    db = _db
+  })
+  server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context:async() => {
+      return {db,req}
+    }
+  })
+  await fillDatabase(db)
   const result = await server.executeOperation({
     query: GET_REVIEWS,
   });

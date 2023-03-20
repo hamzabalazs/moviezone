@@ -6,23 +6,28 @@ import { CREATE_MOVIE, DELETE_MOVIE, GET_MOVIES, GET_MOVIES_BY_CATEGORY, GET_MOV
 import { addMovie, deleteMovie, editMovie, editResponseMovie, testMovie} from "./movie.mocks";
 import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
-
-const db = createDatabase();
+import { Database } from "../common/sqlite-async-ts";
+ 
+let db:Database
 let req = {
     headers:{
         'auth-token':""
     }
 }
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: async () => {
-    return { db, req };
-  },
-});
+let server:ApolloServer
 
 test("Should get all movies",async() => {
-    await fillDatabase(db)
+    await Database.open(":memory:").then((_db:Database) => {
+        db = _db
+      })
+      server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        context:async() => {
+          return {db,req}
+        }
+      })
+      await fillDatabase(db)
     const result = await server.executeOperation({
         query:GET_MOVIES
     })

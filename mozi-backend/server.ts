@@ -1,5 +1,4 @@
 import { ApolloServer } from "apollo-server-express";
-const sqlite3 = require("sqlite3").verbose();
 import {Database} from './common/sqlite-async-ts'
 import { typeDefs } from "./Schema/TypeDefs";
 import { resolvers } from "./Schema/Resolvers";
@@ -20,7 +19,6 @@ async function startApolloServer(typeDefs: DocumentNode, resolvers: any) {
     db=_db
     console.log("Connected to database!")
   })
-  
   const server = new ApolloServer<MyContext>({
     typeDefs,
     resolvers,

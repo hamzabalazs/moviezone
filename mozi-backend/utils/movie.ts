@@ -39,7 +39,7 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
 
 export async function deleteMovie(id:string, context:MyContext):Promise<Movie> {
   if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
-  const movie = getMovieById(id, context);
+  const movie = await getMovieById(id, context);
   if(movie === undefined){
     throw new Error(NO_MOVIE_MESSAGE)
   }

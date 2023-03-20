@@ -1,4 +1,7 @@
-import { Database } from "sqlite3";
+import { ApolloServer } from "apollo-server";
+import { Database } from "../common/sqlite-async-ts";
+import { resolvers } from "../Schema/Resolvers";
+import { typeDefs } from "../Schema/TypeDefs";
 import {
   categoryData,
   movieData,
@@ -7,31 +10,57 @@ import {
   userData,
 } from "./mockedData";
 const sqlite3 = require("sqlite3").verbose();
-const expressGraphQL = require("express-graphql").graphqlHTTP;
+
+export async function createServer() {
+  let db: Database;
+  Database.open(":memory").then((_db: Database) => {
+    db = _db;
+    console.log("kesz")
+    return {server,db}
+  });
+
+  let req = {
+    headers: {
+      "auth-token": "",
+    },
+  };
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async () => {
+      return { db, req };
+    },
+  });
+}
 
 export function createDatabase() {
-  const db: Database = new sqlite3.Database(
-    ":memory:",
-    (err: { message: any }) => {
-      if (err) {
-        return console.error(err.message);
-      }
+  const db = new sqlite3.Database(":memory:", (err: { message: any }) => {
+    if (err) {
+      return console.error(err.message);
     }
-  );
+  });
 
   return db;
 }
+// export function createDatabase() {
+//   Database.open(":memory:").then((_db:Database) => {
+//     const db:Database = _db
+//     return db;
+//   })
+//   return new Database()
+// }
+
 export async function fillDatabase(db: Database) {
   await createUserTable(db);
   await createMovieTable(db);
   await createCategoryTable(db);
   await createReviewTable(db);
   await createSessionTable(db);
-  await fillUserTable(db);
-  await fillMovieTable(db);
-  await fillCategoryTable(db);
-  await fillReviewTable(db);
-  await fillSessionTable(db);
+  fillUserTable(db);
+  fillMovieTable(db);
+  fillCategoryTable(db);
+  fillReviewTable(db);
+  fillSessionTable(db);
 }
 async function createUserTable(db: Database) {
   const sql = `CREATE TABLE user (
@@ -43,14 +72,15 @@ async function createUserTable(db: Database) {
         password text, 
         CONSTRAINT email_unique UNIQUE (email)
         )`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+        await db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function createMovieTable(db: Database) {
   const sql = `CREATE TABLE movie (
@@ -62,28 +92,30 @@ async function createMovieTable(db: Database) {
         category_id text,
         FOREIGN KEY(category_id) REFERENCES category(id)
       )`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+      await db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function createCategoryTable(db: Database) {
   const sql = `CREATE TABLE category (
         id text PRIMARY KEY,
         name text
       )`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+      await db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function createReviewTable(db: Database) {
   const sql = `CREATE TABLE review (
@@ -95,15 +127,15 @@ async function createReviewTable(db: Database) {
         FOREIGN KEY(movie_id) REFERENCES movie(id)
         FOREIGN KEY(user_id) REFERENCES user(id)
       )`;
-
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+      await  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function createSessionTable(db: Database) {
   const sql = `CREATE TABLE "session" (
@@ -115,14 +147,15 @@ async function createSessionTable(db: Database) {
     FOREIGN KEY("user_id") REFERENCES "user"("id"),
     PRIMARY KEY("id" AUTOINCREMENT)
   )`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  await db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function fillUserTable(db: Database) {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES 
@@ -131,14 +164,15 @@ async function fillUserTable(db: Database) {
   ("${userData[2].id}","${userData[2].first_name}","${userData[2].last_name}","${userData[2].email}","${userData[2].password}","${userData[2].role}"),
   ("${userData[3].id}","${userData[3].first_name}","${userData[3].last_name}","${userData[3].email}","${userData[3].password}","${userData[3].role}"),
   ("${userData[4].id}","${userData[4].first_name}","${userData[4].last_name}","${userData[4].email}","${userData[4].password}","${userData[4].role}")`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function fillMovieTable(db: Database) {
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES
@@ -148,29 +182,30 @@ async function fillMovieTable(db: Database) {
   ("${movieData[3].id}","${movieData[3].title}","${movieData[3].description}","${movieData[3].poster}","${movieData[3].release_date}","${movieData[3].category_id}"),
   ("${movieData[4].id}","${movieData[4].title}","${movieData[4].description}","${movieData[4].poster}","${movieData[4].release_date}","${movieData[4].category_id}"),
   ("${movieData[5].id}","${movieData[5].title}","${movieData[5].description}","${movieData[5].poster}","${movieData[5].release_date}","${movieData[5].category_id}")`;
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function fillCategoryTable(db: Database) {
   const sql = `INSERT INTO category (id,name) VALUES
   ("${categoryData[0].id}","${categoryData[0].name}"),
   ("${categoryData[1].id}","${categoryData[1].name}"),
   ("${categoryData[2].id}","${categoryData[2].name}")`;
-
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function fillReviewTable(db: Database) {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id) VALUES
@@ -181,15 +216,15 @@ async function fillReviewTable(db: Database) {
   ("${reviewData[4].id}","${reviewData[4].rating}","${reviewData[4].description}","${reviewData[4].movie_id}","${reviewData[4].user_id}"),
   ("${reviewData[5].id}","${reviewData[5].rating}","${reviewData[5].description}","${reviewData[5].movie_id}","${reviewData[5].user_id}"),
   ("${reviewData[6].id}","${reviewData[6].rating}","${reviewData[6].description}","${reviewData[6].movie_id}","${reviewData[6].user_id}")`;
-
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
 async function fillSessionTable(db: Database) {
   const sql = `INSERT INTO session (id,token,user_id,expiry) VALUES
@@ -198,13 +233,13 @@ async function fillSessionTable(db: Database) {
   ("${sessionData[2].id}","${sessionData[2].token}","${sessionData[2].user_id}","${sessionData[2].expiry}"),
   ("${sessionData[3].id}","${sessionData[3].token}","${sessionData[3].user_id}","${sessionData[3].expiry}"),
   ("${sessionData[4].id}","${sessionData[4].token}","${sessionData[4].user_id}","${sessionData[4].expiry}")`;
-
-  return new Promise((resolve, reject) => {
-    db.run(sql, (err: any, rows: any) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(rows);
-    });
-  });
+  db.run(sql);
+  // return new Promise((resolve, reject) => {
+  //   db.run(sql, (err: any, rows: any) => {
+  //     if (err) {
+  //       reject(err);
+  //     }
+  //     resolve(rows);
+  //   });
+  // });
 }
