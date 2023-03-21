@@ -15,7 +15,7 @@ interface Props {
 
 export default function MovieListCard({movie}: Props) {
   const { t } = useTranslation();
-  const rating = parseInt(movie.rating)
+  const rating = parseFloat(movie.rating)
   return (
     <Link
       href={"/movie/" + movie.id}
