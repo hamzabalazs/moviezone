@@ -75,8 +75,7 @@ test("Should not get movie, if ID is invalid", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
-  expect(result.data).toBeNull();
+  expect(result.data?.getMovieById).toBeNull();
 });
 
 test("Should get movie,if ID is valid", async () => {

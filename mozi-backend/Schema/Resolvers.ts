@@ -145,7 +145,7 @@ export const resolvers = {
     async createUser(_: any, args: any, context: MyContext) {
       const newUser = args.input;
       const isUser = await checkForUser(newUser.email, context);
-      if (isUser !== undefined) {
+      if (isUser !== null) {
         throw new GraphQLError(USER_EMAIL_USED_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       }
       const validation = await userSchema.isValid(newUser)
@@ -164,14 +164,14 @@ export const resolvers = {
       const updatedUser = args.input;
       const isUser = await getUserById(updatedUser.id, context);
       context.user = await tokenChecker(context)
-      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (isUser === null) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await updateUser(updatedUser, context);
     },
     async deleteUser(_: any, args: any, context: MyContext) {
       const user_id = args.input.id;
       const isUser = await getUserById(user_id, context);
       context.user = await tokenChecker(context)
-      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (isUser === null) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await deleteUser(user_id, context);
     },
     // Categories
@@ -179,7 +179,7 @@ export const resolvers = {
       context.user = await tokenChecker(context)
       const newCategory = args.input.name;
       const isCategory = await checkForCategory(newCategory, context);
-      if (isCategory !== undefined) {
+      if (isCategory !== null) {
         throw new GraphQLError(CATEGORY_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       }
       return await createCategory(newCategory, context);
@@ -193,14 +193,14 @@ export const resolvers = {
       );
       if (categoryExists) throw new GraphQLError(CATEGORY_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       const isCategory = await getCategoryById(updatedCategory.id, context);
-      if (isCategory === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (isCategory === null) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await updateCategory(updatedCategory, context);
     },
     async deleteCategory(_: any, args: any, context: MyContext) {
       context.user = await tokenChecker(context)
       const categoryId = args.input.id;
       const category = await getCategoryById(categoryId, context);
-      if (category === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (category === null) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await deleteCategory(categoryId, context);
     },
     // Movies

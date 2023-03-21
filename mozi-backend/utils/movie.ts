@@ -48,7 +48,7 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
 export async function deleteMovie(id:string, context:MyContext):Promise<Movie|null> {
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const movie = await getMovieById(id, context);
-  if(movie === undefined){
+  if(movie === null){
     throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   }
   const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;

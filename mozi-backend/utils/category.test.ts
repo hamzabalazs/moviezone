@@ -80,7 +80,7 @@ test("Should reject if ID is incorrect", async () => {
       },
     },
   });
-  expect(result.data).toBeNull();
+  expect(result.data?.getCategoryById).toBeNull();
 });
 
 test("Should get category by name", async () => {

@@ -70,8 +70,7 @@ test("Should not get user if ID is incorrect", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
-  expect(result.data).toBeNull();
+  expect(result.data?.getUserById).toBeNull();
 });
 
 test("Should get user if email is correct", async () => {
@@ -96,8 +95,7 @@ test("Should not get user if email is incorrect", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
-  expect(result.data).toBeNull();
+  expect(result.data?.checkForUser).toBeNull();
 });
 
 test("Should get current user if token is given", async () => {

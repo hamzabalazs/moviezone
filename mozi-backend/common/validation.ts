@@ -63,9 +63,9 @@ export async function tokenChecker(context: MyContext) {
 
 export async function createReviewErrorHandling(newReview:any,context:MyContext){
     const isUser = await getUserById(newReview.user_id, context);
-      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (isUser === null) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       const isMovie = await getMovieById(newReview.movie_id, context);
-      if (isMovie === undefined) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+      if (isMovie === null) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       const hasReview = await getReviewsOfUserForMovie(
         newReview.user_id,
         newReview.movie_id,

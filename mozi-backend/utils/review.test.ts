@@ -96,8 +96,7 @@ test("Should not get review if ID is invalid", async () => {
       },
     },
   });
-  expect(result.errors).not.toBeUndefined();
-  expect(result.data).toBeNull();
+  expect(result.data?.getReviewById).toBeNull();
 });
 
 test("Should get review if ID is valid", async () => {
@@ -443,8 +442,7 @@ test("Should delete review if user does own said review", async () => {
       },
     },
   });
-  expect(afterResult.errors).not.toBeUndefined();
-  expect(afterResult.data).toBeNull();
+  expect(afterResult.data?.getReviewById).toBeNull();
 });
 
 test("Should delete review if user does not own review,but is admin/editor", async () => {
@@ -479,6 +477,5 @@ test("Should delete review if user does not own review,but is admin/editor", asy
       },
     },
   });
-  expect(afterResult.errors).not.toBeUndefined();
-  expect(afterResult.data).toBeNull();
+  expect(afterResult.data?.getReviewById).toBeNull();
 });

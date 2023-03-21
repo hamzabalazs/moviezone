@@ -10,11 +10,10 @@ import { userSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { User, FullUser, CurrentUser } from "./types";
 
-export async function getUsers(__: any, context: MyContext): Promise<User[]> {
+export function getUsers(__: any, context: MyContext): Promise<User[]> {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
-  const result = await context.db.all<User>(sql, []);
-  if(result === undefined) return [];
-  return result
+  return context.db.all<User>(sql, []);
+  
 }
 
 export async function getUserById(id: string, context: MyContext): Promise<User|null> {
