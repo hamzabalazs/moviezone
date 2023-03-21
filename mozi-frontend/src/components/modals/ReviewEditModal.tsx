@@ -22,7 +22,7 @@ import {
   GET_USERS_REVIEWS_OF_MOVIE,
 } from "../../pages/MoviePage";
 import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
-import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
@@ -138,7 +138,11 @@ export default function ReviewEditModal({ review, onClose }: Props) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
-      } else {
+      } 
+      else if(error.message === NOT_VALID_REVIEW){
+        const msg = t("validityFailure.reviewNotValid")
+        enqueueSnackbar(msg, { variant: "error" });
+      }else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }

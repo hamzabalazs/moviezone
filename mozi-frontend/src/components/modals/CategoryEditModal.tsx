@@ -15,7 +15,7 @@ import * as Yup from "yup";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { GET_CATEGORIES } from "../../pages/Categories";
-import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
@@ -72,6 +72,10 @@ export default function CategoryEditModal({ category, onClose }: Props) {
       else if(e.message === CATEGORY_EXISTS_MESSAGE){
         const msg = t('category.categoryExists');
         enqueueSnackbar(msg,{variant:"error"})
+      }
+      else if(e.message === NOT_VALID_CATEGORY){
+        const msg = t("validityFailure.categoryNotValid")
+        enqueueSnackbar(msg, { variant: "error" });
       }
       else{
         const msg = t("someError");

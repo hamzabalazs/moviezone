@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useMutation } from "@apollo/client";
+import { NOT_VALID_USER, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 
 const ADD_USER = gql`
   mutation CreateUser($input: AddUserInput!) {
@@ -71,10 +72,14 @@ function Register() {
         enqueueSnackbar(msg, { variant: "success" });
         navigate("/login");
       } catch (e: any) {
-        if(e.message === "Email in use!"){
+        if(e.message === USER_EMAIL_USED_MESSAGE){
           const msg = t('register.accountExists')
           enqueueSnackbar(msg,{variant:"error"})
           return;
+        }
+        else if(e.message === NOT_VALID_USER){
+          const msg = t("validityFailure.userNotValid")
+          enqueueSnackbar(msg, { variant: "error" });
         }
       }
     },

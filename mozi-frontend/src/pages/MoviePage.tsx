@@ -27,7 +27,7 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
-import { EXPIRED_TOKEN_MESSAGE } from "../common/errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../common/errorMessages";
 
 export const GET_MOVIE_BY_ID = gql`
   query GetMovieById($input: MovieInput!) {
@@ -247,7 +247,12 @@ export default function MoviePage() {
             const msg = t("failMessages.expiredToken");
             enqueueSnackbar(msg, { variant: "error" });
             context.logOut();
-          } else {
+          }
+          else if(error.message === NOT_VALID_REVIEW){
+            const msg = t("validityFailure.reviewNotValid")
+            enqueueSnackbar(msg, { variant: "error" });
+          }
+          else {
             
             const msg = t("someError");
             enqueueSnackbar(msg, { variant: "error" });
