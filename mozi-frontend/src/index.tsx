@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { Home } from "./pages/App";
+import { Home } from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Forgotpass from "./pages/Forgotpass";
@@ -89,7 +89,7 @@ root.render(
                   }
                 ></Route>
                 <Route
-                  path="movie/:currmovie_id"
+                  path="/movie/:currmovie_id"
                   element={<MoviePage />}
                 ></Route>
                 <Route path="account" element={<Account />}></Route>

@@ -19,6 +19,14 @@ export type Review = {
   rating: string;
 };
 
+export type ExtendedReview = {
+  id: string;
+  user: User;
+  movie: MovieWithReviews;
+  description: string;
+  rating: string;
+}
+
 export type Category = {
   id: string;
   name: string;
@@ -33,6 +41,17 @@ export type Movie = {
   release_date: string;
   category: Category;
 };
+
+export type MovieWithReviews = {
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  rating: string;
+  release_date: string;
+  category: Category;
+  reviews: Review[]
+}
 
 export type MovieListMovie = {
   id:string;

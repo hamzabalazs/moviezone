@@ -3,9 +3,9 @@ import {
   Avatar,
   Button,
   IconButton,
-  Link,
   ListItemIcon,
   Menu,
+  Link,
   MenuItem,
   Switch,
   Toolbar,
@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Suspense, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import Logout from "@mui/icons-material/Logout";
 import { useTranslation } from "react-i18next";
@@ -78,16 +78,17 @@ export default function NavigationBar() {
         data-testid="navbarcomponent"
       >
         <Toolbar id="back-to-top-anchor">
-          {currUser.role === "admin" && (
-            <>
-              <IconButton href="/">
+        <IconButton component={RouterLink} to="/">
                 <VideocamIcon
                   sx={{ fontSize: 40 }}
                   data-testid="navbar-home-icon"
                 />
               </IconButton>
+          {currUser.role === "admin" && (
+            <>
               <Link
-                href="/"
+                component={RouterLink}
+                to="/"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary", marginLeft: 1 }}
@@ -96,7 +97,8 @@ export default function NavigationBar() {
                 MovieZone
               </Link>
               <Link
-                href="/categories"
+                component={RouterLink}
+                to="/categories"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary", marginLeft: 4 }}
@@ -105,7 +107,8 @@ export default function NavigationBar() {
                 {t("navbar.Categories")}
               </Link>
               <Link
-                href="/users"
+                component={RouterLink}
+                to="/users"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary", marginLeft: 4, flexGrow: 1 }}
@@ -117,14 +120,9 @@ export default function NavigationBar() {
           )}
           {currUser.role === "editor" && (
             <>
-              <IconButton href="/">
-                <VideocamIcon
-                  sx={{ fontSize: 40 }}
-                  data-testid="navbar-home-icon"
-                />
-              </IconButton>
               <Link
-                href="/"
+                component={RouterLink}
+                to="/"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary" }}
@@ -133,7 +131,8 @@ export default function NavigationBar() {
                 MovieZone
               </Link>
               <Link
-                href="/categories"
+                component={RouterLink}
+                to="/categories"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary", marginLeft: 4, flexGrow: 1 }}
@@ -145,11 +144,9 @@ export default function NavigationBar() {
           )}
           {currUser.role === "viewer" && (
             <>
-              <IconButton href="/" data-testid="navbar-home-icon">
-                <VideocamIcon sx={{ fontSize: 40 }} />
-              </IconButton>
               <Link
-                href="/"
+                component={RouterLink}
+                to="/"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary" }}
@@ -158,7 +155,8 @@ export default function NavigationBar() {
                 MovieZone
               </Link>
               <Link
-                href="/reviews"
+                component={RouterLink}
+                to="/reviews"
                 underline="none"
                 variant="h6"
                 sx={{ color: "text.primary", marginLeft: 4, flexGrow: 1 }}

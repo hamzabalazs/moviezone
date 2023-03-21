@@ -5,12 +5,12 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { ReviewListReview } from "../../api/types";
+import { Review, ReviewListReview } from "../../api/types";
 import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
-  review: ReviewListReview;
+  review: Review;
   onEdit:() => void;
   onDelete:() => void;
 }

@@ -15,19 +15,19 @@ import { useSnackbar } from "notistack";
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { Category, Movie } from "../../api/types";
+import { Category, Movie, MovieWithReviews } from "../../api/types";
 import * as Yup from "yup";
 import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";
-import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
 import { useSessionContext } from "../../api/SessionContext";
 import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_MOVIE,
 } from "../../common/errorMessages";
+import { useMovie } from "../../api/movie/useMovie";
 
 interface Props {
-  movie?: Movie;
+  movie?: MovieWithReviews;
   onClose?: () => void;
 }
 
@@ -58,11 +58,10 @@ const UPDATE_MOVIE = gql`
 
 export default function MovieEditModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
-  const [UpdateMovieAPI] = useMutation(UPDATE_MOVIE);
+  const { updateMovie: UpdateMovieAPI } = useMovie();
   const { data: categoriesData, loading: categoriesLoading } =
     useQuery(GET_CATEGORIES);
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
 
   const updateMovie = async (
@@ -72,35 +71,19 @@ export default function MovieEditModal({ movie, onClose }: Props) {
     if (movie === undefined || poster === undefined) return;
     const id = movie.id;
     try {
-      await UpdateMovieAPI({
-        variables: {
-          input: {
-            id: movie.id,
-            title: editedMovie.title,
-            description: editedMovie.description,
-            poster: poster,
-            release_date: editedMovie.release_date,
-            category_id: editedMovie.category.id,
-          },
-        },
-        update: (cache, { data }) => {
-          const movieData = client.readQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id } },
-          });
-          if (!movieData) return;
-          cache.writeQuery({
-            query: GET_MOVIE_BY_ID,
-            variables: { input: { id } },
-            data: {
-              getMovieById: data.updateMovie,
-            },
-          });
-        },
-      });
-      const msg = t("successMessages.movieEdit");
-      enqueueSnackbar(msg, { variant: "success" });
-      onClose?.();
+      const result = await UpdateMovieAPI(
+        id,
+        editedMovie.title,
+        editedMovie.description,
+        poster,
+        editedMovie.release_date,
+        editedMovie.category.id
+      );
+      if(result){
+        const msg = t("successMessages.movieEdit");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+      }
     } catch (error: any) {
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");

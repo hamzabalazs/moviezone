@@ -9,125 +9,36 @@ import {
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { ReviewListReview } from "../../api/types";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
-import {
-  GET_MOVIE_BY_ID,
-  GET_REVIEWS_OF_MOVIE,
-  GET_USERS_REVIEWS_OF_MOVIE,
-} from "../../pages/MoviePage";
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
-import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
+import { useReview } from "../../api/review/useReview";
 
 interface Props {
   review?: ReviewListReview;
   onClose?: () => void;
 }
 
-const DELETE_REVIEW = gql`
-  mutation DeleteReview($input: DeleteReviewInput!) {
-    deleteReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
+export default function ReviewDeleteDialog({ review, onClose }: Props) {
+  let id = ""
+  if(review){
+    if(review.movie){
+      id = review.movie.id
     }
   }
-`;
-
-export default function ReviewDeleteDialog({ review, onClose }: Props) {
+  const {deleteReview:DeleteReviewAPI} = useReview(id)
   const { t } = useTranslation();
-  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
 
   const handleDeletion = async () => {
     if (review === undefined) return;
-    const movie_id = review.movie.id;
-    const user_id = review.user.id;
     try {
-      await DeleteReviewAPI({
-        variables: { input: { id: review.id } },
-        update: (cache, { data }) => {
-          if(window.location.pathname === "/reviews"){
-            const reviewsOfUserData = client.readQuery({
-              query: GET_REVIEWS_OF_USER,
-              variables: { input: { user_id } },
-            });
-            if(!reviewsOfUserData) return
-            cache.writeQuery({
-              query: GET_REVIEWS_OF_USER,
-              variables: { input: { user_id } },
-              data: {
-                getReviewsOfUser: reviewsOfUserData.getReviewsOfUser.filter(
-                  (x: any) => x.id != data.deleteReview.id
-                ),
-              },
-            });
-          }
-          else{
-            const reviewsOfMovieData = client.readQuery({
-              query: GET_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id } },
-            });
-            if(!reviewsOfMovieData) return
-            cache.writeQuery({
-              query: GET_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id } },
-              data: {
-                getReviewsOfMovie: reviewsOfMovieData.getReviewsOfMovie.filter(
-                  (x: any) => x.id != data.deleteReview.id
-                ),
-              },
-            });
-            const reviewsOfUserForMovieData = client.readQuery({
-              query: GET_USERS_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id, user_id } },
-            });
-            if(!reviewsOfUserForMovieData) return
-            cache.writeQuery({
-              query: GET_USERS_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id, user_id } },
-              data: {
-                getReviewsOfUserForMovie: reviewsOfUserForMovieData.getReviewsOfUserForMovie.filter(
-                  (x: any) => x.id != data.deleteReview.id
-                ),
-              },
-            });
-              client.readQuery({
-              query: GET_MOVIE_BY_ID,
-              variables: { input: { id: movie_id } },
-            });
-            cache.writeQuery({
-              query: GET_MOVIE_BY_ID,
-              variables: { input: { id: movie_id } },
-              data: {
-                getMovieById: data.deleteReview.movie,
-              },
-            });
-          }
-        },
-      });
-      const msg = t("successMessages.reviewDelete");
-      enqueueSnackbar(msg, { variant: "success" });
-      onClose?.();
+      const result = await DeleteReviewAPI(review.id)
+      if(result){
+        const msg = t("successMessages.reviewDelete");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+      }
     } catch (error: any) {
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");

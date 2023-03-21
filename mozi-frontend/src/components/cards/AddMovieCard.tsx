@@ -24,9 +24,9 @@ import { datevalidator } from "../../common/datevalidator";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
 import { useSnackbar } from 'notistack'
-import { GET_MOVIES } from "../../pages/App";
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_MOVIE } from "../../common/errorMessages";
+import { GET_HOME_PAGE_DATA } from "../../pages/useHomePageData";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -98,12 +98,13 @@ export default function AddMovieCard(props: Props) {
         },
         update:(cache,{data}) => {
           const moviesData = client.readQuery({
-            query: GET_MOVIES
+            query: GET_HOME_PAGE_DATA
           })
           if(!moviesData) return;
           cache.writeQuery({
-            query:GET_MOVIES,
+            query:GET_HOME_PAGE_DATA,
             data:{
+              ...moviesData,
               getMovies:[...moviesData.getMovies, data.createMovie]
             }
           })

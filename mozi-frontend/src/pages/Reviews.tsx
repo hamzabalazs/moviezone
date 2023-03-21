@@ -1,6 +1,6 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import { ReviewListReview } from "../api/types";
+import { Review, ReviewListReview } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -78,7 +78,7 @@ function Reviews() {
         <div>
           {reviewsData.getReviewsOfUser.length !== 0 && (
             <Grid container spacing={4}>
-              {reviewsData.getReviewsOfUser.map((review:ReviewListReview) => (
+              {reviewsData.getReviewsOfUser.map((review:Review) => (
                 <Grid item key={review.id} xs={12}>
                   <ReviewCard
                     review={review}

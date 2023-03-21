@@ -8,12 +8,12 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Movie } from "../../api/types";
+import { Movie, MovieWithReviews } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieEditModal from "./MovieEditModal";
 import { SnackbarProvider } from "notistack";
 
-const testMovie: Movie = {
+const testMovie: MovieWithReviews = {
   id: "idM1",
   title: "title1",
   description: "description1",
@@ -24,6 +24,7 @@ const testMovie: Movie = {
     name: "name1",
   },
   rating: "3",
+  reviews:[]
 };
 
 const testNewMovie = {
@@ -119,7 +120,7 @@ const dataMock = [
 
 const cache = new InMemoryCache()
 
-function renderMovieEditModal(props: { movie?: Movie; onClose?: () => void }) {
+function renderMovieEditModal(props: { movie?: MovieWithReviews; onClose?: () => void }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
       <MockedProvider mocks={dataMock} cache={cache}>

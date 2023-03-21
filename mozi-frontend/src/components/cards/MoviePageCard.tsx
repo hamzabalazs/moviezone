@@ -7,12 +7,12 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { Movie } from "../../api/types";
+import { Movie, MovieWithReviews } from "../../api/types";
 import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../../api/SessionContext";
 
 interface Props {
-  movie: Movie;
+  movie: MovieWithReviews;
   onEdit?: () => void;
   onDelete?: () => void;
 }

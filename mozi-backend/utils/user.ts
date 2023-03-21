@@ -1,6 +1,5 @@
 import { GraphQLError } from "graphql";
 import md5 from "md5";
-import { RunResult } from "sqlite3";
 import {
   NOT_VALID_USER,
   UNAUTHORIZED_MESSAGE,

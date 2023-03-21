@@ -6,7 +6,7 @@ import {
 } from "../common/errorMessages";
 import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { DbReview, Review } from "./types";
+import { DbReview, ExtendedReview, Review } from "./types";
 
 export function getReviews(_: any, context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
@@ -16,6 +16,13 @@ export function getReviews(_: any, context: MyContext): Promise<Review[]> {
 export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   const result = await context.db.get<Review>(sql, [id]);
+  if(result === undefined) return null;
+  return result
+}
+
+export async function getExtendedReviewById(id: string, context: MyContext): Promise<ExtendedReview|null> {
+  const sql = `SELECT * FROM review WHERE review.id = ?`;
+  const result = await context.db.get<ExtendedReview>(sql, [id]);
   if(result === undefined) return null;
   return result
 }
@@ -58,7 +65,7 @@ export function getReviewsOfUser(
 export async function createReview(
   review: any,
   context: MyContext
-): Promise<Review|null> {
+): Promise<ExtendedReview|null> {
   console.log(review)
   const validation = await reviewSchema.isValid(review)
   if(!validation) throw new GraphQLError(NOT_VALID_REVIEW,{extensions:{code:'VALIDATION_FAILED'}})
@@ -71,7 +78,7 @@ export async function createReview(
     review.movie_id,
     review.user_id,
   ]);
-  return getReviewById(review.id,context)
+  return await getExtendedReviewById(review.id,context)
 }
 
 export async function updateReview(

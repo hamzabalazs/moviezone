@@ -9,68 +9,47 @@ import {
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Movie } from "../../api/types";
+import { MovieWithReviews } from "../../api/types";
 import { gql, useMutation } from "@apollo/client";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
+import { useMovie } from "../../api/movie/useMovie";
 
 interface Props {
-  movie?: Movie;
+  movie?: MovieWithReviews;
   onClose?: () => void;
 }
-
-const DELETE_MOVIE = gql`
-  mutation DeleteMovie($input: DeleteMovieInput!) {
-    deleteMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
 
 export default function MovieDeleteDialog({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut } = useSessionContext()
+  const { logOut } = useSessionContext();
+  const { deleteMovie: DeleteMovieAPI } = useMovie();
 
   const handleDeletion = async () => {
     if (movie === undefined) return;
 
     const movie_id = movie.id;
-    try{
-      await DeleteMovieAPI({
-        variables: { input: { id: movie_id } },
-      });
+    try {
+      const result = await DeleteMovieAPI(movie_id);
+      if (result) {
         const msg = t("successMessages.movieDelete");
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();
         navigate("/");
-
-        
-    }catch(error:any){
-      if(error.message === EXPIRED_TOKEN_MESSAGE){
+      }
+    } catch (error: any) {
+      if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
-      }
-      else{
+      } else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }
     }
-
   };
-
 
   return (
     <Dialog

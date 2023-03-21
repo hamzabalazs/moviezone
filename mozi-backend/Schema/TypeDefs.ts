@@ -59,11 +59,30 @@ export const typeDefs = gql`
     rating: String!
   }
 
+  type MovieWithReviews {
+    id: ID!
+    title: String!
+    description: String!
+    poster: String!
+    release_date: String!
+    category: Category!
+    rating: String!
+    reviews: [Review!]!
+  }
+
   type Review {
     id: ID!
     rating: String!
     description: String!
     movie: Movie!
+    user: User!
+  }
+
+  type ExtendedReview {
+    id: ID!
+    rating: String!
+    description: String!
+    movie: MovieWithReviews!
     user: User!
   }
 
@@ -253,6 +272,7 @@ export const typeDefs = gql`
     getUserForLogin(input: LoginInput!): CurrentUser!
     getMovies: [Movie!]!
     getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
+    getMovieWithReviewsById(input: MovieInput!): MovieWithReviews!
     getMovieById(input: MovieInput!): Movie
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category
@@ -268,19 +288,19 @@ export const typeDefs = gql`
   # Mutations
   type Mutation {
     createToken(input: AddTokenInput!): RunResult!
-    createUser(input: AddUserInput!): User!
+    createUser(input: AddUserInput!): User
     updateUser(input: UpdateUserInput!): User!
     deleteUser(input: DeleteUserInput!): User!
     logIn(input: LoginInput!): CurrentUser!
-    createCategory(input: AddCategoryInput!): Category!
+    createCategory(input: AddCategoryInput!): Category
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
-    createMovie(input: AddMovieInput!): Movie!
+    createMovie(input: AddMovieInput!): Movie
     updateMovie(input: UpdateMovieInput!): Movie!
     deleteMovie(input: DeleteMovieInput!): Movie!
-    createReview(input: AddReviewInput!): Review!
-    updateReview(input: UpdateReviewInput!): Review!
-    deleteReview(input: DeleteReviewInput!): Review!
+    createReview(input: AddReviewInput!): ExtendedReview
+    updateReview(input: UpdateReviewInput!): ExtendedReview
+    deleteReview(input: DeleteReviewInput!): ExtendedReview
     deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): RunResult!
     deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!

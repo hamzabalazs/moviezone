@@ -13,126 +13,40 @@ import {
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { ReviewListReview } from "../../api/types";
 import * as Yup from "yup";
-import {
-  GET_MOVIE_BY_ID,
-  GET_REVIEWS_OF_MOVIE,
-  GET_USERS_REVIEWS_OF_MOVIE,
-} from "../../pages/MoviePage";
-import { GET_REVIEWS_OF_USER } from "../../pages/Reviews";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
+import { useReview } from "../../api/review/useReview";
 
 interface Props {
   review?: ReviewListReview;
   onClose?: () => void;
 }
 
-const UPDATE_REVIEW = gql`
-  mutation UpdateReview($input: UpdateReviewInput!) {
-    updateReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
+export default function ReviewEditModal({ review, onClose }: Props) {
+  let id = ""
+  if(review){
+    if(review.movie){
+      id = review.movie.id
     }
   }
-`;
-
-export default function ReviewEditModal({ review, onClose }: Props) {
-  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
+  const {updateReview:UpdateReviewAPI} = useReview(id)
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {
     if (review === undefined) return;
-    const movie_id = review.movie.id;
-    const user_id = review.user.id;
+
     try {
-      await UpdateReviewAPI({
-        variables: {
-          input: {
-            id: review.id,
-            description: editedReview.description,
-            rating: editedReview.rating,
-          },
-        },
-        update: (cache,{data}) => {
-          if (window.location.pathname === "/reviews") {
-            const reviewData = client.readQuery({
-              query: GET_REVIEWS_OF_USER,
-              variables: { input: { user_id } },
-            });
-            if(!reviewData) return;
-            cache.writeQuery({
-              query: GET_REVIEWS_OF_USER,
-              variables: { input: { user_id } },
-              data: {
-                getReviewsOfUser: [...reviewData.getReviewsOfUser],
-              },
-            });
-          } else {
-            const reviewsOfMovieData = client.readQuery({
-              query: GET_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id } },
-            });
-            if(!reviewsOfMovieData) return;
-            cache.writeQuery({
-              query: GET_REVIEWS_OF_MOVIE,
-              data: {
-                getReviewsOfMovie: [...reviewsOfMovieData.getReviewsOfMovie],
-              },
-            });
-            const reviewsOfUserData = client.readQuery({
-              query: GET_USERS_REVIEWS_OF_MOVIE,
-              variables: { input: { movie_id, user_id } },
-            });
-            if(!reviewsOfUserData) return;
-            cache.writeQuery({
-              query: GET_USERS_REVIEWS_OF_MOVIE,
-              data: {
-                getReviewsOfUserForMovie: [...reviewsOfUserData.getReviewsOfUserForMovie],
-              },
-            });
-            const movieData = client.readQuery({
-              query: GET_MOVIE_BY_ID,
-              variables: { input: { id: movie_id } },
-            });
-            if(!movieData) return;
-            cache.writeQuery({
-              query: GET_MOVIE_BY_ID,
-              variables: { input: { id: movie_id } },
-              data: {
-                getMovieById: data.updateReview.movie,
-              },
-            });
-          }
-        },
-      });
-      const msg = t("successMessages.reviewEdit");
-      enqueueSnackbar(msg, { variant: "success" });
-      onClose?.();
+      const result = await UpdateReviewAPI(review.id,editedReview.rating,editedReview.description)
+      if(result){
+        const msg = t("successMessages.reviewEdit");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+      }
     } catch (error: any) {
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
@@ -159,9 +73,6 @@ export default function ReviewEditModal({ review, onClose }: Props) {
     enableReinitialize: true,
     validationSchema: schema,
   });
-
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
-
   return (
     <Modal
       open={Boolean(review)}

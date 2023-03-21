@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql/error";
 import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { CreateMovie, Movie, UpdateMovieInput } from "./types";
+import { CreateMovie, Movie, MovieWithReviews, UpdateMovieInput } from "./types";
 
 export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
@@ -19,6 +19,13 @@ export async function getMovieById(id:string, context:MyContext):Promise<Movie|n
 export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movie[]> {
   const sql = "SELECT * FROM movie WHERE category_id = ?";
   return context.db.all<Movie>(sql,[id])
+}
+
+export async function getMovieWithReviewsById(id:string,context:MyContext): Promise<MovieWithReviews | null>{
+  const sql = `SELECT * FROM movie WHERE id = ?`
+  const result = await context.db.get<MovieWithReviews>(sql,[id])
+  if(result === undefined) return null
+  return result
 }
 
 export async function createMovie(movie:CreateMovie, context:MyContext):Promise<Movie|null> {

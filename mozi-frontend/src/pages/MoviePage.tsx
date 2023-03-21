@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Movie, ReviewListReview } from "../api/types";
+import { MovieWithReviews, Review, ReviewListReview } from "../api/types";
 import { useSnackbar } from "notistack";
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
@@ -26,138 +26,24 @@ import ReviewCard from "../components/cards/ReviewCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../common/errorMessages";
-
-export const GET_MOVIE_BY_ID = gql`
-  query GetMovieById($input: MovieInput!) {
-    getMovieById(input: $input) {
-      id
-      title
-      poster
-      description
-      release_date
-      rating
-      category {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const GET_REVIEWS_OF_MOVIE = gql`
-  query GetReviewsOfMovie($input: GetReviewsOfMovieInput!) {
-    getReviewsOfMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
-
-export const GET_USERS_REVIEWS_OF_MOVIE = gql`
-  query GetReviewsOfUserForMovie($input: GetReviewsOfUserForMovieInput!) {
-    getReviewsOfUserForMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
-
-const ADD_REVIEW = gql`
-  mutation CreateReview($input: AddReviewInput!) {
-    createReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
+import { useMoviePageData } from "./useMoviePageData";
+import { useReview } from "../api/review/useReview";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
   const navigate = useNavigate();
   const context = useSessionContext();
   const currUser = context.user!;
-  const [AddReviewAPI] = useMutation(ADD_REVIEW);
   const { enqueueSnackbar } = useSnackbar();
-
-  const { data: movieReviewsData, loading: movieReviewsLoading } = useQuery(
-    GET_REVIEWS_OF_MOVIE,
-    { variables: { input: { movie_id: currmovie_id } } }
-  );
-  const {
-    data: movieData,
-    loading: movieLoading,
-    error: movieError,
-  } = useQuery(GET_MOVIE_BY_ID, {
-    variables: { input: { id: currmovie_id } },
-  });
-  const { data: userReviewsData, loading: userReviewsLoading } = useQuery(
-    GET_USERS_REVIEWS_OF_MOVIE,
-    { variables: { input: { movie_id: currmovie_id, user_id: currUser.id } } }
-  );
-
+  const { movie, error, loading } = useMoviePageData(currmovie_id!)
+  const {addReview:AddReviewAPI} = useReview(currmovie_id!)
   const { t } = useTranslation();
-  const client = useApolloClient();
 
-  const [editingMovie, setEditingMovie] = useState<Movie | undefined>(
+  const [editingMovie, setEditingMovie] = useState<MovieWithReviews | undefined>(
     undefined
   );
-  const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
+  const [deletingMovie, setDeletingMovie] = useState<MovieWithReviews | undefined>(
     undefined
   );
   const [editingReview, setEditingReview] = useState<
@@ -168,14 +54,15 @@ export default function MoviePage() {
   >(undefined);
   const [ratingDescription, setRatingDescription] = useState("");
   const [value, setValue] = useState<number | null>(0);
+  const reviewsOfUser = movie?.reviews.filter((x) => x.user.id === currUser.id)
 
   useEffect(() => {
     if (!currUser) navigate("/login");
   }, []);
 
   useEffect(() => {
-    if (movieError) navigate("/");
-  }, [movieError]);
+    if (error) navigate("/");
+  }, [error]);
 
   const handleAddReview = async () => {
     const movie_id = currmovie_id;
@@ -188,60 +75,20 @@ export default function MoviePage() {
       const user_id = currUser.id;
       if (
         movie_id !== undefined &&
-        userReviewsData.getReviewsOfUserForMovie.length === 0 &&
+        reviewsOfUser.length === 0 &&
         rating !== "0" &&
         description !== "" &&
         currUser
       ) {
         try {
-          await AddReviewAPI({
-            variables: { input: { rating, description, movie_id, user_id } },
-            update: (cache, { data }) => {
-              const reviewsOfMovieData = client.readQuery({
-                query: GET_REVIEWS_OF_MOVIE,
-                variables: { input: { movie_id } },
-              });
-              if(!reviewsOfMovieData) return;
-              cache.writeQuery({
-                query: GET_REVIEWS_OF_MOVIE,
-                variables: { input: { movie_id } },
-                data: {
-                  getReviewsOfMovie: [...reviewsOfMovieData.getReviewsOfMovie, data.createReview],
-                },
-              });
-              const reviewsOfUserForMovieData = client.readQuery({
-                query: GET_USERS_REVIEWS_OF_MOVIE,
-                variables: { input: { movie_id, user_id } },
-              });
-              if(!reviewsOfUserForMovieData) return;
-              cache.writeQuery({
-                query: GET_USERS_REVIEWS_OF_MOVIE,
-                variables: { input: { movie_id, user_id } },
-                data: {
-                  getReviewsOfUserForMovie: [
-                    ...reviewsOfUserForMovieData.getReviewsOfUserForMovie,
-                    data.createReview,
-                  ],
-                },
-              });
-              client.readQuery({
-                query: GET_MOVIE_BY_ID,
-                variables: { input: { id: movie_id } },
-              });
-              cache.writeQuery({
-                query: GET_MOVIE_BY_ID,
-                variables: { input: { id: movie_id } },
-                data: {
-                  getMovieById: data.createReview.movie,
-                },
-              });
-            },
-          });
-          const msg = t("successMessages.reviewAdd");
-          enqueueSnackbar(msg, { variant: "success" });
-
-          setRatingDescription("");
-          setValue(0);
+          const result = await AddReviewAPI(rating,description,movie_id,user_id);
+          if(result){
+            const msg = t("successMessages.reviewAdd");
+            enqueueSnackbar(msg, { variant: "success" });
+  
+            setRatingDescription("");
+            setValue(0);
+          }
         } catch (error: any) {
           if (error.message === EXPIRED_TOKEN_MESSAGE) {
             const msg = t("failMessages.expiredToken");
@@ -253,7 +100,6 @@ export default function MoviePage() {
             enqueueSnackbar(msg, { variant: "error" });
           }
           else {
-            
             const msg = t("someError");
             enqueueSnackbar(msg, { variant: "error" });
           }
@@ -264,16 +110,14 @@ export default function MoviePage() {
       } else if (rating === "0") {
         const msg = t("failMessages.reviewRatingMissing");
         enqueueSnackbar(msg, { variant: "error" });
-      } else if (userReviewsData.getReviewsOfUserForMovie.length !== 0) {
+      } else if (movie.reviews.filter((x) => x.user.id === user_id).length !== 0) {
         const msg = t("failMessages.reviewAddMultiple");
         enqueueSnackbar(msg, { variant: "error" });
       }
     }
   };
 
-  if (movieLoading) return LoadingComponent(movieLoading);
-  if (movieReviewsLoading) return LoadingComponent(movieReviewsLoading);
-  if (userReviewsLoading) return LoadingComponent(userReviewsLoading);
+  if (loading) return LoadingComponent(loading);
 
   return (
     <>
@@ -298,9 +142,9 @@ export default function MoviePage() {
           />
           <div style={{ display: "flex", justifyContent: "center" }}>
             <MoviePageCard
-              movie={movieData.getMovieById}
-              onEdit={() => setEditingMovie(movieData.getMovieById)}
-              onDelete={() => setDeletingMovie(movieData.getMovieById)}
+              movie={movie}
+              onEdit={() => setEditingMovie(movie)}
+              onDelete={() => setDeletingMovie(movie)}
             />
           </div>
           <div
@@ -311,35 +155,38 @@ export default function MoviePage() {
               marginBottom: 30,
             }}
           >
-            <Grid container spacing={4}>
-              {movieReviewsData.getReviewsOfMovie.length !== 0 && (
+            {movie !== null && (
+
+              <Grid container spacing={4}>
+              {movie.reviews.length !== 0 && (
                 <>
-                  {movieReviewsData.getReviewsOfMovie.map(
-                    (review: ReviewListReview) => (
+                  {movie.reviews.map(
+                    (review: Review) => (
                       <Grid item key={review.id} xs={12}>
                         <ReviewCard
                           review={review}
                           onEdit={() => setEditingReview(review)}
                           onDelete={() => setDeletingReview(review)}
-                        />
+                          />
                       </Grid>
                     )
                   )}
                 </>
               )}
-              {movieReviewsData.getReviewsOfMovie.length === 0 && (
+              {movie.reviews.length === 0 && (
                 <Grid item xs={12}>
                   <Typography
                     variant="h6"
                     align="center"
                     color="textPrimary"
                     gutterBottom
-                  >
+                    >
                     {t("review.noReviewFoundForMovie")}
                   </Typography>
                 </Grid>
               )}
             </Grid>
+                    )}
           </div>
           <Card
             variant="outlined"

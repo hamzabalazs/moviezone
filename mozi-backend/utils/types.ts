@@ -36,6 +36,17 @@ export type Movie = {
   rating: string;
 };
 
+export type MovieWithReviews = {
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  release_date: string;
+  category: Category;
+  rating: string;
+  reviews: Review[];
+}
+
 export type CreateMovie = {
   id: string;
   title: string;
@@ -52,6 +63,14 @@ export type Review = {
   movie: Movie;
   user: User;
 };
+
+export type ExtendedReview = {
+  id: string;
+  user: User;
+  movie: MovieWithReviews;
+  description: string;
+  rating: string;
+}
 
 export type Role = {
   role: string;

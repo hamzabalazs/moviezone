@@ -6,6 +6,7 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
+import { Link as ReactLink } from "react-router-dom";
 import { MovieListMovie } from "../../api/types";
 import { useTranslation } from "react-i18next";
 
@@ -13,12 +14,13 @@ interface Props {
   movie: MovieListMovie;
 }
 
-export default function MovieListCard({movie}: Props) {
+export default function MovieListCard({ movie }: Props) {
   const { t } = useTranslation();
-  const rating = parseFloat(movie.rating)
+  const rating = parseFloat(movie.rating);
   return (
     <Link
-      href={"/movie/" + movie.id}
+      component={ReactLink}
+      to={"/movie/" + movie.id}
       underline="none"
       data-testid="movie-list-card-link"
     >

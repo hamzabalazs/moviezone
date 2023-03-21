@@ -16,6 +16,7 @@ import {
   updateMovie,
   createMovie,
   getMoviesByCategoryId,
+  getMovieWithReviewsById,
 } from "../utils/movie";
 import {
   getReviews,
@@ -37,7 +38,7 @@ import {
   checkForCategory,
 } from "../utils/category";
 import { MyContext } from "../server";
-import { CreateMovie, FullUser, Movie, Review, Role, UserRole } from "../utils/types";
+import { CreateMovie, FullUser, Movie, MovieWithReviews, Review, Role, UserRole } from "../utils/types";
 import {
   BAD_CATEGORYID_MESSAGE,
   CATEGORY_EXISTS_MESSAGE,
@@ -109,6 +110,9 @@ export const resolvers = {
     async getMoviesByCategoryId(_: any, { input }: any, context: MyContext) {
       return await getMoviesByCategoryId(input.category_id, context);
     },
+    async getMovieWithReviewsById(_:any, {input}:any, context:MyContext){
+      return await getMovieWithReviewsById(input.id,context);
+    },
     // Authentication
     async getToken(_: any, __: any, context: MyContext) {
       const user = await getUserByToken(context);
@@ -120,6 +124,14 @@ export const resolvers = {
   Review: {
     async movie(review: any, __: any, context: MyContext) {
       return await getMovieById(review.movie_id, context);
+    },
+    async user(review: any, __: any, context: MyContext) {
+      return await getUserById(review.user_id, context);
+    },
+  },
+  ExtendedReview: {
+    async movie(review: any, __: any, context: MyContext) {
+      return await getMovieWithReviewsById(review.movie_id, context);
     },
     async user(review: any, __: any, context: MyContext) {
       return await getUserById(review.user_id, context);
@@ -138,6 +150,23 @@ export const resolvers = {
     async category(movie: any, __: any, context: MyContext) {
       return await getCategoryById(movie.category_id, context);
     },
+  },
+  MovieWithReviews: {
+    async rating(movie: MovieWithReviews, __: any, context: MyContext) {
+      const reviews = await getReviewsOfMovie(movie.id, context);
+      let avg = 0;
+      reviews.map((review) => (avg += parseInt(review.rating)));
+      if (avg !== 0) {
+        avg /= reviews.length;
+        return avg.toString();
+      } else return 0;
+    },
+    async category(movie: any, __: any, context: MyContext) {
+      return await getCategoryById(movie.category_id, context);
+    },
+    async reviews(movie: MovieWithReviews,__:any,context:MyContext){
+      return await getReviewsOfMovie(movie.id,context);
+    }
   },
 
   Mutation: {

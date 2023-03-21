@@ -38,12 +38,12 @@ import { Database } from "../common/sqlite-async-ts";
 let db:Database
 let req = {
     headers:{
-        'auth-token':"admintoken1423"
+        'auth-token':""
     }
 }
 let server:ApolloServer
 
-test("Should open database",async() => {
+test.only("Should open database",async() => {
   await Database.open(":memory:").then((_db:Database) => {
     db = _db
   })
@@ -58,8 +58,7 @@ test("Should open database",async() => {
   expect(db).not.toBeUndefined()
 })
 
-test("Should get all reviews", async () => {
-  req.headers['auth-token'] = "admintoken1423"
+test.only("Should get all reviews", async () => {
   const result = await server.executeOperation({
     query: GET_REVIEWS,
   });

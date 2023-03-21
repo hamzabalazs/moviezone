@@ -17,41 +17,17 @@ import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import { useQuery, gql } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
-  }
-`;
-
-export const GET_MOVIES = gql`
-  query GetMovies {
-    getMovies {
-      id
-      title
-      poster
-      release_date
-      category {
-        id
-      }
-      rating
-    }
-  }
-`;
+import { useHomePageData } from "./useHomePageData";
 
 export function Home() {
   const context = useSessionContext();
-  const {enqueueSnackbar} = useSnackbar()
-  const {t} = useTranslation()
-  const { data: categoryData, loading: categoryLoading ,error} =
-    useQuery(GET_CATEGORIES);
-  const { data: movieData, loading: movieLoading } = useQuery(GET_MOVIES);
+  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
+
+  const { movies, categories, error, loading } = useHomePageData();
+
   const currUser = context.user;
   const navigate = useNavigate();
   const [isOpenAdd, setIsOpenAdd] = useState(false);
@@ -63,14 +39,12 @@ export function Home() {
     if (!currUser) navigate("/login");
   }, []);
 
-  if (movieLoading) return LoadingComponent(movieLoading);
-  if (categoryLoading) return LoadingComponent(categoryLoading);
+  if (loading) return LoadingComponent(loading);
   if (error?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken")
-    enqueueSnackbar(msg,{variant:"error"})
-    context.logOut()
+    const msg = t("failMessages.expiredToken");
+    enqueueSnackbar(msg, { variant: "error" });
+    context.logOut();
   }
-
 
   return (
     <>
@@ -111,50 +85,8 @@ export function Home() {
             )}
           </div>
           <Container maxWidth="md" sx={{ marginBottom: 3 }}>
-            {movieData.getMovies.length !== 0 && (
-              <MovieList
-                movieList={movieData.getMovies}
-                categoryList={categoryData.getCategories}
-              />
-            )}
-            {movieData.getMovies.length === 0 && (
-              <>
-                <Skeleton
-                  variant="rectangular"
-                  sx={{ marginBottom: 3 }}
-                  width={850.4}
-                  height={56}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  sx={{ marginBottom: 4 }}
-                  width={850.4}
-                  height={56}
-                />
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Skeleton
-                      variant="rectangular"
-                      width={273.33}
-                      height={430.1}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Skeleton
-                      variant="rectangular"
-                      width={273.33}
-                      height={430.1}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Skeleton
-                      variant="rectangular"
-                      width={273.33}
-                      height={430.1}
-                    />
-                  </Grid>
-                </Grid>
-              </>
+            {movies.length !== 0 && (
+              <MovieList movieList={movies} categoryList={categories} />
             )}
           </Container>
           <MyFooter />
