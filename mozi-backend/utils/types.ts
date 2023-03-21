@@ -36,6 +36,15 @@ export type Movie = {
   rating: string;
 };
 
+export type CreateMovie = {
+  id: string;
+  title: string;
+  description: string;
+  poster: string;
+  release_date: string;
+  category: Category;
+};
+
 export type Review = {
   id: string;
   rating: string;

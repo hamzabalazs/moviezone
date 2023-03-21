@@ -3,6 +3,7 @@ import { MyContext } from "../server";
 import { CurrentUser } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { NO_USER_MESSAGE } from "../common/errorMessages";
+import { GraphQLError } from "graphql";
 
 export async function logIn(
   loginDetails: { email: string; password: string },
@@ -36,7 +37,7 @@ export async function getUserForLogin(
   const isToken:CurrentUser|null = await context.db.get(sqlToken,[email,md5(password)])
   if (!isToken) {
     const result: CurrentUser|null = await context.db.get(sqlNoToken,[email,md5(password)])
-    if (!result) throw new Error(NO_USER_MESSAGE);
+    if (!result) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
     return result;
   }
   return isToken;

@@ -141,5 +141,11 @@
         "ratingReq":"Rating is required!",
         "posterReq": "Poster is required!"
     },
-    "someError": "Something went wrong, please try again later!"
+    "someError": "Something went wrong, please try again later!",
+    "validityFailure":{
+        "movieNotValid":"Movie is not valid!",
+        "categoryNotValid":"Category is not valid!",
+        "reviewNotValid":"Review is not valid!",
+        "userNotValid":"User is not valid!"
+    }
 }

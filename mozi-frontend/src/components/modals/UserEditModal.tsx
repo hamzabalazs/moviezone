@@ -20,6 +20,7 @@ import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { GET_USERS } from "../../pages/Account";
 import {
   EXPIRED_TOKEN_MESSAGE,
+  NOT_VALID_USER,
   USER_EMAIL_USED_MESSAGE,
 } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
@@ -90,7 +91,12 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
       else if (e.message === USER_EMAIL_USED_MESSAGE) {
         const msg = t("user.emailExists");
         enqueueSnackbar(msg, { variant: "error" });
-      }  else {
+      } 
+      else if (e.message === NOT_VALID_USER) {
+        const msg = t("validityFailure.userNotValid");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
+      else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }

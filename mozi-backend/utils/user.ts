@@ -1,30 +1,41 @@
+import { GraphQLError } from "graphql";
 import md5 from "md5";
 import { RunResult } from "sqlite3";
 import {
+  NOT_VALID_USER,
   UNAUTHORIZED_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
 } from "../common/errorMessages";
+import { userSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { User, FullUser, CurrentUser } from "./types";
 
-export function getUsers(__: any, context: MyContext): Promise<User[]> {
+export async function getUsers(__: any, context: MyContext): Promise<User[]> {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
-  return context.db.all<User>(sql, []);
+  const result = await context.db.all<User>(sql, []);
+  if(result === undefined) return [];
+  return result
 }
 
-export function getUserById(id: string, context: MyContext): Promise<User|null> {
+export async function getUserById(id: string, context: MyContext): Promise<User|null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
-  return context.db.get<User>(sql, [id]);
+  const result = await context.db.get<User>(sql, [id]);
+  if(result === undefined) return null;
+  return result
 }
 
 export async function getUserByToken(context: MyContext): Promise<CurrentUser|null> {
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.password,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`;
-  return context.db.get<CurrentUser>(sql, [context.req.headers["auth-token"]]);
+  const result = await context.db.get<CurrentUser>(sql, [context.req.headers["auth-token"]]);
+  if(result === undefined) return null;
+  return result
 }
 
-export function checkForUser(email: string, context: MyContext): Promise<User|null> {
+export async function checkForUser(email: string, context: MyContext): Promise<User|null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.email = ?`;
-  return context.db.get<User>(sql, [email]);
+  const result = await context.db.get<User>(sql, [email]);
+  if(result === undefined) return null;
+  return result
 }
 
 export async function createUser(
@@ -51,11 +62,14 @@ export async function updateUser(
     context.user!.id === user.id ||
     context.user!.role.toString() === "admin"
   ) {
+    const validation = await userSchema.isValid(user)
+    if(!validation) throw new GraphQLError(NOT_VALID_USER,{extensions:{code:'VALIDATION_FAILED'}})
     const currentUser = await getUserById(user.id, context);
     const userExists = await checkForUser(user.email, context);
     if (userExists !== null && currentUser !== null)
       if (userExists.email !== currentUser.email)
-        throw new Error(USER_EMAIL_USED_MESSAGE);
+        throw new GraphQLError(USER_EMAIL_USED_MESSAGE,{extensions:{code:'BAD_USER_INPUT'}})
+
     let newPass = md5(user.password);
     const sql = !user.role
       ? `UPDATE user SET first_name = ?,
@@ -88,7 +102,7 @@ export async function updateUser(
       ]);
     return getUserById(user.id,context)
   }
-  throw new Error(UNAUTHORIZED_MESSAGE);
+  throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
 }
 
 export async function deleteUser(
@@ -106,5 +120,5 @@ export async function deleteUser(
     return user;
   }
 
-  throw new Error(UNAUTHORIZED_MESSAGE);
+  throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
 }

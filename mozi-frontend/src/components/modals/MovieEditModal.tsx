@@ -21,7 +21,10 @@ import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";
 import { GET_MOVIE_BY_ID } from "../../pages/MoviePage";
 import { useSessionContext } from "../../api/SessionContext";
-import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import {
+  EXPIRED_TOKEN_MESSAGE,
+  NOT_VALID_MOVIE,
+} from "../../common/errorMessages";
 
 interface Props {
   movie?: Movie;
@@ -38,19 +41,19 @@ const GET_CATEGORIES = gql`
 `;
 const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
-  updateMovie(input: $input) {
-    id
-    title
-    description
-    poster
-    release_date
-    category {
+    updateMovie(input: $input) {
       id
-      name
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
     }
-    rating
   }
-}
 `;
 
 export default function MovieEditModal({ movie, onClose }: Props) {
@@ -80,7 +83,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
             category_id: editedMovie.category.id,
           },
         },
-        update: (cache,{data}) => {
+        update: (cache, { data }) => {
           const movieData = client.readQuery({
             query: GET_MOVIE_BY_ID,
             variables: { input: { id } },
@@ -103,6 +106,9 @@ export default function MovieEditModal({ movie, onClose }: Props) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
+      } else if (error.message === NOT_VALID_MOVIE) {
+        const msg = t("validityFailure.movieNotValid");
+        enqueueSnackbar(msg, { variant: "error" });
       } else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });

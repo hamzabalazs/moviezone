@@ -37,22 +37,19 @@ import {
   checkForCategory,
 } from "../utils/category";
 import { MyContext } from "../server";
-import { FullUser, Movie, Review, Role, UserRole } from "../utils/types";
+import { CreateMovie, FullUser, Movie, Review, Role, UserRole } from "../utils/types";
 import {
   BAD_CATEGORYID_MESSAGE,
   CATEGORY_EXISTS_MESSAGE,
-  EXPIRED_TOKEN_MESSAGE,
+  NOT_VALID_USER,
   NO_CATEGORY_MESSAGE,
-  NO_MOVIE_MESSAGE,
   NO_TOKEN_MESSAGE,
   NO_USER_MESSAGE,
-  REVIEW_EXISTS_MESSAGE,
   REVIEW_INVALID_RATING_MESSAGE,
-  UNAUTHORIZED_MESSAGE,
-  USER_CREATION_FAILED_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
 } from "../common/errorMessages";
-import { createReviewErrorHandling, tokenChecker } from "../common/validation";
+import { createReviewErrorHandling, tokenChecker, userSchema } from "../common/validation";
+import { GraphQLError } from "graphql";
 
 export const resolvers = {
   Query: {
@@ -115,7 +112,7 @@ export const resolvers = {
     // Authentication
     async getToken(_: any, __: any, context: MyContext) {
       const user = await getUserByToken(context);
-      if(!user) throw new Error(NO_TOKEN_MESSAGE)
+      if(!user) throw new GraphQLError(NO_TOKEN_MESSAGE,{extensions:{code:'UNAUTHENTICATED'}})
       context.user = user;
       return await getToken(context);
     },
@@ -149,8 +146,10 @@ export const resolvers = {
       const newUser = args.input;
       const isUser = await checkForUser(newUser.email, context);
       if (isUser !== undefined) {
-        throw new Error(USER_EMAIL_USED_MESSAGE);
+        throw new GraphQLError(USER_EMAIL_USED_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       }
+      const validation = await userSchema.isValid(newUser)
+      if(!validation) throw new GraphQLError(NOT_VALID_USER,{extensions:{code:'VALIDATION_FAILED'}})
       const user: FullUser = {
         id: uuidv4(),
         first_name: newUser.first_name,
@@ -159,64 +158,49 @@ export const resolvers = {
         password: md5(newUser.password),
         role: "viewer" as unknown as UserRole,
       };
-      const createdUser = await createUser(user, context);
-      if (createdUser === undefined) {
-        throw new Error(USER_CREATION_FAILED_MESSAGE);
-      }
-      return createdUser;
+      return await createUser(user, context);
     },
     async updateUser(_: any, args: any, context: MyContext) {
       const updatedUser = args.input;
       const isUser = await getUserById(updatedUser.id, context);
       context.user = await tokenChecker(context)
-      if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
+      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await updateUser(updatedUser, context);
     },
     async deleteUser(_: any, args: any, context: MyContext) {
       const user_id = args.input.id;
       const isUser = await getUserById(user_id, context);
       context.user = await tokenChecker(context)
-      if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
+      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await deleteUser(user_id, context);
     },
     // Categories
     async createCategory(_: any, args: any, context: MyContext) {
-      const user = await getUserByToken(context);
-      if (!user) throw new Error(NO_TOKEN_MESSAGE);
-      if (user.role.toString() === "viewer")
-        throw new Error(UNAUTHORIZED_MESSAGE);
-      context.user = user;
-      const isExpired = await getToken(context);
-      if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+      context.user = await tokenChecker(context)
       const newCategory = args.input.name;
       const isCategory = await checkForCategory(newCategory, context);
       if (isCategory !== undefined) {
-        throw new Error(CATEGORY_EXISTS_MESSAGE);
+        throw new GraphQLError(CATEGORY_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       }
       return await createCategory(newCategory, context);
     },
     async updateCategory(_: any, args: any, context: MyContext) {
-      context.user = await tokenChecker(context)
-      // if (user.role.toString() === "viewer")
-      //   throw new Error(UNAUTHORIZED_MESSAGE);
-      
+      context.user = await tokenChecker(context)   
       const updatedCategory = args.input;
       const categoryExists = await checkForCategory(
         updatedCategory.name,
         context
       );
-      if (categoryExists) throw new Error(CATEGORY_EXISTS_MESSAGE);
+      if (categoryExists) throw new GraphQLError(CATEGORY_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
       const isCategory = await getCategoryById(updatedCategory.id, context);
-      if (isCategory === undefined) throw new Error(NO_CATEGORY_MESSAGE);
+      if (isCategory === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await updateCategory(updatedCategory, context);
     },
     async deleteCategory(_: any, args: any, context: MyContext) {
       context.user = await tokenChecker(context)
-      // if (user.role.toString() === "viewer")
-      //   throw new Error(UNAUTHORIZED_MESSAGE);
       const categoryId = args.input.id;
       const category = await getCategoryById(categoryId, context);
-      if (category === undefined) throw new Error(NO_CATEGORY_MESSAGE);
+      if (category === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       return await deleteCategory(categoryId, context);
     },
     // Movies
@@ -225,16 +209,15 @@ export const resolvers = {
       const newMovie = args.input;
       const isCategory = await getCategoryById(newMovie.category_id, context);
       if (isCategory === null) {
-        throw new Error(BAD_CATEGORYID_MESSAGE);
+        throw new GraphQLError(BAD_CATEGORYID_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       }
-      const movie: Movie = {
+      const movie: CreateMovie = {
         id: uuidv4(),
         title: newMovie.title,
         description: newMovie.description,
         poster: newMovie.poster,
         release_date: newMovie.release_date,
         category: isCategory,
-        rating: "0",
       };
       return await createMovie(movie, context);
     },
@@ -263,7 +246,7 @@ export const resolvers = {
       const updatedReview = args.input;
       context.user = await tokenChecker(context)
       if (updatedReview.rating === "0")
-        throw new Error(REVIEW_INVALID_RATING_MESSAGE);
+      throw new GraphQLError(REVIEW_INVALID_RATING_MESSAGE,{extensions:{code:'BAD_USER_INPUT'}})
       return await updateReview(updatedReview, context);
     },
     async deleteReview(_: any, args: any, context: MyContext) {

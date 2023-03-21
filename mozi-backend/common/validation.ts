@@ -1,10 +1,11 @@
-import { number, object, string } from "yup";
+import { GraphQLError } from "graphql";
+import { object, string } from "yup";
 import { MyContext } from "../server";
 import { getToken } from "../utils/auth";
 import { getMovieById } from "../utils/movie";
 import { getReviewsOfUserForMovie } from "../utils/review";
 import { getUserById, getUserByToken } from "../utils/user";
-import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, REVIEW_EXISTS_MESSAGE, REVIEW_INVALID_RATING_MESSAGE, UNAUTHORIZED_MESSAGE } from "./errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, REVIEW_EXISTS_MESSAGE, REVIEW_INVALID_RATING_MESSAGE } from "./errorMessages";
 
 export const datevalidator =
   /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/;
@@ -42,24 +43,33 @@ export const movieSchema = object({
   category_id: string().required("Category is required!"),
 });
 
+export const createMovieSchema = object({
+  title: string().required("Title is required!"),
+  description: string().required("Description is required!"),
+  poster: string().required("Poster is required!"),
+  release_date: string()
+    .required("Release Date is required!")
+    .matches(datevalidator, "Invalid date format!"),
+})
+
 export async function tokenChecker(context: MyContext) {
   const user = await getUserByToken(context);
-  if (!user) throw new Error(NO_TOKEN_MESSAGE);
+  if (!user) throw new GraphQLError(NO_TOKEN_MESSAGE,{extensions:{code:'UNAUTHENTICATED'}})
   context.user = user
   const isExpired = await getToken(context);
-  if (isExpired.expired === 1) throw new Error(EXPIRED_TOKEN_MESSAGE);
+  if (isExpired.expired === 1) throw new GraphQLError(EXPIRED_TOKEN_MESSAGE,{extensions:{code:'SESSION_EXPIRED'}})
   return user;
 }
 
 export async function createReviewErrorHandling(newReview:any,context:MyContext){
     const isUser = await getUserById(newReview.user_id, context);
-      if (isUser === undefined) throw new Error(NO_USER_MESSAGE);
+      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       const isMovie = await getMovieById(newReview.movie_id, context);
-      if (isMovie === undefined) throw new Error(NO_MOVIE_MESSAGE);
+      if (isMovie === undefined) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       const hasReview = await getReviewsOfUserForMovie(
         newReview.user_id,
         newReview.movie_id,
         context
       );
-      if (hasReview.length !== 0) throw new Error(REVIEW_EXISTS_MESSAGE);
+      if (hasReview.length !== 0) throw new GraphQLError(REVIEW_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
 }

@@ -1,15 +1,19 @@
-import { NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { GraphQLError } from "graphql/error";
+import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { Movie, UpdateMovieInput } from "./types";
+import { CreateMovie, Movie, UpdateMovieInput } from "./types";
 
 export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
   return context.db.all<Movie>(sql)
 }
 
-export function getMovieById(id:string, context:MyContext):Promise<Movie|null> {
+export async function getMovieById(id:string, context:MyContext):Promise<Movie|null> {
   const sql = `SELECT * FROM movie WHERE id = ?`;
-  return context.db.get<Movie>(sql,[id])
+  const result = await context.db.get<Movie>(sql,[id])
+  if(result === undefined) return null;
+  return result
 }
 
 export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movie[]> {
@@ -17,8 +21,10 @@ export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movi
   return context.db.all<Movie>(sql,[id])
 }
 
-export async function createMovie(movie:Movie, context:MyContext):Promise<Movie|null> {
-  if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
+export async function createMovie(movie:CreateMovie, context:MyContext):Promise<Movie|null> {
+  if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
+  const validation = await createMovieSchema.isValid(movie);
+  if(!validation) throw new GraphQLError(NOT_VALID_MOVIE,{extensions:{code:'VALIDATION_FAILED'}})
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
   context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
   return getMovieById(movie.id,context)
@@ -26,22 +32,24 @@ export async function createMovie(movie:Movie, context:MyContext):Promise<Movie|
 
 export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<Movie|null> {
   const isMovie = await getMovieById(movie.id,context)
-      if(!isMovie) throw new Error(NO_MOVIE_MESSAGE)
-  if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
+  if(!isMovie) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+  const validation = await movieSchema.isValid(movie)
+  if(!validation) throw new GraphQLError(NOT_VALID_MOVIE,{extensions:{code:'VALIDATION_FAILED'}})
+  if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const sql = `UPDATE movie SET title = ?,
     description = ?,
     poster = ?, 
     release_date = ?, 
     category_id=? WHERE movie.id = ?`;
-    context.db.run(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id])
-    return getMovieById(movie.id,context)
+  context.db.run(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id])
+  return getMovieById(movie.id,context)
 }
 
 export async function deleteMovie(id:string, context:MyContext):Promise<Movie|null> {
-  if(context.user?.role.toString() === "viewer") throw new Error(UNAUTHORIZED_MESSAGE)
+  if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const movie = await getMovieById(id, context);
   if(movie === undefined){
-    throw new Error(NO_MOVIE_MESSAGE)
+    throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   }
   const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;
   const sqlReviewDelete = `DELETE FROM review WHERE review.movie_id = ?`

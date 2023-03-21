@@ -142,5 +142,11 @@
         "ratingReq":"Az értékelés kötelező!",
         "posterReq": "A poszter kötelező!"
     },
-    "someError": "Valami rosszul sült el, kérjük, próbálja meg később újra!"
+    "someError": "Valami rosszul sült el, kérjük, próbálja meg később újra!",
+    "validityFailure":{
+        "movieNotValid":"A film nem érvényes!",
+        "categoryNotValid":"A kategória nem érvényes!",
+        "reviewNotValid":"A vélemény nem érvényes!",
+        "userNotValid":"A felhasználó nem érvényes!"
+    }
 }
