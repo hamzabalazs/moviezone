@@ -18,25 +18,17 @@ import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useMutation } from "@apollo/client";
-import { NOT_VALID_USER, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
-
-const ADD_USER = gql`
-  mutation CreateUser($input: AddUserInput!) {
-    createUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
+import {
+  NOT_VALID_USER,
+  USER_EMAIL_USED_MESSAGE,
+} from "../common/errorMessages";
+import { useUser } from "../api/user/useUser";
 
 function Register() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const navigate = useNavigate();
-  const [PostUserAPI] = useMutation(ADD_USER);
+  const { addUser: AddUserApi } = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -60,26 +52,24 @@ function Register() {
       const email = values.email;
       const password = values.password;
       try {
-        const result = await PostUserAPI({
-          variables: { input: { first_name, last_name, email, password } },
-        });
-        if (!result) {
+        const result = await AddUserApi(first_name, last_name, email, password);
+        if (result) {
+          const msg = t("register.success");
+          enqueueSnackbar(msg, { variant: "success" });
+          navigate("/login");
+        }
+      } catch (e: any) {
+        if (e.message === USER_EMAIL_USED_MESSAGE) {
+          const msg = t("register.accountExists");
+          enqueueSnackbar(msg, { variant: "error" });
+          return;
+        } else if (e.message === NOT_VALID_USER) {
+          const msg = t("validityFailure.userNotValid");
+          enqueueSnackbar(msg, { variant: "error" });
+        } else {
           const msg = t("someError");
           enqueueSnackbar(msg, { variant: "error" });
           return;
-        }
-        const msg = t("register.success");
-        enqueueSnackbar(msg, { variant: "success" });
-        navigate("/login");
-      } catch (e: any) {
-        if(e.message === USER_EMAIL_USED_MESSAGE){
-          const msg = t('register.accountExists')
-          enqueueSnackbar(msg,{variant:"error"})
-          return;
-        }
-        else if(e.message === NOT_VALID_USER){
-          const msg = t("validityFailure.userNotValid")
-          enqueueSnackbar(msg, { variant: "error" });
         }
       }
     },

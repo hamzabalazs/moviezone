@@ -17,18 +17,7 @@ import { User } from "../api/types";
 import { useSessionContext } from "../api/SessionContext";
 import { gql, useQuery } from "@apollo/client";
 import LoadingComponent from "../components/LoadingComponent";
-
-export const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      first_name
-      last_name
-      email
-      role
-    }
-  }
-`;
+import { useUserData } from "./useUserData";
 
 interface Values {
   email: string;
@@ -39,7 +28,8 @@ function Forgotpass() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar()
-  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
+  const {users,loading} = useUserData()
+
 
   useEffect(() => {
     if (context.user) {
@@ -53,7 +43,7 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const isUser = usersData.getUsers.find((x:User) => x.email === email);
+      const isUser = users.find((x:User) => x.email === email);
       if (!isUser) {
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
@@ -70,7 +60,7 @@ function Forgotpass() {
     },
   });
 
-  if(usersLoading) return LoadingComponent(usersLoading)
+  if(loading) return LoadingComponent(loading)
   return (
     <>
       <Container component="main" maxWidth="xs">

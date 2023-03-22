@@ -12,28 +12,17 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { gql, useQuery} from "@apollo/client";
 import { useSessionContext } from "../api/SessionContext";
-
-const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      first_name
-      last_name
-      email
-      role
-    }
-  }
-`;
+import { useUserData } from "./useUserData";
 
 export function Users() {
-  const { data: usersData, loading:usersLoading } = useQuery(GET_USERS);
   const { t } = useTranslation();
   const context = useSessionContext()
+  const {users,loading} = useUserData()
 
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
   
-  if(usersLoading) return LoadingComponent(usersLoading)
+  if(loading) return LoadingComponent(loading)
 
   return (
     <>
@@ -64,7 +53,7 @@ export function Users() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {usersData.getUsers.map((user:User) => (
+            {users.map((user:User) => (
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}

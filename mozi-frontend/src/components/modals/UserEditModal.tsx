@@ -16,14 +16,13 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
 import * as Yup from "yup";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
-import { GET_USERS } from "../../pages/Account";
 import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_USER,
   USER_EMAIL_USED_MESSAGE,
 } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
+import { useUser } from "../../api/user/useUser";
 
 interface Props {
   user?: User;
@@ -31,52 +30,18 @@ interface Props {
   allowEditRole?: boolean;
 }
 
-const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
+
 
 export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
   const { t } = useTranslation();
-  const [UpdateUserAPI] = useMutation(UPDATE_USER);
+  const {updateUser:UpdateUserAPI} = useUser()
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
 
   const updateUser = async (editedUser: Omit<User, "id">) => {
     if (user === undefined) return;
     try {
-      const result = await UpdateUserAPI({
-        variables: {
-          input: {
-            id: user.id,
-            first_name: editedUser.first_name,
-            last_name: editedUser.last_name,
-            email: editedUser.email,
-            password: editedUser.password,
-            role: allowEditRole ? editedUser.role : undefined,
-          },
-        },
-        update: (cache) => {
-          const data = client.readQuery({
-            query: GET_USERS,
-          });
-          if(!data) return
-          cache.writeQuery({
-            query: GET_USERS,
-            data: {
-              getUsers: data.getUsers,
-            },
-          });
-        },
-      });
+      const result = await UpdateUserAPI(user.id,editedUser.first_name,editedUser.last_name,editedUser.email,editedUser.password,allowEditRole ? editedUser.role : undefined);
       if (result) {
         const msg = t("successMessages.userEdit");
         enqueueSnackbar(msg, { variant: "success" });
