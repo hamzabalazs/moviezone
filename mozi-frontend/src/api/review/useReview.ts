@@ -4,6 +4,7 @@ import {
   useMutation,
   useQuery,
 } from "@apollo/client";
+import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
 import { ExtendedReview } from "../types";
 
 type ReviewData = {
@@ -48,33 +49,6 @@ const ADD_REVIEW = gql`
         first_name
         last_name
         id
-      }
-    }
-  }
-`;
-
-const GET_MOVIE_BY_ID = gql`
-  query GetMovieWithReviewsById($input: MovieInput!) {
-    getMovieWithReviewsById(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-      reviews {
-        id
-        rating
-        description
-        user {
-          id
-          first_name
-          last_name
-        }
       }
     }
   }
@@ -148,9 +122,6 @@ export function useReview(movie_id: string): ReviewData {
   const [AddReviewAPI] = useMutation(ADD_REVIEW);
   const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
   const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
-  useQuery(GET_MOVIE_BY_ID, {
-    variables: { input: { id: movie_id } },
-  });
   const client = useApolloClient();
 
   async function addReview(

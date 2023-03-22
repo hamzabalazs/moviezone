@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql/error";
 import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { CreateMovie, Movie, MovieWithReviews, UpdateMovieInput } from "./types";
+import { CreateMovieType, Movie, MovieWithReviews, UpdateMovieInput } from "./types";
 
 export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
   const sql = "SELECT * FROM movie";
@@ -28,7 +28,7 @@ export async function getMovieWithReviewsById(id:string,context:MyContext): Prom
   return result
 }
 
-export async function createMovie(movie:CreateMovie, context:MyContext):Promise<Movie|null> {
+export async function createMovie(movie:CreateMovieType, context:MyContext):Promise<Movie|null> {
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const validation = await createMovieSchema.isValid(movie);
   if(!validation) throw new GraphQLError(NOT_VALID_MOVIE,{extensions:{code:'VALIDATION_FAILED'}})

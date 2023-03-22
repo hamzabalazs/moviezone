@@ -12,22 +12,13 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CategoryCard from "../components/cards/CategoryCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
-import { useQuery, gql} from '@apollo/client'
-import { useSessionContext } from "../api/SessionContext";
+import { useCategoriesData } from "./useCategoriesData";
 
-export const GET_CATEGORIES = gql`
-  query GetCategories {
-  getCategories {
-    id
-    name
-  }
-}
-`
+
 
 function Categories() {
   const { t } = useTranslation();
-  const {data:categoryData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
-  const context = useSessionContext()
+  const {categories,loading,error} = useCategoriesData();
   
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined
@@ -42,7 +33,7 @@ function Categories() {
     setIsOpenAdd(true);
   };
 
-  if(categoriesLoading) return LoadingComponent(categoriesLoading)
+  if(loading) return LoadingComponent(loading)
 
   return (
     <>
@@ -87,7 +78,7 @@ function Categories() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {categoryData.getCategories.map((category:Category) => (
+            {categories.map((category:Category) => (
               <Grid item key={category.id} xs={12}>
                 <CategoryCard
                   category={category}

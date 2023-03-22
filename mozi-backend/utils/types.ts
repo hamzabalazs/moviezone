@@ -47,7 +47,7 @@ export type MovieWithReviews = {
   reviews: Review[];
 }
 
-export type CreateMovie = {
+export type CreateMovieType = {
   id: string;
   title: string;
   description: string;

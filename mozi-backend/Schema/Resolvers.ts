@@ -38,7 +38,7 @@ import {
   checkForCategory,
 } from "../utils/category";
 import { MyContext } from "../server";
-import { CreateMovie, FullUser, Movie, MovieWithReviews, Review, Role, UserRole } from "../utils/types";
+import { CreateMovieType, FullUser, Movie, MovieWithReviews, Review, Role, UserRole } from "../utils/types";
 import {
   BAD_CATEGORYID_MESSAGE,
   CATEGORY_EXISTS_MESSAGE,
@@ -240,7 +240,7 @@ export const resolvers = {
       if (isCategory === null) {
         throw new GraphQLError(BAD_CATEGORYID_MESSAGE,{extensions:{code:'NOT_FOUND'}})
       }
-      const movie: CreateMovie = {
+      const movie: CreateMovieType = {
         id: uuidv4(),
         title: newMovie.title,
         description: newMovie.description,

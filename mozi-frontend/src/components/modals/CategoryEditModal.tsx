@@ -12,52 +12,29 @@ import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
 import * as Yup from "yup";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
-import { GET_CATEGORIES } from "../../pages/Categories";
 import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
+import { useCategory } from "../../api/category/useCategory";
 
 interface Props {
   category?: Category;
   onClose?: () => void;
 }
 
-const UPDATE_CATEGORY = gql`
-  mutation UpdateCategory($input: UpdateCategoryInput!) {
-    updateCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
+
 
 export default function CategoryEditModal({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY);
+  const {updateCategory:UpdateCategoryAPI} = useCategory()
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient()
   const { logOut } = useSessionContext()
 
   const updateCategory = async (editedCategory: Omit<Category, "id">) => {
     if (category === undefined) return;
     const categoryId = category.id;
     try {
-      const result = await UpdateCategoryAPI({
-        variables: { input: { id: categoryId, name: editedCategory.name } },
-        update:(cache) => {
-          const data = client.readQuery({
-            query:GET_CATEGORIES
-          })
-          if(!data) return;
-          cache.writeQuery({
-            query:GET_CATEGORIES,
-            data:{
-              getCategories:[...data.getCategories]
-            }
-          })
-        }
-      });
+      const result = await UpdateCategoryAPI(categoryId,editedCategory.name);
       if (result) {
         const msg = t("successMessages.categoryEdit");
         enqueueSnackbar(msg, { variant: "success" });

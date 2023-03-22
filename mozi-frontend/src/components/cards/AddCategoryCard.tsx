@@ -12,22 +12,13 @@ import { FormikErrors, useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
-import { GET_CATEGORIES } from "../../pages/Categories";
 import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY, UNAUTHORIZED_MESSAGE } from "../../common/errorMessages"
 import { useSessionContext } from "../../api/SessionContext";
+import { useCategory } from "../../api/category/useCategory";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
 }
-
-const ADD_CATEGORY = gql`
-  mutation CreateCategory($input: AddCategoryInput!) {
-    createCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
 interface Values {
   name: string;
@@ -35,7 +26,7 @@ interface Values {
 
 export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
-  const [AddCategoryAPI] = useMutation(ADD_CATEGORY);
+  const {addCategory: AddCategoryAPI} = useCategory()
   const { enqueueSnackbar } = useSnackbar();
   const client = useApolloClient()
   const { logOut } = useSessionContext()
@@ -43,25 +34,12 @@ export default function AddCategoryCard(props: Props) {
   const setIsOpenAdd = props.setIsOpenAdd;
   const handleAddCategory = async (name: string) => {
     try {
-      await AddCategoryAPI({
-        variables: { input: { name: name } },
-        update:(cache,{data}) => {
-          const categoriesData = client.readQuery({
-            query: GET_CATEGORIES
-          })
-          if(!categoriesData) return
-          cache.writeQuery({
-            query:GET_CATEGORIES,
-            data:{
-              getCategories:[...categoriesData.getCategories, data.createCategory]
-            }
-          })
-        }
-      });
-
-      const msg = t("successMessages.categoryAdd");
-      setIsOpenAdd?.(false);
-      enqueueSnackbar(msg, { variant: "success" });
+      const result = await AddCategoryAPI(name);
+      if(result){
+        const msg = t("successMessages.categoryAdd");
+        setIsOpenAdd?.(false);
+        enqueueSnackbar(msg, { variant: "success" });
+      }
     } catch (error: any) {
       if(error.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
@@ -102,8 +80,6 @@ export default function AddCategoryCard(props: Props) {
       }
     },
   });
-
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>

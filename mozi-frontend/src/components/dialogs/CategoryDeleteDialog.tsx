@@ -8,55 +8,35 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSnackbar } from "notistack";
-import { GET_CATEGORIES } from "../../pages/Categories";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
+import { useCategory } from "../../api/category/useCategory";
 
 interface Props {
   category?: Category;
   onClose?: () => void;
 }
 
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($input: DeleteCategoryInput!) {
-    deleteCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
+
 
 export default function CategoryDeleteDialog({ category, onClose }: Props) {
   const { t } = useTranslation();
-  const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY);
+  const {deleteCategory:DeleteCategoryAPI} = useCategory()
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext()
 
   const handleDeletion = async () => {
     if (category === undefined) return;
     const categoryId = category.id;
     try{
-      await DeleteCategoryAPI({
-      variables: { input: { id: categoryId } },
-        update:(cache,{data}) => {
-          const categoriesData = client.readQuery({
-            query:GET_CATEGORIES
-          })
-          if(!categoriesData) return;
-          cache.writeQuery({
-            query:GET_CATEGORIES,
-            data:{
-              getCategories:categoriesData.getCategories.filter((x:any) => x.id != data.deleteCategory.id)
-            }
-          })
-        }
-      });
-      const msg = t("successMessages.categoryDelete");
-      enqueueSnackbar(msg, { variant: "success" });
-      onClose?.();
+      const result = await DeleteCategoryAPI(categoryId)
+      console.log(result)
+      if(result){
+        const msg = t("successMessages.categoryDelete");
+        enqueueSnackbar(msg, { variant: "success" });
+        onClose?.();
+      }
     }catch(error:any){
       if(error.message === EXPIRED_TOKEN_MESSAGE){
         const msg = t("failMessages.expiredToken");
