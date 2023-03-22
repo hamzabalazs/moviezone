@@ -105,7 +105,7 @@ test("Should call user delete successfully", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("User was deleted successfully!")
+      screen.queryByText("successMessages.userDelete")
     ).toBeInTheDocument();
   });
 });

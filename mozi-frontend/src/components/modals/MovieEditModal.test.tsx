@@ -171,6 +171,6 @@ test("calls edit movie successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(queryByText("Movie was edited successfully!")).toBeInTheDocument();
+    expect(queryByText("successMessages.movieEdit")).toBeInTheDocument();
   });
 });

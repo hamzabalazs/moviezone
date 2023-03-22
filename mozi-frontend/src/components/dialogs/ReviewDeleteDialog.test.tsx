@@ -118,6 +118,6 @@ test("Should call review delete successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Review was deleted successfully!")).toBeInTheDocument();
+    expect(screen.queryByText("successMessages.reviewDelete")).toBeInTheDocument();
   });
 });

@@ -94,7 +94,7 @@ test("calls add category successfully", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("Category was added successfully!")
+      screen.queryByText("successMessages.categoryAdd")
     ).toBeInTheDocument();
   });
 });

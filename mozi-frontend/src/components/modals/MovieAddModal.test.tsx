@@ -172,6 +172,6 @@ test("calls addMovie with correct values when addButton is clicked", async () =>
   });
 
   await waitFor(() => {
-    expect(screen.queryByText("Movie was added successfully!")).toBeInTheDocument();
+    expect(screen.queryByText("successMessages.movieAdd")).toBeInTheDocument();
   });
 });

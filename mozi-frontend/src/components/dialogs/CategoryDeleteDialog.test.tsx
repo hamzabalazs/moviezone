@@ -99,7 +99,7 @@ test("Should call category delete successfully", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("Category was deleted successfully!")
+      screen.queryByText("successMessages.categoryDelete")
     ).toBeInTheDocument();
   });
 });

@@ -106,7 +106,7 @@ test("calls editcategory with correct values", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("Category was edited successfully!")
+      screen.queryByText("successMessages.categoryEdit")
     ).toBeInTheDocument();
   });
 });

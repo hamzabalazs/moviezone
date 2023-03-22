@@ -121,7 +121,7 @@ test("calls editReview with correct values", async () => {
 
   await waitFor(() => {
     expect(
-      screen.queryByText("Review was edited successfully!")
+      screen.queryByText("successMessages.reviewEdit")
     ).toBeInTheDocument();
   });
 });

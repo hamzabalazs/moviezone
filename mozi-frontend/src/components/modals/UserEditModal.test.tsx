@@ -155,6 +155,6 @@ test("Should call edit user successfully", async () => {
   });
 
   await waitFor(() => {
-    expect(queryByText("User was edited successfully")).toBeInTheDocument();
+    expect(queryByText("successMessages.userEdit")).toBeInTheDocument();
   });
 });
