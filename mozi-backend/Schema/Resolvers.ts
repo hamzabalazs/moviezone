@@ -176,6 +176,14 @@ export const resolvers = {
       return movieReviews;
     }
   },
+  ReviewListReview: {
+    async movie(review: any, __: any, context: MyContext) {
+      return await getMovieById(review.movie_id, context);
+    },
+    async user(review: any, __: any, context: MyContext) {
+      return await getUserById(review.user_id, context);
+    },
+  },
 
   Mutation: {
     // Users

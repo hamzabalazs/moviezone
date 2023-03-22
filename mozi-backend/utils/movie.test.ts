@@ -104,7 +104,7 @@ test("Should not add movie, if token is invalid", async () => {
   });
 
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
-  expect(result.data).toBeNull();
+  expect(result.data!.createMovie).toBeNull();
 });
 
 test("Should not add movie, if token is valid but not admin/editor", async () => {
@@ -118,7 +118,7 @@ test("Should not add movie, if token is valid but not admin/editor", async () =>
     },
   });
   expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
-  expect(result.data).toBeNull();
+  expect(result.data!.createMovie).toBeNull();
 });
 
 test("Should not add movie, if token is valid but session has expired", async () => {
@@ -132,7 +132,7 @@ test("Should not add movie, if token is valid but session has expired", async ()
     },
   });
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
-  expect(result.data).toBeNull();
+  expect(result.data!.createMovie).toBeNull();
 });
 
 test("Should add movie, if token is valid and is admin/editor", async () => {

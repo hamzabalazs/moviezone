@@ -1,8 +1,8 @@
 import { gql } from "apollo-server";
 
-export const GET_REVIEWS = gql`
-  query GetReviews {
-    getReviews {
+export const GET_EXTENDED_REVIEWS = gql`
+  query GetExtendedReviews {
+    getExtendedReviews {
       id
       rating
       description
@@ -17,6 +17,19 @@ export const GET_REVIEWS = gql`
           name
         }
         rating
+        reviews {
+          id
+          rating
+          description
+          user {
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
+        }
       }
       user {
         id
@@ -24,6 +37,24 @@ export const GET_REVIEWS = gql`
         last_name
         role
         email
+      }
+    }
+  }
+`;
+
+export const GET_REVIEWS = gql`
+  query GetReviews {
+    getReviews {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        id
+        first_name
+        last_name
       }
     }
   }
@@ -36,111 +67,16 @@ export const GET_REVIEW_BY_ID = gql`
       description
       movie {
         id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
       }
       user {
         id
         first_name
         last_name
-        role
-        email
       }
     }
   }
 `;
-export const GET_REVIEWS_OF_USER = gql`
-  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
-    getReviewsOfUser(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        id
-        first_name
-        last_name
-        role
-        email
-      }
-    }
-  }
-`;
-export const GET_REVIEWS_OF_USER_FOR_MOVIE = gql`
-  query GetReviewsOfUserForMovie($input: GetReviewsOfUserForMovieInput!) {
-    getReviewsOfUserForMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        id
-        first_name
-        last_name
-        role
-        email
-      }
-    }
-  }
-`;
-export const GET_REVIEWS_OF_MOVIE = gql`
-  query GetReviewsOfMovie($input: GetReviewsOfMovieInput!) {
-    getReviewsOfMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        id
-        first_name
-        last_name
-        role
-        email
-      }
-    }
-  }
-`;
-export const CREATE_REVIEW = gql`
+export const ADD_REVIEW = gql`
   mutation CreateReview($input: AddReviewInput!) {
     createReview(input: $input) {
       id
@@ -152,11 +88,24 @@ export const CREATE_REVIEW = gql`
         description
         poster
         release_date
+        rating
         category {
           id
           name
         }
-        rating
+        reviews {
+          id
+          rating
+          description
+          user {
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
+        }
       }
       user {
         id
@@ -168,6 +117,7 @@ export const CREATE_REVIEW = gql`
     }
   }
 `;
+
 export const UPDATE_REVIEW = gql`
   mutation UpdateReview($input: UpdateReviewInput!) {
     updateReview(input: $input) {
@@ -185,17 +135,31 @@ export const UPDATE_REVIEW = gql`
           name
         }
         rating
+        reviews {
+          id
+          rating
+          description
+          user {
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
+        }
       }
       user {
-        id
         first_name
         last_name
+        id
         role
         email
       }
     }
   }
 `;
+
 export const DELETE_REVIEW = gql`
   mutation DeleteReview($input: DeleteReviewInput!) {
     deleteReview(input: $input) {
@@ -213,11 +177,24 @@ export const DELETE_REVIEW = gql`
           name
         }
         rating
+        reviews {
+          id
+          rating
+          description
+          user {
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
+        }
       }
       user {
-        id
         first_name
         last_name
+        id
         role
         email
       }

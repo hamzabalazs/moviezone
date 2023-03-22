@@ -106,7 +106,7 @@ test("Should not add new category if no token was given", async () => {
       },
     },
   });
-  expect(result.data).toBeNull();
+  expect(result.data!.createCategory).toBeNull();
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
 });
 
@@ -120,7 +120,7 @@ test("Should not add new category if user is viewer", async () => {
       },
     },
   });
-  expect(result.data).toBeNull();
+  expect(result.data!.createCategory).toBeNull();
   expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
 });
 
@@ -134,7 +134,7 @@ test("Should not add new category if user session has expired", async () => {
       },
     },
   });
-  expect(result.data).toBeNull();
+  expect(result.data!.createCategory).toBeNull();
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
 });
 
