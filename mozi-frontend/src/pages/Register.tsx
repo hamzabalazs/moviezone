@@ -15,9 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
-import { gql, useMutation } from "@apollo/client";
 import {
   NOT_VALID_USER,
   USER_EMAIL_USED_MESSAGE,

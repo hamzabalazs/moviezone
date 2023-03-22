@@ -123,7 +123,8 @@
         "content":"Don't worry, if your email is in our system, we'll provide you with the reset instructions",
         "email":"Email",
         "hasAccount": "Already have an account? Click to Login!",
-        "noUser": "The email cannot be found in our system!"
+        "noUser": "The email cannot be found in our system!",
+        "isUser": "We have sent you an email with the instructions to reset your password!"
     },
     "formikErrors": {
         "categoryReq": "Category name is required!",

@@ -124,7 +124,8 @@
         "content":"Ne aggódjon, ha az email címe megtalálható a rendszerünkben, megadjuk a visszaállítási utasításokat",
         "email":"Email",
         "hasAccount": "Van már felhasználoja? Kattintson a bejelentkezéshez!",
-        "noUser": "Nem található az email a rendszerünkben!"
+        "noUser": "Nem található az email a rendszerünkben!",
+        "isUser": "Küldtünk egy emailt a jelszó visszaállítási utasításaival!"
     },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",

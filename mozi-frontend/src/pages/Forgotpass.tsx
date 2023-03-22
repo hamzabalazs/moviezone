@@ -48,7 +48,11 @@ function Forgotpass() {
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
         
-      } else navigate("/login");
+      } else {
+        const msg = t("forgotPass.isUser");
+        enqueueSnackbar(msg,{variant:"success"})
+        navigate("/login");
+      }
     },
     validate: (values) => {
       let errors: FormikErrors<Values> = {};
