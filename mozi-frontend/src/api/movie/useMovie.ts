@@ -1,9 +1,9 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { CreateMovieMutation, DeleteMovieMutation, Movie, UpdateMovieMutation } from "../../gql/graphql";
 import { GET_HOME_PAGE_DATA } from "../../pages/useHomePageData";
 import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
-import { Movie, MovieWithReviews } from "../types";
 
-const UPDATE_MOVIE = gql`
+export const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
     updateMovie(input: $input) {
       id
@@ -20,7 +20,7 @@ const UPDATE_MOVIE = gql`
   }
 `;
 
-const ADD_MOVIE = gql`
+export const ADD_MOVIE = gql`
   mutation CreateMovie($input: AddMovieInput!) {
     createMovie(input: $input) {
       id
@@ -30,13 +30,14 @@ const ADD_MOVIE = gql`
       release_date
       category {
         id
+        name
       }
       rating
     }
   }
 `;
 
-const DELETE_MOVIE = gql`
+export const DELETE_MOVIE = gql`
   mutation DeleteMovie($input: DeleteMovieInput!) {
     deleteMovie(input: $input) {
       id
@@ -60,7 +61,7 @@ type MovieData = {
     poster: string,
     release_date: string,
     category_id: string
-  ) => Promise<Movie | null>;
+  ) => Promise<Movie | null | undefined>;
   updateMovie: (
     id: string,
     title: string,
@@ -73,9 +74,9 @@ type MovieData = {
 };
 
 export function useMovie(): MovieData {
-  const [AddMovieAPI] = useMutation(ADD_MOVIE);
-  const [UpdateMovieAPI] = useMutation(UPDATE_MOVIE);
-  const [DeleteMovieAPI] = useMutation(DELETE_MOVIE);
+  const [AddMovieAPI] = useMutation<CreateMovieMutation>(ADD_MOVIE);
+  const [UpdateMovieAPI] = useMutation<UpdateMovieMutation>(UPDATE_MOVIE);
+  const [DeleteMovieAPI] = useMutation<DeleteMovieMutation>(DELETE_MOVIE);
   const client = useApolloClient();
 
   async function addMovie(
@@ -84,7 +85,7 @@ export function useMovie(): MovieData {
     poster: string,
     release_date: string,
     category_id: string
-  ): Promise<Movie | null> {
+  ): Promise<Movie | null | undefined> {
     const result = await AddMovieAPI({
       variables: {
         input: {
@@ -99,6 +100,8 @@ export function useMovie(): MovieData {
         const pageData = client.readQuery({
           query: GET_HOME_PAGE_DATA,
         });
+        if(!pageData) return;
+        if(!data) return;
         cache.writeQuery({
           query: GET_HOME_PAGE_DATA,
           data: {
@@ -121,7 +124,7 @@ export function useMovie(): MovieData {
     poster: string,
     release_date: string,
     category_id: string
-  ): Promise<MovieWithReviews | null> {
+  ): Promise<Movie | null> {
     const result = await UpdateMovieAPI({
       variables: {
         input: {
@@ -134,10 +137,12 @@ export function useMovie(): MovieData {
         },
       },
       update: (cache, { data }) => {
-        client.readQuery({
+        const res = client.readQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: id } },
         });
+        if(!res) return;
+        if(!data) return;
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: id } },
@@ -153,13 +158,15 @@ export function useMovie(): MovieData {
     return null;
   }
 
-  async function deleteMovie(id: string): Promise<MovieWithReviews | null> {
+  async function deleteMovie(id: string): Promise<Movie | null> {
     const result = await DeleteMovieAPI({
       variables: { input: { id } },
       update: (cache, { data }) => {
         const pageData = client.readQuery({
             query: GET_HOME_PAGE_DATA,
           });
+          if(!pageData) return;
+        if(!data) return;
           cache.writeQuery({
             query: GET_HOME_PAGE_DATA,
             data: {

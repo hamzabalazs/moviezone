@@ -1,24 +1,30 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
+import {
+  CreateReviewMutation,
+  DeleteReviewMutation,
+  ExtendedReview,
+  GetExtendedReviewsQuery,
+  UpdateReviewMutation,
+} from "../../gql/graphql";
 import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
 import { GET_EXTENDED_REVIEWS } from "../../pages/useReviewsData";
-import { ExtendedReview, Review } from "../types";
 
 type ReviewData = {
   updateReview: (
     id: string,
     rating: string,
     description: string
-  ) => Promise<ExtendedReview | null>;
+  ) => Promise<ExtendedReview | null | undefined>;
   addReview: (
     rating: string,
     description: string,
     movie_id: string,
     user_id: string
-  ) => Promise<ExtendedReview | null>;
-  deleteReview: (id: string) => Promise<ExtendedReview | null>;
+  ) => Promise<ExtendedReview | null | undefined>;
+  deleteReview: (id: string) => Promise<ExtendedReview | null | undefined>;
 };
 
-const ADD_REVIEW = gql`
+export const ADD_REVIEW = gql`
   mutation CreateReview($input: AddReviewInput!) {
     createReview(input: $input) {
       id
@@ -30,26 +36,29 @@ const ADD_REVIEW = gql`
         description
         poster
         release_date
+        rating
         category {
           id
           name
         }
-        rating
         reviews {
           id
           rating
           description
           user {
-          id
-          first_name
-          last_name
-        }
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
         }
       }
       user {
+        id
         first_name
         last_name
-        id
         role
         email
       }
@@ -57,7 +66,7 @@ const ADD_REVIEW = gql`
   }
 `;
 
-const UPDATE_REVIEW = gql`
+export const UPDATE_REVIEW = gql`
   mutation UpdateReview($input: UpdateReviewInput!) {
     updateReview(input: $input) {
       id
@@ -79,10 +88,13 @@ const UPDATE_REVIEW = gql`
           rating
           description
           user {
-          id
-          first_name
-          last_name
-        }
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
         }
       }
       user {
@@ -96,7 +108,7 @@ const UPDATE_REVIEW = gql`
   }
 `;
 
-const DELETE_REVIEW = gql`
+export const DELETE_REVIEW = gql`
   mutation DeleteReview($input: DeleteReviewInput!) {
     deleteReview(input: $input) {
       id
@@ -118,10 +130,13 @@ const DELETE_REVIEW = gql`
           rating
           description
           user {
-          id
-          first_name
-          last_name
-        }
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
         }
       }
       user {
@@ -136,9 +151,9 @@ const DELETE_REVIEW = gql`
 `;
 
 export function useReview(movie_id: string): ReviewData {
-  const [AddReviewAPI] = useMutation(ADD_REVIEW);
-  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
-  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
+  const [AddReviewAPI] = useMutation<CreateReviewMutation>(ADD_REVIEW);
+  const [UpdateReviewAPI] = useMutation<UpdateReviewMutation>(UPDATE_REVIEW);
+  const [DeleteReviewAPI] = useMutation<DeleteReviewMutation>(DELETE_REVIEW);
   const client = useApolloClient();
 
   async function addReview(
@@ -146,14 +161,16 @@ export function useReview(movie_id: string): ReviewData {
     description: string,
     movie_id: string,
     user_id: string
-  ): Promise<ExtendedReview | null> {
+  ): Promise<ExtendedReview | null | undefined> {
     const result = await AddReviewAPI({
       variables: { input: { rating, description, movie_id, user_id } },
       update: (cache, { data }) => {
-        client.readQuery({
+        const res = client.readQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
         });
+        if (!res) return;
+        if (!data?.createReview) return;
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
@@ -161,14 +178,18 @@ export function useReview(movie_id: string): ReviewData {
             getMovieWithReviewsById: data.createReview.movie,
           },
         });
-        const reviewData = client.readQuery({
+        const reviewData = client.readQuery<GetExtendedReviewsQuery>({
           query: GET_EXTENDED_REVIEWS,
         });
-        if(!reviewData) return
+        if (!reviewData) return;
+        if (!data) return;
         cache.writeQuery({
           query: GET_EXTENDED_REVIEWS,
           data: {
-            getExtendedReviews: [...reviewData.getExtendedReviews, data.createReview],
+            getExtendedReviews: [
+              ...reviewData.getExtendedReviews,
+              data.createReview,
+            ],
           },
         });
       },
@@ -183,14 +204,15 @@ export function useReview(movie_id: string): ReviewData {
     id: string,
     rating: string,
     description: string
-  ): Promise<ExtendedReview | null> {
+  ): Promise<ExtendedReview | null | undefined> {
     const result = await UpdateReviewAPI({
       variables: { input: { id, rating, description } },
       update: (cache, { data }) => {
-        client.readQuery({
+        const res = client.readQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
         });
+        if (!res || !data || !data.updateReview) return;
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
@@ -201,7 +223,7 @@ export function useReview(movie_id: string): ReviewData {
         const reviewData = client.readQuery({
           query: GET_EXTENDED_REVIEWS,
         });
-        if(!reviewData) return
+        if (!reviewData) return;
         cache.writeQuery({
           query: GET_EXTENDED_REVIEWS,
           data: {
@@ -216,7 +238,9 @@ export function useReview(movie_id: string): ReviewData {
     return null;
   }
 
-  async function deleteReview(id: string): Promise<ExtendedReview | null> {
+  async function deleteReview(
+    id: string
+  ): Promise<ExtendedReview | null | undefined> {
     const result = await DeleteReviewAPI({
       variables: { input: { id } },
       update: (cache, { data }) => {
@@ -224,6 +248,7 @@ export function useReview(movie_id: string): ReviewData {
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
         });
+        if (!data || !data.deleteReview) return;
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: { input: { id: movie_id } },
@@ -234,12 +259,12 @@ export function useReview(movie_id: string): ReviewData {
         const reviewData = client.readQuery({
           query: GET_EXTENDED_REVIEWS,
         });
-        if(!reviewData) return
+        if (!reviewData || !data || !data.deleteReview) return;
         cache.writeQuery({
           query: GET_EXTENDED_REVIEWS,
           data: {
             getExtendedReviews: reviewData.getExtendedReviews.filter(
-              (x: Review) => x.id !== data.deleteReview.id
+              (x: ExtendedReview) => x.id !== data.deleteReview!.id
             ),
           },
         });

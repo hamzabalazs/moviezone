@@ -1,6 +1,6 @@
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
-import { GET_USERS } from "../../pages/useUserData";
-import { User } from "../types";
+import { gql, useApolloClient, useMutation} from "@apollo/client";
+import { CreateUserMutation, DeleteUserMutation, FullUser, GetFullUsersQuery, UpdateUserMutation, User } from "../../gql/graphql";
+import { GET_FULL_USERS} from "../../pages/useUserData";
 
 type UserData = {
   addUser: (
@@ -8,7 +8,7 @@ type UserData = {
     last_name: string,
     email: string,
     password: string
-  ) => Promise<User | null>;
+  ) => Promise<User | null | undefined>;
   updateUser: (
     id: string,
     first_name: string,
@@ -16,11 +16,11 @@ type UserData = {
     email: string,
     password: string,
     role?: string
-  ) => Promise<User | null>;
-  deleteUser: (id: string) => Promise<User | null>;
+  ) => Promise<FullUser | null>;
+  deleteUser: (id: string) => Promise<FullUser | null>;
 };
 
-const ADD_USER = gql`
+export const ADD_USER = gql`
   mutation CreateUser($input: AddUserInput!) {
     createUser(input: $input) {
       id
@@ -32,7 +32,7 @@ const ADD_USER = gql`
   }
 `;
 
-const UPDATE_USER = gql`
+export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
       id
@@ -40,11 +40,12 @@ const UPDATE_USER = gql`
       last_name
       role
       email
+      password
     }
   }
 `;
 
-const DELETE_USER = gql`
+export const DELETE_USER = gql`
   mutation DeleteUser($input: DeleteUserInput!) {
     deleteUser(input: $input) {
       id
@@ -52,14 +53,15 @@ const DELETE_USER = gql`
       last_name
       role
       email
+      password
     }
   }
 `;
 
 export function useUser(): UserData {
-  const [AddUserAPI] = useMutation(ADD_USER);
-  const [UpdateUserAPI] = useMutation(UPDATE_USER);
-  const [DeleteUserAPI] = useMutation(DELETE_USER);
+  const [AddUserAPI] = useMutation<CreateUserMutation>(ADD_USER);
+  const [UpdateUserAPI] = useMutation<UpdateUserMutation>(UPDATE_USER);
+  const [DeleteUserAPI] = useMutation<DeleteUserMutation>(DELETE_USER);
   const client = useApolloClient()
 
   async function addUser(
@@ -67,7 +69,7 @@ export function useUser(): UserData {
     last_name: string,
     email: string,
     password: string
-  ): Promise<User | null> {
+  ): Promise<User | null | undefined> {
     const result = await AddUserAPI({
       variables: {
         input: {
@@ -91,7 +93,7 @@ export function useUser(): UserData {
     email: string,
     password: string,
     role?: string
-  ): Promise<User | null> {
+  ): Promise<FullUser | null> {
     const result = await UpdateUserAPI({
       variables: {
         input: {
@@ -103,14 +105,15 @@ export function useUser(): UserData {
           role,
         },
       },
-      update:(cache,{data}) => {
-        const users = client.readQuery({
-          query:GET_USERS,
+      update:(cache) => {
+        const users = client.readQuery<GetFullUsersQuery>({
+          query:GET_FULL_USERS,
         })
-        cache.writeQuery({
-          query:GET_USERS,
+        if(!users) return;
+        cache.writeQuery<GetFullUsersQuery>({
+          query:GET_FULL_USERS,
           data:{
-            getUsers: [...users.getUsers]
+            getFullUsers: [...users.getFullUsers]
           }
         })
       }
@@ -121,7 +124,7 @@ export function useUser(): UserData {
     return null;
   }
 
-  async function deleteUser(id: string): Promise<User | null> {
+  async function deleteUser(id: string): Promise<FullUser | null> {
     const result = await DeleteUserAPI({
       variables: {
         input: {
@@ -129,13 +132,15 @@ export function useUser(): UserData {
         },
       },
       update:(cache,{data}) => {
-        const users = client.readQuery({
-          query:GET_USERS,
+        const users = client.readQuery<GetFullUsersQuery>({
+          query:GET_FULL_USERS,
         })
-        cache.writeQuery({
-          query:GET_USERS,
+        if(!users) return;
+        if(!data?.deleteUser) return;
+        cache.writeQuery<GetFullUsersQuery>({
+          query:GET_FULL_USERS,
           data:{
-            getUsers: users.getUsers.filter((x:User) => x.id !== data.deleteUser.id)
+            getFullUsers: users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id)
           }
         })
       }

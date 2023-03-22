@@ -1,19 +1,19 @@
 import React from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { CurrUser, User } from "../types";
+import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { CurrentUser, LogInMutation, User } from "../../gql/graphql";
 
 export type LogInData = {
-  user?: CurrUser;
+  user?: CurrentUser;
   logIn: (
     email: string,
     password: string
-  ) => Promise<User | undefined | string>;
+  ) => Promise<CurrentUser | undefined | string>;
   logOut: () => void;
   hasRole: (role: User["role"]) => boolean;
 };
 
-const LOGIN = gql`
+export const LOGIN = gql`
   mutation LogIn($input: LoginInput!) {
   logIn(input: $input) {
     id
@@ -30,27 +30,30 @@ const USER_KEY = "user-info";
 const TOKEN_KEY = "token";
 
 export function useLogIn(): LogInData {
-  const [user, setUser] = React.useState<CurrUser | undefined>(
+  const [user, setUser] = React.useState<CurrentUser | undefined>(
     getPersistedUser()
   );
   const navigate = useNavigate();
-  const [LoginAPI] = useMutation(LOGIN);
+  const [LoginAPI] = useMutation<LogInMutation>(LOGIN);
 
   async function logIn(
     email: string,
     password: string
-  ): Promise<User | string> {
+  ): Promise<CurrentUser | string | undefined> {
     try {
       const loggedUser = await LoginAPI({
         variables: { input: { email, password } },
       });
+      if(!loggedUser.data) return;
       const token = loggedUser.data.logIn.token;
       setUser(loggedUser.data.logIn);
       localStorage.setItem(
         USER_KEY,
         JSON.stringify(loggedUser.data.logIn)
       );
-      localStorage.setItem(TOKEN_KEY, token);
+      if(token){
+        localStorage.setItem(TOKEN_KEY, token);
+      }
       return loggedUser.data.logIn;
     } catch (error: any) {
       return error.message;
@@ -80,7 +83,7 @@ export function useLogIn(): LogInData {
   };
 }
 
-export function getPersistedUser(): CurrUser | undefined {
+export function getPersistedUser(): CurrentUser | undefined {
   try {
     const storedUser = localStorage.getItem(USER_KEY);
     if (storedUser) return JSON.parse(storedUser);

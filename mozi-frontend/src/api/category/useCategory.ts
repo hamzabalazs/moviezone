@@ -1,14 +1,14 @@
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { Category, CreateCategoryMutation, DeleteCategoryMutation, UpdateCategoryMutation } from "../../gql/graphql";
 import { GET_CATEGORIES } from "../../pages/useCategoriesData";
-import { Category } from "../types";
 
 type CategoryData = {
-  addCategory: (name: string) => Promise<Category | null>;
+  addCategory: (name: string) => Promise<Category | null | undefined>;
   updateCategory: (id: string, name: string) => Promise<Category | null>;
   deleteCategory: (id: string) => Promise<Category | null>;
 };
 
-const ADD_CATEGORY = gql`
+export const ADD_CATEGORY = gql`
   mutation CreateCategory($input: AddCategoryInput!) {
     createCategory(input: $input) {
       id
@@ -17,7 +17,7 @@ const ADD_CATEGORY = gql`
   }
 `;
 
-const UPDATE_CATEGORY = gql`
+export const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
     updateCategory(input: $input) {
       id
@@ -26,7 +26,7 @@ const UPDATE_CATEGORY = gql`
   }
 `;
 
-const DELETE_CATEGORY = gql`
+export const DELETE_CATEGORY = gql`
   mutation DeleteCategory($input: DeleteCategoryInput!) {
     deleteCategory(input: $input) {
       id
@@ -35,13 +35,13 @@ const DELETE_CATEGORY = gql`
   }
 `;
 
-export function useCategory() {
-  const [AddCategoryAPI] = useMutation(ADD_CATEGORY);
-  const [UpdateCategoryAPI] = useMutation(UPDATE_CATEGORY);
-  const [DeleteCategoryAPI] = useMutation(DELETE_CATEGORY);
+export function useCategory():CategoryData {
+  const [AddCategoryAPI] = useMutation<CreateCategoryMutation>(ADD_CATEGORY);
+  const [UpdateCategoryAPI] = useMutation<UpdateCategoryMutation>(UPDATE_CATEGORY);
+  const [DeleteCategoryAPI] = useMutation<DeleteCategoryMutation>(DELETE_CATEGORY);
   const client = useApolloClient();
 
-  async function addCategory(name: string): Promise<Category | null> {
+  async function addCategory(name: string): Promise<Category | null | undefined> {
     const result = await AddCategoryAPI({
       variables: {
         input: {
@@ -53,6 +53,8 @@ export function useCategory() {
             query: GET_CATEGORIES,
             
         })
+        if(!categoriesData) return;
+            if(!data) return;
         cache.writeQuery({
             query: GET_CATEGORIES,
             data:{
@@ -79,6 +81,7 @@ export function useCategory() {
             const categoriesData = client.readQuery({
                 query: GET_CATEGORIES
             })
+            if(!categoriesData) return;
             cache.writeQuery({
                 query: GET_CATEGORIES,
                 data:{
@@ -105,6 +108,8 @@ export function useCategory() {
             const categoriesData = client.readQuery({
                 query: GET_CATEGORIES
             })
+            if(!categoriesData) return;
+            if(!data) return;
             cache.writeQuery({
                 query:GET_CATEGORIES,
                 data:{
