@@ -15,7 +15,6 @@ import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { User } from "../../api/types";
-import * as Yup from "yup";
 import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_USER,
@@ -23,6 +22,7 @@ import {
 } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useUser } from "../../api/user/useUser";
+import { useEditUserSchema } from "../../common/validationFunctions";
 
 interface Props {
   user?: User;
@@ -84,8 +84,6 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
     enableReinitialize: true,
     validationSchema: schema,
   });
-
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
 
   return (
     <Modal
@@ -215,24 +213,4 @@ function TextField({
       ) : null}
     </>
   );
-}
-
-function useEditUserSchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    first_name: Yup.string().required(t("formikErrors.firstNameReq") || ""),
-    last_name: Yup.string().required(t("formikErrors.lastNameReq") || ""),
-    email: Yup.string()
-      .required(t("formikErrors.emailReq") || "")
-      .email(t("formikErrors.emailFormat") || ""),
-    password: Yup.string()
-      .required(t("formikErrors.passwordReq") || "")
-      .test(
-        "len",
-        t("formikErrors.passwordLength") || "",
-        (val) => val.length >= 5
-      ),
-    role: Yup.string().required(),
-  });
 }

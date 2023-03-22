@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { useSessionContext } from "../api/SessionContext";
 import { isString } from "lodash";
 import { useSnackbar } from "notistack";
+import { useLoginUserSchema } from "../common/validationFunctions";
 
 function Login() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function Login() {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const schema = useEditUserSchema();
+  const schema = useLoginUserSchema();
 
   const formik = useFormik({
     initialValues: {
@@ -164,19 +165,3 @@ function TextField({
   );
 }
 
-function useEditUserSchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    email: Yup.string()
-      .required(t("formikErrors.emailReq") || "")
-      .email(t("formikErrors.emailFormat") || ""),
-    password: Yup.string()
-      .required(t("formikErrors.passwordReq") || "")
-      .test(
-        "len",
-        t("formikErrors.passwordLength") || "",
-        (val) => val.length >= 5
-      ),
-  });
-}

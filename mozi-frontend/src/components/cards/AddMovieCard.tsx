@@ -19,14 +19,13 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { Category, Movie } from "../../api/types";
-import * as Yup from "yup";
-import { datevalidator } from "../../common/datevalidator";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
 import { useSnackbar } from 'notistack'
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_MOVIE } from "../../common/errorMessages";
 import { GET_HOME_PAGE_DATA } from "../../pages/useHomePageData";
+import { useAddMovieSchema } from "../../common/validationFunctions";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -296,17 +295,4 @@ function TextField({
       ) : null}
     </>
   );
-}
-
-function useAddMovieSchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    title: Yup.string().required(t("formikErrors.titleReq") || ""),
-    description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
-    release_date: Yup.string()
-      .required(t("formikErrors.release_dateReq") || "")
-      .matches(datevalidator, t("formikErrors.release_dateFormat") || ""),
-    //category: Yup.string().required(t("formikErrors.categoryReq") || ""),
-  });
 }

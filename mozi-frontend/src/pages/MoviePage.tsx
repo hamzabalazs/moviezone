@@ -90,7 +90,6 @@ export default function MoviePage() {
             setValue(0);
           }
         } catch (error: any) {
-          console.log("error",error)
           if (error.message === EXPIRED_TOKEN_MESSAGE) {
             const msg = t("failMessages.expiredToken");
             enqueueSnackbar(msg, { variant: "error" });

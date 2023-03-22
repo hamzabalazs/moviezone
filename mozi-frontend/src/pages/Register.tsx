@@ -23,6 +23,7 @@ import {
   USER_EMAIL_USED_MESSAGE,
 } from "../common/errorMessages";
 import { useUser } from "../api/user/useUser";
+import { useRegisterUserSchema } from "../common/validationFunctions";
 
 function Register() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ function Register() {
     }
   });
 
-  const schema = useEditUserSchema();
+  const schema = useRegisterUserSchema();
 
   const formik = useFormik({
     initialValues: {
@@ -206,21 +207,3 @@ function TextField({
   );
 }
 
-function useEditUserSchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    first_name: Yup.string().required(t("formikErrors.firstNameReq") || ""),
-    last_name: Yup.string().required(t("formikErrors.lastNameReq") || ""),
-    email: Yup.string()
-      .required(t("formikErrors.emailReq") || "")
-      .email(t("formikErrors.emailFormat") || ""),
-    password: Yup.string()
-      .required(t("formikErrors.passwordReq") || "")
-      .test(
-        "len",
-        t("formikErrors.passwordLength") || "",
-        (val) => val.length > 5
-      ),
-  });
-}

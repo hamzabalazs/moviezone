@@ -11,11 +11,11 @@ import {
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { Category } from "../../api/types";
-import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useCategory } from "../../api/category/useCategory";
+import { useEditCategorySchema } from "../../common/validationFunctions";
 
 interface Props {
   category?: Category;
@@ -160,12 +160,4 @@ function TextField({
       ) : null}
     </>
   );
-}
-
-function useEditCategorySchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    name: Yup.string().required(t("formikErrors.nameReq") || ""),
-  });
 }

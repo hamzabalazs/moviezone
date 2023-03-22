@@ -12,12 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import { Category, Movie, MovieWithReviews } from "../../api/types";
-import * as Yup from "yup";
-import { datevalidator } from "../../common/datevalidator";
 import LoadingComponent from "../LoadingComponent";
 import { useSessionContext } from "../../api/SessionContext";
 import {
@@ -25,6 +23,7 @@ import {
   NOT_VALID_MOVIE,
 } from "../../common/errorMessages";
 import { useMovie } from "../../api/movie/useMovie";
+import { useEditMovieSchema } from "../../common/validationFunctions";
 
 interface Props {
   movie?: MovieWithReviews;
@@ -234,16 +233,4 @@ function TextField({
       ) : null}
     </>
   );
-}
-
-function useEditMovieSchema() {
-  const { t } = useTranslation();
-
-  return Yup.object({
-    title: Yup.string().required(t("formikErrors.titleReq") || ""),
-    description: Yup.string().required(t("formikErrors.descriptionReq") || ""),
-    release_date: Yup.string()
-      .required(t("formikErrors.release_dateReq") || "")
-      .matches(datevalidator, t("formikErrors.release_dateFormat") || ""),
-  });
 }
