@@ -8,11 +8,11 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { CurrentUser } from "../gql/graphql";
 import Register from "./Register";
 
-function renderRegister(user?: CurrUser) {
+function renderRegister(user?: CurrentUser) {
   return render(
     <MemoryRouter>
       <MockedProvider>

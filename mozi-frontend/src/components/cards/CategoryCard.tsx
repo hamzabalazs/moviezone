@@ -5,8 +5,8 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { Category } from "../../api/types";
 import { useTranslation } from "react-i18next";
+import { Category } from "../../gql/graphql";
 
 interface Props {
   category: Category;

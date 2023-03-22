@@ -39,7 +39,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "download-schema": "apollo schema:download --endpoint=http://localhost:5000/graphql graphql-schema.json",
-    "codegen": "apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql"
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -60,7 +60,10 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "3.2.2",
     "@types/lodash": "^4.14.191",
-    "@types/uuid": "^9.0.1"
+    "@types/uuid": "^9.0.1",
+    "@graphql-codegen/introspection": "3.0.1",
+    "@graphql-codegen/client-preset": "2.1.1"
   }
 }

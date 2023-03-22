@@ -9,11 +9,10 @@ import {
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { MovieWithReviews } from "../../api/types";
-import { gql, useMutation } from "@apollo/client";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useMovie } from "../../api/movie/useMovie";
+import { MovieWithReviews } from "../../gql/graphql";
 
 interface Props {
   movie?: MovieWithReviews;

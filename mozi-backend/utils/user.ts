@@ -15,9 +15,21 @@ export function getUsers(__: any, context: MyContext): Promise<User[]> {
   
 }
 
+export function getFullUsers(context:MyContext): Promise<FullUser[]>{
+  const sql = `SELECT * from user`
+  return context.db.all<FullUser>(sql,[])
+}
+
 export async function getUserById(id: string, context: MyContext): Promise<User|null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
   const result = await context.db.get<User>(sql, [id]);
+  if(result === undefined) return null;
+  return result
+}
+
+export async function getFullUserById(id:string,context:MyContext): Promise<FullUser|null> {
+  const sql = `SELECT * FROM user WHERE id = ?`
+  const result = await context.db.get<FullUser>(sql, [id]);
   if(result === undefined) return null;
   return result
 }
@@ -98,7 +110,7 @@ export async function updateUser(
         user.role,
         user.id,
       ]);
-    return getUserById(user.id,context)
+    return getFullUserById(user.id,context)
   }
   throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
 }
@@ -111,7 +123,7 @@ export async function deleteUser(
     const sqlDelete = `DELETE FROM user WHERE user.id = ?`;
     const sqlReviewDelete = `DELETE FROM review WHERE review.user_id = ?`;
     const sqlTokenDelete = `DELETE from session WHERE user_id = ?`;
-    const user = getUserById(id,context)
+    const user = getFullUserById(id,context)
     context.db.run(sqlReviewDelete,[id])
     context.db.run(sqlTokenDelete, [id]);
     context.db.run(sqlDelete,[id])

@@ -2,59 +2,21 @@ import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Review } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 import { SnackbarProvider } from "notistack";
+import { DELETE_REVIEW } from "../../api/review/useReview";
+import {ReviewListReview, UserRole } from "../../gql/graphql";
 
-const DELETE_REVIEW = gql`
-  mutation DeleteReview($input: DeleteReviewInput!) {
-    deleteReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
-
-const testReview: Review = {
+const testReview: ReviewListReview = {
   id: "idC1",
   user: {
     id: "idU2",
     first_name: "first",
     last_name: "last",
-    email: "email",
-    role: "viewer",
-    password: "vivu",
   },
   movie: {
     id: "idM2",
-    title: "title",
-    description: "WAAA",
-    poster: "posterket",
-    release_date: "awuuu",
-    category: {
-      id: "idC1",
-      name: "name1",
-    },
-    rating: "0",
   },
   description: "description1EDITED",
   rating: "5",
@@ -91,7 +53,7 @@ const deleteMock = {
 const cache = new InMemoryCache();
 
 function renderReviewDeleteDialog(props: {
-  review?: Review;
+  review?: ReviewListReview;
   onClose?: () => void;
 }) {
   return render(

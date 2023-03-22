@@ -12,10 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { gql, useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
-import { Category, Movie, MovieWithReviews } from "../../api/types";
 import LoadingComponent from "../LoadingComponent";
 import { useSessionContext } from "../../api/SessionContext";
 import {
@@ -24,42 +22,19 @@ import {
 } from "../../common/errorMessages";
 import { useMovie } from "../../api/movie/useMovie";
 import { useEditMovieSchema } from "../../common/validationFunctions";
+import { useCategoriesData } from "../../pages/useCategoriesData";
+import { Category, Movie, MovieWithReviews } from "../../gql/graphql";
 
 interface Props {
   movie?: MovieWithReviews;
   onClose?: () => void;
 }
 
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
-  }
-`;
-const UPDATE_MOVIE = gql`
-  mutation UpdateMovie($input: UpdateMovieInput!) {
-    updateMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
-
 export default function MovieEditModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const { updateMovie: UpdateMovieAPI } = useMovie();
-  const { data: categoriesData, loading: categoriesLoading } =
-    useQuery(GET_CATEGORIES);
+  const { categories, loading } =
+    useCategoriesData();
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext();
 
@@ -113,8 +88,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
     validationSchema: schema,
   });
 
-  if (categoriesLoading) return LoadingComponent(categoriesLoading);
-  //if(data) return <p style={{visibility:"hidden",height:"0px",margin:"0px"}}>Success</p>
+  if (loading) return LoadingComponent(loading);
 
   return (
     <Modal
@@ -194,7 +168,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
               data-testid="movie-edit-category"
               inputProps={{ "data-testid": "movie-edit-categoryId" }}
             >
-              {categoriesData.getCategories.map((category: Category) => (
+              {categories.map((category: Category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>

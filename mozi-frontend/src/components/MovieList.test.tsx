@@ -5,35 +5,12 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { Home } from "../pages/Home";
-
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
-  }
-`;
-
-const GET_MOVIES = gql`
-  query GetMovies {
-    getMovies {
-      id
-      title
-      poster
-      release_date
-      category {
-        id
-      }
-      rating
-    }
-  }
-`;
+import { GET_HOME_PAGE_DATA } from "../pages/useHomePageData";
 
 const mockData = [
   {
     request:{
-      query:GET_MOVIES
+      query:GET_HOME_PAGE_DATA
     },
     result:{
       data:{
@@ -68,16 +45,7 @@ const mockData = [
             },
             rating:"5"
           },
-        ]
-      }
-    }
-  },
-  {
-    request:{
-      query:GET_CATEGORIES
-    },
-    result:{
-      data:{
+        ],
         getCategories:[
           {
             id:"idC1",
@@ -90,7 +58,7 @@ const mockData = [
         ]
       }
     }
-  }
+  },
 ]
 
 function renderHome() {

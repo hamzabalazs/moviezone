@@ -13,11 +13,10 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FormikErrors, useFormik } from "formik";
 import { useSnackbar } from 'notistack'
-import { User } from "../api/types";
 import { useSessionContext } from "../api/SessionContext";
-import { gql, useQuery } from "@apollo/client";
 import LoadingComponent from "../components/LoadingComponent";
 import { useUserData } from "./useUserData";
+import { User } from "../gql/graphql";
 
 interface Values {
   email: string;
@@ -28,7 +27,7 @@ function Forgotpass() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar()
-  const {users,loading} = useUserData()
+  const {users,usersLoading} = useUserData()
 
 
   useEffect(() => {
@@ -64,7 +63,7 @@ function Forgotpass() {
     },
   });
 
-  if(loading) return LoadingComponent(loading)
+  if(usersLoading) return LoadingComponent(usersLoading)
   return (
     <>
       <Container component="main" maxWidth="xs">

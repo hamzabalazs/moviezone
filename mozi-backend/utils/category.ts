@@ -17,7 +17,7 @@ export async function getCategoryById(id: string, context:MyContext):Promise<Cat
   return result
 }
 
-export async function createCategory(name:string, context:MyContext):Promise<Category> {
+export async function createCategory(name:string, context:MyContext):Promise<Category|null> {
   const newCategory = {
     id:uuidv4(),
     name:name

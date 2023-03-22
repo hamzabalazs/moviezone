@@ -8,10 +8,11 @@ import {
   waitFor,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Category, CurrUser } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryEditModal from "./CategoryEditModal";
 import { SnackbarProvider } from "notistack";
+import { UPDATE_CATEGORY } from "../../api/category/useCategory";
+import { Category, CurrentUser } from "../../gql/graphql";
 
 const testCategory: Category = {
   id: "idC3",
@@ -23,14 +24,6 @@ const newtestCategory: Category = {
   name: "EDITED",
 };
 
-const UPDATE_CATEGORY = gql`
-  mutation UpdateCategory($input: UpdateCategoryInput!) {
-    updateCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 const editMock = {
   request: {
     query: UPDATE_CATEGORY,
@@ -56,7 +49,7 @@ const cache = new InMemoryCache()
 function renderCategoryEditModal(props: {
   category?: Category;
   onClose?: () => void;
-  user?: CurrUser;
+  user?: CurrentUser;
 }) {
   return render(
       <SnackbarProvider autoHideDuration={null}>

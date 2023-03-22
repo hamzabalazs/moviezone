@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -9,18 +8,10 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Categories from "./Categories";
+import { GET_CATEGORIES } from "./useCategoriesData";
 
-const GET_CATEGORIES = gql`
-  query GetCategories {
-  getCategories {
-    id
-    name
-  }
-}
-`
 
 const mockCategoryData = {
   request:{

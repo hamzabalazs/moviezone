@@ -2,24 +2,16 @@ import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Category } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import CategoryDeleteDialog from "./CategoryDeleteDialog";
 import { SnackbarProvider } from "notistack";
+import { DELETE_CATEGORY } from "../../api/category/useCategory";
+import { Category } from "../../gql/graphql";
 
 const testCategory: Category = {
   id: "idC3",
   name: "categoryName",
 };
-
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($input: DeleteCategoryInput!) {
-    deleteCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
 const deleteMock = {
   request: {

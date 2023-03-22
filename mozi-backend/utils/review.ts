@@ -6,11 +6,11 @@ import {
 } from "../common/errorMessages";
 import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { DbReview, ExtendedReview, Review } from "./types";
+import { DbReview, ExtendedReview, Review, ReviewListReview } from "./types";
 
-export function getReviews(context: MyContext): Promise<Review[]> {
+export function getReviews(context: MyContext): Promise<ReviewListReview[]> {
   const sql = "SELECT * FROM review";
-  return context.db.all<Review>(sql);
+  return context.db.all<ReviewListReview>(sql);
 }
 
 export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]> {

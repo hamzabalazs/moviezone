@@ -17,15 +17,19 @@ import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
-import { Category, Movie } from "../../api/types";
+import { useApolloClient} from "@apollo/client";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../LoadingComponent";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useSessionContext } from "../../api/SessionContext";
-import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_MOVIE } from "../../common/errorMessages";
-import { GET_HOME_PAGE_DATA } from "../../pages/useHomePageData";
+import {
+  EXPIRED_TOKEN_MESSAGE,
+  NOT_VALID_MOVIE,
+} from "../../common/errorMessages";
 import { useAddMovieSchema } from "../../common/validationFunctions";
+import { useMovie } from "../../api/movie/useMovie";
+import { useCategoriesData } from "../../pages/useCategoriesData";
+import { Category, Movie } from "../../gql/graphql";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
@@ -48,86 +52,45 @@ export const resizeFile = (file: File) =>
     );
   });
 
-const ADD_MOVIE = gql`
-  mutation CreateMovie($input: AddMovieInput!) {
-    createMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-      }
-      rating
-    }
-  }
-`;
-const GET_CATEGORIES = gql`
-  query GetCategories {
-  getCategories {
-    id
-    name
-  }
-}
-`
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();
   const [poster, setPoster] = useState("");
-  const [AddMovieAPI,{data}] = useMutation(ADD_MOVIE);
-  const {data:categoriesData,loading:categoriesLoading} = useQuery(GET_CATEGORIES)
   const setIsOpenAdd = props.setIsOpenAdd;
-  const { enqueueSnackbar} = useSnackbar()
-  const client = useApolloClient()
-  const { logOut } = useSessionContext()
+  const { enqueueSnackbar } = useSnackbar();
+  const client = useApolloClient();
+  const { logOut } = useSessionContext();
+  const { addMovie: AddMovieAPI } = useMovie();
+  const {categories,loading} = useCategoriesData()
 
   const handleAddMovie = async (
     addedMovie: Omit<Movie, "id" | "rating" | "poster">
   ) => {
-    try{
-      await AddMovieAPI({
-        variables: {
-          input: {
-            title: addedMovie.title,
-            description: addedMovie.description,
-            poster: poster,
-            release_date: addedMovie.release_date,
-            category_id: addedMovie.category.id,
-          },
-        },
-        update:(cache,{data}) => {
-          const moviesData = client.readQuery({
-            query: GET_HOME_PAGE_DATA
-          })
-          if(!moviesData) return;
-          cache.writeQuery({
-            query:GET_HOME_PAGE_DATA,
-            data:{
-              ...moviesData,
-              getMovies:[...moviesData.getMovies, data.createMovie]
-            }
-          })
-        }
-      });
-      const msg = t("successMessages.movieAdd");
-      enqueueSnackbar(msg,{variant:"success"})
-      setIsOpenAdd?.(false);
-    }catch(error:any){
-      if(error.message === EXPIRED_TOKEN_MESSAGE){
+    try {
+      const result = await AddMovieAPI(
+        addedMovie.title,
+        addedMovie.description,
+        poster,
+        addedMovie.release_date,
+        addedMovie.category.id
+      );
+      if (result) {
+        const msg = t("successMessages.movieAdd");
+        enqueueSnackbar(msg, { variant: "success" });
+        setIsOpenAdd?.(false);
+      }
+    } catch (error: any) {
+      if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
         logOut();
-      }
-      else if(error.message === NOT_VALID_MOVIE){
-        const msg = t("validityFailure.movieNotValid")
+      } else if (error.message === NOT_VALID_MOVIE) {
+        const msg = t("validityFailure.movieNotValid");
         enqueueSnackbar(msg, { variant: "error" });
-      }
-      else{
+      } else {
         const msg = t("someError");
         enqueueSnackbar(msg, { variant: "error" });
       }
     }
-      
   };
 
   const formikValues: Omit<Movie, "id" | "rating" | "poster"> = {
@@ -148,8 +111,7 @@ export default function AddMovieCard(props: Props) {
     validationSchema: schema,
   });
 
-  if(categoriesLoading) return LoadingComponent(categoriesLoading);
-
+  if (loading) return LoadingComponent(loading);
 
   return (
     <Box component="form" onSubmit={formik.handleSubmit}>
@@ -218,7 +180,7 @@ export default function AddMovieCard(props: Props) {
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-category" }}
           >
-            {categoriesData.getCategories.map((category:Category) => (
+            {categories.map((category: Category) => (
               <MenuItem key={category.id} value={category.id}>
                 {category.name}
               </MenuItem>

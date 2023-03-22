@@ -5,11 +5,11 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { User } from "../../api/types";
 import { useTranslation } from "react-i18next";
+import { FullUser } from "../../gql/graphql";
 
 interface Props {
-  user: User;
+  user: FullUser;
   onEdit?: () => void;
   onDelete?: () => void;
 }

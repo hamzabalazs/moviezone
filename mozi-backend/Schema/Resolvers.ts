@@ -8,6 +8,7 @@ import {
   checkForUser,
   getUserById,
   getUserByToken,
+  getFullUsers,
 } from "../utils/user";
 import {
   getMovies,
@@ -55,6 +56,9 @@ export const resolvers = {
     // Users
     async getUsers(_: any, __: any, context: MyContext) {
       return await getUsers(_, context);
+    },
+    async getFullUsers(_: any, __:any, context: MyContext) {
+      return await getFullUsers(context)
     },
     async getUserById(_: any, { input }: any, context: MyContext) {
       return await getUserById(input.id, context);

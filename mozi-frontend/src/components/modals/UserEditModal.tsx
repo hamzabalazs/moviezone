@@ -14,7 +14,6 @@ import {
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { User } from "../../api/types";
 import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_USER,
@@ -23,9 +22,10 @@ import {
 import { useSessionContext } from "../../api/SessionContext";
 import { useUser } from "../../api/user/useUser";
 import { useEditUserSchema } from "../../common/validationFunctions";
+import { FullUser, UserRole } from "../../gql/graphql";
 
 interface Props {
-  user?: User;
+  user?: FullUser;
   onClose?: () => void;
   allowEditRole?: boolean;
 }
@@ -38,7 +38,7 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext();
 
-  const updateUser = async (editedUser: Omit<User, "id">) => {
+  const updateUser = async (editedUser: Omit<FullUser, "id">) => {
     if (user === undefined) return;
     try {
       const result = await UpdateUserAPI(user.id,editedUser.first_name,editedUser.last_name,editedUser.email,editedUser.password,allowEditRole ? editedUser.role : undefined);
@@ -68,12 +68,12 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
     }
   };
 
-  const formikValues: Omit<User, "id"> = {
+  const formikValues: Omit<FullUser, "id"> = {
     first_name: user?.first_name || "",
     last_name: user?.last_name || "",
     email: user?.email || "",
-    password: user?.password || "",
-    role: user?.role || "viewer",
+    password: "",
+    role: user?.role || UserRole["Viewer"],
   };
 
   const schema = useEditUserSchema();

@@ -2,21 +2,11 @@ import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { CurrentUser, UserRole } from "../gql/graphql";
 import Account from "./Account";
+import { GET_USERS } from "./useUserData";
 
-const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      first_name
-      last_name
-      email
-      role
-    }
-  }
-`;
 
 const mockUsersData = {
   request:{
@@ -51,17 +41,16 @@ const mockUsersData = {
   }
 }
 
-const editorUser:CurrUser = {
+const editorUser:CurrentUser = {
   id:"idU2",
   first_name:"editor",
   last_name:"editor",
   email:"editor@example.com",
-  password:"editor",
-  role:"editor",
+  role:UserRole["Editor"],
   token:"token1"
 }
 
-function renderAccount(currUser?:CurrUser) {
+function renderAccount(currUser?:CurrentUser) {
   return render(
     <MemoryRouter>
       <MockedProvider addTypename={false} mocks={[mockUsersData]}>

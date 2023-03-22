@@ -10,21 +10,9 @@ import {
 import userEvent from "@testing-library/user-event";
 import { GraphQLError } from "graphql";
 import { MemoryRouter } from "react-router-dom";
+import { LOGIN } from "../api/auth/useLogIn";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Login from "./Login";
-
-const LOGIN = gql`
-  mutation CreateToken($input: AddTokenInput!) {
-    createToken(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-      token
-    }
-  }
-`;
 
 const mockLoginData = {
   request: {

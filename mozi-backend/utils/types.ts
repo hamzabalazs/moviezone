@@ -64,6 +64,14 @@ export type Review = {
   user: User;
 };
 
+export type ReviewListReview = {
+  id:string;
+  rating:string;
+  description:string;
+  user:{id:string,first_name:string,last_name:string}
+  movie: {id:string}
+}
+
 export type ExtendedReview = {
   id: string;
   user: User;

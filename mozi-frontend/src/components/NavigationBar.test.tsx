@@ -2,14 +2,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import "@testing-library/jest-dom/extend-expect";
 import NavigationBar from "./NavigationBar";
-import { CurrUser } from "../api/types";
 import { themeSwitchContext } from "../themeSwitchContext";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import styles from "../styles";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import { CurrentUser, UserRole } from "../gql/graphql";
 
-function renderNavbar(user?: CurrUser) {
+function renderNavbar(user?: CurrentUser) {
   return render(
     <MockedSessionContext value={{ user }}>
       <MemoryRouter initialEntries={["/"]}>
@@ -25,31 +25,20 @@ function DisplayRoute() {
   return <div data-testid="test-location">{location.pathname}</div>;
 }
 
-const adminUser: CurrUser = {
+const adminUser: CurrentUser = {
   id: "idU1",
   first_name: "admin",
   last_name: "admin",
   email: "admin@example.com",
-  password: "admin",
-  role: "admin",
+  role: UserRole["Admin"],
   token: "token1",
 };
-const editorUser: CurrUser = {
-  id: "idU2",
-  first_name: "editor",
-  last_name: "editor",
-  email: "editor@example.com",
-  password: "editor",
-  role: "editor",
-  token: "token2",
-};
-const viewerUser: CurrUser = {
+const viewerUser: CurrentUser = {
   id: "idU3",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",
-  password: "viewer",
-  role: "viewer",
+  role: UserRole["Viewer"],
   token: "token3",
 };
 

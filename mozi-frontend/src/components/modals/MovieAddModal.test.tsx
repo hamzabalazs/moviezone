@@ -12,6 +12,8 @@ import { MockedSessionContext } from "../../common/testing/MockedSessionProvider
 import MovieAddModal from "./MovieAddModal";
 import { v4 as uuidv4 } from "uuid";
 import { SnackbarProvider } from "notistack";
+import { GET_CATEGORIES } from "../../pages/useCategoriesData";
+import { ADD_MOVIE } from "../../api/movie/useMovie";
 
 const addMovie = {
   title: "title1",
@@ -20,31 +22,6 @@ const addMovie = {
   category_id: "idC1",
   poster: "chucknorris.jpg",
 };
-
-const ADD_MOVIE = gql`
-  mutation CreateMovie($input: AddMovieInput!) {
-    createMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-      }
-      rating
-    }
-  }
-`;
-
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
-  }
-`;
 
 const dataMock = [
   {

@@ -2,80 +2,11 @@ import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { CurrentUser, UserRole } from "../gql/graphql";
 import MoviePage from "./MoviePage";
+import { GET_MOVIE_BY_ID } from "./useMoviePageData";
 
-const GET_MOVIE_BY_ID = gql`
-  query GetMovieById($input: MovieInput!) {
-    getMovieById(input: $input) {
-      id
-      title
-      poster
-      description
-      release_date
-      rating
-      category {
-        id
-        name
-      }
-    }
-  }
-`;
-
-const GET_REVIEWS_OF_MOVIE = gql`
-  query GetReviewsOfMovie($input: GetReviewsOfMovieInput!) {
-    getReviewsOfMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
-
-const GET_USERS_REVIEWS_OF_MOVIE = gql`
-  query GetReviewsOfUserForMovie($input: GetReviewsOfUserForMovieInput!) {
-    getReviewsOfUserForMovie(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
 
 const mockMovieData = [
   {
@@ -99,82 +30,37 @@ const mockMovieData = [
           category: {
             id: "idC1",
           },
+          reviews:[
+            {
+              id: "idR3",
+              rating: "3",
+              description: "Good!",
+              movie: {
+                title: "title4",
+                id: "idM4",
+              },
+              user: {
+                id: "idU1",
+                first_name: "admin",
+                last_name: "admin",
+              },
+            },
+            {
+              id: "idR4",
+              rating: "1",
+              description: "Bad!",
+              movie: {
+                title: "title4",
+                id: "idM4",
+              },
+              user: {
+                id: "idU3",
+                first_name: "viewer",
+                last_name: "viewer",
+              },
+            },
+          ]
         },
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_USERS_REVIEWS_OF_MOVIE,
-      variables: {
-        input: {
-          movie_id: "idM4",
-          user_id: "idU1",
-        },
-      },
-    },
-    result: {
-      data: {
-        getReviewsOfUserForMovie: [
-          {
-            id: "idR3",
-            rating: "3",
-            description: "Good!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU1",
-              first_name: "admin",
-              last_name: "admin",
-            },
-          },
-        ],
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_REVIEWS_OF_MOVIE,
-      variables: {
-        input: {
-          movie_id: "idM4",
-        },
-      },
-    },
-    result: {
-      data: {
-        getReviewsOfMovie: [
-          {
-            id: "idR3",
-            rating: "3",
-            description: "Good!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU1",
-              first_name: "admin",
-              last_name: "admin",
-            },
-          },
-          {
-            id: "idR4",
-            rating: "1",
-            description: "Bad!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU3",
-              first_name: "viewer",
-              last_name: "viewer",
-            },
-          },
-        ],
       },
     },
   },
@@ -202,110 +88,63 @@ const mockMovieDataViewer = [
           category: {
             id: "idC1",
           },
+          reviews: [
+            {
+              id: "idR3",
+              rating: "3",
+              description: "Good!",
+              movie: {
+                title: "title4",
+                id: "idM4",
+              },
+              user: {
+                id: "idU1",
+                first_name: "admin",
+                last_name: "admin",
+              },
+            },
+            {
+              id: "idR4",
+              rating: "1",
+              description: "Bad!",
+              movie: {
+                title: "title4",
+                id: "idM4",
+              },
+              user: {
+                id: "idU3",
+                first_name: "viewer",
+                last_name: "viewer",
+              },
+            },
+          ]
         },
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_USERS_REVIEWS_OF_MOVIE,
-      variables: {
-        input: {
-          movie_id: "idM4",
-          user_id: "idU3",
-        },
-      },
-    },
-    result: {
-      data: {
-        getReviewsOfUserForMovie: [
-          {
-            id: "idR4",
-            rating: "1",
-            description: "Bad!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU3",
-              first_name: "viewer",
-              last_name: "viewer",
-            },
-          },
-        ],
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_REVIEWS_OF_MOVIE,
-      variables: {
-        input: {
-          movie_id: "idM4",
-        },
-      },
-    },
-    result: {
-      data: {
-        getReviewsOfMovie: [
-          {
-            id: "idR3",
-            rating: "3",
-            description: "Good!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU1",
-              first_name: "admin",
-              last_name: "admin",
-            },
-          },
-          {
-            id: "idR4",
-            rating: "1",
-            description: "Bad!",
-            movie: {
-              title: "title4",
-              id: "idM4",
-            },
-            user: {
-              id: "idU3",
-              first_name: "viewer",
-              last_name: "viewer",
-            },
-          },
-        ],
       },
     },
   },
 ]
 
-const adminUser: CurrUser = {
+const adminUser: CurrentUser = {
   id: "idU1",
   first_name: "admin",
   last_name: "admin",
   email: "admin@example.com",
-  password: "admin",
-  role: "admin",
+  role: UserRole["Admin"],
   token: "token1",
 };
 
-const viewerUser: CurrUser = {
+const viewerUser: CurrentUser = {
   id: "idU3",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",
-  password: "viewer",
-  role: "viewer",
+  role: UserRole["Viewer"],
   token: "token1",
 };
 
 const cache = new InMemoryCache();
 
-function renderMoviePage(currUser?: CurrUser,mockData?:any) {
+function renderMoviePage(currUser?: CurrentUser,mockData?:any) {
   const FAKE_EVENT = { name: "test event" };
   const routes = [
     {

@@ -7,11 +7,11 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as ReactLink } from "react-router-dom";
-import { MovieListMovie } from "../../api/types";
 import { useTranslation } from "react-i18next";
+import { Movie } from "../../gql/graphql";
 
 interface Props {
-  movie: MovieListMovie;
+  movie: Movie;
 }
 
 export default function MovieListCard({ movie }: Props) {

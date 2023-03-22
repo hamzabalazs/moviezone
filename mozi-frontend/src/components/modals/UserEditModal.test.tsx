@@ -8,40 +8,30 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { User } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import UserEditModal from "./UserEditModal";
 import { SnackbarProvider } from "notistack";
+import { UPDATE_USER } from "../../api/user/useUser";
+import { FullUser, UserRole } from "../../gql/graphql";
 
-const testUser: User = {
+const testUser: FullUser = {
   id: "idU3",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",
   password: "viewer",
-  role: "viewer",
+  role: UserRole["Viewer"],
 };
 
-const newTestUser: User = {
+const newTestUser: FullUser = {
   id: "idU3",
   first_name: "New viewer",
   last_name: "New viewer",
   email: "new_viewer@example.com",
   password: "New viewer",
-  role: "editor",
+  role: UserRole["Viewer"],
 };
 
-const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
 
 const editMock = {
   request: {
@@ -73,7 +63,7 @@ const editMock = {
 const cache = new InMemoryCache()
 
 function renderUserEditModal(props: {
-  user?: User;
+  user?: FullUser;
   onClose?: () => void;
   allowEditRole?: boolean;
 }) {

@@ -7,11 +7,11 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { Category } from "../../api/types";
 import { useSnackbar } from "notistack";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useCategory } from "../../api/category/useCategory";
+import { Category } from "../../gql/graphql";
 
 interface Props {
   category?: Category;

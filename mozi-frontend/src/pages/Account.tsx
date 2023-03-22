@@ -5,45 +5,45 @@ import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
-import { User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { useUserData } from "./useUserData";
+import { FullUser, UserRole } from "../gql/graphql";
 
 
 function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
-  const {users,loading} = useUserData()
-  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
-  const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
+  const {fullUsers,fullUsersLoading} = useUserData()
+  const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);
 
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<FullUser>({
     id: "",
     first_name: "",
     last_name: "",
     email: "",
     password: "",
-    role: "viewer",
+    role: UserRole["Viewer"],
   });
 
   useEffect(() => {
-    if (context.user && !loading) {
-      const displayUser = users.find((x:User) => x.id === context.user?.id);
+    if (context.user && !fullUsersLoading) {
+      const displayUser = fullUsers.find((x:FullUser) => x.id === context.user?.id);
       if (displayUser) {
         setUser(displayUser);
       }else context.logOut()
       
     }
-    if(!context.user && loading){
+    if(!context.user && fullUsersLoading){
       context.logOut()
     }
-  }, [users]);
+  }, [fullUsers]);
 
-  if (loading) return LoadingComponent(loading);
+  if (fullUsersLoading) return LoadingComponent(fullUsersLoading);
   
 
   return (
@@ -74,7 +74,7 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {users.find((x:User) => x.id === context.user?.id) && (
+              {fullUsers.find((x:FullUser) => x.id === context.user?.id) && (
                 <UserCard
                   user={user}
                   onEdit={() => setEditingUser(user)}

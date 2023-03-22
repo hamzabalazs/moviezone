@@ -1,49 +1,23 @@
-import { gql } from "@apollo/client";
 import {MockedProvider} from "@apollo/client/testing"
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { CurrUser } from "../api/types";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { CurrentUser, UserRole } from "../gql/graphql";
 import Reviews from "./Reviews";
+import { GET_EXTENDED_REVIEWS } from "./useReviewsData";
 
-const GET_REVIEWS_OF_USER = gql`
-  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
-  getReviewsOfUser(input: $input) {
-    id
-    rating
-    description
-    movie {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-    user {
-      id
-      first_name
-      last_name
-    }
-  }
-}
-`;
 
 const mockReviewData = {
   request: {
-    query: GET_REVIEWS_OF_USER,
+    query: GET_EXTENDED_REVIEWS,
     variables:{input:{
       user_id:"idU1"
     }}
   },
   result: {
     data: {
-      getReviewsOfUser: [
+      getExtendedReviews: [
         {
           id: "idR3",
           rating: "3",
@@ -65,7 +39,7 @@ const mockReviewData = {
 
 
 
-function renderReviews(currUser?: CurrUser) {
+function renderReviews(currUser?: CurrentUser) {
 
   return render(
     <MemoryRouter>
@@ -78,13 +52,12 @@ function renderReviews(currUser?: CurrUser) {
   );
 }
 
-const viewerUser: CurrUser = {
+const viewerUser: CurrentUser = {
   id: "idU1",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",
-  password: "viewer",
-  role: "viewer",
+  role: UserRole["Viewer"],
   token: "token1",
 };
 

@@ -7,9 +7,9 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { Movie, MovieWithReviews } from "../../api/types";
 import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../../api/SessionContext";
+import { MovieWithReviews } from "../../gql/graphql";
 
 interface Props {
   movie: MovieWithReviews;

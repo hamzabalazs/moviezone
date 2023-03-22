@@ -1,11 +1,11 @@
 import { Autocomplete, Grid, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Category, MovieListMovie } from "../api/types";
 import MovieListCard from "./cards/MovieListCard";
 import { useTranslation } from "react-i18next";
+import { Category, Movie } from "../gql/graphql";
 
 interface Props {
-  movieList: MovieListMovie[];
+  movieList: Movie[];
   categoryList: Category[];
 }
 
@@ -15,7 +15,7 @@ function MovieList(props: Props) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string[] | undefined
   >([]);
-  const [movieList, setMovieList] = useState<MovieListMovie[]>(props.movieList);
+  const [movieList, setMovieList] = useState<Movie[]>(props.movieList);
   const movieListForAutocomplete: string[] = [];
   const categoryListForAutocomplete: string[] = [];
   const [movieOptions, setMovieOptions] = useState<string[]>([]);

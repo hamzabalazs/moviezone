@@ -8,14 +8,13 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { User } from "../../api/types";
-import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useUser } from "../../api/user/useUser";
+import { FullUser} from "../../gql/graphql";
 
 interface Props {
-  user?: User;
+  user?: FullUser;
   onClose?: () => void;
 }
 
@@ -23,7 +22,6 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
   const { t } = useTranslation();
   const { deleteUser: DeleteUserAPI } = useUser();
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
 
   const handleDeletion = async () => {

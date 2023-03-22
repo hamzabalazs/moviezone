@@ -3,32 +3,21 @@ import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
-import { Review } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import ReviewEditModal from "./ReviewEditModal";
 import { SnackbarProvider } from "notistack";
+import { UPDATE_REVIEW } from "../../api/review/useReview";
+import {ReviewListReview, UserRole } from "../../gql/graphql";
 
-const testReview: Review = {
+const testReview: ReviewListReview = {
   id: "idC1",
   user: {
     id: "idU2",
     first_name: "first",
     last_name: "last",
-    email: "email",
-    role: "viewer",
-    password: "vivu",
   },
   movie: {
     id: "idM2",
-    title: "title",
-    description: "WAAA",
-    poster: "posterket",
-    release_date: "awuuu",
-    category: {
-      id: "idC1",
-      name: "name1",
-    },
-    rating: "0",
   },
   description: "description1EDITED",
   rating: "5",
@@ -39,33 +28,6 @@ const newReview = {
   description: "EDITED",
   rating: "5",
 };
-
-const UPDATE_REVIEW = gql`
-  mutation UpdateReview($input: UpdateReviewInput!) {
-    updateReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-      }
-    }
-  }
-`;
 
 const editMock = {
   request: {
@@ -86,15 +48,6 @@ const editMock = {
         description: newReview.description,
         movie: {
           id: testReview.movie.id,
-          title: testReview.movie.title,
-          description: testReview.movie.description,
-          poster: testReview.movie.poster,
-          release_date: testReview.movie.release_date,
-          category:{
-            id:testReview.movie.category.id,
-            name:testReview.movie.category.name,
-          },
-          rating:testReview.movie.rating,
         },
         user: {
           first_name: testReview.user.first_name,
@@ -109,7 +62,7 @@ const editMock = {
 const cache = new InMemoryCache()
 
 function renderReviewEditModal(props: {
-  review?: Review;
+  review?: ReviewListReview;
   onClose?: () => void;
 }) {
   return render(

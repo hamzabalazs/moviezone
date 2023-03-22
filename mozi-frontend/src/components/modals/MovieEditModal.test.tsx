@@ -8,10 +8,12 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Movie, MovieWithReviews } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieEditModal from "./MovieEditModal";
 import { SnackbarProvider } from "notistack";
+import { GET_CATEGORIES } from "../../pages/useCategoriesData";
+import { UPDATE_MOVIE } from "../../api/movie/useMovie";
+import { MovieWithReviews } from "../../gql/graphql";
 
 const testMovie: MovieWithReviews = {
   id: "idM1",
@@ -36,30 +38,6 @@ const testNewMovie = {
   categoryId: "idC3",
 };
 
-const GET_CATEGORIES = gql`
-  query GetCategories {
-    getCategories {
-      id
-      name
-    }
-  }
-`;
-const UPDATE_MOVIE = gql`
-  mutation UpdateMovie($input: UpdateMovieInput!) {
-  updateMovie(input: $input) {
-    id
-    title
-    description
-    poster
-    release_date
-    category {
-      id
-      name
-    }
-    rating
-  }
-}
-`;
 
 const dataMock = [
   {

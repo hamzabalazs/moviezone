@@ -4,10 +4,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import { MemoryRouter } from "react-router-dom";
-import { Movie, MovieWithReviews } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import MovieDeleteDialog from "./MovieDeleteDialog";
 import { SnackbarProvider } from "notistack";
+import { DELETE_MOVIE } from "../../api/movie/useMovie";
+import { MovieWithReviews } from "../../gql/graphql";
 
 const testMovie: MovieWithReviews = {
   id: "idM1",
@@ -22,23 +23,6 @@ const testMovie: MovieWithReviews = {
   rating: "3",
   reviews:[]
 };
-
-const DELETE_MOVIE = gql`
-  mutation DeleteMovie($input: DeleteMovieInput!) {
-    deleteMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
 
 const deleteMock = {
   request: {

@@ -1,6 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import { Review, ReviewListReview } from "../api/types";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -12,17 +11,18 @@ import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { useReviewsData } from "./useReviewsData";
+import { ReviewListReview } from "../gql/graphql";
 
 function Reviews() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const currUser = context.user;
   const user_id = currUser!.id
-  const {reviews,loading} = useReviewsData(user_id);
+  const {reviews,reviewLoading} = useReviewsData(user_id);
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
 
-  if(loading) return LoadingComponent(loading)
+  if(reviewLoading) return LoadingComponent(reviewLoading)
   return (
     <>
       <NavigationBar />
@@ -50,7 +50,7 @@ function Reviews() {
         <div>
           {reviews.length !== 0 && (
             <Grid container spacing={4}>
-              {reviews.map((review:Review) => (
+              {reviews.map((review:ReviewListReview) => (
                 <Grid item key={review.id} xs={12}>
                   <ReviewCard
                     review={review}

@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import { Category } from "../../api/types";
 import { useSnackbar } from "notistack";
 import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useCategory } from "../../api/category/useCategory";
 import { useEditCategorySchema } from "../../common/validationFunctions";
+import { Category } from "../../gql/graphql";
 
 interface Props {
   category?: Category;

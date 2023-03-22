@@ -59,6 +59,25 @@ export const typeDefs = gql`
     rating: String!
   }
 
+  type ReviewUser {
+    id:ID!
+    first_name:String!
+    last_name:String!
+  }
+
+  type ReviewMovie {
+    id:String!
+  }
+
+  type ReviewListReview {
+  id:ID!
+  user:ReviewUser!
+  description:String!
+  rating:String!
+  movie:ReviewMovie!
+
+}
+
   type MovieWithReviews {
     id: ID!
     title: String!
@@ -67,7 +86,7 @@ export const typeDefs = gql`
     release_date: String!
     category: Category!
     rating: String!
-    reviews: [Review!]!
+    reviews: [ReviewListReview!]!
   }
 
   type Review {
@@ -266,6 +285,7 @@ export const typeDefs = gql`
   # Queries
   type Query {
     getUsers: [User!]!
+    getFullUsers: [FullUser!]!
     getUserById(input: UserInput!): User
     getUserByToken: CurrentUser!
     checkForUser(input: UserEmailInput!): User
@@ -277,7 +297,7 @@ export const typeDefs = gql`
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
-    getReviews: [Review!]!
+    getReviews: [ReviewListReview!]!
     getExtendedReviews: [ExtendedReview!]!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
@@ -290,8 +310,8 @@ export const typeDefs = gql`
   type Mutation {
     createToken(input: AddTokenInput!): RunResult!
     createUser(input: AddUserInput!): User
-    updateUser(input: UpdateUserInput!): User!
-    deleteUser(input: DeleteUserInput!): User!
+    updateUser(input: UpdateUserInput!): FullUser!
+    deleteUser(input: DeleteUserInput!): FullUser!
     logIn(input: LoginInput!): CurrentUser!
     createCategory(input: AddCategoryInput!): Category
     updateCategory(input: UpdateCategoryInput!): Category!

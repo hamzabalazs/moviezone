@@ -12,18 +12,10 @@ import { MockedSessionContext } from "../../common/testing/MockedSessionProvider
 import CategoryAddModal from "./CategoryAddModal";
 import { v4 as uuidv4 } from "uuid";
 import { SnackbarProvider } from "notistack";
+import { ADD_CATEGORY } from "../../api/category/useCategory";
 const addCategory = {
   name: "ADDED",
 };
-
-const ADD_CATEGORY = gql`
-  mutation CreateCategory($input: AddCategoryInput!) {
-    createCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
 const addMock = {
   request: {

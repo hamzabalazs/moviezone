@@ -1,8 +1,8 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
-import { MovieWithReviews } from "../api/types";
+import { GetMovieWithReviewsByIdQuery, MovieWithReviews } from "../gql/graphql";
 
 type MoviePageData = {
-  movie: MovieWithReviews;
+  movie: MovieWithReviews | null;
   error: ApolloError | undefined;
   loading: boolean;
 };
@@ -29,13 +29,16 @@ export const GET_MOVIE_BY_ID = gql`
           first_name
           last_name
         }
+        movie{
+          id
+        }
       }
     }
   }
 `;
 
 export function useMoviePageData(movie_id: string): MoviePageData {
-  const { data, error, loading } = useQuery(GET_MOVIE_BY_ID, {
+  const { data, error, loading } = useQuery<GetMovieWithReviewsByIdQuery>(GET_MOVIE_BY_ID, {
     variables: { input: { id: movie_id } },
   });
 

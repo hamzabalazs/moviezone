@@ -7,22 +7,19 @@ import NavigationBar from "../components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
-import { User } from "../api/types";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
-import { gql, useQuery} from "@apollo/client";
-import { useSessionContext } from "../api/SessionContext";
 import { useUserData } from "./useUserData";
+import { FullUser } from "../gql/graphql";
 
 export function Users() {
   const { t } = useTranslation();
-  const context = useSessionContext()
-  const {users,loading} = useUserData()
+  const {fullUsers,fullUsersLoading} = useUserData()
 
-  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
-  const [deletingUser, setDeletingUser] = useState<User | undefined>(undefined);
+  const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);
   
-  if(loading) return LoadingComponent(loading)
+  if(fullUsersLoading) return LoadingComponent(fullUsersLoading)
 
   return (
     <>
@@ -53,7 +50,7 @@ export function Users() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {users.map((user:User) => (
+            {fullUsers.map((user:FullUser) => (
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}

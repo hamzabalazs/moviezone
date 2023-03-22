@@ -1,7 +1,6 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Category } from "../api/types";
 import CategoryDeleteDialog from "../components/dialogs/CategoryDeleteDialog";
 import CategoryAddModal from "../components/modals/CategoryAddModal";
 import CategoryEditModal from "../components/modals/CategoryEditModal";
@@ -13,12 +12,13 @@ import CategoryCard from "../components/cards/CategoryCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useCategoriesData } from "./useCategoriesData";
+import { Category } from "../gql/graphql";
 
 
 
 function Categories() {
   const { t } = useTranslation();
-  const {categories,loading,error} = useCategoriesData();
+  const {categories,loading} = useCategoriesData();
   
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined

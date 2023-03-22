@@ -2,31 +2,20 @@ import { gql, InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { User } from "../../api/types";
 import { MockedSessionContext } from "../../common/testing/MockedSessionProvider";
 import UserDeleteDialog from "./UserDeleteDialog";
 import { SnackbarProvider } from "notistack";
+import { DELETE_USER } from "../../api/user/useUser";
+import { FullUser, UserRole } from "../../gql/graphql";
 
-const testUser: User = {
+const testUser: FullUser = {
   id: "idU3",
   first_name: "viewer",
   last_name: "viewer",
   email: "viewer@example.com",
   password: "viewer",
-  role: "viewer",
+  role: UserRole["Viewer"],
 };
-
-const DELETE_USER = gql`
-  mutation DeleteUser($input: DeleteUserInput!) {
-    deleteUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
 
 const deleteMock = {
   request: {
@@ -52,7 +41,7 @@ const deleteMock = {
 
 const cache = new InMemoryCache();
 
-function renderUserDeleteDialog(props: { user?: User; onClose?: () => void }) {
+function renderUserDeleteDialog(props: { user?: FullUser; onClose?: () => void }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
       <MockedProvider cache={cache} mocks={[deleteMock]}>

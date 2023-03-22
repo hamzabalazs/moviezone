@@ -13,11 +13,11 @@ import {
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { ReviewListReview } from "../../api/types";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useReview } from "../../api/review/useReview";
 import { useEditReviewSchema } from "../../common/validationFunctions";
+import { ReviewListReview } from "../../gql/graphql";
 
 interface Props {
   review?: ReviewListReview;

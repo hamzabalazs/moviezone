@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MovieWithReviews, Review, ReviewListReview } from "../api/types";
 import { useSnackbar } from "notistack";
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
@@ -29,6 +28,7 @@ import { useSessionContext } from "../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../common/errorMessages";
 import { useMoviePageData } from "./useMoviePageData";
 import { useReview } from "../api/review/useReview";
+import { MovieWithReviews, ReviewListReview } from "../gql/graphql";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
@@ -54,7 +54,7 @@ export default function MoviePage() {
   >(undefined);
   const [ratingDescription, setRatingDescription] = useState("");
   const [value, setValue] = useState<number | null>(0);
-  const reviewsOfUser = movie?.reviews.filter((x) => x.user.id === currUser.id)
+  const reviewsOfUser = movie?.reviews.filter((x:ReviewListReview) => x.user.id === currUser.id)
 
   useEffect(() => {
     if (!currUser) navigate("/login");
@@ -71,7 +71,7 @@ export default function MoviePage() {
       rating = value.toString();
     } else rating = "0";
     const description = ratingDescription;
-    if (currUser) {
+    if (currUser && reviewsOfUser) {
       const user_id = currUser.id;
       if (
         movie_id !== undefined &&
@@ -110,7 +110,7 @@ export default function MoviePage() {
       } else if (rating === "0") {
         const msg = t("failMessages.reviewRatingMissing");
         enqueueSnackbar(msg, { variant: "error" });
-      } else if (movie.reviews.filter((x) => x.user.id === user_id).length !== 0) {
+      } else if (reviewsOfUser.length !== 0) {
         const msg = t("failMessages.reviewAddMultiple");
         enqueueSnackbar(msg, { variant: "error" });
       }
@@ -141,11 +141,13 @@ export default function MoviePage() {
             onClose={() => setDeletingReview(undefined)}
           />
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <MoviePageCard
-              movie={movie}
-              onEdit={() => setEditingMovie(movie)}
-              onDelete={() => setDeletingMovie(movie)}
-            />
+            {movie && (
+              <MoviePageCard
+                movie={movie}
+                onEdit={() => setEditingMovie(movie)}
+                onDelete={() => setDeletingMovie(movie)}
+              />
+            )}
           </div>
           <div
             style={{
@@ -161,7 +163,7 @@ export default function MoviePage() {
               {movie.reviews.length !== 0 && (
                 <>
                   {movie.reviews.map(
-                    (review: Review) => (
+                    (review: ReviewListReview) => (
                       <Grid item key={review.id} xs={12}>
                         <ReviewCard
                           review={review}

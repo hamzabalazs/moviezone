@@ -1,10 +1,13 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
-import { User } from "../api/types";
+import { FullUser, GetFullUsersQuery, GetUsersQuery, User } from "../gql/graphql";
 
 type UsersData = {
   users: User[];
-  loading: boolean;
-  error: ApolloError | undefined;
+  fullUsers: FullUser[];
+  usersLoading: boolean;
+  fullUsersLoading: boolean;
+  usersError: ApolloError | undefined;
+  fullUsersError: ApolloError | undefined;
 };
 
 export const GET_USERS = gql`
@@ -19,12 +22,29 @@ export const GET_USERS = gql`
   }
 `;
 
+export const GET_FULL_USERS = gql`
+  query GetFullUsers {
+    getFullUsers{
+      id
+      first_name
+      last_name
+      email
+      password
+      role
+    }
+  }
+`
+
 export function useUserData():UsersData{
-    const {data,loading,error} = useQuery(GET_USERS)
+    const {data:userData,loading:usersLoading,error:usersError} = useQuery<GetUsersQuery>(GET_USERS)
+    const {data:fullUserData,loading:fullUsersLoading,error:fullUsersError} = useQuery<GetFullUsersQuery>(GET_FULL_USERS)
 
     return{
-        users: data?.getUsers || [],
-        loading,
-        error
+        users: userData?.getUsers || [],
+        fullUsers: fullUserData?.getFullUsers || [],
+        usersLoading,
+        fullUsersLoading,
+        usersError,
+        fullUsersError
     }
 }

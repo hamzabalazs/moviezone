@@ -1,5 +1,6 @@
 import React from "react";
 import { sessionContext, SessionContextData } from "../../api/SessionContext";
+import { UserRole } from "../../gql/graphql";
 
 export function MockedSessionContext({
   children,
@@ -18,8 +19,7 @@ export function MockedSessionContext({
           first_name: "admin",
           last_name: "admin",
           email: "admin@example.com",
-          password: "admin",
-          role: "admin",
+          role: UserRole["Admin"],
           token: "token1",
         },
         logOut:jest.fn(),

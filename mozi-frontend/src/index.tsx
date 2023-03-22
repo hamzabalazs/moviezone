@@ -20,7 +20,6 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
-import { User } from "./api/types";
 import { themeSwitchContext } from "./themeSwitchContext";
 import { setContext } from "@apollo/client/link/context";
 import {
@@ -28,6 +27,7 @@ import {
   useSessionContext,
 } from "./api/SessionContext";
 import { SnackbarProvider } from "notistack";
+import { User, UserRole } from "./gql/graphql";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -67,7 +67,7 @@ root.render(
                 <Route
                   path="categories"
                   element={
-                    <RoleWrapper role="editor">
+                    <RoleWrapper role={UserRole["Editor"]}>
                       <Categories />
                     </RoleWrapper>
                   }
@@ -75,7 +75,7 @@ root.render(
                 <Route
                   path="reviews"
                   element={
-                    <RoleWrapper role="viewer">
+                    <RoleWrapper role={UserRole["Viewer"]}>
                       <Reviews />
                     </RoleWrapper>
                   }
@@ -83,7 +83,7 @@ root.render(
                 <Route
                   path="users"
                   element={
-                    <RoleWrapper role="admin">
+                    <RoleWrapper role={UserRole["Admin"]}>
                       <Users />
                     </RoleWrapper>
                   }

@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import { Review} from "../../api/types";
 import { useTranslation } from "react-i18next";
+import { Review } from "../../gql/graphql";
 
 interface Props {
   review: Review;

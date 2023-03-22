@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { ReviewListReview } from "../../api/types";
 import { useSessionContext } from "../../api/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useReview } from "../../api/review/useReview";
+import { ReviewListReview } from "../../gql/graphql";
 
 interface Props {
   review?: ReviewListReview;
