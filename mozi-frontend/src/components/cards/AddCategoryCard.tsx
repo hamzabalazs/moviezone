@@ -28,7 +28,6 @@ export default function AddCategoryCard(props: Props) {
   const { t } = useTranslation();
   const {addCategory: AddCategoryAPI} = useCategory()
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient()
   const { logOut } = useSessionContext()
 
   const setIsOpenAdd = props.setIsOpenAdd;

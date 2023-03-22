@@ -278,6 +278,7 @@ export const typeDefs = gql`
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
     getReviews: [Review!]!
+    getExtendedReviews: [ExtendedReview!]!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!

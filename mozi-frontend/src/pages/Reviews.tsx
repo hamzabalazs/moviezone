@@ -11,46 +11,18 @@ import ReviewCard from "../components/cards/ReviewCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import { gql, useQuery } from "@apollo/client";
-
-export const GET_REVIEWS_OF_USER = gql`
-  query GetReviewsOfUser($input: GetReviewsOfUserInput!) {
-  getReviewsOfUser(input: $input) {
-    id
-    rating
-    description
-    movie {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-    user {
-      id
-      first_name
-      last_name
-    }
-  }
-}
-`;
+import { useReviewsData } from "./useReviewsData";
 
 function Reviews() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const currUser = context.user;
   const user_id = currUser!.id
-  const { data: reviewsData, loading:reviewsLoading } = useQuery(GET_REVIEWS_OF_USER,{variables:{input:{user_id}}});
-
+  const {reviews,loading} = useReviewsData(user_id);
   const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
   const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
 
-  if(reviewsLoading) return LoadingComponent(reviewsLoading)
+  if(loading) return LoadingComponent(loading)
   return (
     <>
       <NavigationBar />
@@ -76,9 +48,9 @@ function Reviews() {
           </Container>
         </div>
         <div>
-          {reviewsData.getReviewsOfUser.length !== 0 && (
+          {reviews.length !== 0 && (
             <Grid container spacing={4}>
-              {reviewsData.getReviewsOfUser.map((review:Review) => (
+              {reviews.map((review:Review) => (
                 <Grid item key={review.id} xs={12}>
                   <ReviewCard
                     review={review}
@@ -89,7 +61,7 @@ function Reviews() {
               ))}
             </Grid>
           )}
-          {reviewsData.getReviewsOfUser.length === 0 && (
+          {reviews.length === 0 && (
             <Typography
               variant="h4"
               align="center"

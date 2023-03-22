@@ -1,11 +1,7 @@
-import {
-  gql,
-  useApolloClient,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
-import { ExtendedReview } from "../types";
+import { GET_EXTENDED_REVIEWS } from "../../pages/useReviewsData";
+import { ExtendedReview, Review } from "../types";
 
 type ReviewData = {
   updateReview: (
@@ -43,12 +39,19 @@ const ADD_REVIEW = gql`
           id
           rating
           description
+          user {
+          id
+          first_name
+          last_name
+        }
         }
       }
       user {
         first_name
         last_name
         id
+        role
+        email
       }
     }
   }
@@ -75,12 +78,19 @@ const UPDATE_REVIEW = gql`
           id
           rating
           description
+          user {
+          id
+          first_name
+          last_name
+        }
         }
       }
       user {
         first_name
         last_name
         id
+        role
+        email
       }
     }
   }
@@ -107,12 +117,19 @@ const DELETE_REVIEW = gql`
           id
           rating
           description
+          user {
+          id
+          first_name
+          last_name
+        }
         }
       }
       user {
         first_name
         last_name
         id
+        role
+        email
       }
     }
   }
@@ -144,6 +161,16 @@ export function useReview(movie_id: string): ReviewData {
             getMovieWithReviewsById: data.createReview.movie,
           },
         });
+        const reviewData = client.readQuery({
+          query: GET_EXTENDED_REVIEWS,
+        });
+        if(!reviewData) return
+        cache.writeQuery({
+          query: GET_EXTENDED_REVIEWS,
+          data: {
+            getExtendedReviews: [...reviewData.getExtendedReviews, data.createReview],
+          },
+        });
       },
     });
     if (result.data) {
@@ -153,12 +180,12 @@ export function useReview(movie_id: string): ReviewData {
   }
 
   async function updateReview(
-    id:string,
+    id: string,
     rating: string,
-    description: string,
+    description: string
   ): Promise<ExtendedReview | null> {
     const result = await UpdateReviewAPI({
-      variables: { input: { id,rating, description } },
+      variables: { input: { id, rating, description } },
       update: (cache, { data }) => {
         client.readQuery({
           query: GET_MOVIE_BY_ID,
@@ -171,6 +198,16 @@ export function useReview(movie_id: string): ReviewData {
             getMovieWithReviewsById: data.updateReview.movie,
           },
         });
+        const reviewData = client.readQuery({
+          query: GET_EXTENDED_REVIEWS,
+        });
+        if(!reviewData) return
+        cache.writeQuery({
+          query: GET_EXTENDED_REVIEWS,
+          data: {
+            getExtendedReviews: [...reviewData.getExtendedReviews],
+          },
+        });
       },
     });
     if (result.data) {
@@ -179,9 +216,7 @@ export function useReview(movie_id: string): ReviewData {
     return null;
   }
 
-  async function deleteReview(
-    id:string
-  ): Promise<ExtendedReview | null> {
+  async function deleteReview(id: string): Promise<ExtendedReview | null> {
     const result = await DeleteReviewAPI({
       variables: { input: { id } },
       update: (cache, { data }) => {
@@ -196,6 +231,18 @@ export function useReview(movie_id: string): ReviewData {
             getMovieWithReviewsById: data.deleteReview.movie,
           },
         });
+        const reviewData = client.readQuery({
+          query: GET_EXTENDED_REVIEWS,
+        });
+        if(!reviewData) return
+        cache.writeQuery({
+          query: GET_EXTENDED_REVIEWS,
+          data: {
+            getExtendedReviews: reviewData.getExtendedReviews.filter(
+              (x: Review) => x.id !== data.deleteReview.id
+            ),
+          },
+        });
       },
     });
     if (result.data) {
@@ -204,9 +251,9 @@ export function useReview(movie_id: string): ReviewData {
     return null;
   }
 
-  return{
+  return {
     addReview,
     updateReview,
-    deleteReview
-  }
+    deleteReview,
+  };
 }

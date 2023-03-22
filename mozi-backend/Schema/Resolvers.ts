@@ -21,12 +21,10 @@ import {
 import {
   getReviews,
   getReviewById,
-  getReviewsOfUserForMovie,
-  getReviewsOfMovie,
   deleteReview,
   updateReview,
   createReview,
-  getReviewsOfUser,
+  getExtendedReviews,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -38,7 +36,7 @@ import {
   checkForCategory,
 } from "../utils/category";
 import { MyContext } from "../server";
-import { CreateMovieType, FullUser, Movie, MovieWithReviews, Review, Role, UserRole } from "../utils/types";
+import { CreateMovieType, FullUser, Movie, MovieWithReviews, Review, UserRole } from "../utils/types";
 import {
   BAD_CATEGORYID_MESSAGE,
   CATEGORY_EXISTS_MESSAGE,
@@ -82,24 +80,15 @@ export const resolvers = {
     },
     // Reviews
     async getReviews(_: any, __: any, context: MyContext) {
-      return await getReviews(_, context);
+      return await getReviews(context);
     },
     async getReviewById(_: any, { input }: any, context: MyContext) {
       return await getReviewById(input.id, context);
     },
-    async getReviewsOfMovie(_: any, { input }: any, context: MyContext) {
-      return await getReviewsOfMovie(input.movie_id, context);
+    async getExtendedReviews(_:any,__:any,context:MyContext){
+      return await getExtendedReviews(context);
     },
-    async getReviewsOfUserForMovie(_: any, { input }: any, context: MyContext) {
-      return await getReviewsOfUserForMovie(
-        input.user_id,
-        input.movie_id,
-        context
-      );
-    },
-    async getReviewsOfUser(_: any, { input }: any, context: MyContext) {
-      return await getReviewsOfUser(input.user_id, context);
-    },
+    
     // Movies
     async getMovies(_: any, __: any, context: MyContext) {
       return await getMovies(_, context);
@@ -139,11 +128,17 @@ export const resolvers = {
   },
   Movie: {
     async rating(movie: Movie, __: any, context: MyContext) {
-      const reviews = await getReviewsOfMovie(movie.id, context);
+      const reviews = await getReviews(context);
       let avg = 0;
-      reviews.map((review) => (avg += parseInt(review.rating)));
+      let length = 0;
+      reviews.map((x:any) => {
+        if(x.movie_id === movie.id){
+          avg += parseInt(x.rating)
+          length++
+        }
+      });
       if (avg !== 0) {
-        avg /= reviews.length;
+        avg /= length;
         return avg.toString();
       } else return 0;
     },
@@ -153,11 +148,17 @@ export const resolvers = {
   },
   MovieWithReviews: {
     async rating(movie: MovieWithReviews, __: any, context: MyContext) {
-      const reviews = await getReviewsOfMovie(movie.id, context);
+      const reviews = await getReviews(context);
       let avg = 0;
-      reviews.map((review) => (avg += parseInt(review.rating)));
+      let length = 0;
+      reviews.map((x:any) => {
+        if(x.movie_id === movie.id){
+          avg += parseInt(x.rating)
+          length++
+        }
+      });
       if (avg !== 0) {
-        avg /= reviews.length;
+        avg /= length;
         return avg.toString();
       } else return 0;
     },
@@ -165,7 +166,10 @@ export const resolvers = {
       return await getCategoryById(movie.category_id, context);
     },
     async reviews(movie: MovieWithReviews,__:any,context:MyContext){
-      return await getReviewsOfMovie(movie.id,context);
+      const reviews = await getReviews(context);
+      const movieReviews = reviews.filter((x:any) => x.movie_id === movie.id)
+      console.log("movie",movieReviews)
+      return movieReviews;
     }
   },
 

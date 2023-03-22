@@ -8,9 +8,14 @@ import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { DbReview, ExtendedReview, Review } from "./types";
 
-export function getReviews(_: any, context: MyContext): Promise<Review[]> {
+export function getReviews(context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
   return context.db.all<Review>(sql);
+}
+
+export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]> {
+  const sql = "SELECT * FROM review";
+  return context.db.all<ExtendedReview>(sql);
 }
 
 export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
@@ -35,31 +40,6 @@ export async function getReviewForUpdate(
   const result = await context.db.get<DbReview>(sql, [id]);
   if(result === undefined) return null;
   return result
-}
-
-export function getReviewsOfUserForMovie(
-  user_id: string,
-  movie_id: string,
-  context: MyContext
-): Promise<Review[]> {
-  const sql = `SELECT * FROM review WHERE review.user_id = ? AND review.movie_id = ?`;
-  return context.db.all<Review>(sql, [user_id, movie_id]);
-}
-
-export function getReviewsOfMovie(
-  movie_id: string,
-  context: MyContext
-): Promise<Review[]> {
-  const sql = `SELECT * FROM review WHERE review.movie_id = ?`;
-  return context.db.all<Review>(sql, [movie_id]);
-}
-
-export function getReviewsOfUser(
-  user_id: string,
-  context: MyContext
-): Promise<Review[]> {
-  const sql = `SELECT * FROM review WHERE review.user_id = ?`;
-  return context.db.all<Review>(sql, [user_id]);
 }
 
 export async function createReview(
