@@ -6,30 +6,36 @@ import { CreateMovieType, Movie, MovieWithReviews, UpdateMovieInput } from "./ty
 
 export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let sql = "SELECT * FROM movie";
+  let params = []
   if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
   let offsetString = ""
   let searchFieldString = ""
   let categoryString = ""
   if(input.searchField){
-    searchFieldString = ` title LIKE "%${input.searchField}%"`
+    searchFieldString = ` title LIKE '%' || ? || '%'`
+    params.push(input.searchField)
     sql = sql.concat(searchFieldString)
   }
   if(input.searchField && input.category.length !==0) sql = sql.concat(` AND`)
   if(input.category.length !== 0){
+    const validator = /[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/
     categoryString = " category_id IN ("
     input.category.forEach((x:string) => {
-      categoryString = categoryString.concat(`"${x}"`,",")
+      if(x.match(validator)) categoryString = categoryString.concat(`"${x}"`,",")
     })
     categoryString = categoryString.substring(0,categoryString.length - 1)
     categoryString = categoryString.concat(")")
     sql = sql.concat(categoryString)
   }
-  sql = sql.concat(` LIMIT ${input.limit}`)
+  sql = sql.concat(` LIMIT ?`)
+  params.push(input.limit)
   if(input.offset){
-    offsetString = ` OFFSET ${input.offset}`
+    offsetString = ` OFFSET ?`
     sql = sql.concat(offsetString)
+    params.push(input.offset)
   }
-  return context.db.all<Movie>(sql)
+  console.log(sql)
+  return context.db.all<Movie>(sql,params)
 }
 
 export function getNumberOfMovies(input:any,context:MyContext): Promise<number | null> {
