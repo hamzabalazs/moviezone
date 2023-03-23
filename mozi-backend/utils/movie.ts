@@ -4,9 +4,54 @@ import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { CreateMovieType, Movie, MovieWithReviews, UpdateMovieInput } from "./types";
 
-export function getMovies(_:any, context:MyContext):Promise<Movie[]> {
-  const sql = "SELECT * FROM movie";
+export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
+  let sql = "SELECT * FROM movie";
+  if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
+  let offsetString = ""
+  let searchFieldString = ""
+  let categoryString = ""
+  if(input.searchField){
+    searchFieldString = ` title LIKE "%${input.searchField}%"`
+    sql = sql.concat(searchFieldString)
+  }
+  if(input.searchField && input.category.length !==0) sql = sql.concat(` AND`)
+  if(input.category.length !== 0){
+    categoryString = " category_id IN ("
+    input.category.forEach((x:string) => {
+      categoryString = categoryString.concat(`"${x}"`,",")
+    })
+    categoryString = categoryString.substring(0,categoryString.length - 1)
+    categoryString = categoryString.concat(")")
+    sql = sql.concat(categoryString)
+  }
+  sql = sql.concat(` LIMIT ${input.limit}`)
+  if(input.offset){
+    offsetString = ` OFFSET ${input.offset}`
+    sql = sql.concat(offsetString)
+  }
   return context.db.all<Movie>(sql)
+}
+
+export function getNumberOfMovies(input:any,context:MyContext): Promise<number | null> {
+  let sql = `SELECT COUNT(*) as totalCount FROM movie`
+  if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
+  let searchFieldString = ""
+  let categoryString = ""
+  if(input.searchField){
+    searchFieldString = ` title LIKE "%${input.searchField}%"`
+    sql = sql.concat(searchFieldString)
+  }
+  if(input.searchField && input.category.length !==0) sql = sql.concat(` AND`)
+  if(input.category.length !== 0){
+    categoryString = " category_id IN ("
+    input.category.forEach((x:string) => {
+      categoryString = categoryString.concat(`"${x}"`,",")
+    })
+    categoryString = categoryString.substring(0,categoryString.length - 1)
+    categoryString = categoryString.concat(")")
+    sql = sql.concat(categoryString)
+  }
+  return context.db.get<number>(sql)
 }
 
 export async function getMovieById(id:string, context:MyContext):Promise<Movie|null> {

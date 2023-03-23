@@ -45,7 +45,7 @@ export type MovieWithReviews = {
   category: Category;
   rating: string;
   reviews: Review[];
-}
+};
 
 export type CreateMovieType = {
   id: string;
@@ -65,12 +65,12 @@ export type Review = {
 };
 
 export type ReviewListReview = {
-  id:string;
-  rating:string;
-  description:string;
-  user:{id:string,first_name:string,last_name:string}
-  movie: {id:string}
-}
+  id: string;
+  rating: string;
+  description: string;
+  user: { id: string; first_name: string; last_name: string };
+  movie: { id: string };
+};
 
 export type ExtendedReview = {
   id: string;
@@ -78,7 +78,7 @@ export type ExtendedReview = {
   movie: MovieWithReviews;
   description: string;
   rating: string;
-}
+};
 
 export type Role = {
   role: string;

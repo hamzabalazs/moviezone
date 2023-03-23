@@ -4,8 +4,6 @@ import {
   Container,
   IconButton,
   Fab,
-  Skeleton,
-  Grid,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +24,7 @@ export function Home() {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const { movies, categories, error, loading } = useHomePageData();
+  
 
   const currUser = context.user;
   const navigate = useNavigate();
@@ -38,13 +36,6 @@ export function Home() {
   useEffect(() => {
     if (!currUser) navigate("/login");
   }, []);
-
-  if (loading) return LoadingComponent(loading);
-  if (error?.message === "Expired token!") {
-    const msg = t("failMessages.expiredToken");
-    enqueueSnackbar(msg, { variant: "error" });
-    context.logOut();
-  }
 
   return (
     <>
@@ -85,9 +76,7 @@ export function Home() {
             )}
           </div>
           <Container maxWidth="md" sx={{ marginBottom: 3 }}>
-            {movies.length !== 0 && (
-              <MovieList movieList={movies} categoryList={categories} />
-            )}
+              <MovieList/>
           </Container>
           <MyFooter />
         </main>

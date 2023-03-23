@@ -60,23 +60,22 @@ export const typeDefs = gql`
   }
 
   type ReviewUser {
-    id:ID!
-    first_name:String!
-    last_name:String!
+    id: ID!
+    first_name: String!
+    last_name: String!
   }
 
   type ReviewMovie {
-    id:String!
+    id: String!
   }
 
   type ReviewListReview {
-  id:ID!
-  user:ReviewUser!
-  description:String!
-  rating:String!
-  movie:ReviewMovie!
-
-}
+    id: ID!
+    user: ReviewUser!
+    description: String!
+    rating: String!
+    movie: ReviewMovie!
+  }
 
   type MovieWithReviews {
     id: ID!
@@ -87,6 +86,11 @@ export const typeDefs = gql`
     category: Category!
     rating: String!
     reviews: [ReviewListReview!]!
+  }
+
+  type MovieTitles {
+    id: ID!
+    title: String!
   }
 
   type Review {
@@ -282,6 +286,22 @@ export const typeDefs = gql`
     changes: Int!
   }
 
+  input SortMovieInput {
+    limit: Int!
+    offset: Int!
+    category: [String!]!
+    searchField: String
+  }
+
+  input numOfMoviesInput {
+    category: [String!]!
+    searchField: String
+  }
+
+  type numOfMovies {
+    totalCount: Int
+  }
+
   # Queries
   type Query {
     getUsers: [User!]!
@@ -290,7 +310,9 @@ export const typeDefs = gql`
     getUserByToken: CurrentUser!
     checkForUser(input: UserEmailInput!): User
     getUserForLogin(input: LoginInput!): CurrentUser!
-    getMovies: [Movie!]!
+    getMovies(input: SortMovieInput!): [Movie!]!
+    getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
+    getMovieTitles: [MovieTitles!]!
     getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
     getMovieWithReviewsById(input: MovieInput!): MovieWithReviews!
     getMovieById(input: MovieInput!): Movie

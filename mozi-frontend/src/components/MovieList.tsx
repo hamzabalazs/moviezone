@@ -1,136 +1,86 @@
-import { Autocomplete, Grid, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Autocomplete, debounce, Grid, TextField } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import MovieListCard from "./cards/MovieListCard";
 import { useTranslation } from "react-i18next";
 import { Category, Movie } from "../gql/graphql";
+import { useHomePageData } from "../pages/useHomePageData";
+import MovieListSkeletonComponent from "./MovieListSkeletonComponent";
+import { useBottomScrollListener } from "react-bottom-scroll-listener";
 
-interface Props {
-  movieList: Movie[];
-  categoryList: Category[];
-}
-
-function MovieList(props: Props) {
+function MovieList() {
   const { t } = useTranslation();
-
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string[] | undefined
-  >([]);
-  const [movieList, setMovieList] = useState<Movie[]>(props.movieList);
-  const movieListForAutocomplete: string[] = [];
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const categoryListForAutocomplete: string[] = [];
-  const [movieOptions, setMovieOptions] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [selectedMovieTitle, setSelectedMovieTitle] = useState<
-    string[] | undefined
-  >([]);
-  const [inputValueMovie, setInputValueMovie] = useState("");
   const [inputValueCategory, setInputValueCategory] = useState("");
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [movieList, setMovieList] = useState<Movie[]>([]);
+  const [offset, setOffset] = useState<number>(0);
 
-  function filtering(
-    categoryId: string[] | undefined,
-    title: string[] | undefined
-  ) {
-    if (
-      (categoryId?.length === 0 || categoryId === undefined) &&
-      (title?.length === 0 || title === undefined)
-    ) {
-      setMovieList(props.movieList);
-    } else if (
-      (categoryId?.length !== 0 || categoryId !== undefined) &&
-      (title?.length === 0 || title === undefined)
-    ) {
-      const newCategories = props.categoryList.filter((x: Category) =>
-        categoryId?.includes(x.name)
-      );
-      const categoryList: string[] = [];
-      newCategories.forEach((category: Category) => {
-        categoryList.push(category.id);
-      });
-      const newMovies = props.movieList.filter((x: any) =>
-        categoryList?.includes(x.category.id)
-      );
-      setMovieList(newMovies);
-    } else if (
-      (categoryId?.length === 0 || categoryId === undefined) &&
-      (title?.length !== 0 || title !== undefined)
-    ) {
-      const newMovies = props.movieList.filter((x: any) =>
-        title?.includes(x.title)
-      );
-      setMovieList(newMovies);
-    } else {
-      const newCategories = props.categoryList.filter((x: Category) =>
-        categoryId?.includes(x.name)
-      );
-      const categoryList: string[] = [];
-      newCategories.forEach((category: Category) => {
-        categoryList.push(category.id);
-      });
-      const newMovies = props.movieList.filter(
-        (x: any) =>
-          title?.includes(x.title) && categoryList?.includes(x.category.id)
-      );
-      setMovieList(newMovies);
-    }
-  }
-  useEffect(() => {
-    const filteredMovieList: string[] = [];
-    movieList.forEach((movie) => {
-      filteredMovieList.push(movie.title);
-    });
-    setMovieOptions(filteredMovieList);
-  }, [movieList]);
+  const { movies, categories, error, loading, totalCount } = useHomePageData(
+    offset,
+    categoryFilter,
+    searchValue
+  );
+  
+  useBottomScrollListener(() => {
+    if (totalCount - offset > 9) setOffset(offset + 9);
+    return;
+  });
 
   useEffect(() => {
-    filtering(selectedCategoryId, selectedMovieTitle);
-  }, [selectedMovieTitle, selectedCategoryId]);
-
-  useEffect(() => {
-    if (movieListForAutocomplete.length === 0) {
-      props.movieList.forEach((movie: any) => {
-        movieListForAutocomplete.push(movie.title);
-      });
-      setMovieOptions(movieListForAutocomplete);
-    }
     if (categoryListForAutocomplete.length === 0) {
-      props.categoryList.forEach((category: Category) => {
+      categories.forEach((category: Category) => {
         categoryListForAutocomplete.push(category.name);
       });
       setCategoryOptions(categoryListForAutocomplete);
     }
-    filtering(selectedCategoryId, selectedMovieTitle);
-  }, []);
+  }, [categories]);
 
   useEffect(() => {
-    setMovieList(props.movieList)
-    filtering(selectedCategoryId,selectedMovieTitle)
-  },[props.movieList])
+    let list: string[] = [];
+    categories.forEach((category: Category) => {
+      if (selectedCategoryId.includes(category.name)) list.push(category.id);
+    });
+    setCategoryFilter(list);
+  }, [selectedCategoryId]);
+
+  useEffect(() => {
+    if (!loading) {
+      movieList.push(...movies);
+      setMovieList(movieList);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    setMovieList([]);
+    setOffset(0);
+  }, [selectedCategoryId, searchValue]);
+
+  const search = (value:string) => {
+    setSearchValue(value);
+  }
+
+  let searchDebounce = debounce(search,1000)
 
   return (
     <>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Grid container spacing={2}>
           <Grid item key={1} xs={12} sm={12} md={12}>
-            <Autocomplete
-              multiple
-              disablePortal
-              id="combo-box"
+            <TextField
+              id="searchValue"
+              name="searchValue"
+              sx={{ border: 2 }}
               fullWidth
-              options={movieOptions}
-              value={selectedMovieTitle}
-              onChange={(event: any, newValue: string[] | undefined) => {
-                setSelectedMovieTitle(newValue);
+              // value={searchValue}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  searchDebounce.clear()
+                  searchDebounce = debounce(search,500)
+                  searchDebounce(event.target.value);
               }}
-              inputValue={inputValueMovie}
-              onInputChange={(event, newInputValue) => {
-                setInputValueMovie(newInputValue);
-              }}
-              sx={{ width: "100%", border: 1, borderRadius: 1 }}
-              renderInput={(params) => (
-                <TextField {...params} label={t("navbar.Movies")} />
-              )}
-              data-testid="movie-autocomplete"
-            />
+            ></TextField>
           </Grid>
           <Grid item key={2} xs={12} sm={12} md={12}>
             <Autocomplete
@@ -140,7 +90,7 @@ function MovieList(props: Props) {
               fullWidth
               options={categoryOptions}
               value={selectedCategoryId}
-              onChange={(event: any, newValue: string[] | undefined) => {
+              onChange={(event: any, newValue: string[]) => {
                 setSelectedCategoryId(newValue);
               }}
               inputValue={inputValueCategory}
@@ -162,12 +112,25 @@ function MovieList(props: Props) {
         </Grid>
       </div>
       <Grid container spacing={2}>
-        {movieList.map((movie) => (
+        {movieList.map((movie: Movie) => (
           <Grid item key={movie.id} xs={12} sm={6} md={4}>
             <MovieListCard movie={movie} />
           </Grid>
         ))}
       </Grid>
+      {loading && (
+        <Grid container spacing={2}>
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+          <MovieListSkeletonComponent />
+        </Grid>
+      )}
     </>
   );
 }
