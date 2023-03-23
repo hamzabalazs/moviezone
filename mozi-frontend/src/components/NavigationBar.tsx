@@ -78,10 +78,9 @@ export default function NavigationBar() {
         data-testid="navbarcomponent"
       >
         <Toolbar id="back-to-top-anchor">
-        <IconButton component={RouterLink} to="/">
+        <IconButton component={RouterLink} to="/" data-testid="navbar-home-icon">
                 <VideocamIcon
                   sx={{ fontSize: 40 }}
-                  data-testid="navbar-home-icon"
                 />
               </IconButton>
           {currUser.role === "admin" && (

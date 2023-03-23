@@ -46,7 +46,6 @@ export async function createReview(
   review: any,
   context: MyContext
 ): Promise<ExtendedReview|null> {
-  console.log(review)
   const validation = await reviewSchema.isValid(review)
   if(!validation) throw new GraphQLError(NOT_VALID_REVIEW,{extensions:{code:'VALIDATION_FAILED'}})
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)

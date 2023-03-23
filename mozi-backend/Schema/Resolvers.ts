@@ -172,7 +172,6 @@ export const resolvers = {
     async reviews(movie: MovieWithReviews,__:any,context:MyContext){
       const reviews = await getReviews(context);
       const movieReviews = reviews.filter((x:any) => x.movie_id === movie.id)
-      console.log("movie",movieReviews)
       return movieReviews;
     }
   },

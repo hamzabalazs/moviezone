@@ -118,7 +118,6 @@ export function useCategory():CategoryData {
             })
         }
     });
-    console.log(result.errors)
     if(result.data){
         return result.data.deleteCategory
     }

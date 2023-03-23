@@ -5,10 +5,11 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import Account from "./Account";
-import { GET_USERS } from "./useUserData";
+import { GET_FULL_USERS, GET_USERS } from "./useUserData";
 
 
-const mockUsersData = {
+const mockUsersData = [
+{
   request:{
     query:GET_USERS
   },
@@ -20,26 +21,62 @@ const mockUsersData = {
           first_name:"admin",
           last_name:"admin",
           email:"admin@example.com",
-          role:"admin"
+          role:UserRole["Admin"]
         },
         {
           id:"idU2",
           first_name:"editor",
           last_name:"editor",
           email:"editor@example.com",
-          role:"editor"
+          role:UserRole["Editor"]
         },
         {
           id:"idU3",
           first_name:"viewer",
           last_name:"viewer",
           email:"viewer@example.com",
-          role:"viewer"
+          role:UserRole["Viewer"]
+        }
+      ]
+    }
+  }
+},
+{
+  request:{
+    query: GET_FULL_USERS
+  },
+  result:{
+    data:{
+      getFullUsers:[
+        {
+          id:"idU1",
+          first_name:"admin",
+          last_name:"admin",
+          email:"admin@example.com",
+          password:"admin",
+          role:UserRole["Admin"]
+        },
+        {
+          id:"idU2",
+          first_name:"editor",
+          last_name:"editor",
+          email:"editor@example.com",
+          password:"editor",
+          role:UserRole["Editor"]
+        },
+        {
+          id:"idU3",
+          first_name:"viewer",
+          last_name:"viewer",
+          email:"viewer@example.com",
+          password:"viewer",
+          role:UserRole["Viewer"]
         }
       ]
     }
   }
 }
+]
 
 const editorUser:CurrentUser = {
   id:"idU2",
@@ -53,7 +90,7 @@ const editorUser:CurrentUser = {
 function renderAccount(currUser?:CurrentUser) {
   return render(
     <MemoryRouter>
-      <MockedProvider addTypename={false} mocks={[mockUsersData]}>
+      <MockedProvider addTypename={false} mocks={mockUsersData}>
         <MockedSessionContext value={{user:currUser}}>
           <Account />
         </MockedSessionContext>

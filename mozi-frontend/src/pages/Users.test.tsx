@@ -5,9 +5,10 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import { Users } from "./Users";
-import { GET_USERS } from "./useUserData";
+import { GET_FULL_USERS, GET_USERS } from "./useUserData";
 
-const mockUserData = {
+const mockUserData = [
+{
   request: {
     query: GET_USERS,
   },
@@ -38,7 +39,43 @@ const mockUserData = {
       ],
     },
   },
-};
+},
+{
+  request: {
+    query: GET_FULL_USERS,
+  },
+  result: {
+    data: {
+      getFullUsers: [
+        {
+          id:"idU1",
+          first_name:"user1",
+          last_name:"user1",
+          email:"user1@example.com",
+          password: "user1pass",
+          role:"viewer",
+        },
+        {
+          id:"idU2",
+          first_name:"user2",
+          last_name:"user2",
+          email:"user2@example.com",
+          password: "user2pass",
+          role:"viewer",
+        },
+        {
+          id:"idU3",
+          first_name:"user3",
+          last_name:"user3",
+          email:"user3@example.com",
+          password: "user2pass",
+          role:"viewer",
+        },
+      ],
+    },
+  },
+}
+];
 
 const adminUser: CurrentUser = {
   id: "idU1",
@@ -52,7 +89,7 @@ const adminUser: CurrentUser = {
 function renderUsers(currUser?: CurrentUser) {
   return render(
     <MemoryRouter>
-      <MockedProvider addTypename={false} mocks={[mockUserData]}>
+      <MockedProvider addTypename={false} mocks={mockUserData}>
         <MockedSessionContext value={{user:currUser}}>
           <Users />
         </MockedSessionContext>

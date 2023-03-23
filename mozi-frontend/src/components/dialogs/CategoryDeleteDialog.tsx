@@ -31,7 +31,6 @@ export default function CategoryDeleteDialog({ category, onClose }: Props) {
     const categoryId = category.id;
     try{
       const result = await DeleteCategoryAPI(categoryId)
-      console.log(result)
       if(result){
         const msg = t("successMessages.categoryDelete");
         enqueueSnackbar(msg, { variant: "success" });

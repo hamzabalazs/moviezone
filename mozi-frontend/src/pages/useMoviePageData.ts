@@ -7,7 +7,7 @@ type MoviePageData = {
   loading: boolean;
 };
 
-export const GET_MOVIE_BY_ID = gql`
+export const GET_MOVIE_WITH_REVIEWS_BY_ID = gql`
   query GetMovieWithReviewsById($input: MovieInput!) {
     getMovieWithReviewsById(input: $input) {
       id
@@ -38,7 +38,7 @@ export const GET_MOVIE_BY_ID = gql`
 `;
 
 export function useMoviePageData(movie_id: string): MoviePageData {
-  const { data, error, loading } = useQuery<GetMovieWithReviewsByIdQuery>(GET_MOVIE_BY_ID, {
+  const { data, error, loading } = useQuery<GetMovieWithReviewsByIdQuery>(GET_MOVIE_WITH_REVIEWS_BY_ID, {
     variables: { input: { id: movie_id } },
   });
 

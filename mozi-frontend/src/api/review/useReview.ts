@@ -6,7 +6,7 @@ import {
   GetExtendedReviewsQuery,
   UpdateReviewMutation,
 } from "../../gql/graphql";
-import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
+import { GET_MOVIE_WITH_REVIEWS_BY_ID } from "../../pages/useMoviePageData";
 import { GET_EXTENDED_REVIEWS } from "../../pages/useReviewsData";
 
 type ReviewData = {
@@ -166,13 +166,13 @@ export function useReview(movie_id: string): ReviewData {
       variables: { input: { rating, description, movie_id, user_id } },
       update: (cache, { data }) => {
         const res = client.readQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
         });
         if (!res) return;
         if (!data?.createReview) return;
         cache.writeQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
           data: {
             getMovieWithReviewsById: data.createReview.movie,
@@ -209,12 +209,12 @@ export function useReview(movie_id: string): ReviewData {
       variables: { input: { id, rating, description } },
       update: (cache, { data }) => {
         const res = client.readQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
         });
         if (!res || !data || !data.updateReview) return;
         cache.writeQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
           data: {
             getMovieWithReviewsById: data.updateReview.movie,
@@ -245,12 +245,12 @@ export function useReview(movie_id: string): ReviewData {
       variables: { input: { id } },
       update: (cache, { data }) => {
         client.readQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
         });
         if (!data || !data.deleteReview) return;
         cache.writeQuery({
-          query: GET_MOVIE_BY_ID,
+          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
           variables: { input: { id: movie_id } },
           data: {
             getMovieWithReviewsById: data.deleteReview.movie,
