@@ -18,6 +18,11 @@ export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]>
   return context.db.all<ExtendedReview>(sql);
 }
 
+export function getNumberOfReviews(user_id:string,context:MyContext): Promise<number | null>{
+  const sql = `SELECT COUNT(*) as totalCount FROM review WHERE user_id = ?`
+  return context.db.get<number>(sql,[user_id])
+}
+
 export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   const result = await context.db.get<Review>(sql, [id]);

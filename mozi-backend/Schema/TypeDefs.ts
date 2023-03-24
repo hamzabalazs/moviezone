@@ -303,11 +303,19 @@ export const typeDefs = gql`
     searchField: String
   }
 
+  input numOfReviewsInput {
+    user_id: ID!
+  }
+
   type numOfMovies {
     totalCount: Int
   }
 
   type numOfUsers {
+    totalCount: Int
+  }
+
+  type numOfReviews {
     totalCount: Int
   }
 
@@ -331,6 +339,7 @@ export const typeDefs = gql`
     checkForCategory(input: CategoryNameInput!): Category!
     getReviews: [ReviewListReview!]!
     getExtendedReviews: [ExtendedReview!]!
+    getNumberOfReviews(input: numOfReviewsInput!): numOfReviews!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!

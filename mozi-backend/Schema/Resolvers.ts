@@ -28,6 +28,7 @@ import {
   updateReview,
   createReview,
   getExtendedReviews,
+  getNumberOfReviews,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -107,6 +108,9 @@ export const resolvers = {
     },
     async getExtendedReviews(_: any, __: any, context: MyContext) {
       return await getExtendedReviews(context);
+    },
+    async getNumberOfReviews(_:any,{input}:any,context:MyContext){
+      return await getNumberOfReviews(input.user_id,context)
     },
 
     // Movies
