@@ -1,8 +1,8 @@
 import { gql } from "apollo-server";
 
 export const GET_MOVIES = gql`
-  query GetMovies {
-    getMovies {
+  query GetMovies($input: MoviePaginationInput!) {
+    getMovies(input: $input) {
       id
       title
       description

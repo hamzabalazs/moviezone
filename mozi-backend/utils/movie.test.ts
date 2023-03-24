@@ -52,6 +52,16 @@ test("Should open database",async() => {
 test("Should get all movies", async () => {
   const result = await server.executeOperation({
     query: GET_MOVIES,
+    variables:{
+      input:{
+        limit:100,
+        offset:0,
+        category:[],
+        searchField:"",
+        orderByTitle:null,
+        orderByCategory:null
+      }
+    }
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.getMovies).toHaveLength(6);
@@ -139,6 +149,17 @@ test("Should add movie, if token is valid and is admin/editor", async () => {
   req.headers["auth-token"] = "admintoken1423";
   const beforeResult = await server.executeOperation({
     query: GET_MOVIES,
+    variables:{
+      input:{
+        limit:100,
+        offset:0,
+        category:[],
+        searchField:"",
+        orderByTitle:null,
+        orderByCategory:null
+      }
+    }
+    
   });
   expect(beforeResult.errors).toBeUndefined();
   expect(beforeResult.data?.getMovies).toHaveLength(6);
@@ -156,6 +177,16 @@ test("Should add movie, if token is valid and is admin/editor", async () => {
 
   const afterResult = await server.executeOperation({
     query: GET_MOVIES,
+    variables:{
+      input:{
+        limit:100,
+        offset:0,
+        category:[],
+        searchField:"",
+        orderByTitle:null,
+        orderByCategory:null
+      }
+    }
   });
   expect(afterResult.errors).toBeUndefined();
   expect(afterResult.data?.getMovies).toHaveLength(7);
@@ -318,6 +349,16 @@ test("Should not delete movie, if movie does not exist ( bad ID )", async () => 
 test("Should delete movie, if movie exists and token is valid and is admin/editor", async () => {
   const beforeResult = await server.executeOperation({
     query: GET_MOVIES,
+    variables:{
+      input:{
+        limit:100,
+        offset:0,
+        category:[],
+        searchField:"",
+        orderByTitle:null,
+        orderByCategory:null
+      }
+    }
   });
   expect(beforeResult.errors).toBeUndefined();
   expect(beforeResult.data?.getMovies).toHaveLength(7);
@@ -336,6 +377,16 @@ test("Should delete movie, if movie exists and token is valid and is admin/edito
 
   const afterResult = await server.executeOperation({
     query: GET_MOVIES,
+    variables:{
+      input:{
+        limit:100,
+        offset:0,
+        category:[],
+        searchField:"",
+        orderByTitle:null,
+        orderByCategory:null
+      }
+    }
   });
   expect(afterResult.errors).toBeUndefined();
   expect(afterResult.data?.getMovies).toHaveLength(6);
