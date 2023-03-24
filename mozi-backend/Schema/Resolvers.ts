@@ -29,6 +29,7 @@ import {
   createReview,
   getExtendedReviews,
   getNumberOfReviews,
+  getDisplayReviews,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -102,6 +103,9 @@ export const resolvers = {
     // Reviews
     async getReviews(_: any, __: any, context: MyContext) {
       return await getReviews(context);
+    },
+    async getDisplayReviews(_: any, {input}: any, context: MyContext) {
+      return await getDisplayReviews(input,context);
     },
     async getReviewById(_: any, { input }: any, context: MyContext) {
       return await getReviewById(input.id, context);

@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useUserData } from "./useUserData";
 import { FullUser } from "../gql/graphql";
 import { useBottomScrollListener } from "react-bottom-scroll-listener";
-import UserSkeletonComponent from "../components/UserSkeletonComponent";
+import CardSkeletonComponent from "../components/CardSkeletonComponent";
 
 export function Users() {
   const { t } = useTranslation();
@@ -39,6 +39,7 @@ export function Users() {
       setUserList([...userList,...list]);
     }
   }, [fullUsersLoading]);
+
 
   return (
     <>
@@ -81,9 +82,9 @@ export function Users() {
           </Grid>
           {fullUsersLoading && (
             <Grid container spacing={4}>
-              <UserSkeletonComponent />
-              <UserSkeletonComponent />
-              <UserSkeletonComponent />
+              <CardSkeletonComponent />
+              <CardSkeletonComponent />
+              <CardSkeletonComponent />
             </Grid>
           )}
         </div>

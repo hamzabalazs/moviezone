@@ -298,6 +298,12 @@ export const typeDefs = gql`
     offset: Int!
   }
 
+  input ReviewPaginationInput {
+    user_id: ID!
+    limit: Int!
+    offset: Int!
+  }
+
   input numOfMoviesInput {
     category: [String!]!
     searchField: String
@@ -338,10 +344,10 @@ export const typeDefs = gql`
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
     getReviews: [ReviewListReview!]!
+    getDisplayReviews(input: ReviewPaginationInput): [ReviewListReview!]!
     getExtendedReviews: [ExtendedReview!]!
     getNumberOfReviews(input: numOfReviewsInput!): numOfReviews!
     getReviewById(input: ReviewInput!): Review
-    getReviewsOfUserForMovie(input: GetReviewsOfUserForMovieInput!): [Review!]!
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
     getToken: Expiry!

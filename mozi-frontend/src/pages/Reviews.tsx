@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
 import ReviewEditModal from "../components/modals/ReviewEditModal";
 import MyFooter from "../components/MyFooter";
@@ -8,21 +8,42 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import ReviewCard from "../components/cards/ReviewCard";
 import { useTranslation } from "react-i18next";
-import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { useReviewsData } from "./useReviewsData";
+import { useBottomScrollListener } from "react-bottom-scroll-listener";
 import { ReviewListReview } from "../gql/graphql";
+import CardSkeletonComponent from "../components/CardSkeletonComponent";
 
 function Reviews() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const currUser = context.user;
-  const user_id = currUser!.id
-  const {reviews,reviewLoading} = useReviewsData(user_id);
-  const [editingReview, setEditingReview] = useState<ReviewListReview | undefined>(undefined);
-  const [deletingReview, setDeletingReview] = useState<ReviewListReview | undefined>(undefined);
+  const user_id = currUser!.id;
+  const [editingReview, setEditingReview] = useState<
+    ReviewListReview | undefined
+  >(undefined);
+  const [deletingReview, setDeletingReview] = useState<
+    ReviewListReview | undefined
+  >(undefined);
+  const [reviewList, setReviewList] = useState<ReviewListReview[]>([]);
+  const [offset, setOffset] = useState<number>(0);
+  const { reviews, loading, totalCount } = useReviewsData(user_id, offset);
+  console.log(reviews);
 
-  if(reviewLoading) return LoadingComponent(reviewLoading)
+  useBottomScrollListener(() => {
+    if (totalCount - offset > 3) {
+      setOffset(offset + 3);
+    }
+    return;
+  });
+  useEffect(() => {
+    if (!loading) {
+      const list: ReviewListReview[] = [];
+      list.push(...reviews);
+      setReviewList([...reviewList, ...list]);
+    }
+  }, [loading]);
+
   return (
     <>
       <NavigationBar />
@@ -48,28 +69,25 @@ function Reviews() {
           </Container>
         </div>
         <div>
-          {reviews.length !== 0 && (
+          <Grid container spacing={4}>
+            {reviewList.map((review: ReviewListReview) => (
+              <Grid item key={review.id} xs={12}>
+                <ReviewCard
+                  review={review}
+                  onEdit={() => setEditingReview(review)}
+                  onDelete={() => setDeletingReview(review)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+          {loading && (
             <Grid container spacing={4}>
-              {reviews.map((review:ReviewListReview) => (
-                <Grid item key={review.id} xs={12}>
-                  <ReviewCard
-                    review={review}
-                    onEdit={() => setEditingReview(review)}
-                    onDelete={() => setDeletingReview(review)}
-                  />
-                </Grid>
-              ))}
+              <Grid item xs={12}>
+                <CardSkeletonComponent />
+                <CardSkeletonComponent />
+                <CardSkeletonComponent />
+              </Grid>
             </Grid>
-          )}
-          {reviews.length === 0 && (
-            <Typography
-              variant="h4"
-              align="center"
-              color="textPrimary"
-              gutterBottom
-            >
-              {t("review.noReviewFound")}
-            </Typography>
           )}
         </div>
         <MyFooter />

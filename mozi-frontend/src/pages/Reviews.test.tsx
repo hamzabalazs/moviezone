@@ -5,15 +5,33 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import Reviews from "./Reviews";
-import { GET_EXTENDED_REVIEWS, GET_REVIEWS } from "./useReviewsData";
+import { GET_DISPLAY_REVIEWS } from "./useReviewsData";
 
 const mockReviewData = [
 {
-  request: {
-    query: GET_EXTENDED_REVIEWS,
+  request:{
+    query: GET_DISPLAY_REVIEWS
   },
   result: {
     data: {
+      getReviews: [
+        {
+          id: "idR3",
+          rating: "3",
+          description: "Good!",
+          movie: {
+            id: "idM2",
+          },
+          user: {
+            id: "idU1",
+            first_name: "user1",
+            last_name: "user1",
+          },
+        },
+      ],
+      getNumberOfReviews:{
+        totalCount:3
+      },
       getExtendedReviews: [
         {
           id: "idR3",
@@ -52,30 +70,6 @@ const mockReviewData = [
             last_name: "user1",
             email: "user1@email.com",
             role: UserRole["Viewer"]
-          },
-        },
-      ],
-    },
-  },
-},
-{
-  request:{
-    query: GET_REVIEWS
-  },
-  result: {
-    data: {
-      getReviews: [
-        {
-          id: "idR3",
-          rating: "3",
-          description: "Good!",
-          movie: {
-            id: "idM2",
-          },
-          user: {
-            id: "idU1",
-            first_name: "user1",
-            last_name: "user1",
           },
         },
       ],

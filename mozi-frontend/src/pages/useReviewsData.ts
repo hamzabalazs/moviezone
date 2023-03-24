@@ -1,22 +1,35 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
 import {
   ExtendedReview,
-  GetExtendedReviewsQuery,
-  GetReviewsQuery,
   ReviewListReview,
 } from "../gql/graphql";
 
 type ReviewData = {
   extendedReviews: ExtendedReview[];
   reviews: ReviewListReview[];
-  extendedReviewLoading: boolean;
-  reviewLoading: boolean;
-  extendedReviewError: ApolloError | undefined;
-  reviewError: ApolloError | undefined;
+  totalCount: number;
+  loading: boolean;
+  error: ApolloError | undefined;
 };
 
-export const GET_EXTENDED_REVIEWS = gql`
-  query GetExtendedReviews {
+export const GET_DISPLAY_REVIEWS = gql`
+  query GetDisplayReviews($input: ReviewPaginationInput,$input2: numOfReviewsInput!) {
+    getDisplayReviews(input: $input) {
+      id
+      rating
+      description
+      movie {
+        id
+      }
+      user {
+        id
+        first_name
+        last_name
+      }
+    }
+    getNumberOfReviews(input: $input2){
+      totalCount
+    }
     getExtendedReviews {
       id
       rating
@@ -57,46 +70,32 @@ export const GET_EXTENDED_REVIEWS = gql`
   }
 `;
 
-export const GET_REVIEWS = gql`
-  query GetReviews {
-    getReviews {
-      id
-      rating
-      description
-      movie {
-        id
-      }
-      user {
-        id
-        first_name
-        last_name
-      }
+export function useReviewsData(user_id: string,offset?:number): ReviewData {
+  const {
+    data,
+    loading,
+    error
+  } = useQuery(GET_DISPLAY_REVIEWS,{variables:{
+    input:{
+      user_id,
+      limit:3,
+      offset:offset || 0
+    },
+    input2:{
+      user_id
     }
-  }
-`;
+  }, fetchPolicy:'network-only'});
 
-export function useReviewsData(user_id: string): ReviewData {
-  const {
-    data: extendedReviews,
-    loading: extendedReviewLoading,
-    error: extendedReviewError,
-  } = useQuery<GetExtendedReviewsQuery>(GET_EXTENDED_REVIEWS);
-  const {
-    data: reviews,
-    loading: reviewLoading,
-    error: reviewError,
-  } = useQuery<GetReviewsQuery>(GET_REVIEWS);
 
   return {
     extendedReviews:
-      extendedReviews?.getExtendedReviews.filter(
+      data?.getExtendedReviews.filter(
         (x: any) => x.user.id === user_id
       ) || [],
     reviews:
-      reviews?.getReviews.filter((x: any) => x.user.id === user_id) || [],
-    extendedReviewLoading,
-    reviewLoading,
-    extendedReviewError,
-    reviewError,
+      data?.getDisplayReviews.filter((x: any) => x.user.id === user_id) || [],
+    totalCount: data?.getNumberOfReviews.totalCount || 0,
+    loading,
+    error,
   };
 }

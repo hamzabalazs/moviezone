@@ -1,13 +1,48 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
-import {
-  CreateReviewMutation,
-  DeleteReviewMutation,
-  ExtendedReview,
-  GetExtendedReviewsQuery,
-  UpdateReviewMutation,
-} from "../../gql/graphql";
+import { ExtendedReview } from "../../gql/graphql";
 import { GET_MOVIE_WITH_REVIEWS_BY_ID } from "../../pages/useMoviePageData";
-import { GET_EXTENDED_REVIEWS } from "../../pages/useReviewsData";
+
+export const GET_EXTENDED_REVIEWS = gql`
+  query getExtendedReviews {
+    getExtendedReviews {
+      id
+      rating
+      description
+      movie {
+        id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
+        reviews {
+          id
+          rating
+          description
+          user {
+            id
+            first_name
+            last_name
+          }
+          movie {
+            id
+          }
+        }
+      }
+      user {
+        id
+        first_name
+        last_name
+        role
+        email
+      }
+    }
+  }
+`;
 
 type ReviewData = {
   updateReview: (
@@ -151,9 +186,9 @@ export const DELETE_REVIEW = gql`
 `;
 
 export function useReview(movie_id: string): ReviewData {
-  const [AddReviewAPI] = useMutation<CreateReviewMutation>(ADD_REVIEW);
-  const [UpdateReviewAPI] = useMutation<UpdateReviewMutation>(UPDATE_REVIEW);
-  const [DeleteReviewAPI] = useMutation<DeleteReviewMutation>(DELETE_REVIEW);
+  const [AddReviewAPI] = useMutation(ADD_REVIEW);
+  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
+  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
   const client = useApolloClient();
 
   async function addReview(
@@ -178,7 +213,7 @@ export function useReview(movie_id: string): ReviewData {
             getMovieWithReviewsById: data.createReview.movie,
           },
         });
-        const reviewData = client.readQuery<GetExtendedReviewsQuery>({
+        const reviewData = client.readQuery({
           query: GET_EXTENDED_REVIEWS,
         });
         if (!reviewData) return;

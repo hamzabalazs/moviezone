@@ -13,6 +13,18 @@ export function getReviews(context: MyContext): Promise<ReviewListReview[]> {
   return context.db.all<ReviewListReview>(sql);
 }
 
+export function getDisplayReviews(input:any,context: MyContext): Promise<ReviewListReview[]> {
+  let sql = "SELECT * FROM review WHERE user_id = ?";
+  let params = [input.user_id]
+  sql = sql.concat(` LIMIT ?`)
+  params.push(input.limit)
+  if(input.offset !== 0){
+    sql = sql.concat(` OFFSET ?`)
+    params.push(input.offset)
+  }
+  return context.db.all<ReviewListReview>(sql,params);
+}
+
 export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]> {
   const sql = "SELECT * FROM review";
   return context.db.all<ExtendedReview>(sql);

@@ -1,6 +1,6 @@
 import { Grid, Skeleton } from "@mui/material";
 
-export default function UserSkeletonComponent() {
+export default function CardSkeletonComponent() {
   return (
     <Grid item xs={12}>
       <Skeleton
