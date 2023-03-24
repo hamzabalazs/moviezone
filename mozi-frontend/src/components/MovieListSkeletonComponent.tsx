@@ -6,7 +6,7 @@ export default function MovieListSkeletonComponent(){
             <Skeleton
               variant="rectangular"
               sx={{
-                marginTop:2,
+                marginTop:3,
                 height: "430px",
                 display: "flex",
                 flexDirection: "column",

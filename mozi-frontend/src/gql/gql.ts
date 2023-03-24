@@ -27,12 +27,12 @@ const documents = {
     "\n  mutation UpdateUser($input: UpdateUserInput!) {\n    updateUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n": types.UpdateUserDocument,
     "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n": types.DeleteUserDocument,
     "\n  query GetCategories {\n  getCategories {\n    id\n    name\n  }\n}\n": types.GetCategoriesDocument,
-    "\n  query GetHomePageData($input: SortMovieInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies {\n      totalCount\n    }\n  }\n": types.GetHomePageDataDocument,
+    "\n  query GetHomePageData($input: MoviePaginationInput!,$input2: numOfMoviesInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies(input: $input2) {\n      totalCount\n    }\n  }\n": types.GetHomePageDataDocument,
     "\n  query GetMovieWithReviewsById($input: MovieInput!) {\n    getMovieWithReviewsById(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n      reviews {\n        id\n        rating\n        description\n        user {\n          id\n          first_name\n          last_name\n        }\n        movie{\n          id\n        }\n      }\n    }\n  }\n": types.GetMovieWithReviewsByIdDocument,
     "\n  query GetExtendedReviews {\n    getExtendedReviews {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        category {\n          id\n          name\n        }\n        rating\n        reviews {\n          id\n          rating\n          description\n          user {\n            id\n            first_name\n            last_name\n          }\n          movie {\n            id\n          }\n        }\n      }\n      user {\n        id\n        first_name\n        last_name\n        role\n        email\n      }\n    }\n  }\n": types.GetExtendedReviewsDocument,
     "\n  query GetReviews {\n    getReviews {\n      id\n      rating\n      description\n      movie {\n        id\n      }\n      user {\n        id\n        first_name\n        last_name\n      }\n    }\n  }\n": types.GetReviewsDocument,
     "\n  query GetUsers {\n    getUsers {\n      id\n      first_name\n      last_name\n      email\n      role\n    }\n  }\n": types.GetUsersDocument,
-    "\n  query GetFullUsers {\n    getFullUsers{\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n  }\n": types.GetFullUsersDocument,
+    "\n  query GetFullUsers($input:UserPaginationInput) {\n    getFullUsers(input: $input){\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n    getNumberOfUsers{\n      totalCount\n    }\n  }\n": types.GetFullUsersDocument,
 };
 
 /**
@@ -108,7 +108,7 @@ export function graphql(source: "\n  query GetCategories {\n  getCategories {\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetHomePageData($input: SortMovieInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies {\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  query GetHomePageData($input: SortMovieInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies {\n      totalCount\n    }\n  }\n"];
+export function graphql(source: "\n  query GetHomePageData($input: MoviePaginationInput!,$input2: numOfMoviesInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies(input: $input2) {\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  query GetHomePageData($input: MoviePaginationInput!,$input2: numOfMoviesInput!) {\n    getCategories {\n      id\n      name\n    }\n    getMovies(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n    getNumberOfMovies(input: $input2) {\n      totalCount\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -128,7 +128,7 @@ export function graphql(source: "\n  query GetUsers {\n    getUsers {\n      id\
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetFullUsers {\n    getFullUsers{\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n  }\n"): (typeof documents)["\n  query GetFullUsers {\n    getFullUsers{\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n  }\n"];
+export function graphql(source: "\n  query GetFullUsers($input:UserPaginationInput) {\n    getFullUsers(input: $input){\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n    getNumberOfUsers{\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  query GetFullUsers($input:UserPaginationInput) {\n    getFullUsers(input: $input){\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n    getNumberOfUsers{\n      totalCount\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

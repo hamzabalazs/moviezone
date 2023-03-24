@@ -9,6 +9,7 @@ import {
   getUserById,
   getUserByToken,
   getFullUsers,
+  getNumberOfUsers,
 } from "../utils/user";
 import {
   getMovies,
@@ -67,10 +68,13 @@ export const resolvers = {
   Query: {
     // Users
     async getUsers(_: any, __: any, context: MyContext) {
-      return await getUsers(_, context);
+      return await getUsers(context);
     },
-    async getFullUsers(_: any, __: any, context: MyContext) {
-      return await getFullUsers(context);
+    async getFullUsers(_: any, {input}: any, context: MyContext) {
+      return await getFullUsers(input,context);
+    },
+    async getNumberOfUsers(_: any, __: any, context: MyContext) {
+      return await getNumberOfUsers(context);
     },
     async getUserById(_: any, { input }: any, context: MyContext) {
       return await getUserById(input.id, context);

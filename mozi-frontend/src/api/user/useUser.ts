@@ -113,7 +113,10 @@ export function useUser(): UserData {
         cache.writeQuery<GetFullUsersQuery>({
           query:GET_FULL_USERS,
           data:{
-            getFullUsers: [...users.getFullUsers]
+            getFullUsers: [...users.getFullUsers],
+            getNumberOfUsers:{
+              totalCount: users.getNumberOfUsers.totalCount
+            }
           }
         })
       }
@@ -140,7 +143,10 @@ export function useUser(): UserData {
         cache.writeQuery<GetFullUsersQuery>({
           query:GET_FULL_USERS,
           data:{
-            getFullUsers: users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id)
+            getFullUsers: users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id),
+            getNumberOfUsers:{
+              totalCount: users.getNumberOfUsers.totalCount
+            }
           }
         })
       }

@@ -9,15 +9,28 @@ import { userSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { User, FullUser, CurrentUser } from "./types";
 
-export function getUsers(__: any, context: MyContext): Promise<User[]> {
+export function getUsers(context: MyContext): Promise<User[]> {
   const sql = "SELECT id,first_name,last_name,email,role FROM user";
   return context.db.all<User>(sql, []);
-  
 }
 
-export function getFullUsers(context:MyContext): Promise<FullUser[]>{
-  const sql = `SELECT * from user`
-  return context.db.all<FullUser>(sql,[])
+export function getFullUsers(input:any,context:MyContext): Promise<FullUser[]>{
+  let sql = `SELECT * from user`
+  let params = []
+  let offsetString = ""
+  sql = sql.concat(` LIMIT ?`)
+  params.push(input.limit)
+  if(input.offset !== 0){
+    offsetString = ` OFFSET ?`
+    sql = sql.concat(offsetString)
+    params.push(input.offset)
+  }
+  return context.db.all<FullUser>(sql,params)
+}
+
+export function getNumberOfUsers(context:MyContext): Promise<number | null>{
+  const sql = `SELECT COUNT(*) as totalCount FROM user`
+  return context.db.get<number>(sql);
 }
 
 export async function getUserById(id: string, context: MyContext): Promise<User|null> {

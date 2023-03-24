@@ -10,7 +10,7 @@ type HomePageData = {
 };
 
 export const GET_HOME_PAGE_DATA = gql`
-  query GetHomePageData($input: SortMovieInput!,$input2: numOfMoviesInput!) {
+  query GetHomePageData($input: MoviePaginationInput!,$input2: numOfMoviesInput!) {
     getCategories {
       id
       name

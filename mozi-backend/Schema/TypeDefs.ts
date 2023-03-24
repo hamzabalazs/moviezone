@@ -286,11 +286,16 @@ export const typeDefs = gql`
     changes: Int!
   }
 
-  input SortMovieInput {
+  input MoviePaginationInput {
     limit: Int!
     offset: Int!
     category: [String!]!
     searchField: String
+  }
+
+  input UserPaginationInput {
+    limit: Int!
+    offset: Int!
   }
 
   input numOfMoviesInput {
@@ -302,15 +307,20 @@ export const typeDefs = gql`
     totalCount: Int
   }
 
+  type numOfUsers {
+    totalCount: Int
+  }
+
   # Queries
   type Query {
     getUsers: [User!]!
-    getFullUsers: [FullUser!]!
+    getFullUsers(input: UserPaginationInput): [FullUser!]!
+    getNumberOfUsers: numOfUsers!
     getUserById(input: UserInput!): User
     getUserByToken: CurrentUser!
     checkForUser(input: UserEmailInput!): User
     getUserForLogin(input: LoginInput!): CurrentUser!
-    getMovies(input: SortMovieInput!): [Movie!]!
+    getMovies(input: MoviePaginationInput!): [Movie!]!
     getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
     getMovieTitles: [MovieTitles!]!
     getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!

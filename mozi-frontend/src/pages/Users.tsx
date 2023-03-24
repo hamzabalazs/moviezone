@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserDeleteDialog from "../components/dialogs/UserDeleteDialog";
 import UserEditModal from "../components/modals/UserEditModal";
 import MyFooter from "../components/MyFooter";
@@ -8,18 +8,37 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../components/ScrollTop";
 import UserCard from "../components/cards/UserCard";
 import { useTranslation } from "react-i18next";
-import LoadingComponent from "../components/LoadingComponent";
 import { useUserData } from "./useUserData";
 import { FullUser } from "../gql/graphql";
+import { useBottomScrollListener } from "react-bottom-scroll-listener";
+import UserSkeletonComponent from "../components/UserSkeletonComponent";
 
 export function Users() {
   const { t } = useTranslation();
-  const {fullUsers,fullUsersLoading} = useUserData()
+  const [userList, setUserList] = useState<FullUser[]>([]);
+  const [editingUser, setEditingUser] = useState<FullUser | undefined>(
+    undefined
+  );
+  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(
+    undefined
+  );
 
-  const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
-  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);
-  
-  if(fullUsersLoading) return LoadingComponent(fullUsersLoading)
+  const [offset, setOffset] = useState<number>(0);
+  const { fullUsers, fullUsersLoading, totalCount } = useUserData(offset);
+
+  useBottomScrollListener(() => {
+    if (totalCount - offset > 3) {
+      setOffset(offset + 3);
+    }
+    return;
+  });
+  useEffect(() => {
+    if (!fullUsersLoading) {
+      const list:FullUser[] = []
+      list.push(...fullUsers);
+      setUserList([...userList,...list]);
+    }
+  }, [fullUsersLoading]);
 
   return (
     <>
@@ -29,13 +48,13 @@ export function Users() {
           user={deletingUser}
           onClose={() => setDeletingUser(undefined)}
         />
-        
+
         <UserEditModal
           user={editingUser}
           onClose={() => setEditingUser(undefined)}
           allowEditRole
         />
-        
+
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>
             <Typography
@@ -50,7 +69,7 @@ export function Users() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {fullUsers.map((user:FullUser) => (
+            {userList.map((user: FullUser) => (
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}
@@ -60,6 +79,13 @@ export function Users() {
               </Grid>
             ))}
           </Grid>
+          {fullUsersLoading && (
+            <Grid container spacing={4}>
+              <UserSkeletonComponent />
+              <UserSkeletonComponent />
+              <UserSkeletonComponent />
+            </Grid>
+          )}
         </div>
         <MyFooter />
       </main>
