@@ -291,6 +291,8 @@ export const typeDefs = gql`
     offset: Int!
     category: [String!]!
     searchField: String
+    orderByTitle: Boolean
+    orderByCategory: Boolean
   }
 
   input UserPaginationInput {

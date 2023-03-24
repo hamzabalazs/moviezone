@@ -8,13 +8,10 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let sql = "SELECT * FROM movie";
   let params = []
   if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
-  let offsetString = ""
-  let searchFieldString = ""
   let categoryString = ""
   if(input.searchField){
-    searchFieldString = ` title LIKE '%' || ? || '%'`
     params.push(input.searchField)
-    sql = sql.concat(searchFieldString)
+    sql = sql.concat(` title LIKE '%' || ? || '%'`)
   }
   if(input.searchField && input.category.length !==0) sql = sql.concat(` AND`)
   if(input.category.length !== 0){
@@ -27,13 +24,22 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
     categoryString = categoryString.concat(")")
     sql = sql.concat(categoryString)
   }
+  if(input.orderByCategory !== null && input.orderByTitle !== null) throw new Error("BOTH ORDERS")
+  if(input.orderByCategory !== null){
+    if(input.orderByCategory === true) sql = sql.concat(` ORDER BY category_id`)
+    else sql = sql.concat(` ORDER BY category_id DESC`)
+  }
+  if(input.orderByTitle !== null){
+    if(input.orderByTitle === true) sql = sql.concat(` ORDER BY title`)
+    else sql = sql.concat(` ORDER BY title DESC`)
+  }
   sql = sql.concat(` LIMIT ?`)
   params.push(input.limit)
   if(input.offset){
-    offsetString = ` OFFSET ?`
-    sql = sql.concat(offsetString)
+    sql = sql.concat(` OFFSET ?`)
     params.push(input.offset)
   }
+  console.log(sql)
   return context.db.all<Movie>(sql,params)
 }
 

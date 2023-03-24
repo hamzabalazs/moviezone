@@ -36,7 +36,9 @@ export const GET_HOME_PAGE_DATA = gql`
 export function useHomePageData(
   offset: number,
   category: string[],
-  searchField?: string
+  orderByTitle:boolean|null,
+  orderByCategory:boolean|null,
+  searchField?: string,
 ): HomePageData {
   const { data, error, loading } = useQuery<GetHomePageDataQuery>(
     GET_HOME_PAGE_DATA,
@@ -47,6 +49,8 @@ export function useHomePageData(
           category,
           searchField,
           offset,
+          orderByTitle,
+          orderByCategory
         },
         input2:{
           category,
