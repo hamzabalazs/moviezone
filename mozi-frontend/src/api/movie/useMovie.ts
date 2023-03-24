@@ -1,7 +1,12 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
-import { CreateMovieMutation, DeleteMovieMutation, Movie, UpdateMovieMutation } from "../../gql/graphql";
+import {
+  CreateMovieMutation,
+  DeleteMovieMutation,
+  Movie,
+  UpdateMovieMutation,
+} from "../../gql/graphql";
 import { GET_HOME_PAGE_DATA } from "../../pages/useHomePageData";
-import { GET_MOVIE_WITH_REVIEWS_BY_ID } from "../../pages/useMoviePageData";
+import { GET_MOVIE_BY_ID } from "../../pages/useMoviePageData";
 
 export const UPDATE_MOVIE = gql`
   mutation UpdateMovie($input: UpdateMovieInput!) {
@@ -100,8 +105,8 @@ export function useMovie(): MovieData {
         const pageData = client.readQuery({
           query: GET_HOME_PAGE_DATA,
         });
-        if(!pageData) return;
-        if(!data) return;
+        if (!pageData) return;
+        if (!data) return;
         cache.writeQuery({
           query: GET_HOME_PAGE_DATA,
           data: {
@@ -138,16 +143,23 @@ export function useMovie(): MovieData {
       },
       update: (cache, { data }) => {
         const res = client.readQuery({
-          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
-          variables: { input: { id: id } },
+          query: GET_MOVIE_BY_ID,
+          variables: {
+            input: {
+              id: id,
+            },
+            input2:{
+              movie_id: id
+            }
+          },
         });
-        if(!res) return;
-        if(!data) return;
+        if (!res) return;
+        if (!data) return;
         cache.writeQuery({
-          query: GET_MOVIE_WITH_REVIEWS_BY_ID,
+          query: GET_MOVIE_BY_ID,
           variables: { input: { id: id } },
           data: {
-            getMovieWithReviewsById: data.updateMovie,
+            getMovieById: data.updateMovie,
           },
         });
       },
@@ -163,17 +175,19 @@ export function useMovie(): MovieData {
       variables: { input: { id } },
       update: (cache, { data }) => {
         const pageData = client.readQuery({
-            query: GET_HOME_PAGE_DATA,
-          });
-          if(!pageData) return;
-        if(!data) return;
-          cache.writeQuery({
-            query: GET_HOME_PAGE_DATA,
-            data: {
-              ...pageData.getCategories,
-              getMovies: pageData.getMovies.filter((x:any) => x.id !== data.deleteMovie.id)
-            },
-          });
+          query: GET_HOME_PAGE_DATA,
+        });
+        if (!pageData) return;
+        if (!data) return;
+        cache.writeQuery({
+          query: GET_HOME_PAGE_DATA,
+          data: {
+            ...pageData.getCategories,
+            getMovies: pageData.getMovies.filter(
+              (x: any) => x.id !== data.deleteMovie.id
+            ),
+          },
+        });
       },
     });
     if (result.data) {

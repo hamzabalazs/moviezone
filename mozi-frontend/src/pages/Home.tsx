@@ -13,19 +13,12 @@ import MovieAddModal from "../components/modals/MovieAddModal";
 import MyFooter from "../components/MyFooter";
 import ScrollTop from "../components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { useHomePageData } from "./useHomePageData";
 
 export function Home() {
   const context = useSessionContext();
-  const { enqueueSnackbar } = useSnackbar();
-  const { t } = useTranslation();
-
-  
-
   const currUser = context.user;
   const navigate = useNavigate();
   const [isOpenAdd, setIsOpenAdd] = useState(false);

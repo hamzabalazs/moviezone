@@ -24,11 +24,11 @@ export default function ReviewDeleteDialog({ review, onClose }: Props) {
     if(review.movie){
       id = review.movie.id
     }
-  }
-  const {deleteReview:DeleteReviewAPI} = useReview(id)
+  } 
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut } = useSessionContext();
+  const { logOut,user } = useSessionContext();
+  const {deleteReview:DeleteReviewAPI} = useReview(id,user!.id)
 
   const handleDeletion = async () => {
     if (review === undefined) return;

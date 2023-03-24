@@ -28,8 +28,11 @@ import {
   updateReview,
   createReview,
   getExtendedReviews,
-  getNumberOfReviews,
   getDisplayReviews,
+  getReviewsOfMovie,
+  getReviewsOfUser,
+  getNumberOfReviewsOfUser,
+  getNumberOfReviewsOfMovie,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -113,8 +116,17 @@ export const resolvers = {
     async getExtendedReviews(_: any, __: any, context: MyContext) {
       return await getExtendedReviews(context);
     },
-    async getNumberOfReviews(_:any,{input}:any,context:MyContext){
-      return await getNumberOfReviews(input.user_id,context)
+    async getNumberOfReviewsOfUser(_:any,{input}:any,context:MyContext){
+      return await getNumberOfReviewsOfUser(input.user_id,context)
+    },
+    async getNumberOfReviewsOfMovie(_:any,{input}:any,context:MyContext){
+      return await getNumberOfReviewsOfMovie(input.movie_id,context)
+    },
+    async getReviewsOfMovie(_:any,{input}:any,context:MyContext){
+      return await getReviewsOfMovie(input,context)
+    },
+    async getReviewsOfUser(_:any,{input}:any,context:MyContext){
+      return await getReviewsOfUser(input,context);
     },
 
     // Movies

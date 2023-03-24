@@ -30,9 +30,14 @@ export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]>
   return context.db.all<ExtendedReview>(sql);
 }
 
-export function getNumberOfReviews(user_id:string,context:MyContext): Promise<number | null>{
+export function getNumberOfReviewsOfUser(user_id:string,context:MyContext): Promise<number | null>{
   const sql = `SELECT COUNT(*) as totalCount FROM review WHERE user_id = ?`
   return context.db.get<number>(sql,[user_id])
+}
+
+export function getNumberOfReviewsOfMovie(movie_id:string,context:MyContext): Promise<number | null>{
+  const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ?`
+  return context.db.get<number>(sql,[movie_id])
 }
 
 export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
@@ -40,6 +45,26 @@ export async function getReviewById(id: string, context: MyContext): Promise<Rev
   const result = await context.db.get<Review>(sql, [id]);
   if(result === undefined) return null;
   return result
+}
+
+export async function getReviewsOfMovie(input:any,context:MyContext): Promise<ReviewListReview[]> {
+  let sql = `SELECT * FROM review WHERE movie_id = ? LIMIT ?`
+  let params = [input.movie_id,input.limit]
+  if(input.offset !==0 ){
+    sql = sql.concat(` OFFSET ?`)
+    params.push(input.offset)
+  }
+  return context.db.all<ReviewListReview>(sql,params)
+}
+
+export async function getReviewsOfUser(input:any,context:MyContext): Promise<ReviewListReview[]>{
+  let sql = `SELECT * FROM review WHERE user_id = ? LIMIT ?`
+  let params = [input.user_id,input.limit]
+  if(input.offset !==0 ){
+    sql = sql.concat(` OFFSET ?`)
+    params.push(input.offset)
+  }
+  return context.db.all<ReviewListReview>(sql,params)
 }
 
 export async function getExtendedReviewById(id: string, context: MyContext): Promise<ExtendedReview|null> {

@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../../api/SessionContext";
-import { MovieWithReviews } from "../../gql/graphql";
+import { Movie } from "../../gql/graphql";
 
 interface Props {
-  movie: MovieWithReviews;
+  movie: Movie;
   onEdit?: () => void;
   onDelete?: () => void;
 }

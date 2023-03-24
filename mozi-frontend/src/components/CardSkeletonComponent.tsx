@@ -6,8 +6,7 @@ export default function CardSkeletonComponent() {
       <Skeleton
         variant="rectangular"
         sx={{
-          marginTop:2,
-          height: "288px",
+          height: "293.5px",
           display: "flex",
           flexDirection: "column",
           borderColor: "text.secondary",

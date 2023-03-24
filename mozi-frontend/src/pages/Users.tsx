@@ -62,7 +62,6 @@ export function Users() {
               variant="h2"
               align="center"
               color="textPrimary"
-              gutterBottom
             >
               {t("navbar.Users")}
             </Typography>
@@ -81,7 +80,7 @@ export function Users() {
             ))}
           </Grid>
           {fullUsersLoading && (
-            <Grid container spacing={4}>
+            <Grid container spacing={4} sx={{marginTop:0}}>
               <CardSkeletonComponent />
               <CardSkeletonComponent />
               <CardSkeletonComponent />

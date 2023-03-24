@@ -235,10 +235,6 @@ export const typeDefs = gql`
     movie_id: ID!
   }
 
-  input GetReviewsOfMovieInput {
-    movie_id: ID!
-  }
-
   input LoginInput {
     email: String!
     password: String!
@@ -261,8 +257,16 @@ export const typeDefs = gql`
     movie_id: ID!
   }
 
+  input GetReviewsOfMovieInput {
+    movie_id: ID!
+    limit: Int!
+    offset: Int!
+  }
+
   input GetReviewsOfUserInput {
     user_id: ID!
+    limit: Int!
+    offset: Int!
   }
 
   input DeleteReviewsOfUserInput {
@@ -312,7 +316,8 @@ export const typeDefs = gql`
   }
 
   input numOfReviewsInput {
-    user_id: ID!
+    user_id: ID
+    movie_id: ID
   }
 
   type numOfMovies {
@@ -348,10 +353,11 @@ export const typeDefs = gql`
     getReviews: [ReviewListReview!]!
     getDisplayReviews(input: ReviewPaginationInput): [ReviewListReview!]!
     getExtendedReviews: [ExtendedReview!]!
-    getNumberOfReviews(input: numOfReviewsInput!): numOfReviews!
+    getNumberOfReviewsOfUser(input: numOfReviewsInput!): numOfReviews!
+    getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
     getReviewById(input: ReviewInput!): Review
-    getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
-    getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
+    getReviewsOfMovie(input: GetReviewsOfMovieInput!): [ReviewListReview!]!
+    getReviewsOfUser(input: GetReviewsOfUserInput!): [ReviewListReview!]!
     getToken: Expiry!
   }
 

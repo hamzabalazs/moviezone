@@ -5,12 +5,12 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import Reviews from "./Reviews";
-import { GET_DISPLAY_REVIEWS } from "./useReviewsData";
+import { GET_REVIEWS } from "./useReviewsData";
 
 const mockReviewData = [
 {
   request:{
-    query: GET_DISPLAY_REVIEWS
+    query: GET_REVIEWS
   },
   result: {
     data: {

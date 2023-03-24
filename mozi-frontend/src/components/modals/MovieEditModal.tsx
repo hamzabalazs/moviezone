@@ -23,10 +23,10 @@ import {
 import { useMovie } from "../../api/movie/useMovie";
 import { useEditMovieSchema } from "../../common/validationFunctions";
 import { useCategoriesData } from "../../pages/useCategoriesData";
-import { Category, Movie, MovieWithReviews } from "../../gql/graphql";
+import { Category, Movie } from "../../gql/graphql";
 
 interface Props {
-  movie?: MovieWithReviews;
+  movie?: Movie;
   onClose?: () => void;
 }
 

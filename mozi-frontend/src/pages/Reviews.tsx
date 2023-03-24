@@ -28,7 +28,6 @@ function Reviews() {
   const [reviewList, setReviewList] = useState<ReviewListReview[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const { reviews, loading, totalCount } = useReviewsData(user_id, offset);
-  console.log(reviews);
 
   useBottomScrollListener(() => {
     if (totalCount - offset > 3) {
@@ -38,6 +37,7 @@ function Reviews() {
   });
   useEffect(() => {
     if (!loading) {
+      console.log(reviews)
       const list: ReviewListReview[] = [];
       list.push(...reviews);
       setReviewList([...reviewList, ...list]);
@@ -81,12 +81,10 @@ function Reviews() {
             ))}
           </Grid>
           {loading && (
-            <Grid container spacing={4}>
-              <Grid item xs={12}>
-                <CardSkeletonComponent />
-                <CardSkeletonComponent />
-                <CardSkeletonComponent />
-              </Grid>
+            <Grid container spacing={4} sx={{marginTop:0}}>
+              <CardSkeletonComponent />
+              <CardSkeletonComponent />
+              <CardSkeletonComponent />
             </Grid>
           )}
         </div>

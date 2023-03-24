@@ -13,9 +13,9 @@ import MovieEditModal from "./MovieEditModal";
 import { SnackbarProvider } from "notistack";
 import { GET_CATEGORIES } from "../../pages/useCategoriesData";
 import { UPDATE_MOVIE } from "../../api/movie/useMovie";
-import { MovieWithReviews } from "../../gql/graphql";
+import { Movie} from "../../gql/graphql";
 
-const testMovie: MovieWithReviews = {
+const testMovie: Movie = {
   id: "idM1",
   title: "title1",
   description: "description1",
@@ -26,7 +26,6 @@ const testMovie: MovieWithReviews = {
     name: "name1",
   },
   rating: "3",
-  reviews:[]
 };
 
 const testNewMovie = {
@@ -98,7 +97,7 @@ const dataMock = [
 
 const cache = new InMemoryCache()
 
-function renderMovieEditModal(props: { movie?: MovieWithReviews; onClose?: () => void }) {
+function renderMovieEditModal(props: { movie?: Movie; onClose?: () => void }) {
   return render(
     <SnackbarProvider autoHideDuration={null}>
       <MockedProvider mocks={dataMock} cache={cache}>

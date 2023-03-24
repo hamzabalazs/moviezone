@@ -12,10 +12,10 @@ import { useNavigate } from "react-router-dom";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 import { useSessionContext } from "../../api/SessionContext";
 import { useMovie } from "../../api/movie/useMovie";
-import { MovieWithReviews } from "../../gql/graphql";
+import { Movie } from "../../gql/graphql";
 
 interface Props {
-  movie?: MovieWithReviews;
+  movie?: Movie;
   onClose?: () => void;
 }
 

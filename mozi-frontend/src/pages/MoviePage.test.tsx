@@ -5,13 +5,13 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import MoviePage from "./MoviePage";
-import {GET_MOVIE_WITH_REVIEWS_BY_ID } from "./useMoviePageData";
+import {GET_MOVIE_BY_ID } from "./useMoviePageData";
 
 
 const mockMovieData = [
   {
     request: {
-      query: GET_MOVIE_WITH_REVIEWS_BY_ID,
+      query: GET_MOVIE_BY_ID,
       variables: {
         input: {
           id: "idM4",
@@ -20,7 +20,7 @@ const mockMovieData = [
     },
     result: {
       data: {
-        getMovieWithReviewsById: {
+        getMovieById: {
           id: "idM4",
           title: "title4",
           poster: "poster4",
@@ -30,36 +30,6 @@ const mockMovieData = [
           category: {
             id: "idC1",
           },
-          reviews:[
-            {
-              id: "idR3",
-              rating: "3",
-              description: "Good!",
-              movie: {
-                title: "title4",
-                id: "idM4",
-              },
-              user: {
-                id: "idU1",
-                first_name: "admin",
-                last_name: "admin",
-              },
-            },
-            {
-              id: "idR4",
-              rating: "1",
-              description: "Bad!",
-              movie: {
-                title: "title4",
-                id: "idM4",
-              },
-              user: {
-                id: "idU3",
-                first_name: "viewer",
-                last_name: "viewer",
-              },
-            },
-          ]
         },
       },
     },
@@ -69,7 +39,7 @@ const mockMovieData = [
 const mockMovieDataViewer = [
   {
     request: {
-      query: GET_MOVIE_WITH_REVIEWS_BY_ID,
+      query: GET_MOVIE_BY_ID,
       variables: {
         input: {
           id: "idM4",
@@ -78,7 +48,7 @@ const mockMovieDataViewer = [
     },
     result: {
       data: {
-        getMovieWithReviewsById: {
+        getMovieById: {
           id: "idM4",
           title: "title4",
           poster: "poster4",
@@ -88,36 +58,6 @@ const mockMovieDataViewer = [
           category: {
             id: "idC1",
           },
-          reviews: [
-            {
-              id: "idR3",
-              rating: "3",
-              description: "Good!",
-              movie: {
-                title: "title4",
-                id: "idM4",
-              },
-              user: {
-                id: "idU1",
-                first_name: "admin",
-                last_name: "admin",
-              },
-            },
-            {
-              id: "idR4",
-              rating: "1",
-              description: "Bad!",
-              movie: {
-                title: "title4",
-                id: "idM4",
-              },
-              user: {
-                id: "idU3",
-                first_name: "viewer",
-                last_name: "viewer",
-              },
-            },
-          ]
         },
       },
     },

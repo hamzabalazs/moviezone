@@ -31,10 +31,10 @@ export default function ReviewEditModal({ review, onClose }: Props) {
       id = review.movie.id
     }
   }
-  const {updateReview:UpdateReviewAPI} = useReview(id)
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut } = useSessionContext();
+  const { logOut,user } = useSessionContext();
+  const {updateReview:UpdateReviewAPI} = useReview(id,user!.id)
   const updateReview = async (
     editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
   ) => {

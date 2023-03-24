@@ -1,18 +1,6 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Fab,
-  Grid,
-  InputLabel,
-  Rating,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Fab, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSnackbar } from "notistack";
 import MoviePageCard from "../components/cards/MoviePageCard";
 import MovieDeleteDialog from "../components/dialogs/MovieDeleteDialog";
 import ReviewDeleteDialog from "../components/dialogs/ReviewDeleteDialog";
@@ -25,29 +13,47 @@ import ReviewCard from "../components/cards/ReviewCard";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../components/LoadingComponent";
 import { useSessionContext } from "../api/SessionContext";
-import {
-  EXPIRED_TOKEN_MESSAGE,
-  NOT_VALID_REVIEW,
-} from "../common/errorMessages";
 import { useMoviePageData } from "./useMoviePageData";
-import { useReview } from "../api/review/useReview";
-import { MovieWithReviews, ReviewListReview } from "../gql/graphql";
+import { Movie, ReviewListReview } from "../gql/graphql";
 import AddReviewCard from "../components/cards/AddReviewCard";
+import { useBottomScrollListener } from "react-bottom-scroll-listener";
+import CardSkeletonComponent from "../components/CardSkeletonComponent";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
   const navigate = useNavigate();
   const { user: currUser } = useSessionContext();
-  const { movie, error, loading } = useMoviePageData(currmovie_id!);
+  const [offset, setOffset] = useState<number>(0);
+  const [reviewList, setReviewList] = useState<ReviewListReview[]>([]);
+  const { movie, reviews, error, loading, totalCount } = useMoviePageData(
+    currmovie_id!,
+    offset
+  );
 
-  const { t } = useTranslation();
+  useBottomScrollListener(() => {
+    console.log("scrolledbottom");
+    console.log(totalCount)
+    if (totalCount - offset > 3) {
+      setOffset(offset + 3);
+    }
+    return;
+  });
 
-  const [editingMovie, setEditingMovie] = useState<
-    MovieWithReviews | undefined
-  >(undefined);
-  const [deletingMovie, setDeletingMovie] = useState<
-    MovieWithReviews | undefined
-  >(undefined);
+  useEffect(() => {
+    if (!loading) {
+      console.log(reviews);
+      const list: ReviewListReview[] = [];
+      list.push(...reviews);
+      setReviewList([...reviewList, ...list]);
+    }
+  }, [loading]);
+
+  const [editingMovie, setEditingMovie] = useState<Movie | undefined>(
+    undefined
+  );
+  const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
+    undefined
+  );
   const [editingReview, setEditingReview] = useState<
     ReviewListReview | undefined
   >(undefined);
@@ -58,12 +64,6 @@ export default function MoviePage() {
   useEffect(() => {
     if (!currUser) navigate("/login");
   }, []);
-
-  useEffect(() => {
-    if (error) navigate("/");
-  }, [error]);
-
-  if (loading) return LoadingComponent(loading);
 
   return (
     <>
@@ -102,44 +102,33 @@ export default function MoviePage() {
             )}
           </div>
           <AddReviewCard currmovie_id={currmovie_id!} />
-          <Typography variant="h4" sx={{ marginLeft: 10 , marginTop:10}}>
+          <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 10 }}>
             All reviews
           </Typography>
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
               marginTop: 10,
               marginBottom: 30,
             }}
           >
-            {movie !== null && (
-              <Grid container spacing={4}>
-                {movie.reviews.length !== 0 && (
-                  <>
-                    {movie.reviews.map((review: ReviewListReview) => (
-                      <Grid item key={review.id} xs={12}>
-                        <ReviewCard
-                          review={review}
-                          onEdit={() => setEditingReview(review)}
-                          onDelete={() => setDeletingReview(review)}
-                        />
-                      </Grid>
-                    ))}
-                  </>
-                )}
-                {movie.reviews.length === 0 && (
-                  <Grid item xs={12}>
-                    <Typography
-                      variant="h6"
-                      align="center"
-                      color="textPrimary"
-                      gutterBottom
-                    >
-                      {t("review.noReviewFoundForMovie")}
-                    </Typography>
+            <Grid container spacing={4}>
+              <>
+                {reviewList.map((review: ReviewListReview) => (
+                  <Grid item key={review.id} xs={12}>
+                    <ReviewCard
+                      review={review}
+                      onEdit={() => setEditingReview(review)}
+                      onDelete={() => setDeletingReview(review)}
+                    />
                   </Grid>
-                )}
+                ))}
+              </>
+            </Grid>
+            {loading && (
+              <Grid container spacing={4} sx={{ marginTop: 0 }}>
+                <CardSkeletonComponent />
+                <CardSkeletonComponent />
+                <CardSkeletonComponent />
               </Grid>
             )}
           </div>

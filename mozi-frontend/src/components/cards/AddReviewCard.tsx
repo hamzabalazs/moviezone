@@ -27,13 +27,13 @@ interface Props{
 export default function AddReviewCard({
   currmovie_id
 }:Props) {
-  const { addReview: AddReviewAPI } = useReview(currmovie_id!);
-  const { movie, error, loading } = useMoviePageData(currmovie_id!);
-  const [ratingDescription,setRatingDescription] = useState<string>("")
-  const [rating,setRating] = useState<number>(0)
   const context = useSessionContext();
   const currUser = context.user!;
-  const reviewsOfUser = movie?.reviews.filter(
+  const { addReview: AddReviewAPI } = useReview(currmovie_id!,currUser!.id);
+  const { movie, reviews, error, loading } = useMoviePageData(currmovie_id!,0);
+  const [ratingDescription,setRatingDescription] = useState<string>("")
+  const [rating,setRating] = useState<number>(0)
+  const reviewsOfUser = reviews.filter(
     (x: ReviewListReview) => x.user.id === currUser.id
   );
 

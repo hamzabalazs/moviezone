@@ -8,9 +8,9 @@ import { MockedSessionContext } from "../../common/testing/MockedSessionProvider
 import MovieDeleteDialog from "./MovieDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import { DELETE_MOVIE } from "../../api/movie/useMovie";
-import { MovieWithReviews } from "../../gql/graphql";
+import { Movie } from "../../gql/graphql";
 
-const testMovie: MovieWithReviews = {
+const testMovie: Movie = {
   id: "idM1",
   title: "title1",
   description: "description1",
@@ -21,7 +21,6 @@ const testMovie: MovieWithReviews = {
     name: "name1",
   },
   rating: "3",
-  reviews:[]
 };
 
 const deleteMock = {
@@ -52,7 +51,7 @@ const deleteMock = {
 };
 
 function renderMovieDeleteDialog(props: {
-  movie?: MovieWithReviews;
+  movie?: Movie;
   onClose?: () => void;
 }) {
   return render(
