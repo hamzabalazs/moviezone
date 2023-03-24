@@ -1,5 +1,5 @@
 import { Autocomplete, debounce, Grid, TextField } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MovieListCard from "./cards/MovieListCard";
 import { useTranslation } from "react-i18next";
 import { Category, Movie } from "../gql/graphql";
@@ -48,8 +48,9 @@ function MovieList() {
 
   useEffect(() => {
     if (!loading) {
-      movieList.push(...movies);
-      setMovieList(movieList);
+      let list:Movie[] = []
+      list.push(...movies);
+      setMovieList([...movieList,...list]);
     }
   }, [loading]);
 
@@ -74,7 +75,6 @@ function MovieList() {
               name="searchValue"
               sx={{ border: 2 }}
               fullWidth
-              // value={searchValue}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   searchDebounce.clear()
                   searchDebounce = debounce(search,500)
