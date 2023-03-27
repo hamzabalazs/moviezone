@@ -1,11 +1,23 @@
 import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
-import { createServer, fillDatabase } from "../test/createDatabase";
-import { ApolloServer } from "apollo-server";
-import { LOGIN } from "../test/Query_Auth";
+import { fillDatabase } from "../test/createDatabase";
+import { ApolloServer, gql } from "apollo-server";
 import { existingTestUser, newTestUser } from "./auth.mocks";
 import { NO_USER_MESSAGE } from "../common/errorMessages";
 import { Database } from "../common/sqlite-async-ts";
+
+const LOGIN = gql`
+  mutation LogIn($input: LoginInput!) {
+    logIn(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+      token
+    }
+  }
+`;
 
 let db:Database
 let req = {

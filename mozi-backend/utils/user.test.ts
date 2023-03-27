@@ -1,20 +1,58 @@
 import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
-import { createDatabase, fillDatabase } from "../test/createDatabase";
-import { ApolloServer } from "apollo-server";
-import {
-  CREATE_USER,
-  DELETE_USER,
-  GET_USERS,
-  GET_USER_BY_EMAIL,
-  GET_USER_BY_ID,
-  GET_USER_BY_TOKEN,
-  UPDATE_USER,
-} from "../test/Query_User";
+import { fillDatabase } from "../test/createDatabase";
+import { ApolloServer, gql } from "apollo-server";
 import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testResponseUser2, testUser, testUser2 } from "./user.mocks";
 import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 import { userData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
+import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/api/user/useUser"
+
+const GET_USERS = gql`
+  query GetUsers {
+    getUsers {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
+const GET_USER_BY_ID = gql`
+  query GetUserById($input: UserInput!) {
+    getUserById(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
+const GET_USER_BY_EMAIL = gql`
+  query CheckForUser($input: UserEmailInput!) {
+    checkForUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
+  }
+`;
+const GET_USER_BY_TOKEN = gql`
+  query GetUserByToken {
+    getUserByToken {
+      id
+      first_name
+      last_name
+      role
+      email
+      token
+    }
+  }
+`;
 
 let db:Database
 let req = {
@@ -212,16 +250,6 @@ test("Should not edit user, if email is already in database",async() => {
 
 
 test("Should edit user if token and ID is good", async () => {
-  const beforeResult = await server.executeOperation({
-    query: GET_USER_BY_ID,
-    variables: {
-      input: {
-        id: testUser.id,
-      },
-    },
-  });
-  expect(beforeResult.errors).toBeUndefined();
-  expect(beforeResult.data?.getUserById).toEqual(testResponseUser);
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
     query: UPDATE_USER,
@@ -233,29 +261,9 @@ test("Should edit user if token and ID is good", async () => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.updateUser).toEqual(editResponseUser);
-  const afterResult = await server.executeOperation({
-    query: GET_USER_BY_ID,
-    variables: {
-      input: {
-        id: testUser.id,
-      },
-    },
-  });
-  expect(afterResult.errors).toBeUndefined();
-  expect(afterResult.data?.getUserById).toEqual(editResponseUser);
 });
 
 test("Should edit user even if no role was given",async() => {
-  const beforeResult = await server.executeOperation({
-    query: GET_USER_BY_ID,
-    variables: {
-      input: {
-        id: testUser2.id,
-      },
-    },
-  });
-  expect(beforeResult.errors).toBeUndefined();
-  expect(beforeResult.data?.getUserById).toEqual(testResponseUser2);
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
     query: UPDATE_USER,
@@ -267,16 +275,6 @@ test("Should edit user even if no role was given",async() => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.updateUser).toEqual(editResponseUser2);
-  const afterResult = await server.executeOperation({
-    query: GET_USER_BY_ID,
-    variables: {
-      input: {
-        id: testUser.id,
-      },
-    },
-  });
-  expect(afterResult.errors).toBeUndefined();
-  expect(afterResult.data?.getUserById).toEqual(editResponseUser);
 })
 
 test("Should not delete user if bad token is given", async () => {

@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { Home } from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Forgotpass from "./pages/Forgotpass";
+import { Home } from "./movies/Home";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import styles from "./styles";
-import Categories from "./pages/Categories";
-import { Users } from "./pages/Users";
-import Reviews from "./pages/Reviews";
-import MoviePage from "./pages/MoviePage";
-import Account from "./pages/Account";
+import Categories from "./categories/Categories";
+import Reviews from "./reviews/Reviews";
+import MoviePage from "./movies/MoviePage";
 import {
   ApolloClient,
   InMemoryCache,
@@ -25,9 +20,14 @@ import { setContext } from "@apollo/client/link/context";
 import {
   SessionContextProvider,
   useSessionContext,
-} from "./api/SessionContext";
+} from "./auth/SessionContext";
 import { SnackbarProvider } from "notistack";
 import { User, UserRole } from "./gql/graphql";
+import Login from "./auth/Login";
+import Register from "./users/Register";
+import Forgotpass from "./users/Forgotpass";
+import { Users } from "./users/Users";
+import Account from "./users/Account";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

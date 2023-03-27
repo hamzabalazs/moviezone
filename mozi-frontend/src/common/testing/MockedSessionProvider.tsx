@@ -1,5 +1,5 @@
 import React from "react";
-import { sessionContext, SessionContextData } from "../../api/SessionContext";
+import { sessionContext, SessionContextData } from "../../auth/SessionContext";
 import { UserRole } from "../../gql/graphql";
 
 export function MockedSessionContext({

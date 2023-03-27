@@ -1,15 +1,7 @@
 import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
 import { fillDatabase } from "../test/createDatabase";
-import { ApolloServer } from "apollo-server";
-import {
-  CREATE_CATEGORY,
-  DELETE_CATEGORY,
-  GET_CATEGORIES,
-  GET_CATEGORY_BY_ID,
-  GET_CATEGORY_BY_NAME,
-  UPDATE_CATEGORY,
-} from "../test/Query_Category";
+import { ApolloServer, gql } from "apollo-server";
 import {
   addCategory,
   deleteCategory,
@@ -25,6 +17,25 @@ import {
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
+import { GET_CATEGORIES } from "../../mozi-frontend/src/pages/useCategoriesData"
+import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY } from "../../mozi-frontend/src/api/category/useCategory"
+
+const GET_CATEGORY_BY_ID = gql`
+  query GetCategoryById($input: CategoryInput!) {
+    getCategoryById(input: $input) {
+      id
+      name
+    }
+  }
+`;
+const GET_CATEGORY_BY_NAME = gql`
+  query CheckForCategory($input: CategoryNameInput!) {
+    checkForCategory(input: $input) {
+      id
+      name
+    }
+  }
+`;
 
 let db: Database;
 let req = {

@@ -1,15 +1,12 @@
 import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
-import { createDatabase, fillDatabase } from "../test/createDatabase";
-import { ApolloServer } from "apollo-server";
+import { fillDatabase } from "../test/createDatabase";
+import { ApolloServer, gql } from "apollo-server";
 import {
   CREATE_MOVIE,
   DELETE_MOVIE,
-  GET_MOVIES,
-  GET_MOVIES_BY_CATEGORY,
-  GET_MOVIE_BY_ID,
   UPDATE_MOVIE,
-} from "../test/Query_Movie";
+} from "../../mozi-frontend/src/api/movie/useMovie";
 import {
   addMovie,
   deleteMovie,
@@ -25,6 +22,40 @@ import {
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
+import { GET_MOVIE_BY_ID } from "../../mozi-frontend/src/pages/useMoviePageData";
+
+const GET_MOVIES = gql`
+  query GetMovies($input: MoviePaginationInput!) {
+    getMovies(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+const GET_MOVIES_BY_CATEGORY = gql`
+  query GetMoviesByCategoryId($input: GetMoviesByCategoryIdInput!) {
+    getMoviesByCategoryId(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
 
 let db: Database;
 let req = {
@@ -83,6 +114,15 @@ test("Should not get movie, if ID is invalid", async () => {
       input: {
         id: "badID",
       },
+      input2: {
+        movie_id: testMovie.id,
+        limit:3,
+        offset:0
+      },
+      input3:{
+        movie_id: testMovie.id,
+        user_id:""
+      }
     },
   });
   expect(result.data?.getMovieById).toBeNull();
@@ -96,6 +136,15 @@ test("Should get movie,if ID is valid", async () => {
       input: {
         id: testMovie.id,
       },
+      input2: {
+        movie_id: testMovie.id,
+        limit:3,
+        offset:0
+      },
+      input3:{
+        movie_id: testMovie.id,
+        user_id:""
+      }
     },
   });
   expect(result.errors).toBeUndefined();
@@ -261,6 +310,15 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
       input: {
         id: testMovie.id,
       },
+      input2: {
+        movie_id: testMovie.id,
+        limit:3,
+        offset:0
+      },
+      input3:{
+        movie_id: testMovie.id,
+        user_id:""
+      }
     },
   });
   expect(beforeResult.errors).toBeUndefined();
@@ -284,6 +342,15 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
       input: {
         id: testMovie.id,
       },
+      input2: {
+        movie_id: testMovie.id,
+        limit:3,
+        offset:0
+      },
+      input3:{
+        movie_id: testMovie.id,
+        user_id:""
+      }
     },
   });
   expect(afterResult.errors).toBeUndefined();

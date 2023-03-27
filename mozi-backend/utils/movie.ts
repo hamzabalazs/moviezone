@@ -39,7 +39,6 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
     sql = sql.concat(` OFFSET ?`)
     params.push(input.offset)
   }
-  console.log(sql)
   return context.db.all<Movie>(sql,params)
 }
 

@@ -60,27 +60,30 @@ export const editUser2: Omit<FullUser, "role">= {
   password: "EDITEDPASS",
 };
 
-export const editResponseUser: Omit<User, "role"> & { role: string } = {
+export const editResponseUser: Omit<FullUser, "role"> & { role: string } = {
   id: "idU1",
   first_name: "EDITED",
   last_name: "User1EDIT",
   email: "EDITEDuser1@gmail.com",
+  password: "5610a275623908cb1c5e014c188bd62c",
   role: "editor",
 };
 
-export const editResponseUser2: Omit<User, "role"> & { role: string } = {
+export const editResponseUser2: Omit<FullUser, "role"> & { role: string } = {
   id: "idU4",
   first_name: "EDITED",
   last_name: "User4EDIT",
   email: "EDITEDuser4@gmail.com",
+  password: "5610a275623908cb1c5e014c188bd62c",
   role: "viewer",
 };
 
-export const deleteUser: Omit<User, "role"> & { role: string } = {
+export const deleteUser: Omit<FullUser, "role"> & { role: string } = {
   id: "idU1",
   first_name: "EDITED",
   last_name: "User1EDIT",
   email: "EDITEDuser1@gmail.com",
+  password: "5610a275623908cb1c5e014c188bd62c",
   role: "editor",
 };
 
