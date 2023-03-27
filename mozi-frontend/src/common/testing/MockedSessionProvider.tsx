@@ -22,7 +22,7 @@ export function MockedSessionContext({
           role: UserRole["Admin"],
           token: "token1",
         },
-        logOut:jest.fn(),
+        // logOut:jest.fn(),
         ...value,
       }}
     >

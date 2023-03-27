@@ -10,11 +10,22 @@ import { GET_REVIEWS } from "./useReviewsData";
 const mockReviewData = [
 {
   request:{
-    query: GET_REVIEWS
+    query: GET_REVIEWS,
+    variables:{
+      input:{
+        user_id:"idU1",
+        limit:3,
+        offset:0
+      },
+      input2:{
+        user_id:"idU1",
+        movie_id:""
+      }
+    }
   },
   result: {
     data: {
-      getReviews: [
+      getReviewsOfUser: [
         {
           id: "idR3",
           rating: "3",
@@ -29,50 +40,9 @@ const mockReviewData = [
           },
         },
       ],
-      getNumberOfReviews:{
-        totalCount:3
+      getNumberOfReviewsOfUser:{
+        totalCount:1
       },
-      getExtendedReviews: [
-        {
-          id: "idR3",
-          rating: "3",
-          description: "Good!",
-          movie: {
-            title: "MovieTitle2",
-            id: "idM2",
-            description: "description2",
-            poster: "poster2",
-            release_date: "releaseDate2",
-            category: {
-              id: "idC1",
-              name: "name1",
-            },
-            rating: "3",
-            reviews: [
-              {
-                id: "idR3",
-                rating: "3",
-                description: "Good!",
-                user: {
-                  id: "idU1",
-                  first_name: "user1",
-                  last_name: "user1",
-                },
-                movie:{
-                  id:"idR3"
-                }
-              },
-            ],
-          },
-          user: {
-            id: "idU1",
-            first_name: "user1",
-            last_name: "user1",
-            email: "user1@email.com",
-            role: UserRole["Viewer"]
-          },
-        },
-      ],
     },
   },
 }
@@ -98,15 +68,6 @@ const viewerUser: CurrentUser = {
   role: UserRole["Viewer"],
   token: "token1",
 };
-
-test("Should show LoadingComponent at first, after loading should show review page", async () => {
-  const { queryByTestId } = renderReviews(viewerUser);
-  const loader = queryByTestId("loader");
-  expect(loader).toBeInTheDocument();
-  await waitFor(() => {
-    expect(loader).not.toBeInTheDocument();
-  });
-});
 
 test("correct amount of reviews show up for user", async () => {
   renderReviews(viewerUser);

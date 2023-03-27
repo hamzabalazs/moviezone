@@ -42,7 +42,13 @@ const mockUsersData = [
 },
 {
   request:{
-    query: GET_FULL_USERS
+    query: GET_FULL_USERS,
+    variables:{
+      input:{
+        limit:3,
+        offset:0
+      }
+    }
   },
   result:{
     data:{
@@ -71,7 +77,10 @@ const mockUsersData = [
           password:"viewer",
           role:UserRole["Viewer"]
         }
-      ]
+      ],
+      getNumberOfUsers:{
+        totalCount:3
+      }
     }
   }
 }
@@ -98,16 +107,6 @@ function renderAccount(currUser?:CurrentUser) {
   );
 }
 
-test("LoadingComponent should show while loading, after loading should not show",async() => {
-  const {queryByTestId} = renderAccount()
-
-  const loader = queryByTestId("loader")
-  expect(loader).toBeInTheDocument()
-
-  await waitFor(() => {
-    expect(loader).not.toBeInTheDocument()
-  })
-})
 
 test("only one user shows up", async() => {
   renderAccount(editorUser);

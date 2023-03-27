@@ -49,15 +49,6 @@ function MovieList() {
   });
 
   useEffect(() => {
-    if (categoryListForAutocomplete.length === 0) {
-      categories.forEach((category: Category) => {
-        categoryListForAutocomplete.push(category.name);
-      });
-      setCategoryOptions(categoryListForAutocomplete);
-    }
-  }, [categories]);
-
-  useEffect(() => {
     let list: string[] = [];
     categories.forEach((category: Category) => {
       if (selectedCategoryId.includes(category.name)) list.push(category.id);
@@ -70,6 +61,12 @@ function MovieList() {
       let list: Movie[] = [];
       list.push(...movies);
       setMovieList([...movieList, ...list]);
+      if (categoryListForAutocomplete.length === 0 && categories !== undefined) {
+        categories.forEach((category: Category) => {
+          categoryListForAutocomplete.push(category.name);
+        });
+        setCategoryOptions(categoryListForAutocomplete);
+      }
     }
   }, [loading]);
 

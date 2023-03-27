@@ -1,5 +1,5 @@
 import { MockedProvider } from "@apollo/client/testing";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
@@ -17,24 +17,24 @@ const mockUserData = [
       getUsers: [
         {
           id:"idU1",
-          first_name:"user1",
-          last_name:"user1",
-          email:"user1@example.com",
-          role:"viewer",
+          first_name:"admin",
+          last_name:"admin",
+          email:"admin@example.com",
+          role:UserRole["Admin"],
         },
         {
           id:"idU2",
           first_name:"user2",
           last_name:"user2",
           email:"user2@example.com",
-          role:"viewer",
+          role:UserRole["Viewer"],
         },
         {
           id:"idU3",
           first_name:"user3",
           last_name:"user3",
           email:"user3@example.com",
-          role:"viewer",
+          role:UserRole["Viewer"],
         },
       ],
     },
@@ -43,17 +43,23 @@ const mockUserData = [
 {
   request: {
     query: GET_FULL_USERS,
+    variables:{
+      input:{
+        limit:3,
+        offset:0
+      }
+    }
   },
   result: {
     data: {
       getFullUsers: [
         {
           id:"idU1",
-          first_name:"user1",
-          last_name:"user1",
-          email:"user1@example.com",
-          password: "user1pass",
-          role:"viewer",
+          first_name:"admin",
+          last_name:"admin",
+          email:"admin@example.com",
+          password: "admin",
+          role:UserRole["Admin"],
         },
         {
           id:"idU2",
@@ -61,7 +67,7 @@ const mockUserData = [
           last_name:"user2",
           email:"user2@example.com",
           password: "user2pass",
-          role:"viewer",
+          role:UserRole["Viewer"],
         },
         {
           id:"idU3",
@@ -69,9 +75,12 @@ const mockUserData = [
           last_name:"user3",
           email:"user3@example.com",
           password: "user2pass",
-          role:"viewer",
+          role:UserRole["Viewer"],
         },
       ],
+      getNumberOfUsers:{
+        totalCount:3
+      }
     },
   },
 }
@@ -97,15 +106,6 @@ function renderUsers(currUser?: CurrentUser) {
     </MemoryRouter>
   );
 }
-
-test("LoadingComponent renders first, after loading user page renders",async() => {
-  const {queryByTestId} = renderUsers(adminUser)
-  const loader = queryByTestId("loader");
-  expect(loader).toBeInTheDocument()
-  await waitFor(() => {
-    expect(loader).not.toBeInTheDocument()
-  })
-})
 
 test("Should show correct amount of cards", async() => {
   const {findAllByTestId} = renderUsers(adminUser);

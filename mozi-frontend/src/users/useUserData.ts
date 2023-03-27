@@ -40,7 +40,7 @@ export const GET_FULL_USERS = gql`
 `
 
 export function useUserData(offset?:number):UsersData{
-    const {data:userData,loading:usersLoading,error:usersError} = useQuery<GetUsersQuery>(GET_USERS,{fetchPolicy:'network-only'})
+    const {data:userData,loading:usersLoading,error:usersError} = useQuery<GetUsersQuery>(GET_USERS)
     const {data:fullUserData,loading:fullUsersLoading,error:fullUsersError} = useQuery<GetFullUsersQuery>(GET_FULL_USERS,{variables:
     {
       input:{

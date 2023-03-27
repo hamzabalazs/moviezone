@@ -24,7 +24,7 @@ export function Users() {
   );
 
   const [offset, setOffset] = useState<number>(0);
-  const { fullUsers, fullUsersLoading, totalCount } = useUserData(offset);
+  const { fullUsers, fullUsersLoading, totalCount,usersError,fullUsersError } = useUserData(offset);
 
   useBottomScrollListener(() => {
     if (totalCount - offset > 3) {
@@ -39,7 +39,6 @@ export function Users() {
       setUserList([...userList,...list]);
     }
   }, [fullUsersLoading]);
-
 
   return (
     <>
