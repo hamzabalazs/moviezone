@@ -1,9 +1,9 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
-import { Movie, ReviewListReview } from "../gql/graphql";
+import { Movie, Review} from "../gql/graphql";
 
 type MoviePageData = {
   movie: Movie | null;
-  reviews: ReviewListReview[];
+  reviews: Review[];
   error: ApolloError | undefined;
   totalCount: number;
   loading: boolean;
@@ -33,11 +33,22 @@ export const GET_MOVIE_BY_ID = gql`
       description
       movie {
         id
+        title
+        description
+        poster
+        release_date
+        rating
+        category {
+          id
+          name
+        }
       }
       user {
         id
         first_name
         last_name
+        role
+        email
       }
     }
     getNumberOfReviewsOfMovie(input: $input3) {
@@ -65,6 +76,7 @@ export function useMoviePageData(
         user_id: "",
       },
     },
+    fetchPolicy:'cache-and-network'
   });
 
   return {

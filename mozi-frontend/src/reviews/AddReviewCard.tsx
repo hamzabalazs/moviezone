@@ -17,7 +17,7 @@ import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_REVIEW,
 } from "../common/errorMessages";
-import { ReviewListReview } from "../gql/graphql";
+import { Review } from "../gql/graphql";
 import { useMoviePageData } from "../movies/useMoviePageData";
 
 interface Props{
@@ -34,7 +34,7 @@ export default function AddReviewCard({
   const [ratingDescription,setRatingDescription] = useState<string>("")
   const [rating,setRating] = useState<number>(0)
   const reviewsOfUser = reviews.filter(
-    (x: ReviewListReview) => x.user.id === currUser.id
+    (x: Review) => x.user.id === currUser.id
   );
 
   const handleAddReview = async () => {

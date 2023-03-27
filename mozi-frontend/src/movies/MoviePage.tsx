@@ -10,7 +10,7 @@ import ScrollTop from "../common/components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useSessionContext } from "../auth/SessionContext";
 import { useMoviePageData } from "./useMoviePageData";
-import { Movie, ReviewListReview } from "../gql/graphql";
+import { Movie, Review } from "../gql/graphql";
 import AddReviewCard from "../reviews/AddReviewCard";
 import { useBottomScrollListener } from "react-bottom-scroll-listener";
 import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
@@ -22,8 +22,8 @@ export default function MoviePage() {
   const navigate = useNavigate();
   const { user: currUser } = useSessionContext();
   const [offset, setOffset] = useState<number>(0);
-  const [reviewList, setReviewList] = useState<ReviewListReview[]>([]);
-  const { movie, reviews, error, loading, totalCount } = useMoviePageData(
+  const [reviewList, setReviewList] = useState<Review[]>([]);
+  const { movie, reviews, loading, totalCount } = useMoviePageData(
     currmovie_id!,
     offset
   );
@@ -37,9 +37,7 @@ export default function MoviePage() {
 
   useEffect(() => {
     if (!loading) {
-      const list: ReviewListReview[] = [];
-      list.push(...reviews);
-      setReviewList([...reviewList, ...list]);
+      setReviewList([...reviewList, ...reviews]);
     }
   }, [loading]);
 
@@ -49,12 +47,12 @@ export default function MoviePage() {
   const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
     undefined
   );
-  const [editingReview, setEditingReview] = useState<
-    ReviewListReview | undefined
-  >(undefined);
-  const [deletingReview, setDeletingReview] = useState<
-    ReviewListReview | undefined
-  >(undefined);
+  const [editingReview, setEditingReview] = useState<Review | undefined>(
+    undefined
+  );
+  const [deletingReview, setDeletingReview] = useState<Review | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (!currUser) navigate("/login");
@@ -108,7 +106,7 @@ export default function MoviePage() {
           >
             <Grid container spacing={4}>
               <>
-                {reviewList.map((review: ReviewListReview) => (
+                {reviewList.map((review: Review) => (
                   <Grid item key={review.id} xs={12}>
                     <ReviewCard
                       review={review}

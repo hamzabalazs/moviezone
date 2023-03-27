@@ -5,18 +5,29 @@ import userEvent from "@testing-library/user-event";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 import { SnackbarProvider } from "notistack";
-import {ReviewListReview} from "../gql/graphql";
+import {Review, UserRole} from "../gql/graphql";
 import { DELETE_REVIEW } from "./useReview";
 
-const testReview: ReviewListReview = {
+const testReview:Review = {
   id: "idC1",
   user: {
     id: "idU2",
     first_name: "first",
     last_name: "last",
+    email:"firstlast@gmail.com",
+    role:UserRole["Admin"]
   },
   movie: {
     id: "idM2",
+    title: "title2",
+    description: "description2",
+    release_date:"02/02/2022",
+    poster:"poster2",
+    category:{
+      id:"idC1",
+      name:"name2"
+    },
+    rating:"0"
   },
   description: "description1EDITED",
   rating: "5",
@@ -53,7 +64,7 @@ const deleteMock = {
 const cache = new InMemoryCache();
 
 function renderReviewDeleteDialog(props: {
-  review?: ReviewListReview;
+  review?: Review;
   onClose?: () => void;
 }) {
   return render(

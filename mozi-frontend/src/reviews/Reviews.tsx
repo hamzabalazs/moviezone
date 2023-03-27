@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../auth/SessionContext";
 import { useReviewsData } from "./useReviewsData";
 import { useBottomScrollListener } from "react-bottom-scroll-listener";
-import { ReviewListReview } from "../gql/graphql";
+import { Review } from "../gql/graphql";
 import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
 import ReviewCard from "./ReviewCard";
 
@@ -19,15 +19,15 @@ function Reviews() {
   const context = useSessionContext();
   const currUser = context.user;
   const user_id = currUser!.id;
-  const [editingReview, setEditingReview] = useState<
-    ReviewListReview | undefined
-  >(undefined);
-  const [deletingReview, setDeletingReview] = useState<
-    ReviewListReview | undefined
-  >(undefined);
-  const [reviewList, setReviewList] = useState<ReviewListReview[]>([]);
+  const [editingReview, setEditingReview] = useState<Review | undefined>(
+    undefined
+  );
+  const [deletingReview, setDeletingReview] = useState<Review | undefined>(
+    undefined
+  );
+  const [reviewList, setReviewList] = useState<Review[]>([]);
   const [offset, setOffset] = useState<number>(0);
-  const { reviews, loading, totalCount } = useReviewsData(user_id, offset);
+  const { reviews, loading, totalCount } = useReviewsData(user_id,reviewList,offset);
 
   useBottomScrollListener(() => {
     if (totalCount - offset > 3) {
@@ -35,13 +35,6 @@ function Reviews() {
     }
     return;
   });
-  useEffect(() => {
-    if (!loading) {
-      const list: ReviewListReview[] = [];
-      list.push(...reviews);
-      setReviewList([...reviewList, ...list]);
-    }
-  }, [loading]);
 
   return (
     <>
@@ -49,7 +42,9 @@ function Reviews() {
       <main style={{ position: "relative", minHeight: "100vh" }}>
         <ReviewEditModal
           review={editingReview}
-          onClose={() => setEditingReview(undefined)}
+          onClose={() => {
+            setEditingReview(undefined)
+          }}
         />
         <ReviewDeleteDialog
           review={deletingReview}
@@ -69,7 +64,7 @@ function Reviews() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {reviewList.map((review: ReviewListReview) => (
+            {reviews.map((review: Review) => (
               <Grid item key={review.id} xs={12}>
                 <ReviewCard
                   review={review}
@@ -80,7 +75,7 @@ function Reviews() {
             ))}
           </Grid>
           {loading && (
-            <Grid container spacing={4} sx={{marginTop:0}}>
+            <Grid container spacing={4} sx={{ marginTop: 0 }}>
               <CardSkeletonComponent />
               <CardSkeletonComponent />
               <CardSkeletonComponent />

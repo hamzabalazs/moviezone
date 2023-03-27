@@ -1,10 +1,10 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
 import {
-  ReviewListReview,
+  Review,
 } from "../gql/graphql";
 
 type ReviewData = {
-  reviews: ReviewListReview[]
+  reviews: Review[]
   totalCount: number;
   loading: boolean;
   error: ApolloError | undefined;
@@ -35,7 +35,7 @@ export const GET_REVIEWS = gql`
   }
 `;
 
-export function useReviewsData(user_id: string,offset?:number): ReviewData {
+export function useReviewsData(user_id: string,reviewList:Review[],offset?:number): ReviewData {
   const {
     data,
     loading,
@@ -50,11 +50,15 @@ export function useReviewsData(user_id: string,offset?:number): ReviewData {
       user_id,
       movie_id:""
     }
-  }, fetchPolicy:'network-only'});
-
+  }, fetchPolicy:'cache-and-network'});
+  if(!loading){
+    if(data.getReviewsOfUser && !reviewList.includes(data.getReviewsOfUser[0])){
+      reviewList.push(...data.getReviewsOfUser)
+    }
+  }
 
   return {
-    reviews: data?.getReviewsOfUser || [],
+    reviews: reviewList,
     totalCount: data?.getNumberOfReviewsOfUser.totalCount || 0,
     loading,
     error,

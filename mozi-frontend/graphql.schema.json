@@ -2119,7 +2119,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ExtendedReview",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2276,7 +2276,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ExtendedReview",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2536,7 +2536,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ExtendedReview",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3163,7 +3163,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ReviewListReview",
+                    "name": "Review",
                     "ofType": null
                   }
                 }

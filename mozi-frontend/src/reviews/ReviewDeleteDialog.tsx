@@ -11,10 +11,10 @@ import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../auth/SessionContext";
 import { EXPIRED_TOKEN_MESSAGE } from "../common/errorMessages";
 import { useReview } from "./useReview";
-import { ReviewListReview } from "../gql/graphql";
+import { Review } from "../gql/graphql";
 
 interface Props {
-  review?: ReviewListReview;
+  review?: Review;
   onClose?: () => void;
 }
 

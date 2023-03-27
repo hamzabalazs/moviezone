@@ -9,6 +9,7 @@ type UsersData = {
   fullUsersLoading: boolean;
   usersError: ApolloError | undefined;
   fullUsersError: ApolloError | undefined;
+  fetchMore: any
 };
 
 export const GET_USERS = gql`
@@ -39,15 +40,15 @@ export const GET_FULL_USERS = gql`
   }
 `
 
-export function useUserData(offset?:number):UsersData{
+export function useUserData(offset?:number,limit?:number):UsersData{
     const {data:userData,loading:usersLoading,error:usersError} = useQuery<GetUsersQuery>(GET_USERS)
-    const {data:fullUserData,loading:fullUsersLoading,error:fullUsersError} = useQuery<GetFullUsersQuery>(GET_FULL_USERS,{variables:
+    const {data:fullUserData,loading:fullUsersLoading,error:fullUsersError,fetchMore} = useQuery<GetFullUsersQuery>(GET_FULL_USERS,{variables:
     {
       input:{
-        limit:3,
+        limit:limit || 3,
         offset:offset || 0
       }
-    },fetchPolicy:'network-only'})
+    },fetchPolicy:'cache-first',notifyOnNetworkStatusChange:true})
     return{
         users: userData?.getUsers || [],
         fullUsers: fullUserData?.getFullUsers || [],
@@ -55,6 +56,7 @@ export function useUserData(offset?:number):UsersData{
         usersLoading,
         fullUsersLoading,
         usersError,
-        fullUsersError
+        fullUsersError,
+        fetchMore
     }
 }

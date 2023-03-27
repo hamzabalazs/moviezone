@@ -15,30 +15,29 @@ import UserEditModal from "./UserEditModal";
 
 export function Users() {
   const { t } = useTranslation();
-  const [userList, setUserList] = useState<FullUser[]>([]);
   const [editingUser, setEditingUser] = useState<FullUser | undefined>(
     undefined
   );
   const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(
     undefined
   );
+  let currentLength = 0;
+  const { fullUsers, fullUsersLoading, totalCount,usersError,fullUsersError,fetchMore } = useUserData();
 
-  const [offset, setOffset] = useState<number>(0);
-  const { fullUsers, fullUsersLoading, totalCount,usersError,fullUsersError } = useUserData(offset);
-
-  useBottomScrollListener(() => {
-    if (totalCount - offset > 3) {
-      setOffset(offset + 3);
-    }
-    return;
+  useBottomScrollListener(() => { 
+    currentLength += fullUsers.length
+    console.log("totalcount",totalCount)
+    console.log("currentlength",currentLength)
+    if(currentLength >= totalCount) return;
+    fetchMore({
+      variables:{
+        input:{
+          limit:3,
+          offset: currentLength
+        }
+      }
+    })
   });
-  useEffect(() => {
-    if (!fullUsersLoading) {
-      const list:FullUser[] = []
-      list.push(...fullUsers);
-      setUserList([...userList,...list]);
-    }
-  }, [fullUsersLoading]);
 
   return (
     <>
@@ -66,7 +65,7 @@ export function Users() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {userList.map((user: FullUser) => (
+            {fullUsers.map((user: FullUser) => (
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}

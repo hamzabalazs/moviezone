@@ -7,10 +7,10 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useSessionContext } from "../auth/SessionContext";
-import { ReviewListReview } from "../gql/graphql";
+import { Review } from "../gql/graphql";
 
 interface Props {
-  review: ReviewListReview;
+  review: Review;
   onEdit:() => void;
   onDelete:() => void;
 }

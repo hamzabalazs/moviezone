@@ -105,21 +105,6 @@ export function useUser(): UserData {
           role,
         },
       },
-      update:(cache) => {
-        const users = client.readQuery<GetFullUsersQuery>({
-          query:GET_FULL_USERS,
-        })
-        if(!users) return;
-        cache.writeQuery<GetFullUsersQuery>({
-          query:GET_FULL_USERS,
-          data:{
-            getFullUsers: [...users.getFullUsers],
-            getNumberOfUsers:{
-              totalCount: users.getNumberOfUsers.totalCount
-            }
-          }
-        })
-      }
     });
     if (result.data) {
       return result.data.updateUser;
@@ -137,21 +122,33 @@ export function useUser(): UserData {
       update:(cache,{data}) => {
         const users = client.readQuery<GetFullUsersQuery>({
           query:GET_FULL_USERS,
+          variables:{
+            input:{
+              limit:3,
+              offset:0
+            }
+          }
         })
         if(!users) return;
         if(!data?.deleteUser) return;
         cache.writeQuery<GetFullUsersQuery>({
           query:GET_FULL_USERS,
+          variables:{
+            input:{
+              limit:3,
+              offset:0
+            }
+          },
           data:{
-            getFullUsers: users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id),
+            getFullUsers: [...users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id)],
             getNumberOfUsers:{
-              totalCount: users.getNumberOfUsers.totalCount
+              totalCount: users.getNumberOfUsers.totalCount! - 1
             }
           }
         })
       }
     });
-    if(result.data){
+    if(result?.data){
       return result.data.deleteUser
     }
     return null;

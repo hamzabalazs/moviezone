@@ -49,7 +49,23 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies:{
+      Query:{
+        fields:{
+          getFullUsers:{
+            keyArgs:["id"],
+            merge(existing = [], incoming){
+              if(incoming.length > 3){
+                return [...incoming]
+              }
+              return [...existing,...incoming]
+            }
+          }
+      }
+      }
+    }
+  }),
 });
 
 root.render(

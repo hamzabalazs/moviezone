@@ -17,11 +17,11 @@ import { EXPIRED_TOKEN_MESSAGE, NOT_VALID_REVIEW } from "../common/errorMessages
 import { useSessionContext } from "../auth/SessionContext";
 import { useReview } from "./useReview";
 import { useEditReviewSchema } from "../common/validationFunctions";
-import { ReviewListReview } from "../gql/graphql";
+import { Review } from "../gql/graphql";
 
 interface Props {
-  review?: ReviewListReview;
-  onClose?: () => void;
+  review?: Review;
+  onClose?: (edited?:boolean) => void;
 }
 
 export default function ReviewEditModal({ review, onClose }: Props) {
@@ -36,7 +36,7 @@ export default function ReviewEditModal({ review, onClose }: Props) {
   const { logOut,user } = useSessionContext();
   const {updateReview:UpdateReviewAPI} = useReview(id,user!.id)
   const updateReview = async (
-    editedReview: Omit<ReviewListReview, "id" | "movie" | "user">
+    editedReview: Omit<Review, "id" | "movie" | "user">
   ) => {
     if (review === undefined) return;
 
@@ -45,7 +45,7 @@ export default function ReviewEditModal({ review, onClose }: Props) {
       if(result){
         const msg = t("successMessages.reviewEdit");
         enqueueSnackbar(msg, { variant: "success" });
-        onClose?.();
+        onClose?.(true);
       }
     } catch (error: any) {
       if (error.message === EXPIRED_TOKEN_MESSAGE) {

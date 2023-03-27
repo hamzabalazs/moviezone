@@ -5,7 +5,6 @@ import NavigationBar from "../common/components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "../common/components/ScrollTop";
 import { useTranslation } from "react-i18next";
-import LoadingComponent from "../common/components/LoadingComponent";
 import { useSessionContext } from "../auth/SessionContext";
 import { useUserData } from "./useUserData";
 import { FullUser, UserRole } from "../gql/graphql";
@@ -18,6 +17,7 @@ import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
 function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
+  const [fullUsersList,setFullUsersList] = useState<FullUser[]>([])
   const {fullUsers,fullUsersLoading} = useUserData()
   const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);

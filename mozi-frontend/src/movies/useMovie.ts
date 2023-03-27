@@ -149,7 +149,13 @@ export function useMovie(): MovieData {
               id: id,
             },
             input2:{
-              movie_id: id
+              movie_id: id,
+              limit:3,
+              offset:0,
+            },
+            input3:{
+              movie_id:id,
+              user_id:""
             }
           },
         });
@@ -160,6 +166,8 @@ export function useMovie(): MovieData {
           variables: { input: { id: id } },
           data: {
             getMovieById: data.updateMovie,
+            getReviewsOfMovie: res.getReviewsOfMovie,
+            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie
           },
         });
       },
