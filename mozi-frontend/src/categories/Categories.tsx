@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
-import {useState } from "react";
+import { useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import NavigationBar from "../common/components/NavigationBar";
 import MyFooter from "../common/components/MyFooter";
@@ -14,12 +14,10 @@ import CategoryDeleteDialog from "./CategoryDeleteDialog";
 import CategoryAddModal from "./CategoryAddModal";
 import CategoryCard from "./CategoryCard";
 
-
-
 function Categories() {
   const { t } = useTranslation();
-  const {categories,loading} = useCategoriesData();
-  
+  const { categories, loading } = useCategoriesData();
+
   const [editingCategory, setEditingCategory] = useState<Category | undefined>(
     undefined
   );
@@ -33,7 +31,7 @@ function Categories() {
     setIsOpenAdd(true);
   };
 
-  if(loading) return LoadingComponent(loading)
+  if (loading) return LoadingComponent(loading);
 
   return (
     <>
@@ -42,7 +40,7 @@ function Categories() {
         <CategoryEditModal
           category={editingCategory}
           onClose={() => {
-            setEditingCategory(undefined)
+            setEditingCategory(undefined);
           }}
         />
         <CategoryDeleteDialog
@@ -50,10 +48,7 @@ function Categories() {
           onClose={() => setDeletingCategory(undefined)}
         />
         <div>
-          <CategoryAddModal
-            isOpenAdd={isOpenAdd}
-            setIsOpenAdd={setIsOpenAdd}
-          />
+          <CategoryAddModal isOpenAdd={isOpenAdd} setIsOpenAdd={setIsOpenAdd} />
           <IconButton
             sx={{
               "&:hover": {
@@ -78,7 +73,7 @@ function Categories() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {categories.map((category:Category) => (
+            {categories.map((category: Category) => (
               <Grid item key={category.id} xs={12}>
                 <CategoryCard
                   category={category}
@@ -88,6 +83,7 @@ function Categories() {
               </Grid>
             ))}
           </Grid>
+          {}
         </div>
         <MyFooter />
       </main>

@@ -15,6 +15,7 @@ export default function CardSkeletonComponent() {
           marginLeft: 5,
           marginRight: 5,
         }}
+        data-testid="skeleton-component"
       />
     </Grid>
   );

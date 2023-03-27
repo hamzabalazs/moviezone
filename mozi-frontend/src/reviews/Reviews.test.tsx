@@ -8,44 +8,44 @@ import Reviews from "./Reviews";
 import { GET_REVIEWS } from "./useReviewsData";
 
 const mockReviewData = [
-{
-  request:{
-    query: GET_REVIEWS,
-    variables:{
-      input:{
-        user_id:"idU1",
-        limit:3,
-        offset:0
-      },
-      input2:{
-        user_id:"idU1",
-        movie_id:""
-      }
-    }
-  },
-  result: {
-    data: {
-      getReviewsOfUser: [
-        {
-          id: "idR3",
-          rating: "3",
-          description: "Good!",
-          movie: {
-            id: "idM2",
-          },
-          user: {
-            id: "idU1",
-            first_name: "user1",
-            last_name: "user1",
-          },
+  {
+    request: {
+      query: GET_REVIEWS,
+      variables: {
+        input: {
+          user_id: "idU1",
+          limit: 3,
+          offset: 0,
         },
-      ],
-      getNumberOfReviewsOfUser:{
-        totalCount:1
+        input2: {
+          user_id: "idU1",
+          movie_id: "",
+        },
+      },
+    },
+    result: {
+      data: {
+        getReviewsOfUser: [
+          {
+            id: "idR3",
+            rating: "3",
+            description: "Good!",
+            movie: {
+              id: "idM2",
+            },
+            user: {
+              id: "idU1",
+              first_name: "user1",
+              last_name: "user1",
+            },
+          },
+        ],
+        getNumberOfReviewsOfUser: {
+          totalCount: 1,
+        },
       },
     },
   },
-}
 ];
 
 function renderReviews(currUser?: CurrentUser) {
@@ -69,12 +69,22 @@ const viewerUser: CurrentUser = {
   token: "token1",
 };
 
+test("Loading skeleton appears as placeholder", async () => {
+  renderReviews(viewerUser);
+
+  const skeleton = screen.getAllByTestId("skeleton-component");
+  expect(skeleton).toBeTruthy();
+  expect(skeleton[0]).toBeInTheDocument();
+  expect(skeleton).toHaveLength(3);
+
+  const cards = await screen.findAllByTestId("review-card");
+  expect(skeleton[0]).not.toBeInTheDocument();
+});
+
 test("correct amount of reviews show up for user", async () => {
   renderReviews(viewerUser);
-  await waitFor(() => {
-    const cards = screen.getAllByTestId("review-card");
-    expect(cards).toHaveLength(1);
-  });
+  const cards = await screen.findAllByTestId("review-card");
+  expect(cards).toHaveLength(1);
 });
 
 test("review edit modal opens and shows correctly", async () => {

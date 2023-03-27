@@ -12,34 +12,33 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Categories from "./Categories";
 import { GET_CATEGORIES } from "./useCategoriesData";
 
-
 const mockCategoryData = {
-  request:{
-    query:GET_CATEGORIES
+  request: {
+    query: GET_CATEGORIES,
   },
-  result:{
-    data:{
-      getCategories:[
+  result: {
+    data: {
+      getCategories: [
         {
-          id:"idC1",
-          name:"name1"
+          id: "idC1",
+          name: "name1",
         },
         {
-          id:"idC2",
-          name:"name2"
+          id: "idC2",
+          name: "name2",
         },
         {
-          id:"idC3",
-          name:"name3"
+          id: "idC3",
+          name: "name3",
         },
         {
-          id:"idC4",
-          name:"name4"
+          id: "idC4",
+          name: "name4",
         },
-      ]
-    }
-  }
-}
+      ],
+    },
+  },
+};
 
 function renderCategories() {
   return render(
@@ -53,29 +52,30 @@ function renderCategories() {
   );
 }
 
-test("LoadingComponent should show while loading, after loading should not show",async() => {
-  const {queryByTestId} = renderCategories()
+test("LoadingComponent should show while loading, after loading should not show", async () => {
+  const { queryByTestId } = renderCategories();
 
-  const loader = queryByTestId("loader")
-  expect(loader).toBeInTheDocument()
+  const loader = queryByTestId("loader");
+  expect(loader).toBeInTheDocument();
 
   await waitFor(() => {
-    expect(loader).not.toBeInTheDocument()
-  })
-})
+    expect(loader).not.toBeInTheDocument();
+  });
+});
 
-
-test("Should have same amount of cards as categories", async() => {
+test("Should have same amount of cards as categories", async () => {
   renderCategories();
 
   const cards = await screen.findAllByTestId("category-card");
   expect(cards).toHaveLength(4);
 });
 
-test("category edit modal opens and shows correctly", async() => {
+test("category edit modal opens and shows correctly", async () => {
   renderCategories();
 
-  const cardEditButtons = await screen.findAllByRole("button", { name: "Edit" });
+  const cardEditButtons = await screen.findAllByRole("button", {
+    name: "Edit",
+  });
 
   userEvent.click(cardEditButtons[0]);
   const cardEditModal = screen.getByTestId("category-edit-modal");
@@ -86,9 +86,11 @@ test("category edit modal opens and shows correctly", async() => {
   expect(cardEditModalButton).toBeInTheDocument();
 });
 
-test("category delete dialog opens and shows correctly", async() => {
+test("category delete dialog opens and shows correctly", async () => {
   renderCategories();
-  const cardDeleteButtons = await screen.findAllByRole("button", { name: "Delete" });
+  const cardDeleteButtons = await screen.findAllByRole("button", {
+    name: "Delete",
+  });
 
   userEvent.click(cardDeleteButtons[0]);
   const cardDeleteDialog = screen.getByTestId("category-delete-dialog");
@@ -99,7 +101,7 @@ test("category delete dialog opens and shows correctly", async() => {
   expect(cardDeleteDialogQuit).toBeInTheDocument();
 });
 
-test("category add modal opens and shows correctly", async() => {
+test("category add modal opens and shows correctly", async () => {
   renderCategories();
 
   const cardAddButton = await screen.findByTestId("category-add-button");

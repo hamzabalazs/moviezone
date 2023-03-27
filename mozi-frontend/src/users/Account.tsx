@@ -12,6 +12,7 @@ import { FullUser, UserRole } from "../gql/graphql";
 import UserDeleteDialog from "./UserDeleteDialog";
 import UserEditModal from "./UserEditModal";
 import UserCard from "./UserCard";
+import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
 
 
 function Account() {
@@ -41,10 +42,7 @@ function Account() {
     if(!context.user && fullUsersLoading){
       context.logOut()
     }
-  }, [fullUsers]);
-
-  if (fullUsersLoading) return LoadingComponent(fullUsersLoading);
-  
+  }, [fullUsers]);  
 
   return (
     <>
@@ -83,6 +81,11 @@ function Account() {
               )}
             </Grid>
           </Grid>
+          {fullUsersLoading && (
+            <Grid container spacing={4} sx={{marginTop:0}}>
+              <CardSkeletonComponent />
+            </Grid>
+          )}
         </div>
         <MyFooter />
       </main>

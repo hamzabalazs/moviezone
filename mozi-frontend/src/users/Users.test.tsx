@@ -107,6 +107,18 @@ function renderUsers(currUser?: CurrentUser) {
   );
 }
 
+test("Loading skeleton appears as placeholder", async() => {
+  renderUsers(adminUser)
+
+  const skeleton = screen.getAllByTestId("skeleton-component")
+  expect(skeleton).toBeTruthy()
+  expect(skeleton[0]).toBeInTheDocument()
+  expect(skeleton).toHaveLength(3)
+
+  const cards = await screen.findAllByTestId("user-card")
+  expect(skeleton[0]).not.toBeInTheDocument()
+})
+
 test("Should show correct amount of cards", async() => {
   const {findAllByTestId} = renderUsers(adminUser);
   const cards = await findAllByTestId("user-card");

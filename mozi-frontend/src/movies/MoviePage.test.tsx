@@ -140,6 +140,18 @@ function renderMoviePage(currUser?: CurrentUser) {
   );
 }
 
+test("Loading skeleton appears as placeholder for reviews of movie", async() => {
+  renderMoviePage(adminUser)
+
+  const skeleton = await screen.findAllByTestId("skeleton-component")
+  expect(skeleton).toBeTruthy()
+  expect(skeleton[0]).toBeInTheDocument()
+  expect(skeleton).toHaveLength(3)
+
+  const cards = await screen.findAllByTestId("review-card")
+  expect(skeleton[0]).not.toBeInTheDocument()
+})
+
 test("Should not have edit and delete button on moviecard if current user is viewer", async () => {
   renderMoviePage(viewerUser);
   const card = await screen.findByTestId("moviepage-card");

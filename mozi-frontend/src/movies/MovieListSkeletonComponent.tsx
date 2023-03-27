@@ -14,6 +14,7 @@ export default function MovieListSkeletonComponent(){
                 border: 3,
                 borderRadius: 2,
               }}
+              data-testId="movie-skeleton-component"
             />
           </Grid>
     )
