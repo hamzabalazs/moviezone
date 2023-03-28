@@ -104,11 +104,39 @@ export function useMovie(): MovieData {
       update: (cache, { data }) => {
         const pageData = client.readQuery({
           query: GET_HOME_PAGE_DATA,
+          variables:{
+            input:{
+              limit:100,
+              category:[],
+              searchField:"",
+              offset:0,
+              orderByTitle:null,
+              orderByCategory:null
+            },
+            input2:{
+              category:[],
+              searchField:""
+            }
+          }
         });
         if (!pageData) return;
         if (!data) return;
         cache.writeQuery({
           query: GET_HOME_PAGE_DATA,
+          variables:{
+            input:{
+              limit:100,
+              category:[],
+              searchField:"",
+              offset:0,
+              orderByTitle:null,
+              orderByCategory:null
+            },
+            input2:{
+              category:[],
+              searchField:""
+            }
+          },
           data: {
             ...pageData.getCategories,
             getMovies: [...pageData.getMovies, data.createMovie],
@@ -184,11 +212,39 @@ export function useMovie(): MovieData {
       update: (cache, { data }) => {
         const pageData = client.readQuery({
           query: GET_HOME_PAGE_DATA,
+          variables:{
+            input:{
+              limit:100,
+              category:[],
+              searchField:"",
+              offset:0,
+              orderByTitle:null,
+              orderByCategory:null
+            },
+            input2:{
+              category:[],
+              searchField:""
+            }
+          }
         });
         if (!pageData) return;
         if (!data) return;
         cache.writeQuery({
           query: GET_HOME_PAGE_DATA,
+          variables:{
+            input:{
+              limit:100,
+              category:[],
+              searchField:"",
+              offset:0,
+              orderByTitle:null,
+              orderByCategory:null
+            },
+            input2:{
+              category:[],
+              searchField:""
+            }
+          },
           data: {
             ...pageData.getCategories,
             getMovies: pageData.getMovies.filter(

@@ -128,6 +128,7 @@ function MovieList() {
         <Grid container spacing={2}>
           <Grid item key={1} xs={12} sm={12} md={12}>
             <TextField
+              type={"search"}
               id="searchValue"
               name="searchValue"
               placeholder="Search.."
