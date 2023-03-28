@@ -45,7 +45,7 @@ export function useUserData(offset?: number, limit?: number): UsersData {
     notifyOnNetworkStatusChange: true,
   });
   return {
-    users: data?.getFullUsers || [],
+    users: data?.getUsers || [],
     totalCount: data?.getNumberOfUsers.totalCount || 0,
     loading,
     error,
