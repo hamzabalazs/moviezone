@@ -22,7 +22,7 @@ export function Users() {
     undefined
   );
   let currentLength = 0;
-  const { fullUsers, fullUsersLoading, totalCount,usersError,fullUsersError,fetchMore } = useUserData();
+  const { fullUsers, fullUsersLoading, totalCount,fetchMore } = useUserData();
 
   useBottomScrollListener(() => { 
     currentLength += fullUsers.length

@@ -28,6 +28,7 @@ import Register from "./users/Register";
 import Forgotpass from "./users/Forgotpass";
 import { Users } from "./users/Users";
 import Account from "./users/Account";
+import { offsetLimitPagination } from "@apollo/client/utilities";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -48,14 +49,33 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const eqSet = (xs: any, ys: any) => {
-  if(xs.size === ys.size){
-    return [...xs].every((x) => ys.has(x))
-  }
-  else return [...ys].every((x) => xs.has(x))
-}
-  
+  if (xs.size === ys.size) {
+    return [...xs].every((x) => ys.has(x));
+  } else return [...ys].every((x) => xs.has(x));
+};
+
+const eqMovieListSet = (xs: any, ys: any) => {
+  const isEqual = [...ys].find((x) => xs.has(x));
+  if (isEqual === undefined) return true;
+  return false;
+};
 
 const eqMovieIdSet = (xs: any, ys: any) => [...xs].every((x) => ys.has(x));
+
+const isOrderedAsc = (set: any) => {
+  const unordered = [...set];
+  const ordered = [...set].sort();
+  if (JSON.stringify(unordered) === JSON.stringify(ordered)) return true;
+  return false;
+};
+
+const isOrderedDesc = (set: any) => {
+  const unordered = [...set];
+  const ordered = [...set].sort();
+  ordered.reverse();
+  if (JSON.stringify(unordered) === JSON.stringify(ordered)) return true;
+  return false;
+};
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
@@ -63,6 +83,47 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
+          getMovies: {
+            keyArgs: ["orderByTitle,orderByCategory"],
+            merge(existing: any[], incoming: any[], { args, readField }) {
+              if (incoming.length === 0) return [];
+              if (!args) return [];
+              const merged = existing ? existing.slice(0) : [];
+              const existingIdSet = new Set(
+                merged.map((movie) => readField("id", movie))
+              );
+              const incomingIdSet = new Set(
+                incoming.map((movie) => readField("id", movie))
+              );
+              if (!eqMovieListSet(existingIdSet, incomingIdSet)) {
+                return [...incoming];
+              }
+              const existingTitleSort = new Set(
+                merged.map((movie) => readField("title", movie))
+              );
+              const existingCategorySort = new Set(
+                merged.map((movie) =>
+                  readField("id", readField("category", movie))
+                )
+              );
+              if (args.input.orderByTitle !== undefined) {
+                if (args.input.orderByTitle === true) {
+                  if (!isOrderedAsc(existingTitleSort)) return [...incoming];
+                } else if (args.input.orderByTitle === false) {
+                  if (!isOrderedDesc(existingTitleSort)) return [...incoming];
+                }
+              }
+              if (args.input.orderByCategory !== undefined) {
+                if (args.input.orderByCategory === true) {
+                  if (!isOrderedAsc(existingCategorySort)) return [...incoming];
+                }
+                else if(args.input.orderByCategory === false){
+                  if(!isOrderedDesc(existingCategorySort)) return [...incoming]
+                }
+              }
+              return [...merged, ...incoming];
+            },
+          },
           getFullUsers: {
             keyArgs: ["id"],
             merge(existing: any[], incoming: any[], { readField }) {
@@ -119,10 +180,14 @@ const client = new ApolloClient({
                 incoming.map((review) => readField("id", review))
               );
               const existingMovieIdSet = new Set(
-                merged.map((review) => readField("id", readField("movie",review)))
+                merged.map((review) =>
+                  readField("id", readField("movie", review))
+                )
               );
               const incomingMovieIdSet = new Set(
-                incoming.map((review) => readField("id", readField("movie",review)))
+                incoming.map((review) =>
+                  readField("id", readField("movie", review))
+                )
               );
               if (!eqMovieIdSet(existingMovieIdSet, incomingMovieIdSet)) {
                 return [...incoming];

@@ -28,24 +28,39 @@ function MovieList() {
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [inputValueCategory, setInputValueCategory] = useState("");
   const [searchValue, setSearchValue] = useState<string>("");
-  const [movieList, setMovieList] = useState<Movie[]>([]);
-  const [offset, setOffset] = useState<number>(0);
   const [orderTitle, setOrderTitle] = useState<boolean | null>(null);
   const [orderCategory, setOrderCategory] = useState<boolean | null>(
     null
   );
-
-  const { movies, categories, loading, totalCount } = useHomePageData(
-    offset,
+  let currentLength = 0;
+  const { movies, categories, loading, totalCount,fetchMore } = useHomePageData(
     categoryFilter,
     orderTitle,
     orderCategory,
-    searchValue
+    searchValue,
   );
 
   useBottomScrollListener(() => {
-    if (totalCount - offset > 9) setOffset(offset + 9);
-    return;
+    currentLength += movies.length
+    console.log("totalcount",totalCount)
+    console.log("currentlength",currentLength)
+    if(currentLength >= totalCount) return;
+    fetchMore({
+      variables:{
+        input:{
+          limit:9,
+          category:categoryFilter,
+          searchField:searchValue,
+          offset: currentLength,
+          orderByTitle: orderTitle,
+          orderByCategory: orderCategory
+        },
+        input2:{
+          category: categoryFilter,
+          searchField: searchValue
+        }
+      }
+    })
   });
 
   useEffect(() => {
@@ -58,9 +73,6 @@ function MovieList() {
 
   useEffect(() => {
     if (!loading) {
-      let list: Movie[] = [];
-      list.push(...movies);
-      setMovieList([...movieList, ...list]);
       if (categoryListForAutocomplete.length === 0 && categories !== undefined) {
         categories.forEach((category: Category) => {
           categoryListForAutocomplete.push(category.name);
@@ -70,10 +82,7 @@ function MovieList() {
     }
   }, [loading]);
 
-  useEffect(() => {
-    setMovieList([]);
-    setOffset(0);
-  }, [selectedCategoryId, searchValue,orderCategory,orderTitle]);
+
 
   const search = (value: string) => {
     setSearchValue(value);
@@ -180,7 +189,7 @@ function MovieList() {
         </Grid>
       </div>
       <Grid container spacing={2}>
-        {movieList.map((movie: Movie) => (
+        {movies.map((movie: Movie) => (
           <Grid item key={movie.id} xs={12} sm={6} md={4}>
             <MovieListCard movie={movie} />
           </Grid>

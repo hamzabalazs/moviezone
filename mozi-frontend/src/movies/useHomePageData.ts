@@ -7,6 +7,7 @@ type HomePageData = {
   totalCount: number;
   loading: boolean;
   error: ApolloError | undefined;
+  fetchMore:any
 };
 
 export const GET_HOME_PAGE_DATA = gql`
@@ -34,21 +35,22 @@ export const GET_HOME_PAGE_DATA = gql`
 `;
 
 export function useHomePageData(
-  offset: number,
   category: string[],
   orderByTitle:boolean|null,
   orderByCategory:boolean|null,
   searchField?: string,
+  offset?: number,
+  limit?: number
 ): HomePageData {
-  const { data, error, loading } = useQuery<GetHomePageDataQuery>(
+  const { data, error, loading,fetchMore } = useQuery<GetHomePageDataQuery>(
     GET_HOME_PAGE_DATA,
     {
       variables: {
         input: {
-          limit: 9,
+          limit: limit || 9,
           category,
           searchField,
-          offset,
+          offset: offset || 0,
           orderByTitle,
           orderByCategory
         },
@@ -58,6 +60,7 @@ export function useHomePageData(
         }
       },
       fetchPolicy: "network-only",
+      notifyOnNetworkStatusChange:true
     }
   );
   return {
@@ -66,5 +69,6 @@ export function useHomePageData(
     totalCount: data?.getNumberOfMovies.totalCount || 0,
     error,
     loading,
+    fetchMore
   };
 }
