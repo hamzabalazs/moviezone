@@ -95,35 +95,6 @@ export const editReview2 = {
       id: "idC2",
       name: "name2",
     },
-    reviews:[
-      {
-        id:"idR1",
-        rating:"3",
-        description:"Looked better edit2",
-        movie:{
-          id:"idM1"
-        },
-        user:{
-          id:"idU1",
-          first_name:"Test",
-          last_name:"User1"
-        }
-      },
-      {
-        id:"idR4",
-        rating:"5",
-        description:"Best",
-        movie:{
-          id:"idM1"
-        },
-        user:{
-          id:"idU2",
-          first_name:"Test",
-          last_name:"User2"
-        }
-      }
-    ]
-    
   },
   user: {
     id: "idU1",
@@ -148,36 +119,7 @@ export const editExtendedReview2 = {
     category: {
       id: "idC2",
       name: "name2",
-    },
-    reviews:[
-      {
-        id:"idR1",
-        rating:"3",
-        description:"Looked better edit2",
-        movie:{
-          id:"idM1"
-        },
-        user:{
-          id:"idU1",
-          first_name:"Test",
-          last_name:"User1"
-        }
-      },
-      {
-        id:"idR4",
-        rating:"5",
-        description:"Best",
-        movie:{
-          id:"idM1"
-        },
-        user:{
-          id:"idU2",
-          first_name:"Test",
-          last_name:"User2"
-        }
-      }
-    ]
-    
+    },  
   },
   user: {
     id: "idU1",
@@ -203,21 +145,6 @@ export const deleteReview2 = {
       name: "name1",
     },
     rating:"4",
-    reviews: [
-      {
-        id:"idR6",
-        rating:"4",
-        description:"IT WAS PERFECT",
-        movie:{
-          id:"idM3"
-        },
-        user:{
-          id:"idU4",
-          first_name:"Test",
-          last_name:"User4"
-        }
-      }
-    ]
   },
 
   user: {
@@ -244,21 +171,6 @@ export const deleteReview = {
       name: "name1",
     },
     rating:"1",
-    reviews:[
-      {
-        id:"idR3",
-        rating:"1",
-        description:"Didnt like",
-        movie:{
-          id:"idM2"
-        },
-        user:{
-          id:"idU2",
-          first_name:"Test",
-          last_name:"User2"
-        }
-      }
-    ]
   },
   user: {
     id: "idU1",

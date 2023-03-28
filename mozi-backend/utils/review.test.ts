@@ -356,7 +356,7 @@ test("Should not delete review if user does not own said review", async () => {
     },
   });
   expect(result.errors?.[0]?.message).toEqual(UNAUTHORIZED_MESSAGE);
-  expect(result.data!.deleteReview).toBeNull();
+  expect(result.data).toBeNull();
 });
 
 test("Should not delete review if no token is provided", async () => {
@@ -370,7 +370,7 @@ test("Should not delete review if no token is provided", async () => {
     },
   });
   expect(result.errors?.[0]?.message).toEqual(NO_TOKEN_MESSAGE);
-  expect(result.data!.deleteReview).toBeNull();
+  expect(result.data).toBeNull();
 });
 
 test("Should not delete review if user session has expired", async () => {
@@ -384,7 +384,7 @@ test("Should not delete review if user session has expired", async () => {
     },
   });
   expect(result.errors?.[0]?.message).toEqual(EXPIRED_TOKEN_MESSAGE);
-  expect(result.data!.deleteReview).toBeNull();
+  expect(result.data).toBeNull();
 });
 
 test("Should not delete review if review does not exist ( bad ID )", async () => {
@@ -398,7 +398,7 @@ test("Should not delete review if review does not exist ( bad ID )", async () =>
     },
   });
   expect(result.errors?.[0]?.message).toEqual(NO_REVIEW_MESSAGE);
-  expect(result.data!.deleteReview).toBeNull();
+  expect(result.data).toBeNull();
 });
 
 test("Should delete review if user does own said review", async () => {

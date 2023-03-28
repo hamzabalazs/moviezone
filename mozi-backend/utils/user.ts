@@ -9,12 +9,7 @@ import { userSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { User, FullUser, CurrentUser } from "./types";
 
-export function getUsers(context: MyContext): Promise<User[]> {
-  const sql = "SELECT id,first_name,last_name,email,role FROM user";
-  return context.db.all<User>(sql, []);
-}
-
-export function getFullUsers(input:any,context:MyContext): Promise<FullUser[]>{
+export function getUsers(input:any,context:MyContext): Promise<FullUser[]>{
   let sql = `SELECT * from user`
   let params = []
   let offsetString = ""

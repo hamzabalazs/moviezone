@@ -71,18 +71,6 @@ export async function getMovieById(id:string, context:MyContext):Promise<Movie|n
   return result
 }
 
-export function getMoviesByCategoryId(id:string,context:MyContext): Promise<Movie[]> {
-  const sql = "SELECT * FROM movie WHERE category_id = ?";
-  return context.db.all<Movie>(sql,[id])
-}
-
-export async function getMovieWithReviewsById(id:string,context:MyContext): Promise<MovieWithReviews | null>{
-  const sql = `SELECT * FROM movie WHERE id = ?`
-  const result = await context.db.get<MovieWithReviews>(sql,[id])
-  if(result === undefined) return null
-  return result
-}
-
 export async function createMovie(movie:CreateMovieType, context:MyContext):Promise<Movie|null> {
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const validation = await createMovieSchema.isValid(movie);

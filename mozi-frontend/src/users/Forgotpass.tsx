@@ -16,7 +16,7 @@ import { useSnackbar } from 'notistack'
 import { useSessionContext } from "../auth/SessionContext";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
-import { User } from "../gql/graphql";
+import { FullUser, User } from "../gql/graphql";
 
 interface Values {
   email: string;
@@ -27,7 +27,7 @@ function Forgotpass() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar()
-  const {users,usersLoading} = useUserData()
+  const {users,loading} = useUserData()
 
 
   useEffect(() => {
@@ -42,7 +42,7 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const isUser = users.find((x:User) => x.email === email);
+      const isUser = users.find((x:FullUser) => x.email === email);
       if (!isUser) {
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
@@ -63,7 +63,7 @@ function Forgotpass() {
     },
   });
 
-  if(usersLoading) return LoadingComponent(usersLoading)
+  if(loading) return LoadingComponent(loading)
   return (
     <>
       <Container component="main" maxWidth="xs">

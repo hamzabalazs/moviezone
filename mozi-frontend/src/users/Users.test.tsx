@@ -5,41 +5,9 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import { Users } from "./Users";
-import { GET_FULL_USERS, GET_USERS } from "./useUserData";
+import { GET_FULL_USERS } from "./useUserData";
 
 const mockUserData = [
-{
-  request: {
-    query: GET_USERS,
-  },
-  result: {
-    data: {
-      getUsers: [
-        {
-          id:"idU1",
-          first_name:"admin",
-          last_name:"admin",
-          email:"admin@example.com",
-          role:UserRole["Admin"],
-        },
-        {
-          id:"idU2",
-          first_name:"user2",
-          last_name:"user2",
-          email:"user2@example.com",
-          role:UserRole["Viewer"],
-        },
-        {
-          id:"idU3",
-          first_name:"user3",
-          last_name:"user3",
-          email:"user3@example.com",
-          role:UserRole["Viewer"],
-        },
-      ],
-    },
-  },
-},
 {
   request: {
     query: GET_FULL_USERS,

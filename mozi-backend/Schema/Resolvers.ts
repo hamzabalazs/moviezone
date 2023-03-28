@@ -4,11 +4,10 @@ import {
   createUser,
   deleteUser,
   updateUser,
-  getUsers,
   checkForUser,
   getUserById,
   getUserByToken,
-  getFullUsers,
+  getUsers,
   getNumberOfUsers,
 } from "../utils/user";
 import {
@@ -17,8 +16,6 @@ import {
   deleteMovie,
   updateMovie,
   createMovie,
-  getMoviesByCategoryId,
-  getMovieWithReviewsById,
   getNumberOfMovies,
 } from "../utils/movie";
 import {
@@ -27,8 +24,6 @@ import {
   deleteReview,
   updateReview,
   createReview,
-  getExtendedReviews,
-  getDisplayReviews,
   getReviewsOfMovie,
   getReviewsOfUser,
   getNumberOfReviewsOfUser,
@@ -72,11 +67,8 @@ import { GraphQLError } from "graphql";
 export const resolvers = {
   Query: {
     // Users
-    async getUsers(_: any, __: any, context: MyContext) {
-      return await getUsers(context);
-    },
-    async getFullUsers(_: any, {input}: any, context: MyContext) {
-      return await getFullUsers(input,context);
+    async getUsers(_: any, {input}: any, context: MyContext) {
+      return await getUsers(input,context);
     },
     async getNumberOfUsers(_: any, __: any, context: MyContext) {
       return await getNumberOfUsers(context);
@@ -107,14 +99,8 @@ export const resolvers = {
     async getReviews(_: any, __: any, context: MyContext) {
       return await getReviews(context);
     },
-    async getDisplayReviews(_: any, {input}: any, context: MyContext) {
-      return await getDisplayReviews(input,context);
-    },
     async getReviewById(_: any, { input }: any, context: MyContext) {
       return await getReviewById(input.id, context);
-    },
-    async getExtendedReviews(_: any, __: any, context: MyContext) {
-      return await getExtendedReviews(context);
     },
     async getNumberOfReviewsOfUser(_:any,{input}:any,context:MyContext){
       return await getNumberOfReviewsOfUser(input.user_id,context)
@@ -139,12 +125,6 @@ export const resolvers = {
     async getMovieById(_: any, { input }: any, context: MyContext) {
       return await getMovieById(input.id, context);
     },
-    async getMoviesByCategoryId(_: any, { input }: any, context: MyContext) {
-      return await getMoviesByCategoryId(input.category_id, context);
-    },
-    async getMovieWithReviewsById(_: any, { input }: any, context: MyContext) {
-      return await getMovieWithReviewsById(input.id, context);
-    },
     // Authentication
     async getToken(_: any, __: any, context: MyContext) {
       const user = await getUserByToken(context);
@@ -159,14 +139,6 @@ export const resolvers = {
   Review: {
     async movie(review: any, __: any, context: MyContext) {
       return await getMovieById(review.movie_id, context);
-    },
-    async user(review: any, __: any, context: MyContext) {
-      return await getUserById(review.user_id, context);
-    },
-  },
-  ExtendedReview: {
-    async movie(review: any, __: any, context: MyContext) {
-      return await getMovieWithReviewsById(review.movie_id, context);
     },
     async user(review: any, __: any, context: MyContext) {
       return await getUserById(review.user_id, context);
@@ -190,39 +162,6 @@ export const resolvers = {
     },
     async category(movie: any, __: any, context: MyContext) {
       return await getCategoryById(movie.category_id, context);
-    },
-  },
-  MovieWithReviews: {
-    async rating(movie: MovieWithReviews, __: any, context: MyContext) {
-      const reviews = await getReviews(context);
-      let avg = 0;
-      let length = 0;
-      reviews.map((x: any) => {
-        if (x.movie_id === movie.id) {
-          avg += parseInt(x.rating);
-          length++;
-        }
-      });
-      if (avg !== 0) {
-        avg /= length;
-        return avg.toString();
-      } else return 0;
-    },
-    async category(movie: any, __: any, context: MyContext) {
-      return await getCategoryById(movie.category_id, context);
-    },
-    async reviews(movie: MovieWithReviews, __: any, context: MyContext) {
-      const reviews = await getReviews(context);
-      const movieReviews = reviews.filter((x: any) => x.movie_id === movie.id);
-      return movieReviews;
-    },
-  },
-  ReviewListReview: {
-    async movie(review: any, __: any, context: MyContext) {
-      return await getMovieById(review.movie_id, context);
-    },
-    async user(review: any, __: any, context: MyContext) {
-      return await getUserById(review.user_id, context);
     },
   },
 

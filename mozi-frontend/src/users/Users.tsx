@@ -22,12 +22,10 @@ export function Users() {
     undefined
   );
   let currentLength = 0;
-  const { fullUsers, fullUsersLoading, totalCount,fetchMore } = useUserData();
+  const { users, loading, totalCount,fetchMore } = useUserData();
 
   useBottomScrollListener(() => { 
-    currentLength += fullUsers.length
-    console.log("totalcount",totalCount)
-    console.log("currentlength",currentLength)
+    currentLength += users.length
     if(currentLength >= totalCount) return;
     fetchMore({
       variables:{
@@ -65,7 +63,7 @@ export function Users() {
         </div>
         <div>
           <Grid container spacing={4}>
-            {fullUsers.map((user: FullUser) => (
+            {users.map((user: FullUser) => (
               <Grid item key={user.id} xs={12}>
                 <UserCard
                   user={user}
@@ -75,7 +73,7 @@ export function Users() {
               </Grid>
             ))}
           </Grid>
-          {fullUsersLoading && (
+          {loading && (
             <Grid container spacing={4} sx={{marginTop:0}}>
               <CardSkeletonComponent />
               <CardSkeletonComponent />

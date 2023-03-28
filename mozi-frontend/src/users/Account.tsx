@@ -18,7 +18,7 @@ function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const [fullUsersList,setFullUsersList] = useState<FullUser[]>([])
-  const {fullUsers,fullUsersLoading} = useUserData()
+  const {users,loading} = useUserData()
   const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);
 
@@ -32,17 +32,17 @@ function Account() {
   });
 
   useEffect(() => {
-    if (context.user && !fullUsersLoading) {
-      const displayUser = fullUsers.find((x:FullUser) => x.id === context.user?.id);
+    if (context.user && !loading) {
+      const displayUser = users.find((x:FullUser) => x.id === context.user?.id);
       if (displayUser) {
         setUser(displayUser);
       }else context.logOut()
       
     }
-    if(!context.user && fullUsersLoading){
+    if(!context.user && loading){
       context.logOut()
     }
-  }, [fullUsers]);  
+  }, [users]);  
 
   return (
     <>
@@ -72,7 +72,7 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {fullUsers.find((x:FullUser) => x.id === context.user?.id) && (
+              {users.find((x:FullUser) => x.id === context.user?.id) && (
                 <UserCard
                   user={user}
                   onEdit={() => setEditingUser(user)}
@@ -81,7 +81,7 @@ function Account() {
               )}
             </Grid>
           </Grid>
-          {fullUsersLoading && (
+          {loading && (
             <Grid container spacing={4} sx={{marginTop:0}}>
               <CardSkeletonComponent />
             </Grid>

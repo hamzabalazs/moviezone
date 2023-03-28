@@ -29,8 +29,6 @@ export default function MoviePage() {
   useBottomScrollListener(() => {
     if (!loading) {
       currentLength += reviews.length;
-      console.log("totalcount", totalCount);
-      console.log("currentlength", currentLength);
       if (currentLength >= totalCount) return;
       fetchMore({
         variables: {

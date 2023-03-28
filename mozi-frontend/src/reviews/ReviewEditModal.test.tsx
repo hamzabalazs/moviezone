@@ -6,7 +6,7 @@ import { act } from "react-dom/test-utils";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import ReviewEditModal from "./ReviewEditModal";
 import { SnackbarProvider } from "notistack";
-import {Review, ReviewListReview, UserRole} from "../gql/graphql";
+import {Review, UserRole} from "../gql/graphql";
 import { UPDATE_REVIEW } from "./useReview";
 
 const testReview:Review = {

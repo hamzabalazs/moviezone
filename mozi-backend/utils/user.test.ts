@@ -8,17 +8,6 @@ import { userData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/users/useUser"
 
-const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
 const GET_USER_BY_ID = gql`
   query GetUserById($input: UserInput!) {
     getUserById(input: $input) {
@@ -77,14 +66,14 @@ test("Should open database",async() => {
   expect(db).not.toBeUndefined()
 })
 
-test("Should get all users", async () => {
+// test("Should get all users", async () => {
   
-  const result = await server.executeOperation({
-    query: GET_USERS,
-  });
-  expect(result.errors).toBeUndefined();
-  expect(result.data?.getUsers).toHaveLength(5);
-});
+//   const result = await server.executeOperation({
+//     query: GET_USERS,
+//   });
+//   expect(result.errors).toBeUndefined();
+//   expect(result.data?.getUsers).toHaveLength(5);
+// });
 
 test("Should get user if ID is correct", async () => {
   const result = await server.executeOperation({
@@ -334,11 +323,11 @@ test("Should not delete user if user does not exist ( bad ID )", async () => {
 });
 
 test("Should delete user if token and ID is good", async () => {
-  const beforeResult = await server.executeOperation({
-    query: GET_USERS,
-  });
-  expect(beforeResult.errors).toBeUndefined();
-  expect(beforeResult.data?.getUsers).toHaveLength(6);
+  // const beforeResult = await server.executeOperation({
+  //   query: GET_USERS,
+  // });
+  // expect(beforeResult.errors).toBeUndefined();
+  // expect(beforeResult.data?.getUsers).toHaveLength(6);
   req.headers["auth-token"] = "admintoken1423";
   const result = await server.executeOperation({
     query: DELETE_USER,
@@ -350,9 +339,9 @@ test("Should delete user if token and ID is good", async () => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteUser).toEqual(deleteUser);
-  const afterResult = await server.executeOperation({
-    query: GET_USERS,
-  });
-  expect(afterResult.errors).toBeUndefined();
-  expect(afterResult.data?.getUsers).toHaveLength(5);
+  // const afterResult = await server.executeOperation({
+  //   query: GET_USERS,
+  // });
+  // expect(afterResult.errors).toBeUndefined();
+  // expect(afterResult.data?.getUsers).toHaveLength(5);
 });

@@ -42,8 +42,6 @@ function MovieList() {
 
   useBottomScrollListener(() => {
     currentLength += movies.length
-    console.log("totalcount",totalCount)
-    console.log("currentlength",currentLength)
     if(currentLength >= totalCount) return;
     fetchMore({
       variables:{

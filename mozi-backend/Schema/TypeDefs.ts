@@ -34,10 +34,6 @@ export const typeDefs = gql`
     token: String
   }
 
-  type Role {
-    role: UserRole!
-  }
-
   type Category {
     id: ID!
     name: String!
@@ -59,53 +55,11 @@ export const typeDefs = gql`
     rating: String!
   }
 
-  type ReviewUser {
-    id: ID!
-    first_name: String!
-    last_name: String!
-  }
-
-  type ReviewMovie {
-    id: String!
-  }
-
-  type ReviewListReview {
-    id: ID!
-    user: ReviewUser!
-    description: String!
-    rating: String!
-    movie: ReviewMovie!
-  }
-
-  type MovieWithReviews {
-    id: ID!
-    title: String!
-    description: String!
-    poster: String!
-    release_date: String!
-    category: Category!
-    rating: String!
-    reviews: [ReviewListReview!]!
-  }
-
-  type MovieTitles {
-    id: ID!
-    title: String!
-  }
-
   type Review {
     id: ID!
     rating: String!
     description: String!
     movie: Movie!
-    user: User!
-  }
-
-  type ExtendedReview {
-    id: ID!
-    rating: String!
-    description: String!
-    movie: MovieWithReviews!
     user: User!
   }
 
@@ -230,11 +184,6 @@ export const typeDefs = gql`
     id: ID!
   }
 
-  input GetReviewsOfUserForMovieInput {
-    user_id: ID!
-    movie_id: ID!
-  }
-
   input LoginInput {
     email: String!
     password: String!
@@ -253,10 +202,6 @@ export const typeDefs = gql`
     role: String!
   }
 
-  input DeleteReviewsOfMovieInput {
-    movie_id: ID!
-  }
-
   input GetReviewsOfMovieInput {
     movie_id: ID!
     limit: Int!
@@ -267,14 +212,6 @@ export const typeDefs = gql`
     user_id: ID!
     limit: Int!
     offset: Int!
-  }
-
-  input DeleteReviewsOfUserInput {
-    user_id: ID!
-  }
-
-  input GetMoviesByCategoryIdInput {
-    category_id: ID!
   }
 
   type Expiry {
@@ -304,12 +241,6 @@ export const typeDefs = gql`
     offset: Int!
   }
 
-  input ReviewPaginationInput {
-    user_id: ID!
-    limit: Int!
-    offset: Int!
-  }
-
   input numOfMoviesInput {
     category: [String!]!
     searchField: String
@@ -334,40 +265,33 @@ export const typeDefs = gql`
 
   # Queries
   type Query {
-    getUsers: [User!]!
-    getFullUsers(input: UserPaginationInput): [FullUser!]!
-    getNumberOfUsers: numOfUsers!
+    getUsers(input: UserPaginationInput): [FullUser!]!
     getUserById(input: UserInput!): User
     getUserByToken: CurrentUser!
-    checkForUser(input: UserEmailInput!): User
     getUserForLogin(input: LoginInput!): CurrentUser!
+    checkForUser(input: UserEmailInput!): User
+    getNumberOfUsers: numOfUsers!
     getMovies(input: MoviePaginationInput!): [Movie!]!
-    getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
-    getMovieTitles: [MovieTitles!]!
-    getMoviesByCategoryId(input: GetMoviesByCategoryIdInput!): [Movie!]!
-    getMovieWithReviewsById(input: MovieInput!): MovieWithReviews!
     getMovieById(input: MovieInput!): Movie
+    getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
-    getReviews: [ReviewListReview!]!
-    getDisplayReviews(input: ReviewPaginationInput): [ReviewListReview!]!
-    getExtendedReviews: [ExtendedReview!]!
-    getNumberOfReviewsOfUser(input: numOfReviewsInput!): numOfReviews!
-    getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
+    getReviews: [Review!]!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
+    getNumberOfReviewsOfUser(input: numOfReviewsInput!): numOfReviews!
+    getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
     getToken: Expiry!
   }
 
   # Mutations
   type Mutation {
-    createToken(input: AddTokenInput!): RunResult!
+    logIn(input: LoginInput!): CurrentUser!
     createUser(input: AddUserInput!): User
     updateUser(input: UpdateUserInput!): FullUser!
     deleteUser(input: DeleteUserInput!): FullUser!
-    logIn(input: LoginInput!): CurrentUser!
     createCategory(input: AddCategoryInput!): Category
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
@@ -377,8 +301,7 @@ export const typeDefs = gql`
     createReview(input: AddReviewInput!): Review
     updateReview(input: UpdateReviewInput!): Review
     deleteReview(input: DeleteReviewInput!): Review!
-    deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): RunResult!
-    deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): RunResult!
+    createToken(input: AddTokenInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!
   }
 `;

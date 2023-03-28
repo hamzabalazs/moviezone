@@ -40,22 +40,6 @@ const GET_MOVIES = gql`
     }
   }
 `;
-const GET_MOVIES_BY_CATEGORY = gql`
-  query GetMoviesByCategoryId($input: GetMoviesByCategoryIdInput!) {
-    getMoviesByCategoryId(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
 
 let db: Database;
 let req = {
@@ -96,15 +80,6 @@ test("Should get all movies", async () => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.getMovies).toHaveLength(6);
-});
-
-test("Should get all movies of a given category", async () => {
-  const result = await server.executeOperation({
-    query: GET_MOVIES_BY_CATEGORY,
-    variables: { input: { category_id: categoryData[0].id } },
-  });
-  expect(result.errors).toBeUndefined();
-  expect(result.data?.getMoviesByCategoryId).toHaveLength(3);
 });
 
 test("Should not get movie, if ID is invalid", async () => {

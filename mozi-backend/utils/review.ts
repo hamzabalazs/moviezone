@@ -6,28 +6,11 @@ import {
 } from "../common/errorMessages";
 import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { DbReview, ExtendedReview, Review, ReviewListReview } from "./types";
+import { DbReview, ExtendedReview, Review } from "./types";
 
-export function getReviews(context: MyContext): Promise<ReviewListReview[]> {
+export function getReviews(context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
-  return context.db.all<ReviewListReview>(sql);
-}
-
-export function getDisplayReviews(input:any,context: MyContext): Promise<ReviewListReview[]> {
-  let sql = "SELECT * FROM review WHERE user_id = ?";
-  let params = [input.user_id]
-  sql = sql.concat(` LIMIT ?`)
-  params.push(input.limit)
-  if(input.offset !== 0){
-    sql = sql.concat(` OFFSET ?`)
-    params.push(input.offset)
-  }
-  return context.db.all<ReviewListReview>(sql,params);
-}
-
-export function getExtendedReviews(context:MyContext): Promise<ExtendedReview[]> {
-  const sql = "SELECT * FROM review";
-  return context.db.all<ExtendedReview>(sql);
+  return context.db.all<Review>(sql);
 }
 
 export function getNumberOfReviewsOfUser(user_id:string,context:MyContext): Promise<number | null>{
@@ -67,13 +50,6 @@ export async function getReviewsOfUser(input:any,context:MyContext): Promise<Rev
   return context.db.all<Review>(sql,params)
 }
 
-export async function getExtendedReviewById(id: string, context: MyContext): Promise<ExtendedReview|null> {
-  const sql = `SELECT * FROM review WHERE review.id = ?`;
-  const result = await context.db.get<ExtendedReview>(sql, [id]);
-  if(result === undefined) return null;
-  return result
-}
-
 export async function getReviewForUpdate(
   id: string,
   context: MyContext
@@ -99,7 +75,7 @@ export async function createReview(
     review.movie_id,
     review.user_id,
   ]);
-  return await getExtendedReviewById(review.id,context)
+  return await getReviewById(review.id,context)
 }
 
 export async function updateReview(

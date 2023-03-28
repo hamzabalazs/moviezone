@@ -217,7 +217,6 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
             input3: { user_id: "",movie_id:movie_id },
           },
         });
-        console.log("res",res)
         if (!data || res === undefined) return;
         if(res !== null){
           cache.writeQuery({
@@ -254,7 +253,6 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
             }
           },
         });
-        console.log(reviewData)
         if (!reviewData || !data || !data.deleteReview) return;
         cache.writeQuery({
           query: GET_REVIEWS,
