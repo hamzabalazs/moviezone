@@ -1,5 +1,6 @@
-import { ApolloError, gql, useQuery } from "@apollo/client";
+import { ApolloError, useQuery } from "@apollo/client";
 import { Category, GetCategoriesQuery } from "../gql/graphql";
+import { GET_CATEGORIES } from "./categoryQueries";
 
 
 type CategoriesData = {
@@ -7,19 +8,8 @@ type CategoriesData = {
   loading: boolean;
   error: ApolloError | undefined;
 };
-
-export const GET_CATEGORIES = gql`
-  query GetCategories {
-  getCategories {
-    id
-    name
-  }
-}
-`
-
 export function useCategoriesData():CategoriesData{
     const {data,loading,error} = useQuery<GetCategoriesQuery>(GET_CATEGORIES)
-
     return{
         categories:data?.getCategories || [],
         loading,

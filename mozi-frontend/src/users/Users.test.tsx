@@ -5,12 +5,12 @@ import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import { Users } from "./Users";
-import { GET_FULL_USERS } from "./useUserData";
+import { GET_USERS } from "./userQueries";
 
 const mockUserData = [
 {
   request: {
-    query: GET_FULL_USERS,
+    query: GET_USERS,
     variables:{
       input:{
         limit:3,
@@ -20,7 +20,7 @@ const mockUserData = [
   },
   result: {
     data: {
-      getFullUsers: [
+      getUsers: [
         {
           id:"idU1",
           first_name:"admin",

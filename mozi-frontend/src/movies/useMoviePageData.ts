@@ -1,5 +1,6 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
 import { Movie, Review} from "../gql/graphql";
+import { GET_MOVIE_BY_ID } from "./movieQueries";
 
 type MoviePageData = {
   movie: Movie | null;
@@ -10,53 +11,7 @@ type MoviePageData = {
   fetchMore:any
 };
 
-export const GET_MOVIE_BY_ID = gql`
-  query GetMovies(
-    $input: MovieInput!
-    $input2: GetReviewsOfMovieInput!
-    $input3: numOfReviewsInput!
-  ) {
-    getMovieById(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-    getReviewsOfMovie(input: $input2) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        rating
-        category {
-          id
-          name
-        }
-      }
-      user {
-        id
-        first_name
-        last_name
-        role
-        email
-      }
-    }
-    getNumberOfReviewsOfMovie(input: $input3) {
-        totalCount
-      }
-  }
-`;
+
 
 export function useMoviePageData(
   movie_id: string,

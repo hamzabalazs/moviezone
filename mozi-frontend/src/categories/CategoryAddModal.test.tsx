@@ -12,7 +12,7 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import CategoryAddModal from "./CategoryAddModal";
 import { v4 as uuidv4 } from "uuid";
 import { SnackbarProvider } from "notistack";
-import { CREATE_CATEGORY } from "./useCategory";
+import { CREATE_CATEGORY } from "./categoryQueries";
 const addCategory = {
   name: "ADDED",
 };

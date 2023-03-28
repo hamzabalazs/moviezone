@@ -1,5 +1,6 @@
 import { ApolloError, gql, useQuery } from "@apollo/client";
 import { Category, GetHomePageDataQuery, Movie } from "../gql/graphql";
+import { GET_HOME_PAGE_DATA } from "./movieQueries";
 
 type HomePageData = {
   movies: Movie[];
@@ -10,29 +11,7 @@ type HomePageData = {
   fetchMore:any
 };
 
-export const GET_HOME_PAGE_DATA = gql`
-  query GetHomePageData($input: MoviePaginationInput!,$input2: numOfMoviesInput!) {
-    getCategories {
-      id
-      name
-    }
-    getMovies(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-    getNumberOfMovies(input: $input2) {
-      totalCount
-    }
-  }
-`;
+
 
 export function useHomePageData(
   category: string[],

@@ -1,8 +1,9 @@
-import { ApolloError, gql, useQuery } from "@apollo/client";
+import { ApolloError, useQuery } from "@apollo/client";
 import {
   FullUser,
   GetFullUsersQuery,
 } from "../gql/graphql";
+import { GET_USERS } from "./userQueries";
 
 type UsersData = {
   users: FullUser[];
@@ -12,29 +13,13 @@ type UsersData = {
   fetchMore: any;
 };
 
-export const GET_FULL_USERS = gql`
-  query GetFullUsers($input: UserPaginationInput) {
-    getUsers(input: $input) {
-      id
-      first_name
-      last_name
-      email
-      password
-      role
-    }
-    getNumberOfUsers {
-      totalCount
-    }
-  }
-`;
-
 export function useUserData(offset?: number, limit?: number): UsersData {
   const {
     data,
     loading,
     error,
     fetchMore,
-  } = useQuery<GetFullUsersQuery>(GET_FULL_USERS, {
+  } = useQuery<GetFullUsersQuery>(GET_USERS, {
     variables: {
       input: {
         limit: limit || 3,

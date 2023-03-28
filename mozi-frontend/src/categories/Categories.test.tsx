@@ -10,7 +10,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import Categories from "./Categories";
-import { GET_CATEGORIES } from "./useCategoriesData";
+import { GET_CATEGORIES } from "./categoryQueries";
 
 const mockCategoryData = {
   request: {

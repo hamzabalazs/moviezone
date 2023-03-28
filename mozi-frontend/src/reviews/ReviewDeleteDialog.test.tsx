@@ -6,7 +6,7 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import {Review, UserRole} from "../gql/graphql";
-import { DELETE_REVIEW } from "./useReview";
+import { DELETE_REVIEW } from "./reviewQueries";
 
 const testReview:Review = {
   id: "idC1",

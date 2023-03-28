@@ -2,11 +2,11 @@ import { InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { GET_CATEGORIES } from "../categories/useCategoriesData";
+import { GET_CATEGORIES } from "../categories/categoryQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import MoviePage from "./MoviePage";
-import { GET_MOVIE_BY_ID } from "./useMoviePageData";
+import { GET_MOVIE_BY_ID } from "./movieQueries";
 
 const mockMovieData = [
   {

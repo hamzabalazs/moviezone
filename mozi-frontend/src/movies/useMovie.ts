@@ -5,59 +5,9 @@ import {
   Movie,
   UpdateMovieMutation,
 } from "../gql/graphql";
-import { GET_HOME_PAGE_DATA } from "./useHomePageData";
-import { GET_MOVIE_BY_ID } from "./useMoviePageData";
+import { CREATE_MOVIE, DELETE_MOVIE, GET_HOME_PAGE_DATA, UPDATE_MOVIE } from "./movieQueries";
+import { GET_MOVIE_BY_ID } from "./movieQueries";
 
-export const UPDATE_MOVIE = gql`
-  mutation UpdateMovie($input: UpdateMovieInput!) {
-    updateMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
-
-export const CREATE_MOVIE = gql`
-  mutation CreateMovie($input: AddMovieInput!) {
-    createMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
-
-export const DELETE_MOVIE = gql`
-  mutation DeleteMovie($input: DeleteMovieInput!) {
-    deleteMovie(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
 
 type MovieData = {
   addMovie: (

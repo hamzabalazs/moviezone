@@ -1,11 +1,11 @@
 import { MockedProvider } from "@apollo/client/testing";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
 import Reviews from "./Reviews";
-import { GET_REVIEWS } from "./useReviewsData";
+import { GET_REVIEWS } from "./reviewQueries";
 
 const mockReviewData = [
   {

@@ -12,7 +12,7 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import UserEditModal from "./UserEditModal";
 import { SnackbarProvider } from "notistack";
 import { FullUser, UserRole } from "../gql/graphql";
-import { UPDATE_USER } from "./useUser";
+import { UPDATE_USER } from "./userQueries";
 
 const testUser: FullUser = {
   id: "idU3",

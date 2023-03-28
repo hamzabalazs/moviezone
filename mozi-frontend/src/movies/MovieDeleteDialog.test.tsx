@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -7,7 +6,7 @@ import { MemoryRouter } from "react-router-dom";
 import MovieDeleteDialog from "./MovieDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import { Movie } from "../gql/graphql";
-import { DELETE_MOVIE } from "./useMovie";
+import { DELETE_MOVIE } from "./movieQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 
 const testMovie: Movie = {

@@ -1,38 +1,13 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { Category, CreateCategoryMutation, DeleteCategoryMutation, UpdateCategoryMutation } from "../gql/graphql";
-import { GET_CATEGORIES } from "./useCategoriesData";
+import { CREATE_CATEGORY, DELETE_CATEGORY, GET_CATEGORIES, UPDATE_CATEGORY } from "./categoryQueries";
 type CategoryData = {
   addCategory: (name: string) => Promise<Category | null | undefined>;
   updateCategory: (id: string, name: string) => Promise<Category | null>;
   deleteCategory: (id: string) => Promise<Category | null>;
 };
 
-export const CREATE_CATEGORY = gql`
-  mutation CreateCategory($input: AddCategoryInput!) {
-    createCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
-export const UPDATE_CATEGORY = gql`
-  mutation UpdateCategory($input: UpdateCategoryInput!) {
-    updateCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
-
-export const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($input: DeleteCategoryInput!) {
-    deleteCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
 export function useCategory():CategoryData {
   const [AddCategoryAPI] = useMutation<CreateCategoryMutation>(CREATE_CATEGORY);

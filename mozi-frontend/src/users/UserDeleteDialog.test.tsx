@@ -6,7 +6,7 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import UserDeleteDialog from "./UserDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import { FullUser, UserRole } from "../gql/graphql";
-import { DELETE_USER } from "./useUser";
+import { DELETE_USER } from "./userQueries";
 
 const testUser: FullUser = {
   id: "idU3",

@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import CategoryDeleteDialog from "./CategoryDeleteDialog";
 import { SnackbarProvider } from "notistack";
-import { DELETE_CATEGORY } from "./useCategory";
+import { DELETE_CATEGORY } from "./categoryQueries";
 import { Category } from "../gql/graphql";
 
 const testCategory: Category = {

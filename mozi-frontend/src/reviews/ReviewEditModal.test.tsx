@@ -7,7 +7,7 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import ReviewEditModal from "./ReviewEditModal";
 import { SnackbarProvider } from "notistack";
 import {Review, UserRole} from "../gql/graphql";
-import { UPDATE_REVIEW } from "./useReview";
+import { UPDATE_REVIEW } from "./reviewQueries";
 
 const testReview:Review = {
   id: "idC1",

@@ -124,7 +124,7 @@ const client = new ApolloClient({
               return [...merged, ...incoming];
             },
           },
-          getFullUsers: {
+          getUsers: {
             keyArgs: ["id"],
             merge(existing: any[], incoming: any[], { readField }) {
               const merged = existing ? existing.slice(0) : [];

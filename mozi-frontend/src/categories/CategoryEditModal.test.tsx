@@ -11,7 +11,7 @@ import userEvent from "@testing-library/user-event";
 import CategoryEditModal from "./CategoryEditModal";
 import { SnackbarProvider } from "notistack";
 import { Category, CurrentUser } from "../gql/graphql";
-import { UPDATE_CATEGORY } from "./useCategory";
+import { UPDATE_CATEGORY } from "./categoryQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 
 const testCategory: Category = {

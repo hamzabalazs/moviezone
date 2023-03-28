@@ -12,8 +12,8 @@ import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import MovieAddModal from "./MovieAddModal";
 import { v4 as uuidv4 } from "uuid";
 import { SnackbarProvider } from "notistack";
-import { CREATE_MOVIE } from "./useMovie";
-import { GET_CATEGORIES } from "../categories/useCategoriesData";
+import { CREATE_MOVIE } from "./movieQueries";
+import { GET_CATEGORIES } from "../categories/categoryQueries";
 
 const addMovie = {
   title: "title1",

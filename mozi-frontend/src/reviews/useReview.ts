@@ -1,7 +1,8 @@
-import { gql, useApolloClient, useMutation } from "@apollo/client";
-import { Review } from "../gql/graphql";
-import { GET_MOVIE_BY_ID } from "../movies/useMoviePageData";
-import { GET_REVIEWS } from "./useReviewsData";
+import { useApolloClient, useMutation } from "@apollo/client";
+import { CreateReviewMutation, DeleteReviewMutation, Review, UpdateReviewMutation } from "../gql/graphql";
+import { GET_MOVIE_BY_ID } from "../movies/movieQueries";
+import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW } from "./reviewQueries";
+import { GET_REVIEWS } from "./reviewQueries";
 
 type ReviewData = {
   updateReview: (
@@ -18,97 +19,10 @@ type ReviewData = {
   deleteReview: (id: string) => Promise<Review | null | undefined>;
 };
 
-export const CREATE_REVIEW = gql`
-  mutation CreateReview($input: AddReviewInput!) {
-    createReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        rating
-        category {
-          id
-          name
-        }
-      }
-      user {
-        id
-        first_name
-        last_name
-        role
-        email
-      }
-    }
-  }
-`;
-
-export const UPDATE_REVIEW = gql`
-  mutation UpdateReview($input: UpdateReviewInput!) {
-    updateReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        category {
-          id
-          name
-        }
-        rating
-      }
-      user {
-        first_name
-        last_name
-        id
-        role
-        email
-      }
-    }
-  }
-`;
-
-export const DELETE_REVIEW = gql`
-  mutation DeleteReview($input: DeleteReviewInput!) {
-    deleteReview(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-        title
-        description
-        poster
-        release_date
-        rating
-        category {
-          id
-          name
-        }
-      }
-      user {
-        id
-        first_name
-        last_name 
-        role
-        email
-      }
-    }
-  }
-`;
-
 export function useReview(movie_id: string,user_id:string): ReviewData {
-  const [AddReviewAPI] = useMutation(CREATE_REVIEW);
-  const [UpdateReviewAPI] = useMutation(UPDATE_REVIEW);
-  const [DeleteReviewAPI] = useMutation(DELETE_REVIEW);
+  const [AddReviewAPI] = useMutation<CreateReviewMutation>(CREATE_REVIEW);
+  const [UpdateReviewAPI] = useMutation<UpdateReviewMutation>(UPDATE_REVIEW);
+  const [DeleteReviewAPI] = useMutation<DeleteReviewMutation>(DELETE_REVIEW);
   const client = useApolloClient();
 
   async function addReview(

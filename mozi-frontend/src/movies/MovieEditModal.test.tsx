@@ -1,4 +1,4 @@
-import { gql, InMemoryCache } from "@apollo/client";
+import { InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import {
   act,
@@ -11,8 +11,8 @@ import userEvent from "@testing-library/user-event";
 import MovieEditModal from "./MovieEditModal";
 import { SnackbarProvider } from "notistack";
 import { Movie} from "../gql/graphql";
-import { GET_CATEGORIES } from "../categories/useCategoriesData";
-import { UPDATE_MOVIE } from "./useMovie";
+import { GET_CATEGORIES } from "../categories/categoryQueries";
+import { UPDATE_MOVIE } from "./movieQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 
 const testMovie: Movie = {

@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation} from "@apollo/client";
 import { CreateUserMutation, DeleteUserMutation, FullUser, GetFullUsersQuery, UpdateUserMutation, User } from "../gql/graphql";
-import { GET_FULL_USERS } from "./useUserData";
+import { CREATE_USER, DELETE_USER, UPDATE_USER } from "./userQueries";
+import { GET_USERS } from "./userQueries";
 
 type UserData = {
   addUser: (
@@ -19,44 +20,6 @@ type UserData = {
   ) => Promise<FullUser | null>;
   deleteUser: (id: string) => Promise<FullUser | null>;
 };
-
-export const CREATE_USER = gql`
-  mutation CreateUser($input: AddUserInput!) {
-    createUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
-
-export const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-      password
-    }
-  }
-`;
-
-export const DELETE_USER = gql`
-  mutation DeleteUser($input: DeleteUserInput!) {
-    deleteUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-      password
-    }
-  }
-`;
 
 export function useUser(): UserData {
   const [AddUserAPI] = useMutation<CreateUserMutation>(CREATE_USER);
@@ -121,7 +84,7 @@ export function useUser(): UserData {
       },
       update:(cache,{data}) => {
         const users = client.readQuery<GetFullUsersQuery>({
-          query:GET_FULL_USERS,
+          query:GET_USERS,
           variables:{
             input:{
               limit:3,
@@ -132,7 +95,7 @@ export function useUser(): UserData {
         if(!users) return;
         if(!data?.deleteUser) return;
         cache.writeQuery<GetFullUsersQuery>({
-          query:GET_FULL_USERS,
+          query:GET_USERS,
           variables:{
             input:{
               limit:3,
@@ -140,7 +103,7 @@ export function useUser(): UserData {
             }
           },
           data:{
-            getFullUsers: [...users.getFullUsers.filter((x:FullUser) => x.id !== data.deleteUser.id)],
+            getUsers: [...users.getUsers.filter((x:FullUser) => x.id !== data.deleteUser.id)],
             getNumberOfUsers:{
               totalCount: users.getNumberOfUsers.totalCount! - 1
             }
