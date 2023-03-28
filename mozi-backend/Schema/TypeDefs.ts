@@ -357,7 +357,7 @@ export const typeDefs = gql`
     getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
-    getReviewsOfUser(input: GetReviewsOfUserInput!): [ReviewListReview!]!
+    getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
     getToken: Expiry!
   }
 
@@ -376,7 +376,7 @@ export const typeDefs = gql`
     deleteMovie(input: DeleteMovieInput!): Movie!
     createReview(input: AddReviewInput!): Review
     updateReview(input: UpdateReviewInput!): Review
-    deleteReview(input: DeleteReviewInput!): Review
+    deleteReview(input: DeleteReviewInput!): Review!
     deleteReviewsOfMovie(input: DeleteReviewsOfMovieInput!): RunResult!
     deleteReviewsOfUser(input: DeleteReviewsOfUserInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!

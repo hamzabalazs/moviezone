@@ -57,14 +57,14 @@ export async function getReviewsOfMovie(input:any,context:MyContext): Promise<Re
   return context.db.all<Review>(sql,params)
 }
 
-export async function getReviewsOfUser(input:any,context:MyContext): Promise<ReviewListReview[]>{
+export async function getReviewsOfUser(input:any,context:MyContext): Promise<Review[]>{
   let sql = `SELECT * FROM review WHERE user_id = ? LIMIT ?`
   let params = [input.user_id,input.limit]
   if(input.offset !==0 ){
     sql = sql.concat(` OFFSET ?`)
     params.push(input.offset)
   }
-  return context.db.all<ReviewListReview>(sql,params)
+  return context.db.all<Review>(sql,params)
 }
 
 export async function getExtendedReviewById(id: string, context: MyContext): Promise<ExtendedReview|null> {
@@ -87,7 +87,7 @@ export async function getReviewForUpdate(
 export async function createReview(
   review: any,
   context: MyContext
-): Promise<ReviewListReview|null> {
+): Promise<Review|null> {
   const validation = await reviewSchema.isValid(review)
   if(!validation) throw new GraphQLError(NOT_VALID_REVIEW,{extensions:{code:'VALIDATION_FAILED'}})
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
@@ -105,7 +105,7 @@ export async function createReview(
 export async function updateReview(
   review: any,
   context: MyContext
-): Promise<ReviewListReview|null> {
+): Promise<Review|null> {
   const updatedReview: DbReview|null = await getReviewForUpdate(review.id, context);
   if (updatedReview === null) throw new GraphQLError(NO_REVIEW_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   if (context.user) {
@@ -126,14 +126,14 @@ export async function updateReview(
 export async function deleteReview(
   id: string,
   context: MyContext
-): Promise<ReviewListReview|null> {
+): Promise<Review|null> {
   const reviewToDelete = await getReviewForUpdate(id, context);
   if (!reviewToDelete) throw new GraphQLError(NO_REVIEW_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   if (
     context.user!.id === reviewToDelete.user_id ||
     context.user!.role.toString() !== "viewer"
   ) {
-    const review = getReviewById(id, context);
+    const review = await getReviewById(id, context);
     const sql = `DELETE FROM review WHERE review.id = ?`;
     context.db.run(sql,[id])
     return review

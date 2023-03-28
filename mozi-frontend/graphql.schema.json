@@ -3204,7 +3204,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ReviewListReview",
+                    "name": "Review",
                     "ofType": null
                   }
                 }

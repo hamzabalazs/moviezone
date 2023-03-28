@@ -47,24 +47,104 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const eqSet = (xs: any, ys: any) => {
+  if(xs.size === ys.size){
+    return [...xs].every((x) => ys.has(x))
+  }
+  else return [...ys].every((x) => xs.has(x))
+}
+  
+
+const eqMovieIdSet = (xs: any, ys: any) => [...xs].every((x) => ys.has(x));
+
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache({
-    typePolicies:{
-      Query:{
-        fields:{
-          getFullUsers:{
-            keyArgs:["id"],
-            merge(existing = [], incoming){
-              if(incoming.length > 3){
-                return [...incoming]
+    typePolicies: {
+      Query: {
+        fields: {
+          getFullUsers: {
+            keyArgs: ["id"],
+            merge(existing: any[], incoming: any[], { readField }) {
+              const merged = existing ? existing.slice(0) : [];
+              const existingIdSet = new Set(
+                merged.map((user) => readField("id", user))
+              );
+              const incomingIdSet = new Set(
+                incoming.map((user) => readField("id", user))
+              );
+              if (merged.length - incoming.length === 1) {
+                let isDelete = true;
+                incomingIdSet.forEach((id) => {
+                  if (!isDelete) return;
+                  if (existingIdSet.has(id)) isDelete = true;
+                  else isDelete = false;
+                });
+                if (isDelete) return [...incoming];
               }
-              return [...existing,...incoming]
-            }
-          }
-      }
-      }
-    }
+              return [...merged, ...incoming];
+            },
+          },
+          getReviewsOfUser: {
+            keyArgs: ["id"],
+            merge(existing: any[], incoming: any[], { readField }) {
+              const merged = existing ? existing.slice(0) : [];
+              const existingIdSet = new Set(
+                merged.map((review) => readField("id", review))
+              );
+              const incomingIdSet = new Set(
+                incoming.map((review) => readField("id", review))
+              );
+              if (merged.length - incoming.length === 1) {
+                let isDelete = true;
+                incomingIdSet.forEach((id) => {
+                  if (!isDelete) return;
+                  if (existingIdSet.has(id)) isDelete = true;
+                  else isDelete = false;
+                });
+                if (isDelete) return [...incoming];
+              }
+              return [...merged, ...incoming];
+            },
+          },
+          getReviewsOfMovie: {
+            keyArgs: ["id"],
+            merge(existing: any[], incoming: any[], { readField }) {
+              const merged = existing ? existing.slice(0) : [];
+              if (incoming.length === 0) return [];
+              const existingIdSet = new Set(
+                merged.map((review) => readField("id", review))
+              );
+              const incomingIdSet = new Set(
+                incoming.map((review) => readField("id", review))
+              );
+              const existingMovieIdSet = new Set(
+                merged.map((review) => readField("id", readField("movie",review)))
+              );
+              const incomingMovieIdSet = new Set(
+                incoming.map((review) => readField("id", readField("movie",review)))
+              );
+              if (!eqMovieIdSet(existingMovieIdSet, incomingMovieIdSet)) {
+                return [...incoming];
+              }
+              if (eqSet(existingIdSet, incomingIdSet)) {
+                return [...incoming];
+              }
+              if (merged.length - incoming.length === 1) {
+                let isDelete = true;
+                incomingIdSet.forEach((id) => {
+                  if (!isDelete) return;
+                  if (existingIdSet.has(id)) isDelete = true;
+                  else isDelete = false;
+                });
+                if (isDelete) return [...incoming];
+              }
+              return [...merged, ...incoming];
+            },
+          },
+        },
+      },
+    },
   }),
 });
 

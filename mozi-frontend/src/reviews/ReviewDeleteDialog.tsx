@@ -19,22 +19,23 @@ interface Props {
 }
 
 export default function ReviewDeleteDialog({ review, onClose }: Props) {
-  let id = ""
-  if(review){
-    if(review.movie){
-      id = review.movie.id
-    }
-  } 
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut,user } = useSessionContext();
-  const {deleteReview:DeleteReviewAPI} = useReview(id,user!.id)
+  const { logOut, user } = useSessionContext();
+  let id = "";
+  if (review) {
+    if (review.movie) id = review!.movie.id;
+  }
+  const { deleteReview: DeleteReviewAPI } = useReview(
+    id,
+    user!.id
+  );
 
   const handleDeletion = async () => {
     if (review === undefined) return;
     try {
-      const result = await DeleteReviewAPI(review.id)
-      if(result){
+      const result = await DeleteReviewAPI(review.id);
+      if (result) {
         const msg = t("successMessages.reviewDelete");
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();

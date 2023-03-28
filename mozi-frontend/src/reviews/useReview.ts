@@ -88,16 +88,16 @@ export const DELETE_REVIEW = gql`
         description
         poster
         release_date
+        rating
         category {
           id
           name
         }
-        rating
       }
       user {
-        first_name
-        last_name
         id
+        first_name
+        last_name 
         role
         email
       }
@@ -123,9 +123,9 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
         const res = client.readQuery({
           query: GET_MOVIE_BY_ID,
           variables: {
-            input: { movie_id: movie_id },
+            input: { id: movie_id },
             input2: { movie_id: movie_id, limit:3, offset:0 },
-            input3: { movie_id: movie_id, user_id:""}
+            input3: { user_id:"",movie_id: movie_id}
           },
         });
         if (!res) return;
@@ -133,14 +133,16 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: {
-            input: { movie_id: movie_id },
+            input: { id: movie_id },
             input2: { movie_id: movie_id, limit:3, offset:0 },
-            input3: { movie_id: movie_id, user_id:""}
+            input3: { user_id:"",movie_id: movie_id}
           },
           data: {
             getMovieById: data.createReview.movie,
-            getReviewsOfMovie: data.createReview,
-            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie + 1
+            getReviewsOfMovie: [data.createReview],
+            getNumberOfReviewsOfMovie: {
+              totalCount: res.getNumberOfReviewsOfMovie.totalCount + 1
+            }
           },
         });
       },
@@ -181,45 +183,12 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
               limit:3,
               offset:0,
             },
-            input3: { movie_id:movie_id,user_id: "" },
+            input3: { user_id: "",movie_id:movie_id },
           },
           data: {
             getMovieById: data.updateReview.movie,
             getReviewsOfMovie: [...res.getReviewsOfMovie],
             getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie
-          },
-        });
-        const reviewData = client.readQuery({
-          query: GET_REVIEWS,
-          variables:{
-            input:{
-              user_id,
-              limit:3,
-              offset:0
-            },
-            input2:{
-              user_id,
-              movie_id:""
-            }
-          },
-        });
-        if (!reviewData || !data || !data.deleteReview) return;
-        cache.writeQuery({
-          query: GET_REVIEWS,
-          variables:{
-            input:{
-              user_id,
-              limit:3,
-              offset:0
-            },
-            input2:{
-              user_id,
-              movie_id:""
-            }
-          },
-          data: {
-            getReviewsOfUser: data.updateReview,
-            getNumberOfReviewsOfUser: reviewData.getNumberOfReviewsOfUser
           },
         });
       },
@@ -239,47 +208,53 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
         const res = client.readQuery({
           query: GET_MOVIE_BY_ID,
           variables: {
-            input: { movie_id: movie_id },
+            input: { id: movie_id },
             input2:{
               movie_id:movie_id,
               limit:3,
               offset:0,
             },
-            input3: { movie_id:movie_id,user_id: "" },
+            input3: { user_id: "",movie_id:movie_id },
           },
         });
-        if (!data || !data.deleteReview || !res) return;
-        cache.writeQuery({
-          query: GET_MOVIE_BY_ID,
-          variables: {
-            input: { movie_id: movie_id },
-            input2:{
-              movie_id:movie_id,
-              limit:3,
-              offset:0,
+        console.log("res",res)
+        if (!data || res === undefined) return;
+        if(res !== null){
+          cache.writeQuery({
+            query: GET_MOVIE_BY_ID,
+            variables: {
+              input: { id: movie_id },
+              input2:{
+                movie_id:movie_id,
+                limit:3,
+                offset:0,
+              },
+              input3: { movie_id:movie_id,user_id: "" },
             },
-            input3: { movie_id:movie_id,user_id: "" },
-          },
-          data: {
-            getMovieById: data.deleteReview.movie,
-            getReviewsOfMovie: res.getReviewsOfMovie.filter((x:Review) => x.id !== data.deleteReview.id),
-            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie - 1
-          },
-        });
+            data: {
+              getMovieById: data.deleteReview.movie,
+              getReviewsOfMovie: [...res.getReviewsOfMovie.filter((x:Review) => x.id !== data.deleteReview.id)],
+              getNumberOfReviewsOfMovie: {
+                totalCount: res.getNumberOfReviewsOfMovie.totalCount - 1
+              }
+            },
+          });
+        }
         const reviewData = client.readQuery({
           query: GET_REVIEWS,
           variables:{
             input:{
-              user_id,
+              user_id:user_id,
               limit:3,
               offset:0
             },
             input2:{
-              user_id,
+              user_id:user_id,
               movie_id:""
             }
           },
         });
+        console.log(reviewData)
         if (!reviewData || !data || !data.deleteReview) return;
         cache.writeQuery({
           query: GET_REVIEWS,
@@ -295,8 +270,10 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
             }
           },
           data: {
-            getReviewsOfUser: reviewData.getReviewsOfUser.filter((x:Review) => x.user.id !== data.deleteReview.user_id),
-            getNumberOfReviewsOfUser: reviewData.getNumberOfReviewsOfUser - 1
+            getReviewsOfUser: [...reviewData.getReviewsOfUser.filter((x:Review) => x.id !== data.deleteReview.id)],
+            getNumberOfReviewsOfUser:{
+              totalCount: reviewData.getNumberOfReviewsOfUser.totalCount! - 1
+            }
           },
         });
       },

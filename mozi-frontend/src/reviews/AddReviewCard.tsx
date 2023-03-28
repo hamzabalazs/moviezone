@@ -18,19 +18,19 @@ import {
   NOT_VALID_REVIEW,
 } from "../common/errorMessages";
 import { Review } from "../gql/graphql";
-import { useMoviePageData } from "../movies/useMoviePageData";
 
 interface Props{
     currmovie_id: string;
+    reviews: Review[]
 }
 
 export default function AddReviewCard({
-  currmovie_id
+  currmovie_id,
+  reviews
 }:Props) {
   const context = useSessionContext();
   const currUser = context.user!;
   const { addReview: AddReviewAPI } = useReview(currmovie_id!,currUser!.id);
-  const { movie, reviews, error, loading } = useMoviePageData(currmovie_id!,0);
   const [ratingDescription,setRatingDescription] = useState<string>("")
   const [rating,setRating] = useState<number>(0)
   const reviewsOfUser = reviews.filter(

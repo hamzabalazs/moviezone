@@ -21,25 +21,35 @@ export default function MoviePage() {
   const { currmovie_id } = useParams();
   const navigate = useNavigate();
   const { user: currUser } = useSessionContext();
-  const [offset, setOffset] = useState<number>(0);
-  const [reviewList, setReviewList] = useState<Review[]>([]);
-  const { movie, reviews, loading, totalCount } = useMoviePageData(
-    currmovie_id!,
-    offset
+  let currentLength = 0;
+  const { movie, reviews, loading, totalCount, fetchMore } = useMoviePageData(
+    currmovie_id!
   );
 
   useBottomScrollListener(() => {
-    if (totalCount - offset > 3) {
-      setOffset(offset + 3);
-    }
-    return;
-  });
-
-  useEffect(() => {
     if (!loading) {
-      setReviewList([...reviewList, ...reviews]);
+      currentLength += reviews.length;
+      console.log("totalcount", totalCount);
+      console.log("currentlength", currentLength);
+      if (currentLength >= totalCount) return;
+      fetchMore({
+        variables: {
+          input: {
+            id: currmovie_id,
+          },
+          input2: {
+            movie_id: currmovie_id,
+            limit: 3,
+            offset: currentLength,
+          },
+          input3: {
+            user_id: "",
+            movie_id: currmovie_id,
+          },
+        },
+      });
     }
-  }, [loading]);
+  });
 
   const [editingMovie, setEditingMovie] = useState<Movie | undefined>(
     undefined
@@ -94,7 +104,7 @@ export default function MoviePage() {
               />
             )}
           </div>
-          <AddReviewCard currmovie_id={currmovie_id!} />
+          <AddReviewCard currmovie_id={currmovie_id!} reviews={reviews}/>
           <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 10 }}>
             All reviews
           </Typography>
@@ -105,8 +115,7 @@ export default function MoviePage() {
             }}
           >
             <Grid container spacing={4}>
-              <>
-                {reviewList.map((review: Review) => (
+                {reviews.map((review: Review) => (
                   <Grid item key={review.id} xs={12}>
                     <ReviewCard
                       review={review}
@@ -115,7 +124,6 @@ export default function MoviePage() {
                     />
                   </Grid>
                 ))}
-              </>
             </Grid>
             {loading && (
               <Grid container spacing={4} sx={{ marginTop: 0 }}>

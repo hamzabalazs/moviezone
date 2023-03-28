@@ -25,15 +25,29 @@ function Reviews() {
   const [deletingReview, setDeletingReview] = useState<Review | undefined>(
     undefined
   );
-  const [reviewList, setReviewList] = useState<Review[]>([]);
-  const [offset, setOffset] = useState<number>(0);
-  const { reviews, loading, totalCount } = useReviewsData(user_id,reviewList,offset);
+  let currentLength = 0;
+  const { reviews, loading, totalCount, fetchMore } = useReviewsData(user_id);
 
   useBottomScrollListener(() => {
-    if (totalCount - offset > 3) {
-      setOffset(offset + 3);
+    if (!loading) {
+      currentLength += reviews.length;
+      console.log("totalcount", totalCount);
+      console.log("currentlength", currentLength);
+      if (currentLength >= totalCount) return;
+      fetchMore({
+        variables: {
+          input: {
+            user_id: user_id,
+            limit: 3,
+            offset: currentLength,
+          },
+          input2: {
+            user_id: user_id,
+            movie_id: "",
+          },
+        },
+      });
     }
-    return;
   });
 
   return (
@@ -43,7 +57,7 @@ function Reviews() {
         <ReviewEditModal
           review={editingReview}
           onClose={() => {
-            setEditingReview(undefined)
+            setEditingReview(undefined);
           }}
         />
         <ReviewDeleteDialog

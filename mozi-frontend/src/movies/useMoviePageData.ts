@@ -7,6 +7,7 @@ type MoviePageData = {
   error: ApolloError | undefined;
   totalCount: number;
   loading: boolean;
+  fetchMore:any
 };
 
 export const GET_MOVIE_BY_ID = gql`
@@ -59,9 +60,9 @@ export const GET_MOVIE_BY_ID = gql`
 
 export function useMoviePageData(
   movie_id: string,
-  offset: number
+  offset?: number
 ): MoviePageData {
-  const { data, error, loading } = useQuery(GET_MOVIE_BY_ID, {
+  const { data, error, loading,fetchMore } = useQuery(GET_MOVIE_BY_ID, {
     variables: {
       input: {
         id: movie_id,
@@ -69,14 +70,14 @@ export function useMoviePageData(
       input2: {
         movie_id,
         limit: 3,
-        offset,
+        offset: offset || 0,
       },
       input3: {
-        movie_id,
         user_id: "",
+        movie_id,
       },
     },
-    fetchPolicy:'cache-and-network'
+    fetchPolicy:'network-only',notifyOnNetworkStatusChange:true
   });
 
   return {
@@ -85,5 +86,6 @@ export function useMoviePageData(
     totalCount: data?.getNumberOfReviewsOfMovie.totalCount || 0,
     error,
     loading,
+    fetchMore
   };
 }
