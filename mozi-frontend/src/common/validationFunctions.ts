@@ -37,7 +37,7 @@ export function useRegisterUserSchema() {
       .test(
         "len",
         t("formikErrors.passwordLength") || "",
-        (val) => val.length > 5
+        (val) => val.length >= 5
       ),
   });
 }

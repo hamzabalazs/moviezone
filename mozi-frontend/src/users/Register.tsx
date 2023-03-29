@@ -167,6 +167,7 @@ function Register() {
               variant="contained"
               fullWidth
               type="submit"
+              id="submit"
             >
               {t("register.register")}
             </Button>
