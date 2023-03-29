@@ -1,4 +1,4 @@
-import { ApolloError, gql, useQuery } from "@apollo/client";
+import { ApolloError, useQuery } from "@apollo/client";
 import { Movie, Review} from "../gql/graphql";
 import { GET_MOVIE_BY_ID } from "./movieQueries";
 

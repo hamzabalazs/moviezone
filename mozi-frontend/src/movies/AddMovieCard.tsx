@@ -17,7 +17,6 @@ import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useApolloClient} from "@apollo/client";
 import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useSnackbar } from "notistack";
@@ -57,7 +56,6 @@ export default function AddMovieCard(props: Props) {
   const [poster, setPoster] = useState("");
   const setIsOpenAdd = props.setIsOpenAdd;
   const { enqueueSnackbar } = useSnackbar();
-  const client = useApolloClient();
   const { logOut } = useSessionContext();
   const { addMovie: AddMovieAPI } = useMovie();
   const {categories,loading} = useCategoriesData()

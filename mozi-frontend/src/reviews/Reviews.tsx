@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReviewDeleteDialog from "./ReviewDeleteDialog";
 import ReviewEditModal from "./ReviewEditModal";
 import MyFooter from "../common/components/MyFooter";

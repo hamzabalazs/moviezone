@@ -17,7 +17,6 @@ import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
 function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
-  const [fullUsersList,setFullUsersList] = useState<FullUser[]>([])
   const {users,loading} = useUserData()
   const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
   const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);

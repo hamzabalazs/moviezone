@@ -1,4 +1,4 @@
-import { ApolloError, gql, useQuery } from "@apollo/client";
+import { ApolloError, useQuery } from "@apollo/client";
 import { Category, GetHomePageDataQuery, Movie } from "../gql/graphql";
 import { GET_HOME_PAGE_DATA } from "./movieQueries";
 

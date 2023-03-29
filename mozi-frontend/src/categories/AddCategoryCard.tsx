@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction } from "react";
 import { FormikErrors, useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
-import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY, UNAUTHORIZED_MESSAGE } from "../common/errorMessages"
+import { CATEGORY_EXISTS_MESSAGE, EXPIRED_TOKEN_MESSAGE, NOT_VALID_CATEGORY } from "../common/errorMessages"
 import { useSessionContext } from "../auth/SessionContext";
 import { useCategory } from "./useCategory";
 

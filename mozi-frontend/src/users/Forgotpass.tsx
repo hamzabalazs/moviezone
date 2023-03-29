@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import LockIcon from "@mui/icons-material/Lock";
 import {
   Avatar,
@@ -16,7 +16,7 @@ import { useSnackbar } from 'notistack'
 import { useSessionContext } from "../auth/SessionContext";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
-import { FullUser, User } from "../gql/graphql";
+import { FullUser } from "../gql/graphql";
 
 interface Values {
   email: string;

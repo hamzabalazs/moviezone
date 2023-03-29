@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useMutation} from "@apollo/client";
+import { useApolloClient, useMutation} from "@apollo/client";
 import { CreateUserMutation, DeleteUserMutation, FullUser, GetFullUsersQuery, UpdateUserMutation, User } from "../gql/graphql";
 import { CREATE_USER, DELETE_USER, UPDATE_USER } from "./userQueries";
 import { GET_USERS } from "./userQueries";

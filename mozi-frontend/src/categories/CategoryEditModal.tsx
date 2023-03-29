@@ -22,8 +22,6 @@ interface Props {
   onClose?: () => void;
 }
 
-
-
 export default function CategoryEditModal({ category, onClose }: Props) {
   const { t } = useTranslation();
   const {updateCategory:UpdateCategoryAPI} = useCategory()
@@ -60,11 +58,6 @@ export default function CategoryEditModal({ category, onClose }: Props) {
       }
     }
   };
-
-  interface Values {
-    name: string;
-  }
-
   const schema = useEditCategorySchema();
 
   const formik = useFormik({

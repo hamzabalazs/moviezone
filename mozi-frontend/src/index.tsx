@@ -28,7 +28,6 @@ import Register from "./users/Register";
 import Forgotpass from "./users/Forgotpass";
 import { Users } from "./users/Users";
 import Account from "./users/Account";
-import { offsetLimitPagination } from "@apollo/client/utilities";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import MyFooter from "../common/components/MyFooter";
 import NavigationBar from "../common/components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";

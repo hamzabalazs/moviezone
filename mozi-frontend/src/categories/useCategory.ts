@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import { Category, CreateCategoryMutation, DeleteCategoryMutation, UpdateCategoryMutation } from "../gql/graphql";
 import { CREATE_CATEGORY, DELETE_CATEGORY, GET_CATEGORIES, UPDATE_CATEGORY } from "./categoryQueries";
 type CategoryData = {
