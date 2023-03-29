@@ -83,7 +83,7 @@ const client = new ApolloClient({
       Query: {
         fields: {
           getMovies: {
-            keyArgs: ["orderByTitle,orderByCategory"],
+            keyArgs: ["orderByTitle,orderByCategory,searchField"],
             merge(existing: any[], incoming: any[], { args, readField }) {
               if (incoming.length === 0) return [];
               if (!args) return [];
@@ -105,6 +105,14 @@ const client = new ApolloClient({
                   readField("id", readField("category", movie))
                 )
               );
+              if(args.input.offset === 0 && incoming.length !== 9) return [...incoming]
+              if(args.input.searchField === "" && merged.length < 9) return [...incoming] //search reset
+              if(args.input.searchField !== "" && incoming.length !== 9 && merged.length < 9){
+                return [...incoming]
+              }// search after search
+              if(args.input.searchField !== "" && merged.length >=9 && incoming.length !== 9){
+                return [...merged,...incoming]
+              }// search and merge
               if (args.input.orderByTitle !== undefined) {
                 if (args.input.orderByTitle === true) {
                   if (!isOrderedAsc(existingTitleSort)) return [...incoming];

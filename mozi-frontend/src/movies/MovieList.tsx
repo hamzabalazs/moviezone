@@ -154,8 +154,8 @@ function MovieList() {
               onClose={() => setAnchorEl(null)}
               MenuListProps={{ "aria-labelledby": "sort-button" }}
             >
-              <MenuItem onClick={handleTitleSort}>{titleString}</MenuItem>
-              <MenuItem onClick={handleCategorySort}>{categoryString}</MenuItem>
+              <MenuItem onClick={handleTitleSort} id="sort-title">{titleString}</MenuItem>
+              <MenuItem onClick={handleCategorySort} id="sort-category">{categoryString}</MenuItem>
             </Menu>
           </Grid>
           <Grid item key={2} xs={12} sm={12} md={12}>
