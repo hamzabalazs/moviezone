@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.10",
+    "@badeball/cypress-cucumber-preprocessor": "^16.0.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
@@ -12,7 +13,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.18",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "apollo": "^2.34.0",
@@ -40,7 +40,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "download-schema": "apollo schema:download --endpoint=http://localhost:5000/graphql graphql-schema.json",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "cy:open": "cypress open",
+    "cy:test": "cypress run"
   },
   "eslintConfig": {
     "extends": [
@@ -61,10 +63,16 @@
     ]
   },
   "devDependencies": {
+    "@cypress/browserify-preprocessor": "^3.0.2",
     "@graphql-codegen/cli": "3.2.2",
-    "@types/lodash": "^4.14.191",
-    "@types/uuid": "^9.0.1",
+    "@graphql-codegen/client-preset": "2.1.1",
     "@graphql-codegen/introspection": "3.0.1",
-    "@graphql-codegen/client-preset": "2.1.1"
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^16.18.22",
+    "@types/uuid": "^9.0.1",
+    "cypress": "^12.8.1"
+  },
+  "cypress-cucumber-prepocessor": {
+    "nonGlobalStepDefinitions": true
   }
 }
