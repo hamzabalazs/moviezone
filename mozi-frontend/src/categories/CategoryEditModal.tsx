@@ -88,6 +88,7 @@ export default function CategoryEditModal({ category, onClose }: Props) {
           p: 4,
         }}
         component="form"
+        data-testid="category-edit-card"
         onSubmit={formik.handleSubmit}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">

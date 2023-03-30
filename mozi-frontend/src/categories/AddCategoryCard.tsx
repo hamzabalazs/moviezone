@@ -91,6 +91,7 @@ export default function AddCategoryCard(props: Props) {
           borderColor: "primary.light",
           borderRadius: 2,
         }}
+        data-testid="category-add-card"
       >
         <CardContent>
           <Typography variant="h4" gutterBottom>
@@ -119,7 +120,7 @@ export default function AddCategoryCard(props: Props) {
             size="small"
             sx={{ color: "text.secondary", border: 1, borderRadius: 1 }}
             type="submit"
-            data-testid="category-add-button"
+            data-testid="category-add"
           >
             {t("buttons.add")}
           </Button>
