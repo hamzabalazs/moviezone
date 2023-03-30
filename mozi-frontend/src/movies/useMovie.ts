@@ -207,10 +207,13 @@ export function useMovie(): MovieData {
             },
           },
           data: {
-            ...pageData.getCategories,
+            getCategories: [...pageData.getCategories],
             getMovies: pageData.getMovies.filter(
               (x: any) => x.id !== data.deleteMovie.id
             ),
+            getNumberOfMovies:{
+              totalCount: pageData.getNumberOfMovies.totalCount -1
+            }
           },
         });
       },
