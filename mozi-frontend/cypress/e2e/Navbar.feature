@@ -1,4 +1,4 @@
-Feature: Navigation Bar functionality
+Feature: Navigation Bar works as intended
     Scenario: Navigate to category
         Given I login as admin
         When I navigate to category page

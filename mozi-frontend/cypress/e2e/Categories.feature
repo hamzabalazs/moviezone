@@ -2,7 +2,7 @@ Feature: Categories page works as intended
     Scenario: Categories are listed correctly
         Given I open categories page
         When I arrive on page
-        Then Categories should be loaded
+        Then I see a list of categories
     Scenario: Add Category
         Given I open categories page
         When I press category add button
@@ -21,3 +21,9 @@ Feature: Categories page works as intended
         Then Delete dialog should open
         When I press accept button to delete
         Then Category should be deleted
+    Scenario: Category delete modal closes when quit button is clicked
+        Given I open categories page
+        When I press category delete button
+        Then Delete dialog should open
+        When I press quit button
+        Then Delete dialog should not be open

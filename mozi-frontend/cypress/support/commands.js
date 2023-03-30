@@ -134,3 +134,51 @@ Cypress.Commands.add("deleteMovie", (name, token) => {
     });
   });
 });
+
+Cypress.Commands.add("addUser", (user) => {
+  cy.request({
+    url: "http://localhost:5000/graphql",
+    method: "POST",
+    body: {
+      query: `
+      mutation CreateUser($input: AddUserInput!) {
+        createUser(input: $input) {
+          id
+          first_name
+          last_name
+          role
+          email
+        }
+      }
+      `,
+      variables: {
+        input: {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          password: user.password,
+        },
+      },
+    },
+  });
+});
+
+Cypress.Commands.add("getTotalUserCount", () => {
+  return cy
+    .request({
+      method: "POST",
+      url: "http://localhost:5000/graphql",
+      body: {
+        query: `
+      query GetNumberOfUsers {
+        getNumberOfUsers {
+          totalCount
+        }
+      }
+      `,
+      },
+    })
+    .then((response) => {
+      return response.body.data.getNumberOfUsers.totalCount;
+    });
+});

@@ -1,4 +1,4 @@
-Feature: Home Page
+Feature: Home Page works as intended
     Scenario: Sorts Movie list by title ascending, then descending
         Given I open home page
         When I sort by title
