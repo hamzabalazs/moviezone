@@ -164,21 +164,78 @@ Cypress.Commands.add("addUser", (user) => {
 });
 
 Cypress.Commands.add("getTotalUserCount", () => {
-  return cy
-    .request({
-      method: "POST",
-      url: "http://localhost:5000/graphql",
-      body: {
-        query: `
+  cy.request({
+    url: "http://localhost:5000/graphql",
+    method: "POST",
+    body: {
+      query: `
       query GetNumberOfUsers {
         getNumberOfUsers {
           totalCount
         }
       }
       `,
+    },
+  }).then((response) => {
+    return response.body.data.getNumberOfUsers.totalCount;
+  });
+});
+
+Cypress.Commands.add("addReview", (review,token) => {
+  cy.request({
+    url: "http://localhost:5000/graphql",
+    method: "POST",
+    headers:{
+      'auth-token': token
+    },
+    body: {
+      query: `
+      mutation CreateReview($input: AddReviewInput!) {
+        createReview(input: $input) {
+          id
+          rating
+          description
+          movie{
+            id
+          }
+          user{
+            id
+          }
+        }
+      }
+      `,
+      variables: {
+        input: {
+          rating: review.rating,
+          description: review.description,
+          movie_id: review.movie_id,
+          user_id: review.user_id,
+        },
       },
-    })
-    .then((response) => {
-      return response.body.data.getNumberOfUsers.totalCount;
-    });
+    },
+  }).then((resp) => console.log(resp))
+});
+
+Cypress.Commands.add("getTotalReviewsOfUserCount", (userId) => {
+  cy.request({
+    url: "http://localhost:5000/graphql",
+    method: "POST",
+    body: {
+      query: `
+      query GetNumberOfReviewsOfUser($input: numOfReviewsInput!) {
+        getNumberOfReviewsOfUser(input: $input) {
+          totalCount
+        }
+      }
+      `,
+      variables: {
+        input: {
+          user_id: userId,
+          movie_id: "",
+        },
+      },
+    },
+  }).then((response) => {
+    return response.body.data.getNumberOfReviewsOfUser.totalCount;
+  });
 });

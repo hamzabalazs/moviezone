@@ -110,7 +110,7 @@ export default function AddCategoryCard(props: Props) {
             inputProps={{ "data-testid": "category-add-name" }}
           ></TextField>
           {formik.errors.name ? (
-            <Typography variant="subtitle2" sx={{ color: "red" }}>
+            <Typography variant="subtitle2" sx={{ color: "red" }} data-testid="category-add-error-name">
               {formik.errors.name}
             </Typography>
           ) : null}

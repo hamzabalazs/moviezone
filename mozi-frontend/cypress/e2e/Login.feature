@@ -1,4 +1,12 @@
 Feature: Login to Application
+    Scenario: Navigate to register page
+        Given I open login page
+        When I click on register link
+        Then I should be on register page
+    Scenario: Navigate to forgot password page
+        Given I open login page
+        When I click on forgot password link
+        Then I should be on forgot password page
     Scenario: Missing password and email
         Given I open login page
         When I submit login without email and password

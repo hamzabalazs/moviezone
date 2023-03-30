@@ -3,12 +3,24 @@ Feature: Categories page works as intended
         Given I open categories page
         When I arrive on page
         Then I see a list of categories
+    Scenario: Category add missing name
+        Given I open categories page
+        When I press category add button
+        Then Add modal should open
+        When I leave fields blank and submit
+        Then I should get name required error add
     Scenario: Add Category
         Given I open categories page
         When I press category add button
         Then Add modal should open
         When I fill out data and submit
         Then New category should be added
+    Scenario: Category edit missing name
+        Given I open categories page
+        When I press category edit button
+        Then Edit modal should open
+        When I clear name and submit
+        Then I should get name required error edit
     Scenario: Category should edit
         Given I open categories page
         When I press category edit button

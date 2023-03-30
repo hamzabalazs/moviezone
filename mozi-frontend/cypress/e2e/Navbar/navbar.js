@@ -80,3 +80,19 @@ Then('I should be on login page',() => {
     cy.url()
         .should('eq','http://localhost:3000/login')
 })
+
+When('I press dark or light mode',() => {
+    cy.get("#themeSwitcher").click()
+})
+
+Then('Style should be dark mode',() => {
+    cy.window().then((win) => {
+        expect(win.localStorage.getItem('color-mode')).to.equal('dark')
+    })
+})
+
+Then('Style should be light mode',() => {
+    cy.window().then((win) => {
+        expect(win.localStorage.getItem('color-mode')).to.equal('light')
+    })
+})

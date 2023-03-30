@@ -61,6 +61,77 @@ Then("Edit modal should open", () => {
   cy.get('[data-testid="user-edit-modal"]').should("exist");
 });
 
+When('I clear first_name and submit',() => {
+  cy.get("#first_name").clear()
+  cy.get("#password").clear().type("testtest");
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get first_name required error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"First name is required!")
+})
+
+When('I clear last_name and submit',() => {
+  cy.get("#last_name").clear()
+  cy.get("#password").clear().type("testtest");
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get last_name required error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Last name is required!")
+})
+
+When('I clear email and submit',() => {
+  cy.get("#email").clear()
+  cy.get("#password").clear().type("testtest");
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get email required error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Email is required!")
+})
+
+When('I type invalid email and submit',() => {
+  cy.get("#email").clear().type("invalidemail.com")
+  cy.get("#password").clear().type("testtest");
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get invalid email error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Invalid email format!")
+})
+
+When('I clear password and submit',() => {
+  cy.get("#password").clear()
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get password required error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Password is required!")
+})
+
+When('I type short password and submit',() => {
+  cy.get("#password").clear().type("ps")
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+})
+
+Then('I should get invalid password error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Password has to be 5 or more characters long!")
+})
+
+When("I clear all data and submit", () => {
+  cy.get("#first_name").clear()
+  cy.get("#last_name").clear()
+  cy.get("#email").clear()
+  cy.get("#password").clear()
+  cy.get('[data-testid="user-edit-modal-submit"]').click();
+});
+
+Then('I should get 4x required error',() => {
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',4)
+
+})
+
 When("I change data and submit", () => {
   cy.get("#first_name").clear().type("testEDITED");
   cy.get("#last_name").clear().type("testEDITED");

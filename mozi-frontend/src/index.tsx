@@ -161,6 +161,9 @@ const client = new ApolloClient({
               const incomingIdSet = new Set(
                 incoming.map((review) => readField("id", review))
               );
+              if (eqSet(existingIdSet, incomingIdSet)) {
+                return [...incoming];
+              }
               if (merged.length - incoming.length === 1) {
                 let isDelete = true;
                 incomingIdSet.forEach((id) => {

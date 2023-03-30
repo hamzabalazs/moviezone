@@ -126,6 +126,7 @@ function Forgotpass() {
               }}
               variant="contained"
               fullWidth
+              data-testid="submit"
               type="submit"
             >
               {t("forgotPass.passwordReset")}

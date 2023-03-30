@@ -25,3 +25,10 @@ Feature: Navigation Bar works as intended
         Given I login as admin
         When I press logout
         Then I should be on login page
+    Scenario: Change to dark mode then back to light mode
+        Given I login as admin
+        When I press dark or light mode
+        Then Style should be dark mode
+        When I press dark or light mode
+        Then Style should be light mode
+    

@@ -28,6 +28,14 @@ Then("Add modal should open", () => {
   cy.get('[data-testid="category-add-card"]').should("be.visible");
 });
 
+When("I leave fields blank and submit",() => {
+  cy.get('[data-testid="category-add"]').click();
+})
+
+Then("I should get name required error add",() => {
+  cy.get('[data-testid="category-add-error-name"]').should('be.visible').should('have.text',"Category name is required!")
+})
+
 When("I fill out data and submit", () => {
   cy.get('[data-testid="category-card"]').then((result) => {
     cy.wrap(result.length).as("listLength");
@@ -38,7 +46,6 @@ When("I fill out data and submit", () => {
 
 Then("New category should be added", () => {
   cy.get("@listLength")
-    .should("eq", 13)
     .then((resp) => {
       cy.get('[data-testid="category-card"]').should("have.length", resp + 1);
     });
@@ -51,6 +58,15 @@ When("I press category edit button", () => {
 Then("Edit modal should open", () => {
   cy.get('[data-testid="category-edit-card"]').should("be.visible");
 });
+
+When("I clear name and submit",() => {
+  cy.get("#name").should("have.value", "test").clear()
+  cy.get('[data-testid="category-edit-modal-edit"]').click();
+})
+
+Then("I should get name required error edit",() => {
+  cy.get('[data-testid="category-edit-error-name"]').should('be.visible').should('have.text',"Name is required!")
+})
 
 When("I change name and submit", () => {
   cy.get("#name").should("have.value", "test").clear().type(editCategoryName);

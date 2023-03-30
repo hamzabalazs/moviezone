@@ -32,7 +32,7 @@ export function useMoviePageData(
         movie_id,
       },
     },
-    fetchPolicy:'network-only',notifyOnNetworkStatusChange:true
+    fetchPolicy:'cache-and-network',notifyOnNetworkStatusChange:true
   });
 
   return {

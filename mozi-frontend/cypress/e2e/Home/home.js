@@ -73,9 +73,8 @@ Then("Movie List should change to a single movie", () => {
 });
 
 When("I scroll to bottom", () => {
-  cy.wait(300);
   cy.get('[data-testid="footer"]').scrollIntoView();
-  cy.wait(300);
+  cy.wait(500);
 });
 
 Then("Movie List should load next elements", () => {

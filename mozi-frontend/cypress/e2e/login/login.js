@@ -5,6 +5,22 @@ Given("I open login page", () => {
   cy.visit("http://localhost:3000/login");
 });
 
+When('I click on register link',() => {
+  cy.get('[href="/register"]').click()
+})
+
+Then('I should be on register page',() => {
+  cy.url().should('eq','http://localhost:3000/register')
+})
+
+When('I click on forgot password link',() => {
+  cy.get('[href="/forgotpass"]').click()
+})
+
+Then('I should be on forgot password page',() => {
+  cy.url().should('eq','http://localhost:3000/forgotpass')
+})
+
 When("I submit login", () => {
   cy.get("#email").type("admin@example.com");
   cy.get("#password").type("admin");

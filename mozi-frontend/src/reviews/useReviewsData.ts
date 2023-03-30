@@ -26,7 +26,7 @@ export function useReviewsData(
         movie_id: "",
       },
     },
-    fetchPolicy: "cache-first",
+    fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
   });
 

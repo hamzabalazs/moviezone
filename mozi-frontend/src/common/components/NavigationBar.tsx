@@ -210,6 +210,7 @@ export default function NavigationBar() {
                 checked={mode === "dark"}
                 onChange={switchMode}
                 inputProps={{ "aria-label": "Dark Mode" }}
+                id="themeSwitcher"
               />
             )}
           </themeSwitchContext.Consumer>
