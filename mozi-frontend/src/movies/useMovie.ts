@@ -5,9 +5,13 @@ import {
   Movie,
   UpdateMovieMutation,
 } from "../gql/graphql";
-import { CREATE_MOVIE, DELETE_MOVIE, GET_HOME_PAGE_DATA, UPDATE_MOVIE } from "./movieQueries";
+import {
+  CREATE_MOVIE,
+  DELETE_MOVIE,
+  GET_HOME_PAGE_DATA,
+  UPDATE_MOVIE,
+} from "./movieQueries";
 import { GET_MOVIE_BY_ID } from "./movieQueries";
-
 
 type MovieData = {
   addMovie: (
@@ -41,63 +45,70 @@ export function useMovie(): MovieData {
     release_date: string,
     category_id: string
   ): Promise<Movie | null | undefined> {
-    const result = await AddMovieAPI({
-      variables: {
-        input: {
-          title,
-          description,
-          poster,
-          release_date,
-          category_id,
+    try {
+      const result = await AddMovieAPI({
+        variables: {
+          input: {
+            title,
+            description,
+            poster,
+            release_date,
+            category_id,
+          },
         },
-      },
-      update: (cache, { data }) => {
-        const pageData = client.readQuery({
-          query: GET_HOME_PAGE_DATA,
-          variables:{
-            input:{
-              limit:100,
-              category:[],
-              searchField:"",
-              offset:0,
-              orderByTitle:null,
-              orderByCategory:null
+        update: (cache, { data }) => {
+          const pageData = client.readQuery({
+            query: GET_HOME_PAGE_DATA,
+            variables: {
+              input: {
+                limit: 100,
+                category: [],
+                searchField: "",
+                offset: 0,
+                orderByTitle: null,
+                orderByCategory: null,
+              },
+              input2: {
+                category: [],
+                searchField: "",
+              },
             },
-            input2:{
-              category:[],
-              searchField:""
-            }
-          }
-        });
-        if (!pageData) return;
-        if (!data) return;
-        cache.writeQuery({
-          query: GET_HOME_PAGE_DATA,
-          variables:{
-            input:{
-              limit:100,
-              category:[],
-              searchField:"",
-              offset:0,
-              orderByTitle:null,
-              orderByCategory:null
+          });
+          if (!pageData) return;
+          if (!data) return;
+          cache.writeQuery({
+            query: GET_HOME_PAGE_DATA,
+            variables: {
+              input: {
+                limit: 100,
+                category: [],
+                searchField: "",
+                offset: 0,
+                orderByTitle: null,
+                orderByCategory: null,
+              },
+              input2: {
+                category: [],
+                searchField: "",
+              },
             },
-            input2:{
-              category:[],
-              searchField:""
-            }
-          },
-          data: {
-            ...pageData.getCategories,
-            getMovies: [...pageData.getMovies, data.createMovie],
-          },
-        });
-      },
-    });
-    if (result.data) {
-      return result.data.createMovie;
+            data: {
+              getCategories: [...pageData.getCategories],
+              getMovies: [...pageData.getMovies, data.createMovie],
+              getNumberOfMovies:{
+                totalCount: pageData.getNumberOfMovies.totalCount + 1
+              }
+            },
+          });
+        },
+      });
+      if (result.data) {
+        return result.data.createMovie;
+      }
+      return null;
+    } catch (e: any) {
+      console.log(e.message);
     }
-    return null;
   }
 
   async function updateMovie(
@@ -126,15 +137,15 @@ export function useMovie(): MovieData {
             input: {
               id: id,
             },
-            input2:{
+            input2: {
               movie_id: id,
-              limit:3,
-              offset:0,
+              limit: 3,
+              offset: 0,
             },
-            input3:{
-              movie_id:id,
-              user_id:""
-            }
+            input3: {
+              movie_id: id,
+              user_id: "",
+            },
           },
         });
         if (!res) return;
@@ -145,7 +156,7 @@ export function useMovie(): MovieData {
           data: {
             getMovieById: data.updateMovie,
             getReviewsOfMovie: res.getReviewsOfMovie,
-            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie
+            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie,
           },
         });
       },
@@ -162,38 +173,38 @@ export function useMovie(): MovieData {
       update: (cache, { data }) => {
         const pageData = client.readQuery({
           query: GET_HOME_PAGE_DATA,
-          variables:{
-            input:{
-              limit:100,
-              category:[],
-              searchField:"",
-              offset:0,
-              orderByTitle:null,
-              orderByCategory:null
+          variables: {
+            input: {
+              limit: 100,
+              category: [],
+              searchField: "",
+              offset: 0,
+              orderByTitle: null,
+              orderByCategory: null,
             },
-            input2:{
-              category:[],
-              searchField:""
-            }
-          }
+            input2: {
+              category: [],
+              searchField: "",
+            },
+          },
         });
         if (!pageData) return;
         if (!data) return;
         cache.writeQuery({
           query: GET_HOME_PAGE_DATA,
-          variables:{
-            input:{
-              limit:100,
-              category:[],
-              searchField:"",
-              offset:0,
-              orderByTitle:null,
-              orderByCategory:null
+          variables: {
+            input: {
+              limit: 100,
+              category: [],
+              searchField: "",
+              offset: 0,
+              orderByTitle: null,
+              orderByCategory: null,
             },
-            input2:{
-              category:[],
-              searchField:""
-            }
+            input2: {
+              category: [],
+              searchField: "",
+            },
           },
           data: {
             ...pageData.getCategories,

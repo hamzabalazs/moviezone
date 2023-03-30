@@ -120,6 +120,7 @@ export default function AddMovieCard(props: Props) {
           display: "flex",
           flexDirection: "column",
         }}
+        data-testid="movie-add-card"
       >
         <CardContent>
           <Typography variant="h3" gutterBottom>
@@ -174,6 +175,7 @@ export default function AddMovieCard(props: Props) {
             value={formik.values.category.id}
             name="category.id"
             id="category.id"
+            data-testid="category-select"
             onChange={formik.handleChange}
             sx={{ border: 1, borderRadius: 1 }}
             inputProps={{ "data-testid": "movie-add-category" }}
@@ -227,7 +229,7 @@ export default function AddMovieCard(props: Props) {
             size="small"
             sx={{ color: "text.secondary", border: 1, borderRadius: 1 }}
             type="submit"
-            data-testid="movie-add-button"
+            data-testid="movie-add"
           >
             {t("buttons.add")}
           </Button>
