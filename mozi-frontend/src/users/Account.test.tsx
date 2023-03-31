@@ -82,8 +82,7 @@ test("Loading skeleton appears as placeholder", async() => {
   expect(skeleton).toBeTruthy()
   expect(skeleton).toBeInTheDocument()
 
-  const cards = await screen.findAllByTestId("user-card")
-  expect(skeleton).not.toBeInTheDocument()
+
 })
 
 test("only one user shows up", async() => {

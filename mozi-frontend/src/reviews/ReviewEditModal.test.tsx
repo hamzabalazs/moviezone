@@ -6,29 +6,30 @@ import { act } from "react-dom/test-utils";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import ReviewEditModal from "./ReviewEditModal";
 import { SnackbarProvider } from "notistack";
-import {Review, UserRole} from "../gql/graphql";
+import { Review, UserRole } from "../gql/graphql";
 import { UPDATE_REVIEW } from "./reviewQueries";
+import { MemoryRouter } from "react-router-dom";
 
-const testReview:Review = {
+const testReview: Review = {
   id: "idC1",
   user: {
     id: "idU2",
     first_name: "first",
     last_name: "last",
-    email:"firstlast@gmail.com",
-    role:UserRole["Admin"]
+    email: "firstlast@gmail.com",
+    role: UserRole["Admin"],
   },
   movie: {
     id: "idM2",
     title: "title2",
     description: "description2",
-    release_date:"02/02/2022",
-    poster:"poster2",
-    category:{
-      id:"idC1",
-      name:"name2"
+    release_date: "02/02/2022",
+    poster: "poster2",
+    category: {
+      id: "idC1",
+      name: "name2",
     },
-    rating:"0"
+    rating: "0",
   },
   description: "description1EDITED",
   rating: "5",
@@ -70,20 +71,22 @@ const editMock = {
   },
 };
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache();
 
 function renderReviewEditModal(props: {
   review?: Review;
   onClose?: () => void;
 }) {
   return render(
-    <SnackbarProvider>
-      <MockedProvider mocks={[editMock]} cache={cache}>
-        <MockedSessionContext>
-          <ReviewEditModal review={props.review} onClose={props.onClose} />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider>
+        <MockedProvider mocks={[editMock]} cache={cache}>
+          <MockedSessionContext>
+            <ReviewEditModal review={props.review} onClose={props.onClose} />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 

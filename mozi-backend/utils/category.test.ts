@@ -17,8 +17,7 @@ import {
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
-import { GET_CATEGORIES } from "../../mozi-frontend/src/categories/useCategoriesData"
-import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY } from "../../mozi-frontend/src/categories/useCategory"
+import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "../../mozi-frontend/src/categories/categoryQueries"
 
 const GET_CATEGORY_BY_ID = gql`
   query GetCategoryById($input: CategoryInput!) {

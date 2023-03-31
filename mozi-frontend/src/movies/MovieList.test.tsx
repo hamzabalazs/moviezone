@@ -83,27 +83,27 @@ const mockData = [
 
 function renderHome() {
   return render(
-    <MockedProvider addTypename={false} mocks={mockData}>
-      <MockedSessionContext>
-        <MemoryRouter>
+    <MemoryRouter>
+      <MockedProvider addTypename={false} mocks={mockData}>
+        <MockedSessionContext>
           <Home />
-        </MemoryRouter>
-      </MockedSessionContext>
-    </MockedProvider>
+        </MockedSessionContext>
+      </MockedProvider>
+    </MemoryRouter>
   );
 }
 
-test("Loading skeleton appears as placeholder", async() => {
-  renderHome()
+test("Loading skeleton appears as placeholder", async () => {
+  renderHome();
 
-  const skeleton = screen.getAllByTestId("movie-skeleton-component")
-  expect(skeleton).toBeTruthy()
-  expect(skeleton[0]).toBeInTheDocument()
-  expect(skeleton).toHaveLength(9)
+  const skeleton = screen.getAllByTestId("movie-skeleton-component");
+  expect(skeleton).toBeTruthy();
+  expect(skeleton[0]).toBeInTheDocument();
+  expect(skeleton).toHaveLength(9);
 
-  const cards = await screen.findAllByTestId("movie-list-card")
-  expect(skeleton[0]).not.toBeInTheDocument()
-})
+  const cards = await screen.findAllByTestId("movie-list-card");
+  expect(skeleton[0]).not.toBeInTheDocument();
+});
 
 test("Should have correct amount of cards for movielist", async () => {
   renderHome();

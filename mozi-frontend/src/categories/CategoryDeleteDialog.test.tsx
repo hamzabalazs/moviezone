@@ -7,6 +7,7 @@ import CategoryDeleteDialog from "./CategoryDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import { DELETE_CATEGORY } from "./categoryQueries";
 import { Category } from "../gql/graphql";
+import { MemoryRouter } from "react-router-dom";
 
 const testCategory: Category = {
   id: "idC3",
@@ -35,16 +36,18 @@ function renderCategoryDeleteDialog(props: {
   onClose?: () => void;
 }) {
   return render(
-    <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider mocks={[deleteMock]} cache={cache}>
-        <MockedSessionContext>
-          <CategoryDeleteDialog
-            category={props.category}
-            onClose={props.onClose}
-          />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider mocks={[deleteMock]} cache={cache}>
+          <MockedSessionContext>
+            <CategoryDeleteDialog
+              category={props.category}
+              onClose={props.onClose}
+            />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 

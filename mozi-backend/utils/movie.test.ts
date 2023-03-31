@@ -6,7 +6,8 @@ import {
   CREATE_MOVIE,
   DELETE_MOVIE,
   UPDATE_MOVIE,
-} from "../../mozi-frontend/src/movies/useMovie";
+  GET_MOVIE_BY_ID,
+} from "../../mozi-frontend/src/movies/movieQueries";
 import {
   addMovie,
   deleteMovie,
@@ -20,9 +21,7 @@ import {
   NO_TOKEN_MESSAGE,
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
-import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
-import { GET_MOVIE_BY_ID } from "../../mozi-frontend/src/movies/useMoviePageData";
 
 const GET_MOVIES = gql`
   query GetMovies($input: MoviePaginationInput!) {

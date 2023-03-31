@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SnackbarProvider } from "notistack";
 import { CREATE_MOVIE } from "./movieQueries";
 import { GET_CATEGORIES } from "../categories/categoryQueries";
+import { MemoryRouter } from "react-router-dom";
 
 const addMovie = {
   title: "title1",
@@ -86,16 +87,18 @@ function renderMovieAddModal(props: {
   setIsOpenAdd?: () => void;
 }) {
   return render(
-    <SnackbarProvider>
-      <MockedProvider cache={cache} mocks={dataMock}>
-        <MockedSessionContext>
-          <MovieAddModal
-            isOpenAdd={props.isOpenAdd}
-            setIsOpenAdd={props.setIsOpenAdd}
-          />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider>
+        <MockedProvider cache={cache} mocks={dataMock}>
+          <MockedSessionContext>
+            <MovieAddModal
+              isOpenAdd={props.isOpenAdd}
+              setIsOpenAdd={props.setIsOpenAdd}
+            />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 
@@ -129,7 +132,7 @@ test("If isOpenAdd is true should show modal correctly", async () => {
   const release_date = queryByTestId("movie-add-release_date");
   const category = queryByTestId("movie-add-category");
   const poster = queryByTestId("movie-add-poster");
-  const addButton = queryByTestId("movie-add-button");
+  const addButton = queryByTestId("movie-add");
 
   expect(modal).toBeInTheDocument();
   expect(title).toBeInTheDocument();
@@ -158,7 +161,7 @@ test("calls addMovie with correct values when addButton is clicked", async () =>
   ) as HTMLInputElement;
   const category = getByTestId("movie-add-category") as HTMLInputElement;
   const poster = getByTestId("movie-add-poster") as HTMLInputElement;
-  const addButton = getByTestId("movie-add-button") as HTMLInputElement;
+  const addButton = getByTestId("movie-add") as HTMLInputElement;
   expect(screen.queryByText("Success")).not.toBeInTheDocument();
 
   fireEvent.change(title, { target: { value: addMovie.title } });

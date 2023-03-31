@@ -8,15 +8,18 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { CurrentUser, UserRole } from "../../gql/graphql";
 import NavigationBar from "./NavigationBar";
+import { MockedProvider } from "@apollo/client/testing";
 
 function renderNavbar(user?: CurrentUser) {
   return render(
-    <MockedSessionContext value={{ user }}>
+    <MockedProvider addTypename={false}>
       <MemoryRouter initialEntries={["/"]}>
-        <NavigationBar />
-        <DisplayRoute />
+        <MockedSessionContext value={{ user }}>
+          <NavigationBar />
+          <DisplayRoute />
+        </MockedSessionContext>
       </MemoryRouter>
-    </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
@@ -135,19 +138,21 @@ test("navbar colorchange function calls", async () => {
 
   const theme = styles();
   render(
-    <MockedSessionContext>
-      <themeSwitchContext.Provider
-        value={{ mode: checked ? "dark" : "light", switchMode }}
-      >
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <MemoryRouter initialEntries={["/testroute"]}>
-            <NavigationBar />
-            <DisplayRoute />
-          </MemoryRouter>
-        </ThemeProvider>
-      </themeSwitchContext.Provider>
-    </MockedSessionContext>
+    <MemoryRouter initialEntries={["/testroute"]}>
+      <MockedProvider addTypename={false}>
+        <MockedSessionContext>
+          <themeSwitchContext.Provider
+            value={{ mode: checked ? "dark" : "light", switchMode }}
+          >
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <NavigationBar />
+              <DisplayRoute />
+            </ThemeProvider>
+          </themeSwitchContext.Provider>
+        </MockedSessionContext>
+      </MockedProvider>
+    </MemoryRouter>
   );
 
   const themeSwitcher = screen.getByLabelText("Dark Mode");

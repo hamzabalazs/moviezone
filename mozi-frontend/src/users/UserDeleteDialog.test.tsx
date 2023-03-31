@@ -7,6 +7,7 @@ import UserDeleteDialog from "./UserDeleteDialog";
 import { SnackbarProvider } from "notistack";
 import { FullUser, UserRole } from "../gql/graphql";
 import { DELETE_USER } from "./userQueries";
+import { MemoryRouter } from "react-router-dom";
 
 const testUser: FullUser = {
   id: "idU3",
@@ -41,15 +42,20 @@ const deleteMock = {
 
 const cache = new InMemoryCache();
 
-function renderUserDeleteDialog(props: { user?: FullUser; onClose?: () => void }) {
+function renderUserDeleteDialog(props: {
+  user?: FullUser;
+  onClose?: () => void;
+}) {
   return render(
-    <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider cache={cache} mocks={[deleteMock]}>
-        <MockedSessionContext>
-          <UserDeleteDialog user={props.user} onClose={props.onClose} />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider cache={cache} mocks={[deleteMock]}>
+          <MockedSessionContext>
+            <UserDeleteDialog user={props.user} onClose={props.onClose} />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 

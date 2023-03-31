@@ -10,10 +10,11 @@ import {
 import userEvent from "@testing-library/user-event";
 import MovieEditModal from "./MovieEditModal";
 import { SnackbarProvider } from "notistack";
-import { Movie} from "../gql/graphql";
+import { Movie } from "../gql/graphql";
 import { GET_CATEGORIES } from "../categories/categoryQueries";
 import { UPDATE_MOVIE } from "./movieQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { MemoryRouter } from "react-router-dom";
 
 const testMovie: Movie = {
   id: "idM1",
@@ -36,7 +37,6 @@ const testNewMovie = {
   poster: "poster1",
   categoryId: "idC3",
 };
-
 
 const dataMock = [
   {
@@ -95,17 +95,19 @@ const dataMock = [
   },
 ];
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache();
 
 function renderMovieEditModal(props: { movie?: Movie; onClose?: () => void }) {
   return render(
-    <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider mocks={dataMock} cache={cache}>
-        <MockedSessionContext>
-          <MovieEditModal movie={props.movie} onClose={props.onClose} />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider mocks={dataMock} cache={cache}>
+          <MockedSessionContext>
+            <MovieEditModal movie={props.movie} onClose={props.onClose} />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 
@@ -162,7 +164,9 @@ test("calls edit movie successfully", async () => {
 
   fireEvent.mouseDown(category.getByRole("button"));
   const listbox = within(getByRole("listbox"));
-  const role = listbox.getAllByRole("option").find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!
+  const role = listbox
+    .getAllByRole("option")
+    .find((x) => x.getAttribute("data-value") === testNewMovie.categoryId)!;
   userEvent.click(role);
 
   act(() => {

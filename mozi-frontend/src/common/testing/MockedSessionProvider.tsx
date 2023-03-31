@@ -1,5 +1,6 @@
 import React from "react";
 import { sessionContext, SessionContextData } from "../../auth/SessionContext";
+import { useLogIn } from "../../auth/useLogIn";
 import { UserRole } from "../../gql/graphql";
 
 export function MockedSessionContext({
@@ -9,6 +10,7 @@ export function MockedSessionContext({
   children: React.ReactNode;
   value?: Partial<SessionContextData>;
 }): JSX.Element {
+  const { logIn } = useLogIn()
   return (
     <sessionContext.Provider
       //@ts-ignore
@@ -23,6 +25,7 @@ export function MockedSessionContext({
           token: "token1",
         },
         // logOut:jest.fn(),
+        logIn,
         ...value,
       }}
     >

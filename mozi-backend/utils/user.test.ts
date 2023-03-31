@@ -2,11 +2,11 @@ import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
 import { fillDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
-import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testResponseUser2, testUser, testUser2 } from "./user.mocks";
+import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testUser } from "./user.mocks";
 import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 import { userData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
-import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/users/useUser"
+import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/users/userQueries"
 
 const GET_USER_BY_ID = gql`
   query GetUserById($input: UserInput!) {

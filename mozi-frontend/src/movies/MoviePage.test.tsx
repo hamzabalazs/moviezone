@@ -1,7 +1,10 @@
 import { InMemoryCache } from "@apollo/client";
 import { MockedProvider } from "@apollo/client/testing";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import {
+  createMemoryRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { GET_CATEGORIES } from "../categories/categoryQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
@@ -67,33 +70,33 @@ const mockMovieData = [
               first_name: "viewer",
               last_name: "viewer",
             },
-          }
+          },
         ],
-        getNumberOfReviewsOfMovie:{
-          totalCount:2
-        }
+        getNumberOfReviewsOfMovie: {
+          totalCount: 2,
+        },
       },
     },
   },
   {
     request: {
-      query: GET_CATEGORIES
+      query: GET_CATEGORIES,
     },
     result: {
-      data:{
-        getCategories:[
+      data: {
+        getCategories: [
           {
-            id:"idC1",
-            name:"name1"
+            id: "idC1",
+            name: "name1",
           },
           {
-            id:"idC2",
-            name:"name2"
-          }
-        ]
-      }
-    }
-  }
+            id: "idC2",
+            name: "name2",
+          },
+        ],
+      },
+    },
+  },
 ];
 
 const adminUser: CurrentUser = {
@@ -116,6 +119,13 @@ const viewerUser: CurrentUser = {
 
 const cache = new InMemoryCache();
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom') as any,
+  useNavigate: () => ({
+    navigate: jest.fn()
+  }),
+}));
+
 function renderMoviePage(currUser?: CurrentUser) {
   const FAKE_EVENT = { name: "test event" };
   const routes = [
@@ -132,25 +142,25 @@ function renderMoviePage(currUser?: CurrentUser) {
   });
 
   return render(
-    <MockedSessionContext value={{ user: currUser }}>
-      <MockedProvider cache={cache} mocks={mockMovieData}>
-        <RouterProvider router={router} />
-      </MockedProvider>
-    </MockedSessionContext>
+    <MockedProvider cache={cache} mocks={mockMovieData}>
+      <MockedSessionContext value={{ user: currUser }}>
+        <RouterProvider router={router}></RouterProvider>
+      </MockedSessionContext>
+    </MockedProvider>
   );
 }
 
-test("Loading skeleton appears as placeholder for reviews of movie", async() => {
-  renderMoviePage(adminUser)
+test("Loading skeleton appears as placeholder for reviews of movie", async () => {
+  renderMoviePage(adminUser);
 
-  const skeleton = await screen.findAllByTestId("skeleton-component")
-  expect(skeleton).toBeTruthy()
-  expect(skeleton[0]).toBeInTheDocument()
-  expect(skeleton).toHaveLength(3)
+  const skeleton = await screen.findAllByTestId("skeleton-component");
+  expect(skeleton).toBeTruthy();
+  expect(skeleton[0]).toBeInTheDocument();
+  expect(skeleton).toHaveLength(3);
 
-  const cards = await screen.findAllByTestId("review-card")
-  expect(skeleton[0]).not.toBeInTheDocument()
-})
+  const cards = await screen.findAllByTestId("review-card");
+  expect(skeleton[0]).not.toBeInTheDocument();
+});
 
 test("Should not have edit and delete button on moviecard if current user is viewer", async () => {
   renderMoviePage(viewerUser);

@@ -24,8 +24,7 @@ import {
 } from "../common/errorMessages";
 import { sessionData, userData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
-import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW } from "../../mozi-frontend/src/reviews/useReview";
-import { GET_REVIEWS } from "../../mozi-frontend/src/reviews/useReviewsData";
+import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW,GET_REVIEWS } from "../../mozi-frontend/src/reviews/reviewQueries";
 
 const GET_REVIEW_BY_ID = gql`
   query GetReviewById($input: ReviewInput!) {

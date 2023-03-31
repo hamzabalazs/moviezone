@@ -13,6 +13,7 @@ import { SnackbarProvider } from "notistack";
 import { Category, CurrentUser } from "../gql/graphql";
 import { UPDATE_CATEGORY } from "./categoryQueries";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
+import { MemoryRouter } from "react-router-dom";
 
 const testCategory: Category = {
   id: "idC3",
@@ -44,7 +45,7 @@ const editMock = {
   },
 };
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache();
 
 function renderCategoryEditModal(props: {
   category?: Category;
@@ -52,6 +53,7 @@ function renderCategoryEditModal(props: {
   user?: CurrentUser;
 }) {
   return render(
+    <MemoryRouter>
       <SnackbarProvider autoHideDuration={null}>
         <MockedProvider mocks={[editMock]} cache={cache}>
           <MockedSessionContext value={{ user: props.user }}>
@@ -62,6 +64,7 @@ function renderCategoryEditModal(props: {
           </MockedSessionContext>
         </MockedProvider>
       </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 

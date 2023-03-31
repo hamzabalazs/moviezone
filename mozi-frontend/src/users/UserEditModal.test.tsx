@@ -13,6 +13,7 @@ import UserEditModal from "./UserEditModal";
 import { SnackbarProvider } from "notistack";
 import { FullUser, UserRole } from "../gql/graphql";
 import { UPDATE_USER } from "./userQueries";
+import { MemoryRouter } from "react-router-dom";
 
 const testUser: FullUser = {
   id: "idU3",
@@ -31,7 +32,6 @@ const newTestUser: FullUser = {
   password: "New viewer",
   role: UserRole["Viewer"],
 };
-
 
 const editMock = {
   request: {
@@ -60,7 +60,7 @@ const editMock = {
   },
 };
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache();
 
 function renderUserEditModal(props: {
   user?: FullUser;
@@ -68,17 +68,19 @@ function renderUserEditModal(props: {
   allowEditRole?: boolean;
 }) {
   return render(
-    <SnackbarProvider autoHideDuration={null}>
-      <MockedProvider mocks={[editMock]} cache={cache}>
-        <MockedSessionContext>
-          <UserEditModal
-            user={props.user}
-            onClose={props.onClose}
-            allowEditRole={props.allowEditRole}
-          />
-        </MockedSessionContext>
-      </MockedProvider>
-    </SnackbarProvider>
+    <MemoryRouter>
+      <SnackbarProvider autoHideDuration={null}>
+        <MockedProvider mocks={[editMock]} cache={cache}>
+          <MockedSessionContext>
+            <UserEditModal
+              user={props.user}
+              onClose={props.onClose}
+              allowEditRole={props.allowEditRole}
+            />
+          </MockedSessionContext>
+        </MockedProvider>
+      </SnackbarProvider>
+    </MemoryRouter>
   );
 }
 
