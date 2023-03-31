@@ -3,10 +3,10 @@ import {
   NOT_VALID_REVIEW,
   NO_REVIEW_MESSAGE,
   UNAUTHORIZED_MESSAGE,
-} from "../common/errorMessages";
+} from "../../mozi-frontend/src/common/errorMessages";
 import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { DbReview, ExtendedReview, Review } from "./types";
+import { DbReview, Review } from "./types";
 
 export function getReviews(context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";

@@ -1,8 +1,8 @@
 import { GraphQLError } from "graphql/error";
-import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { CreateMovieType, Movie, MovieWithReviews, UpdateMovieInput } from "./types";
+import { CreateMovieType, Movie, UpdateMovieInput } from "./types";
 
 export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let sql = "SELECT * FROM movie";

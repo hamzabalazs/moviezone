@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql/error";
 import { v4 as uuidv4 } from "uuid";
-import { NOT_VALID_CATEGORY, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { NOT_VALID_CATEGORY, UNAUTHORIZED_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 import { categorySchema } from "../common/validation";
 import { MyContext } from "../server";
 import { Category } from "./types";

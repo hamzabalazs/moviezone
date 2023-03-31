@@ -20,7 +20,7 @@ import {
   NO_MOVIE_MESSAGE,
   NO_TOKEN_MESSAGE,
   UNAUTHORIZED_MESSAGE,
-} from "../common/errorMessages";
+} from "../../mozi-frontend/src/common/errorMessages";
 import { Database } from "../common/sqlite-async-ts";
 
 const GET_MOVIES = gql`

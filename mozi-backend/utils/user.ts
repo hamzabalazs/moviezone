@@ -4,7 +4,7 @@ import {
   NOT_VALID_USER,
   UNAUTHORIZED_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
-} from "../common/errorMessages";
+} from "../../mozi-frontend/src/common/errorMessages";
 import { userSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { User, FullUser, CurrentUser } from "./types";

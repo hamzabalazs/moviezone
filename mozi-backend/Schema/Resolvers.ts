@@ -56,7 +56,7 @@ import {
   NO_USER_MESSAGE,
   REVIEW_INVALID_RATING_MESSAGE,
   USER_EMAIL_USED_MESSAGE,
-} from "../common/errorMessages";
+} from "../../mozi-frontend/src/common/errorMessages";
 import {
   createReviewErrorHandling,
   tokenChecker,

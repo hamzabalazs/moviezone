@@ -3,7 +3,7 @@ import { resolvers } from "../Schema/Resolvers";
 import { fillDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
 import { existingTestUser, newTestUser } from "./auth.mocks";
-import { NO_USER_MESSAGE } from "../common/errorMessages";
+import { NO_USER_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 import { Database } from "../common/sqlite-async-ts";
 
 const LOGIN = gql`
