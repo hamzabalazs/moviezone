@@ -22,8 +22,8 @@ Then('I should be on forgot password page',() => {
 })
 
 When("I submit login", () => {
-  cy.get("#email").type("admin@example.com");
-  cy.get("#password").type("admin");
+  cy.get("#email").clear().type("admin@example.com");
+  cy.get("#password").clear().type("admin");
   cy.get("#submit").click();
 });
 
@@ -35,7 +35,8 @@ Then("I should see homepage", () => {
 });
 
 When("I submit login without password", () => {
-  cy.get("#email").type("admin@example.com");
+  cy.get("#email").clear().type("admin@example.com");
+  cy.get('#password').clear()
   cy.get("#submit").click();
 });
 
@@ -47,7 +48,8 @@ Then("I should get password required error", () => {
 });
 
 When("I submit login without email", () => {
-  cy.get("#password").type("admin");
+  cy.get('#email').clear()
+  cy.get("#password").clear().type("admin");
   cy.get("#submit").click();
 });
 
@@ -59,8 +61,8 @@ Then("I should get email required error", () => {
 });
 
 When("I submit login with bad credentials", () => {
-  cy.get("#email").type("bademail@example.com");
-  cy.get("#password").type("badpassword");
+  cy.get("#email").clear().type("bademail@example.com");
+  cy.get("#password").clear().type("badpassword");
   cy.get("#submit").click();
 });
 
@@ -72,8 +74,8 @@ Then("I should get user not found error", () => {
 });
 
 When("I submit login with invalid email", () => {
-  cy.get("#email").type("formatwrong.com");
-  cy.get("#password").type("password");
+  cy.get("#email").clear().type("formatwrong.com");
+  cy.get("#password").clear().type("password");
   cy.get("#submit").click();
 });
 
@@ -85,8 +87,8 @@ Then("I should get invalid email error", () => {
 });
 
 When("I submit login with invalid password", () => {
-  cy.get("#email").type("goodemail@gmail.com");
-  cy.get("#password").type("ps");
+  cy.get("#email").clear().type("goodemail@gmail.com");
+  cy.get("#password").clear().type("ps");
   cy.get("#submit").click();
 });
 
@@ -98,6 +100,8 @@ Then("I should get invalid password error", () => {
 });
 
 When("I submit login without email and password", () => {
+  cy.get("#email").clear()
+  cy.get("#password").clear()
   cy.get("#submit").click();
 });
 

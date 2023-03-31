@@ -1,7 +1,22 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
+const adminCredentials = {
+    email:"admin@example.com",
+    password:"admin"
+}
+
+const editorCredentials = {
+    email:"editor@example.com",
+    password:"editor"
+}
+
+const viewerCredentials = {
+    email:"viewer@example.com",
+    password:"viewer"
+}
+
 Given('I login as admin',() => {
-    cy.login("admin@example.com","admin")
+    cy.login(adminCredentials.email,adminCredentials.password)
     cy.url()
         .should('eq','http://localhost:3000/') 
 })
@@ -35,7 +50,7 @@ Then("I should be on account page",() => {
 })
 
 Given('I login as viewer',() => {
-    cy.login("viewer@example.com","viewer")
+    cy.login(viewerCredentials.email,viewerCredentials.password)
     cy.url()
         .should('eq','http://localhost:3000/') 
 })
@@ -47,6 +62,27 @@ When('I navigate to reviews page',() => {
 Then('I should be on reviews page',() => {
     cy.url()
         .should('eq','http://localhost:3000/reviews')
+})
+
+Given('I login as editor',() => {
+    cy.login(editorCredentials.email,editorCredentials.password)
+    cy.url().should('eq',"http://localhost:3000/")
+})
+
+When('I open home page',() => {
+    cy.visit('http://localhost:3000/')
+})
+
+Then('I should not see users tab on navbar',() => {
+    cy.get('[href="/users"]').should("not.exist")
+})
+
+Then('I should not see categories tab on navbar',() => {
+    cy.get('[href="/categories"]').should('not.exist')
+})
+
+Then('I should not see reviews tab on navbar',() => {
+    cy.get('[href="/reviews"]').should('not.exist')
 })
 
 When("I change language to Hungarian",() => {

@@ -7,16 +7,12 @@ Feature: Review page works as intended
         Given I open reviews page
         When I scroll to bottom
         Then I should see at most six reviews
-    Scenario: Review Edit missing description
+    Scenario: Review Edit works as intended
         Given I open reviews page and scroll to last review
         When I click on review edit button
         Then I should see review edit modal
         When I submit without description
         Then I should get description required error
-    Scenario: Review Edit successful
-        Given I open reviews page and scroll to last review
-        When I click on review edit button
-        Then I should see review edit modal
         When I submit with correct data
         Then I should see edited review
     Scenario: Review Delete closes after quit is clicked
@@ -25,8 +21,6 @@ Feature: Review page works as intended
         Then I should see review delete dialog
         When I click quit
         Then I should not see review delete dialog
-    Scenario: Review Delete successful
-        Given I open reviews page and scroll to last review after edit
         When I click on review delete button
         Then I should see review delete dialog
         When I click accept

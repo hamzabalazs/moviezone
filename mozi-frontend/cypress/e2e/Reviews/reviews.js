@@ -93,6 +93,7 @@ When("I submit with correct data", () => {
   cy.get('[data-testid="review-edit-modal-description"]')
     .clear()
     .type(testReviewEdited.description);
+  cy.get('[data-testid="review-edit-modal-rating"').find('label').first().click()
   cy.get('[data-testid="review-edit-modal-edit"]').click();
 });
 

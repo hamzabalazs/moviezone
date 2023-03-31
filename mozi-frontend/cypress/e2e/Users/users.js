@@ -14,12 +14,17 @@ const editedTestUser = {
   password: "testtest",
 };
 
+const adminCredentials = {
+  email:"admin@example.com",
+  password:"admin"
+}
+
 before(() => {
   cy.addUser(testUser);
 });
 
 beforeEach(() => {
-  cy.login("admin@example.com", "admin");
+  cy.login(adminCredentials.email, adminCredentials.password);
   cy.wait(300);
 });
 
@@ -63,7 +68,9 @@ Then("Edit modal should open", () => {
 
 When('I clear first_name and submit',() => {
   cy.get("#first_name").clear()
-  cy.get("#password").clear().type("testtest");
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear().type(editedTestUser.email)
+  cy.get("#password").clear().type(editedTestUser.password);
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
 
@@ -72,8 +79,10 @@ Then('I should get first_name required error',() => {
 })
 
 When('I clear last_name and submit',() => {
-  cy.get("#last_name").clear()
-  cy.get("#password").clear().type("testtest");
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear()
+  cy.get('#email').clear().type(editedTestUser.email)
+  cy.get("#password").clear().type(editedTestUser.password);
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
 
@@ -82,8 +91,10 @@ Then('I should get last_name required error',() => {
 })
 
 When('I clear email and submit',() => {
-  cy.get("#email").clear()
-  cy.get("#password").clear().type("testtest");
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear()
+  cy.get("#password").clear().type(editedTestUser.password);
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
 
@@ -92,8 +103,10 @@ Then('I should get email required error',() => {
 })
 
 When('I type invalid email and submit',() => {
-  cy.get("#email").clear().type("invalidemail.com")
-  cy.get("#password").clear().type("testtest");
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear().type("invalid.com")
+  cy.get("#password").clear().type(editedTestUser.password);
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
 
@@ -102,6 +115,9 @@ Then('I should get invalid email error',() => {
 })
 
 When('I clear password and submit',() => {
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear().type(editedTestUser.email)
   cy.get("#password").clear()
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
@@ -111,7 +127,10 @@ Then('I should get password required error',() => {
 })
 
 When('I type short password and submit',() => {
-  cy.get("#password").clear().type("ps")
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear().type(editedTestUser.email)
+  cy.get("#password").clear().type('ps');
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 })
 
@@ -121,8 +140,8 @@ Then('I should get invalid password error',() => {
 
 When("I clear all data and submit", () => {
   cy.get("#first_name").clear()
-  cy.get("#last_name").clear()
-  cy.get("#email").clear()
+  cy.get('#last_name').clear()
+  cy.get('#email').clear()
   cy.get("#password").clear()
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 });
@@ -133,10 +152,10 @@ Then('I should get 4x required error',() => {
 })
 
 When("I change data and submit", () => {
-  cy.get("#first_name").clear().type("testEDITED");
-  cy.get("#last_name").clear().type("testEDITED");
-  cy.get("#email").clear().type("testEDITED@gmail.com");
-  cy.get("#password").clear().type("testtest");
+  cy.get("#first_name").clear().type(editedTestUser.firstName)
+  cy.get('#last_name').clear().type(editedTestUser.lastName)
+  cy.get('#email').clear().type(editedTestUser.email)
+  cy.get("#password").clear().type(editedTestUser.password);
   cy.get('[data-testid="user-edit-modal-submit"]').click();
 });
 

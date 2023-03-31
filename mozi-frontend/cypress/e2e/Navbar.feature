@@ -15,6 +15,26 @@ Feature: Navigation Bar works as intended
         Given I login as viewer
         When I navigate to reviews page
         Then I should be on reviews page
+    Scenario: Should not see Users tab as editor
+        Given I login as editor
+        When I open home page
+        Then I should not see users tab on navbar
+    Scenario: Should not see Categories tab as viewer
+        Given I login as viewer
+        When I open home page
+        Then I should not see categories tab on navbar
+    Scenario: Should not see Users tab as viewer
+        Given I login as viewer
+        When I open home page
+        Then I should not see users tab on navbar
+    Scenario: Should not see Reviews tab as admin
+        Given I login as admin
+        When I open home page
+        Then I should not see reviews tab on navbar
+    Scenario: Should not see Reviews tab as editor
+        Given I login as editor
+        When I open home page
+        Then I should not see reviews tab on navbar
     Scenario: Change Language to Hungarian then back to English
         Given I login as admin
         When I change language to Hungarian
@@ -31,4 +51,3 @@ Feature: Navigation Bar works as intended
         Then Style should be dark mode
         When I press dark or light mode
         Then Style should be light mode
-    

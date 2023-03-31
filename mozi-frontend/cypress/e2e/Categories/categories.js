@@ -28,27 +28,23 @@ Then("Add modal should open", () => {
   cy.get('[data-testid="category-add-card"]').should("be.visible");
 });
 
-When("I leave fields blank and submit",() => {
+When("I leave fields blank and submit", () => {
   cy.get('[data-testid="category-add"]').click();
-})
+});
 
-Then("I should get name required error add",() => {
-  cy.get('[data-testid="category-add-error-name"]').should('be.visible').should('have.text',"Category name is required!")
-})
+Then("I should get name required error add", () => {
+  cy.get('[data-testid="category-add-error-name"]')
+    .should("be.visible")
+    .should("have.text", "Category name is required!");
+});
 
 When("I fill out data and submit", () => {
-  cy.get('[data-testid="category-card"]').then((result) => {
-    cy.wrap(result.length).as("listLength");
-  });
   cy.get("#name").type(newCategoryName);
   cy.get('[data-testid="category-add"]').click();
 });
 
 Then("New category should be added", () => {
-  cy.get("@listLength")
-    .then((resp) => {
-      cy.get('[data-testid="category-card"]').should("have.length", resp + 1);
-    });
+  cy.get('[data-testid="category-card-name"]').last().should("have.text", newCategoryName);
 });
 
 When("I press category edit button", () => {
@@ -59,17 +55,19 @@ Then("Edit modal should open", () => {
   cy.get('[data-testid="category-edit-card"]').should("be.visible");
 });
 
-When("I clear name and submit",() => {
-  cy.get("#name").should("have.value", "test").clear()
+When("I clear name and submit", () => {
+  cy.get("#name").should("have.value", "test").clear();
   cy.get('[data-testid="category-edit-modal-edit"]').click();
-})
+});
 
-Then("I should get name required error edit",() => {
-  cy.get('[data-testid="category-edit-error-name"]').should('be.visible').should('have.text',"Name is required!")
-})
+Then("I should get name required error edit", () => {
+  cy.get('[data-testid="category-edit-error-name"]')
+    .should("be.visible")
+    .should("have.text", "Name is required!");
+});
 
 When("I change name and submit", () => {
-  cy.get("#name").should("have.value", "test").clear().type(editCategoryName);
+  cy.get("#name").clear().type(editCategoryName);
   cy.get('[data-testid="category-edit-modal-edit"]').click();
 });
 
@@ -97,11 +95,10 @@ Then("Category should be deleted", () => {
     .should("not.have.value", editCategoryName);
 });
 
-When('I press quit button',() => {
-  cy.get('[data-testid="category-delete-dialog-quit"]').click()
-})
+When("I press quit button", () => {
+  cy.get('[data-testid="category-delete-dialog-quit"]').click();
+});
 
-Then('Delete dialog should not be open',() => {
+Then("Delete dialog should not be open", () => {
   cy.get('[data-testid="category-delete-dialog"]').should("not.exist");
-
-})
+});
