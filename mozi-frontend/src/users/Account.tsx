@@ -13,35 +13,45 @@ import UserEditModal from "./UserEditModal";
 import UserCard from "./UserCard";
 import CardSkeletonComponent from "../common/components/CardSkeletonComponent";
 
-
 function Account() {
   const { t } = useTranslation();
   const context = useSessionContext();
-  const {users,loading} = useUserData()
-  const [editingUser, setEditingUser] = useState<FullUser | undefined>(undefined);
-  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(undefined);
+  const { users, loading } = useUserData();
+  const [editingUser, setEditingUser] = useState<FullUser | undefined>(
+    undefined
+  );
+  const [deletingUser, setDeletingUser] = useState<FullUser | undefined>(
+    undefined
+  );
 
   const [user, setUser] = useState<FullUser>({
-    id: "",
-    first_name: "",
-    last_name: "",
-    email: "",
+    id: context.user?.id || "",
+    first_name: context.user?.first_name || "",
+    last_name: context.user?.last_name || "",
+    email: context.user?.email || "",
     password: "",
-    role: UserRole["Viewer"],
+    role: context.user?.role || UserRole["Viewer"],
   });
 
   useEffect(() => {
-    if (context.user && !loading) {
-      const displayUser = users.find((x:FullUser) => x.id === context.user?.id);
-      if (displayUser) {
-        setUser(displayUser);
-      }else context.logOut()
-      
+    if (!context.user && loading) {
+      context.logOut();
     }
-    if(!context.user && loading){
-      context.logOut()
+  }, [loading]);
+
+  useEffect(() => {
+    if(!loading && context.user){
+      const displayUser: FullUser = {
+        id: context.user.id,
+        first_name: context.user.first_name,
+        last_name: context.user.last_name,
+        email: context.user.email,
+        password: "",
+        role: context.user.role,
+      };
+      setUser(displayUser)
     }
-  }, [users]);  
+  },[context])
 
   return (
     <>
@@ -71,7 +81,7 @@ function Account() {
         <div>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              {users.find((x:FullUser) => x.id === context.user?.id) && (
+              {context.user && (
                 <UserCard
                   user={user}
                   onEdit={() => setEditingUser(user)}
@@ -81,7 +91,7 @@ function Account() {
             </Grid>
           </Grid>
           {loading && (
-            <Grid container spacing={4} sx={{marginTop:0}}>
+            <Grid container spacing={4} sx={{ marginTop: 0 }}>
               <CardSkeletonComponent />
             </Grid>
           )}

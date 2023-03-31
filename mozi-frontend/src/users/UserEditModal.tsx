@@ -36,13 +36,14 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
   const { t } = useTranslation();
   const {updateUser:UpdateUserAPI} = useUser()
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut } = useSessionContext();
+  const { logOut,logIn } = useSessionContext();
 
   const updateUser = async (editedUser: Omit<FullUser, "id">) => {
     if (user === undefined) return;
     try {
       const result = await UpdateUserAPI(user.id,editedUser.first_name,editedUser.last_name,editedUser.email,editedUser.password,allowEditRole ? editedUser.role : undefined);
       if (result) {
+        logIn(editedUser.email,editedUser.password)
         const msg = t("successMessages.userEdit");
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();

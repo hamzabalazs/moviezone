@@ -31,9 +31,10 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
       if (result) {
         const msg = t("successMessages.userDelete");
         enqueueSnackbar(msg, { variant: "success" });
-        onClose?.();
+        logOut();
       }
     } catch (error: any) {
+      console.log(error.message)
       if (error.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
