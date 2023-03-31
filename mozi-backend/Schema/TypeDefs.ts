@@ -263,6 +263,14 @@ export const typeDefs = gql`
     totalCount: Int
   }
 
+  input resetTokenInput {
+    email:String!
+  }
+
+  input changePasswordInput {
+    password:String!
+  }
+
   # Queries
   type Query {
     getUsers(input: UserPaginationInput): [FullUser!]!
@@ -292,6 +300,7 @@ export const typeDefs = gql`
     createUser(input: AddUserInput!): User
     updateUser(input: UpdateUserInput!): FullUser!
     deleteUser(input: DeleteUserInput!): FullUser!
+    changePassword(input: changePasswordInput!): RunResult!
     createCategory(input: AddCategoryInput!): Category
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
@@ -303,5 +312,6 @@ export const typeDefs = gql`
     deleteReview(input: DeleteReviewInput!): Review!
     createToken(input: AddTokenInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!
+    createResetToken(input:resetTokenInput!): RunResult!
   }
 `;

@@ -70,7 +70,8 @@
     "@types/lodash": "^4.14.191",
     "@types/node": "^16.18.22",
     "@types/uuid": "^9.0.1",
-    "cypress": "^12.8.1"
+    "cypress": "^12.8.1",
+    "nodemailer": "^6.9.1"
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true

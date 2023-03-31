@@ -28,6 +28,7 @@ import Register from "./users/Register";
 import Forgotpass from "./users/Forgotpass";
 import { Users } from "./users/Users";
 import Account from "./users/Account";
+import ResetPassword from "./users/ResetPassword";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -233,6 +234,7 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
                 <Route path="forgotpass" element={<Forgotpass />} />
+                <Route path="resetpassword" element={<ResetPassword/>} />
                 <Route
                   path="categories"
                   element={

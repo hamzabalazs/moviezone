@@ -17,6 +17,8 @@ import { useSessionContext } from "../auth/SessionContext";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
 import { FullUser } from "../gql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
+import { CHECK_FOR_USER, CREATE_RESET_TOKEN } from "./userQueries";
 
 interface Values {
   email: string;
@@ -27,7 +29,8 @@ function Forgotpass() {
   const context = useSessionContext();
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar()
-  const {users,loading} = useUserData()
+  const {users,loading} = useUserData(0,100)
+  
 
 
   useEffect(() => {
@@ -42,13 +45,18 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const isUser = users.find((x:FullUser) => x.email === email);
-      if (!isUser) {
+      const {data} = useQuery(CHECK_FOR_USER,{variables:{input:{email}}})
+      //nem adja vissza
+      
+      if (!data) {
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
         
       } else {
         const msg = t("forgotPass.isUser");
+        const [createResetTokenAPI] = useMutation(CREATE_RESET_TOKEN,{variables:{input:email}})
+
+        //email sending
         enqueueSnackbar(msg,{variant:"success"})
         navigate("/login");
       }

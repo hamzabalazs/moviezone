@@ -9,6 +9,7 @@ import {
   getUserByToken,
   getUsers,
   getNumberOfUsers,
+  changePassword,
 } from "../utils/user";
 import {
   getMovies,
@@ -29,7 +30,7 @@ import {
   getNumberOfReviewsOfUser,
   getNumberOfReviewsOfMovie,
 } from "../utils/review";
-import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
+import { createResetToken, deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
   getCategories,
   getCategoryById,
@@ -210,6 +211,9 @@ export const resolvers = {
         });
       return await deleteUser(user_id, context);
     },
+    async changePassword(_:any, args:any, context:MyContext){
+      return await changePassword(args.input.password,context)
+    },
     // Categories
     async createCategory(_: any, args: any, context: MyContext) {
       context.user = await tokenChecker(context);
@@ -314,5 +318,8 @@ export const resolvers = {
     async deleteToken(_: any, { input }: any, context: MyContext) {
       return await deleteToken(input.token, context);
     },
+    async createResetToken(_:any,{input}:any,context:MyContext) {
+      return await createResetToken(input.email,context)
+    }
   },
 };

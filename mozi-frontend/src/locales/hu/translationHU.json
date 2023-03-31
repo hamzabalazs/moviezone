@@ -74,7 +74,8 @@
         "reviewDelete": "A vélemény törlése sikeres!",
         "movieDelete": "A film törlése sikeres!",
         "categoryDelete": "A kategória törlése sikeres!",
-        "userDelete": "A felhasználó törlése sikeres!"
+        "userDelete": "A felhasználó törlése sikeres!",
+        "passwordChanged":"A jelszó szerkesztése sikeres!"
     },
     "addTitle": {
         "category":"Kategória hozzáadása",
@@ -127,6 +128,11 @@
         "noUser": "Nem található az email a rendszerünkben!",
         "isUser": "Küldtünk egy emailt a jelszó visszaállítási utasításaival!"
     },
+    "resetPass":{
+        "resetpassword":"Jelszó visszaállítás",
+        "password":"Jelszó",
+        "confirmPassword":"Jelszó megerősítése"
+    },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",
         "emailReq": "Az email kötelező!",
@@ -141,7 +147,8 @@
         "emailFormat": "Érvénytelen email formátum!",
         "nameReq":"A név kötelező!",
         "ratingReq":"Az értékelés kötelező!",
-        "posterReq": "A poszter kötelező!"
+        "posterReq": "A poszter kötelező!",
+        "confirmPasswordReq": "A jelszó megerősítése kötelező!"
     },
     "someError": "Valami rosszul sült el, kérjük, próbálja meg később újra!",
     "validityFailure":{

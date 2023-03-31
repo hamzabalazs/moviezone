@@ -73,7 +73,8 @@
         "reviewDelete": "Review was deleted successfully!",
         "movieDelete": "Movie was deleted successfully!",
         "categoryDelete": "Category was deleted successfully!",
-        "userDelete": "User was deleted successfully!"
+        "userDelete": "User was deleted successfully!",
+        "passwordChanged":"Password was changed successfully!"
     },
     "addTitle": {
         "category":"Add Category",
@@ -126,6 +127,11 @@
         "noUser": "The email cannot be found in our system!",
         "isUser": "We have sent you an email with the instructions to reset your password!"
     },
+    "resetPass":{
+        "resetpassword":"Reset Password",
+        "password":"Password",
+        "confirmPassword":"Confirm password"
+    },
     "formikErrors": {
         "categoryReq": "Category name is required!",
         "emailReq": "Email is required!",
@@ -140,7 +146,8 @@
         "emailFormat": "Invalid email format!",
         "nameReq":"Name is required!",
         "ratingReq":"Rating is required!",
-        "posterReq": "Poster is required!"
+        "posterReq": "Poster is required!",
+        "confirmPasswordReq": "Confirm password is required!"
     },
     "someError": "Something went wrong, please try again later!",
     "validityFailure":{

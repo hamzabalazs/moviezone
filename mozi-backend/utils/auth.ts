@@ -4,6 +4,7 @@ import { CurrentUser } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { NO_USER_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 import { GraphQLError } from "graphql";
+import { checkForUser } from "./user";
 
 export async function logIn(
   loginDetails: { email: string; password: string },
@@ -52,4 +53,12 @@ export async function getToken(context: MyContext): Promise<any> {
 export async function deleteToken(token:string,context: MyContext): Promise<any> {
   const sql = `DELETE from session WHERE token = ?`
   return context.db.run(sql,[token])
+}
+
+export async function createResetToken(email:string,context:MyContext): Promise<any>{
+  const user = await checkForUser(email,context)
+  if(!user) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+  const token = Buffer.from(uuidv4()).toString("base64");
+  const sql = `INSERT INTO reset_password (user_id,token) VALUES (?,?)`
+  return context.db.run(sql,[user.id,token])
 }

@@ -140,3 +140,8 @@ export async function deleteUser(
 
   throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
 }
+
+export async function changePassword(password:string,context:MyContext):Promise<any>{
+  const sql = `UPDATE user SET password = ?`
+  return context.db.run(sql,[md5(password)])
+}
