@@ -141,6 +141,7 @@ export default function AddReviewCard({
               color: "#fff",
             }}
             onClick={handleAddReview}
+            data-testid="review-add"
           >
             {t("buttons.add")}
           </Button>

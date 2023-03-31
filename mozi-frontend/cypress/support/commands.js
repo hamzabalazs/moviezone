@@ -239,3 +239,41 @@ Cypress.Commands.add("getTotalReviewsOfUserCount", (userId) => {
     return response.body.data.getNumberOfReviewsOfUser.totalCount;
   });
 });
+
+Cypress.Commands.add("addMovie",(movie,token) => {
+    cy.request({
+      url:'http://localhost:5000/graphql',
+      method: "POST",
+      headers:{
+        'auth-token':token
+      },
+      body:{
+        query: `
+        mutation CreateMovie($input: AddMovieInput!) {
+          createMovie(input: $input) {
+            id
+            title
+            description
+            poster
+            release_date
+            category {
+              id
+              name
+            }
+            rating
+          }
+        }
+        `,
+        variables:{
+          input:{
+            title:movie.title,
+            description:movie.description,
+            poster:movie.poster,
+            release_date:movie.release_date,
+            category_id:movie.category_id
+          }
+        }
+      }
+    })
+})
+
