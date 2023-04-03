@@ -22,7 +22,7 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
   const { t } = useTranslation();
   const { deleteUser: DeleteUserAPI } = useUser();
   const { enqueueSnackbar } = useSnackbar();
-  const { logOut } = useSessionContext();
+  const { logOut,user:currentUser } = useSessionContext();
 
   const handleDeletion = async () => {
     if (user === undefined) return;
@@ -31,7 +31,8 @@ export default function UserDeleteDialog({ user, onClose }: Props) {
       if (result) {
         const msg = t("successMessages.userDelete");
         enqueueSnackbar(msg, { variant: "success" });
-        logOut();
+        if(currentUser!.id === user.id) logOut();
+        onClose?.()
       }
     } catch (error: any) {
       console.log(error.message)

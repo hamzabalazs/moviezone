@@ -181,6 +181,11 @@ const client = new ApolloClient({
             keyArgs: ["id"],
             merge(existing: any[], incoming: any[], { readField }) {
               const merged = existing ? existing.slice(0) : [];
+              console.log("incoming",incoming)
+              console.log("merged",merged)
+              if(merged.length < 3 && incoming.length <= 3 && incoming.length - merged.length === 1) return [...incoming]
+              if(merged.length < 3 && incoming.length <= 3 && incoming.length - merged.length !== 1 && merged.length <= incoming.length) return [...merged,...incoming]
+              if(incoming.length > 3 && incoming.length - merged.length === 1) return [...merged]
               if (incoming.length === 0) return [];
               const existingIdSet = new Set(
                 merged.map((review) => readField("id", review))
@@ -205,12 +210,13 @@ const client = new ApolloClient({
                 return [...incoming];
               }
               if (merged.length - incoming.length === 1) {
-                let isDelete = true;
-                incomingIdSet.forEach((id) => {
-                  if (!isDelete) return;
-                  if (existingIdSet.has(id)) isDelete = true;
-                  else isDelete = false;
-                });
+                const isDelete = eqSet(existingIdSet,incomingIdSet)
+                // incomingIdSet.forEach((id) => {
+                //   if (!isDelete) return;
+                //   if (existingIdSet.has(id)) isDelete = true;
+                //   else isDelete = false;
+                // });
+                
                 if (isDelete) return [...incoming];
               }
               return [...merged, ...incoming];

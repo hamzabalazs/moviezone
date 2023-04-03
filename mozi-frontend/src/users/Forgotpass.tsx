@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FormikErrors, useFormik } from "formik";
-import { useSnackbar } from 'notistack'
+import { useSnackbar } from "notistack";
 import { useSessionContext } from "../auth/SessionContext";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
@@ -27,11 +27,9 @@ function Forgotpass() {
   const { t } = useTranslation();
   const context = useSessionContext();
   const navigate = useNavigate();
-  const {enqueueSnackbar} = useSnackbar()
-  const {users,loading} = useUserData(0,100)
-  const [SendForgotPassMailAPI] = useMutation(SEND_FORGOT_PASS)
-  
-
+  const { enqueueSnackbar } = useSnackbar();
+  const { users, loading } = useUserData(0, 100);
+  const [SendForgotPassMailAPI] = useMutation(SEND_FORGOT_PASS);
 
   useEffect(() => {
     if (context.user) {
@@ -45,15 +43,16 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const result = await SendForgotPassMailAPI({variables:{input:{email}}})
-      if (!result) {
+      try{
+        const result = await SendForgotPassMailAPI({
+          variables: { input: { email } },
+        });
+        const msg = t("forgotPass.isUser");
+        enqueueSnackbar(msg, { variant: "success" });
+        navigate("/login");
+      }catch(e:any){
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
-        
-      } else {
-        const msg = t("forgotPass.isUser");
-        enqueueSnackbar(msg,{variant:"success"})
-        navigate("/login");
       }
     },
     validate: (values) => {
@@ -66,7 +65,7 @@ function Forgotpass() {
     },
   });
 
-  if(loading) return LoadingComponent(loading)
+  if (loading) return LoadingComponent(loading);
   return (
     <>
       <Container component="main" maxWidth="xs">

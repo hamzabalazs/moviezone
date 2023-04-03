@@ -145,7 +145,7 @@ function MovieList() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
-              sx={{width:"28%", marginLeft:2, height:"100%", color:"text.primary",border:2}}
+              sx={{width:"28.5%", marginLeft:1, height:"100%", color:"text.primary",border:2}}
             >
               Sort
             </Button>

@@ -53,7 +53,7 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
           },
           data: {
             getMovieById: data.createReview.movie,
-            getReviewsOfMovie: [data.createReview],
+            getReviewsOfMovie: [...res.getReviewsOfMovie,data.createReview],
             getNumberOfReviewsOfMovie: {
               totalCount: res.getNumberOfReviewsOfMovie.totalCount + 1
             }
@@ -146,7 +146,7 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
             },
             data: {
               getMovieById: data.deleteReview.movie,
-              getReviewsOfMovie: [...res.getReviewsOfMovie.filter((x:Review) => x.id !== data.deleteReview.id)],
+              getReviewsOfMovie: res.getReviewsOfMovie.filter((x:Review) => x.id !== data.deleteReview.id),
               getNumberOfReviewsOfMovie: {
                 totalCount: res.getNumberOfReviewsOfMovie.totalCount - 1
               }
