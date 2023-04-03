@@ -18,15 +18,15 @@ export const GET_USERS = gql`
 
 export const CHECK_FOR_USER = gql`
   query CheckForUser($input: UserEmailInput!) {
-  checkForUser(input: $input) {
-    id
-    first_name
-    last_name
-    role
-    email
+    checkForUser(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+    }
   }
-}
-`
+`;
 
 export const CREATE_USER = gql`
   mutation CreateUser($input: AddUserInput!) {
@@ -68,18 +68,28 @@ export const DELETE_USER = gql`
 
 export const CHANGE_PASSWORD = gql`
   mutation ChangePassword($input: changePasswordInput!) {
-  changePassword(input: $input) {
-    lastID
-    changes
+    changePassword(input: $input) {
+      lastID
+      changes
+    }
   }
-}
-`
+`;
 
-export const CREATE_RESET_TOKEN = gql`
-  mutation CreateResetToken($input: resetTokenInput!) {
-  createResetToken(input: $input) {
-    lastID
-    changes
+export const SEND_FORGOT_PASS = gql`
+  mutation SendForgotPassEmail($input: resetTokenInput!) {
+    sendForgotPassEmail(input: $input)
   }
-}
-`
+`;
+
+export const GET_USER_FOR_PASS_CHANGE = gql`
+  query GetUserForPassChange($input: getUserForPassChangeInput!) {
+    getUserForPassChange(input: $input) {
+      id
+      first_name
+      last_name
+      role
+      email
+      password
+    }
+  }
+`;

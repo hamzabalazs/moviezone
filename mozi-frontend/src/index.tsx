@@ -234,7 +234,7 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
                 <Route path="forgotpass" element={<Forgotpass />} />
-                <Route path="resetpassword" element={<ResetPassword/>} />
+                <Route path="/resetpassword/:token" element={<ResetPassword/>} />
                 <Route
                   path="categories"
                   element={

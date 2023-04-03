@@ -268,7 +268,12 @@ export const typeDefs = gql`
   }
 
   input changePasswordInput {
+    user_id:String!
     password:String!
+  }
+
+  input getUserForPassChangeInput {
+    token:String!
   }
 
   # Queries
@@ -277,6 +282,7 @@ export const typeDefs = gql`
     getUserById(input: UserInput!): User
     getUserByToken: CurrentUser!
     getUserForLogin(input: LoginInput!): CurrentUser!
+    getUserForPassChange(input:getUserForPassChangeInput!): FullUser!
     checkForUser(input: UserEmailInput!): User
     getNumberOfUsers: numOfUsers!
     getMovies(input: MoviePaginationInput!): [Movie!]!
@@ -292,6 +298,7 @@ export const typeDefs = gql`
     getNumberOfReviewsOfUser(input: numOfReviewsInput!): numOfReviews!
     getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
     getToken: Expiry!
+    getResetToken(input: resetTokenInput!): String!
   }
 
   # Mutations
@@ -312,6 +319,6 @@ export const typeDefs = gql`
     deleteReview(input: DeleteReviewInput!): Review!
     createToken(input: AddTokenInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!
-    createResetToken(input:resetTokenInput!): RunResult!
+    sendForgotPassEmail(input: resetTokenInput!): Boolean!
   }
 `;

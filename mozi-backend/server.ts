@@ -5,6 +5,7 @@ import { resolvers } from "./Schema/Resolvers";
 import express from "express";
 import { DocumentNode } from "graphql";
 import { CurrentUser } from "./utils/types";
+const nodemailer = require('nodemailer')
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 
 export interface MyContext {

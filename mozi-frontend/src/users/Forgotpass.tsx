@@ -16,9 +16,8 @@ import { useSnackbar } from 'notistack'
 import { useSessionContext } from "../auth/SessionContext";
 import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
-import { FullUser } from "../gql/graphql";
-import { useMutation, useQuery } from "@apollo/client";
-import { CHECK_FOR_USER, CREATE_RESET_TOKEN } from "./userQueries";
+import { useMutation } from "@apollo/client";
+import { SEND_FORGOT_PASS } from "./userQueries";
 
 interface Values {
   email: string;
@@ -30,6 +29,7 @@ function Forgotpass() {
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar()
   const {users,loading} = useUserData(0,100)
+  const [SendForgotPassMailAPI] = useMutation(SEND_FORGOT_PASS)
   
 
 
@@ -45,18 +45,13 @@ function Forgotpass() {
     },
     onSubmit: async (values) => {
       const email = values.email;
-      const {data} = useQuery(CHECK_FOR_USER,{variables:{input:{email}}})
-      //nem adja vissza
-      
-      if (!data) {
+      const result = await SendForgotPassMailAPI({variables:{input:{email}}})
+      if (!result) {
         const msg = t("forgotPass.noUser");
         enqueueSnackbar(msg,{variant:"error"})
         
       } else {
         const msg = t("forgotPass.isUser");
-        const [createResetTokenAPI] = useMutation(CREATE_RESET_TOKEN,{variables:{input:email}})
-
-        //email sending
         enqueueSnackbar(msg,{variant:"success"})
         navigate("/login");
       }

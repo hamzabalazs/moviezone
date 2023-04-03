@@ -10,6 +10,9 @@ import {
   getUsers,
   getNumberOfUsers,
   changePassword,
+  sendForgotPassEmail,
+  getResetToken,
+  getUserForPassChange,
 } from "../utils/user";
 import {
   getMovies,
@@ -30,7 +33,7 @@ import {
   getNumberOfReviewsOfUser,
   getNumberOfReviewsOfMovie,
 } from "../utils/review";
-import { createResetToken, deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
+import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
   getCategories,
   getCategoryById,
@@ -44,7 +47,6 @@ import {
   CreateMovieType,
   FullUser,
   Movie,
-  MovieWithReviews,
   Review,
   UserRole,
 } from "../utils/types";
@@ -85,6 +87,9 @@ export const resolvers = {
     },
     async getUserForLogin(_: any, { input }: any, context: MyContext) {
       return await getUserForLogin(input, context);
+    },
+    async getUserForPassChange(_:any,{input}:any,context:MyContext) {
+      return await getUserForPassChange(input.token,context)
     },
     // Categories
     async getCategories(_: any, __: any, context: MyContext) {
@@ -136,6 +141,9 @@ export const resolvers = {
       context.user = user;
       return await getToken(context);
     },
+    async getResetToken(_:any,{input}:any,context:MyContext){
+      return await getResetToken(input.email,context)
+    }
   },
   Review: {
     async movie(review: any, __: any, context: MyContext) {
@@ -212,7 +220,7 @@ export const resolvers = {
       return await deleteUser(user_id, context);
     },
     async changePassword(_:any, args:any, context:MyContext){
-      return await changePassword(args.input.password,context)
+      return await changePassword(args.input,context)
     },
     // Categories
     async createCategory(_: any, args: any, context: MyContext) {
@@ -318,8 +326,8 @@ export const resolvers = {
     async deleteToken(_: any, { input }: any, context: MyContext) {
       return await deleteToken(input.token, context);
     },
-    async createResetToken(_:any,{input}:any,context:MyContext) {
-      return await createResetToken(input.email,context)
+    async sendForgotPassEmail(_:any,{ input }:any, context: MyContext) {
+      return await sendForgotPassEmail(input.email,context);
     }
   },
 };
