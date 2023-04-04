@@ -222,22 +222,24 @@ export async function sendForgotPassEmail(
     throw new GraphQLError(NO_RESET_TOKEN, {
       extensions: { code: "NOT_FOUND" },
     });
-  let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false,
     auth: {
-      user: "moviezone4912@gmail.com",
-      pass: "ghxjhvrxyiiyeuui",
+      user: "hulda.conroy@ethereal.email",
+      pass: "nQxcVfDrHPkAK5kUYJ",
     },
   });
 
   const info = await transporter.sendMail({
-    from: '"Movie Zone" <moviezone4912@gmail.com>',
+    from: '"Movie Zone" <moviezone@ethereal.email>',
     to: email,
     subject: "Reset password",
     text: `Dear ${user.first_name} \n\n You have sent a request to reset your password. By clicking on the link provided, you will be able to give a new password to your account. You have one hour to reset your password! If you did not ask to reset your password, ignore this message \n Link:http://localhost:3000/resetpassword/${resetToken}`,
   });
+  console.log(info)
   if(!info) return false;
   return true;
 }
