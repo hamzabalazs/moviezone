@@ -132,6 +132,20 @@
         "password":"Password",
         "confirmPassword":"Confirm password"
     },
+    "dashboard":{
+        "reviewTab": "Review Tab",
+        "movieTab": "Movie Tab",
+        "categoryTab": "Category Tab",
+        "movies":"Movies",
+        "movieYearChartText":"Number of movies release by year from 2000",
+        "nrOfMovies":"Nr. of movies",
+        "nrOfReviewsText":"Number of reviews of a movie over a period of the last six months",
+        "nrOfReviews":"Nr. of reviews",
+        "avgOfReviewsText":"Average of reviews of a movie over a period of the last six months",
+        "avgOfReviews": "Avg. of reviews",
+        "movieNrChartText":"Number of movies per category"
+
+    },
     "formikErrors": {
         "categoryReq": "Category name is required!",
         "emailReq": "Email is required!",

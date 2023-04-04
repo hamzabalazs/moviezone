@@ -1,3 +1,5 @@
+import { TFunction } from "i18next";
+
 export function getMonthList(month:number){
     const months = [
         "Jan",
@@ -61,7 +63,6 @@ export function getMonthList(month:number){
 
     return monthlist
 }
-
 export function getMovieDataCat(nameList:string[],countList:number[]){
     const data = []
     while(nameList.length !== 0){
@@ -74,7 +75,6 @@ export function getMovieDataCat(nameList:string[],countList:number[]){
     }
     return data;
 }
-
 export function getMovieDataYear(yearList:string[],countList:number[]){
   const data = []
     for(let i = 0; i < 23; i++){
@@ -92,8 +92,7 @@ export function getMovieDataYear(yearList:string[],countList:number[]){
     }
     return data;
 }
-
-export function getMovieYearChart(data:any[]){
+export function getMovieYearChart(data:any[],t:TFunction<"translation", undefined, "translation">){
   const chart = {
     chart: {
       backgroundColor: "transparent",
@@ -103,7 +102,7 @@ export function getMovieYearChart(data:any[]){
       borderRadius: 2,
     },
     title: {
-      text: "Number of movies release by year from 2000",
+      text: t('dashboard.movieYearChartText'),
       style: { color: "white" },
     },
     xAxis: {
@@ -120,7 +119,7 @@ export function getMovieYearChart(data:any[]){
     },
     yAxis: {
       title: {
-        text: "Nr. of movies",
+        text: t('dashboard.nrOfMovies'),
         style: { color: "white" },
       },
       labels: {
@@ -136,7 +135,7 @@ export function getMovieYearChart(data:any[]){
     },
     series: [
       {
-        name: "Nr. of movies",
+        name: t('dashboard.nrOfMovies'),
         type: "column",
         color: "#86cc35",
         data: data,
@@ -145,7 +144,7 @@ export function getMovieYearChart(data:any[]){
   };
   return chart
 }
-export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:any[]){
+export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:any[],t:TFunction<"translation", undefined, "translation">){
   const chart = {
     chart: {
       type: "line",
@@ -155,7 +154,7 @@ export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:a
       borderRadius: 2,
     },
     title: {
-      text: "Number of reviews of a movie over a period of the last six months",
+      text: t('dashboard.nrOfReviewsText'),
       style: { color: "white" },
     },
     xAxis: {
@@ -169,7 +168,7 @@ export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:a
     },
     yAxis: {
       title: {
-        text: "Nr. of reviews",
+        text: t('dashboard.nrOfReviews'),
         style: { color: "white" },
       },
       labels: {
@@ -202,7 +201,7 @@ export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:a
   };
   return chart
 }
-export function getReviewAvgChart(monthlist:string[],movie:string | null, avgList:any[]){
+export function getReviewAvgChart(monthlist:string[],movie:string | null, avgList:any[],t:TFunction<"translation", undefined, "translation">){
   const chart = {
     chart: {
       type: "column",
@@ -212,7 +211,7 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
       borderRadius: 2,
     },
     title: {
-      text: "Average of reviews of a movie over a period of the last six months",
+      text: t('dashboard.avgOfReviewsText'),
       style: { color: "white" },
     },
     xAxis: {
@@ -228,7 +227,7 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
       min: 0.0,
       max: 5.0,
       title: {
-        text: "Avg. of reviews",
+        text: t('dashboard.avgOfReviews'),
         style: { color: "white" },
       },
       labels: {
@@ -261,7 +260,7 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
 
   return chart
 }
-export function getMovieNrChart(data:any[]){
+export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined, "translation">){
   const chart = {
     chart: {
       backgroundColor: "transparent",
@@ -271,7 +270,7 @@ export function getMovieNrChart(data:any[]){
       type: "pie",
     },
     title: {
-      text: "Number of movies per category",
+      text: t('dashboard.movieNrChartText'),
       style: { color: "white" },
     },
     plotOptions: {
@@ -289,7 +288,7 @@ export function getMovieNrChart(data:any[]){
     },
     series: [
       {
-        name: "Categories",
+        name: t('dashboard.movies'),
         colorByPoint: true,
         data: data,
       },

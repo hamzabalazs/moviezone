@@ -21,6 +21,7 @@ import {
   getReviewNrChart,
 } from "./DashboardFunctions";
 import HighChartsReact from "highcharts-react-official";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
   enum Tab {
@@ -28,6 +29,7 @@ export default function Dashboard() {
     category = "category",
     movie = "movie",
   }
+  const { t } = useTranslation()
   const [pageTab, setPageTab] = useState<Tab>(Tab["movie"]);
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
@@ -74,10 +76,10 @@ export default function Dashboard() {
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
   const yearChartData = getMovieDataYear(yearList, countYearList);
-  const mChartNrYear = getMovieYearChart(yearChartData)
-  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList)
-  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList)
-  const mChartNrCat = getMovieNrChart(catChartData)
+  const mChartNrYear = getMovieYearChart(yearChartData,t)
+  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList,t)
+  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList,t)
+  const mChartNrCat = getMovieNrChart(catChartData,t)
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -139,7 +141,7 @@ export default function Dashboard() {
             }}
           >
             <Button onClick={handleMovieTab} sx={{ color: "text.primary" }}>
-              Movie Tab
+              {t('dashboard.movieTab')}
             </Button>
           </Grid>
           <Grid
@@ -154,7 +156,7 @@ export default function Dashboard() {
             }}
           >
             <Button onClick={handleReviewTab} sx={{ color: "text.primary" }}>
-              Review Tab
+            {t('dashboard.reviewTab')}
             </Button>
           </Grid>
           <Grid
@@ -169,7 +171,7 @@ export default function Dashboard() {
             }}
           >
             <Button onClick={handleCategoryTab} sx={{ color: "text.primary" }}>
-              Category Tab
+            {t('dashboard.categoryTab')}
             </Button>
           </Grid>
         </Grid>
@@ -203,7 +205,7 @@ export default function Dashboard() {
               onInputChange={(event, newInputValue) => {
                 setInputValueMovie(newInputValue);
               }}
-              renderInput={(params) => <TextField {...params} label="Movies" />}
+              renderInput={(params) => <TextField {...params} label={t('dashboard.movies')} />}
               data-testid="movie-autocomplete"
             />
             {selectedMovie !== "" && (

@@ -133,6 +133,19 @@
         "password":"Jelszó",
         "confirmPassword":"Jelszó megerősítése"
     },
+    "dashboard":{
+        "reviewTab": "Véleménylap",
+        "movieTab": "Filmlap",
+        "categoryTab": "Kategórialap",
+        "movies": "Filmek",
+        "movieYearChartText":"Filmkiadások száma évszerint 2000-től",
+        "nrOfMovies":"Filmek száma",
+        "nrOfReviewsText":"Egy film véleményeinek száma a legutóbbi hat honap leforgása alatt",
+        "nrOfReviews":"Vélemények száma",
+        "avgOfReviewsText":"Egy film átlagértékelése a legutóbbi hat honapban",
+        "avgOfReviews": "Vélemények átlaga",
+        "movieNrChartText":"Filmek száma kategóriák szerint"
+    },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",
         "emailReq": "Az email kötelező!",
