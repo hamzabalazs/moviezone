@@ -1,10 +1,16 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { baseUrl } from '../../support/e2e'
+import {NAME_REQUIRED_MESSAGE,CATEGORY_NAME_REQUIRED_MESSAGE} from '../../support/errormessages'
 
 const newCategoryName = "test";
 const editCategoryName = "testEDITED";
+const adminCredentials = {
+  email:"admin@example.com",
+  password:"admin"
+}
 
 beforeEach(() => {
-  cy.login("admin@example.com", "admin");
+  cy.login(adminCredentials.email, adminCredentials.password);
 });
 
 Given("I open categories page", () => {
@@ -12,7 +18,7 @@ Given("I open categories page", () => {
 });
 
 When("I arrive on page", () => {
-  cy.url().should("eq", "http://localhost:3000/categories");
+  cy.url().should("eq", baseUrl + "categories");
   cy.wait(300);
 });
 
@@ -35,7 +41,7 @@ When("I leave fields blank and submit", () => {
 Then("I should get name required error add", () => {
   cy.get('[data-testid="category-add-error-name"]')
     .should("be.visible")
-    .should("have.text", "Category name is required!");
+    .should("have.text", CATEGORY_NAME_REQUIRED_MESSAGE);
 });
 
 When("I fill out data and submit", () => {
@@ -63,7 +69,7 @@ When("I clear name and submit", () => {
 Then("I should get name required error edit", () => {
   cy.get('[data-testid="category-edit-error-name"]')
     .should("be.visible")
-    .should("have.text", "Name is required!");
+    .should("have.text", NAME_REQUIRED_MESSAGE);
 });
 
 When("I change name and submit", () => {

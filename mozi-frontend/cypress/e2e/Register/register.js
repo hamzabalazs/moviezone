@@ -1,4 +1,6 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor'
+import { baseUrl } from '../../support/e2e'
+import { ACCOUNT_EXISTS_MESSAGE, EMAIL_REQUIRED_MESSAGE, FIRST_NAME_REQUIRED_MESSAGE, INVALID_EMAIL_FORMAT_MESSAGE, INVALID_PASSWORD_FORMAT_MESSAGE, LAST_NAME_REQUIRED_MESSAGE, PASSWORD_REQUIRED_MESSAGE } from '../../support/errormessages'
 
 const testRegister = {
     firstName:"firstname",
@@ -17,7 +19,7 @@ after(() => {
 
 
 Given('I open register page',() => {
-    cy.visit('http://localhost:3000/register')
+    cy.visit(baseUrl + 'register')
 })
 
 When('I submit without any data',() => {
@@ -37,7 +39,7 @@ When('I submit without first name',() => {
 })
 
 Then('I should get required first name error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"First name is required!")
+    cy.get('[data-testid="register-errors"]').should('have.text',FIRST_NAME_REQUIRED_MESSAGE)
 })
 
 When("I submit without last name",() => {
@@ -49,7 +51,7 @@ When("I submit without last name",() => {
 })
 
 Then('I should get required last name error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"Last name is required!")
+    cy.get('[data-testid="register-errors"]').should('have.text',LAST_NAME_REQUIRED_MESSAGE)
 })
 
 When("I submit without email",() => {
@@ -61,7 +63,7 @@ When("I submit without email",() => {
 })
 
 Then('I should get required email error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"Email is required!")
+    cy.get('[data-testid="register-errors"]').should('have.text',EMAIL_REQUIRED_MESSAGE)
 })
 
 When("I submit without password",() => {
@@ -73,7 +75,7 @@ When("I submit without password",() => {
 })
 
 Then('I should get required password error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"Password is required!")
+    cy.get('[data-testid="register-errors"]').should('have.text',PASSWORD_REQUIRED_MESSAGE)
 })
 
 When("I submit with wrong email format",() => {
@@ -85,7 +87,7 @@ When("I submit with wrong email format",() => {
 })
 
 Then('I should get invalid email error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"Invalid email format!")
+    cy.get('[data-testid="register-errors"]').should('have.text',INVALID_EMAIL_FORMAT_MESSAGE)
 })
 
 When("I submit with short password",() => {
@@ -97,7 +99,7 @@ When("I submit with short password",() => {
 })
 
 Then('I should get invalid password error',() => {
-    cy.get('[data-testid="register-errors"]').should('have.text',"Password has to be 5 or more characters long!")
+    cy.get('[data-testid="register-errors"]').should('have.text',INVALID_PASSWORD_FORMAT_MESSAGE)
 })
 
 When('I submit with existing data',() => {
@@ -109,7 +111,7 @@ When('I submit with existing data',() => {
 })
 
 Then('I should get already exists error',() => {
-    cy.get('#notistack-snackbar').should('have.text',"Account already exists!")
+    cy.get('#notistack-snackbar').should('have.text',ACCOUNT_EXISTS_MESSAGE)
 })
 
 When("I submit with good data",() => {
@@ -122,7 +124,7 @@ When("I submit with good data",() => {
 
 Then('I should see login page',() => {
     cy.url()
-        .should('eq','http://localhost:3000/login')
+        .should('eq',baseUrl + 'login')
 })
 
 When("I login with registered data",() => {
@@ -133,5 +135,5 @@ When("I login with registered data",() => {
 
 Then("I should see main page",() => {
     cy.url()
-        .should('eq','http://localhost:3000/')
+        .should('eq',baseUrl)
 })

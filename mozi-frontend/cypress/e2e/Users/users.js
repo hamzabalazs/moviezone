@@ -1,4 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { baseUrl } from "../../support/e2e";
+import { EMAIL_REQUIRED_MESSAGE, FIRST_NAME_REQUIRED_MESSAGE, INVALID_EMAIL_FORMAT_MESSAGE, INVALID_PASSWORD_FORMAT_MESSAGE, LAST_NAME_REQUIRED_MESSAGE, PASSWORD_REQUIRED_MESSAGE } from "../../support/errormessages";
 
 const testUser = {
   firstName: "test",
@@ -29,11 +31,11 @@ beforeEach(() => {
 });
 
 Given("I open users page", () => {
-  cy.visit("http://localhost:3000/users");
+  cy.visit(baseUrl + "users");
 });
 
 When("I arrive on users page", () => {
-  cy.url().should("eq", "http://localhost:3000/users");
+  cy.url().should("eq", baseUrl + "users");
   cy.wait(300);
 });
 
@@ -44,7 +46,7 @@ Then("I see a list of users", () => {
 });
 
 Given("I open users page and go to last user listed", () => {
-  cy.visit("http://localhost:3000/users");
+  cy.visit(baseUrl + "users");
   cy.getTotalUserCount().then((totalCount) => {
     const numScrolls = Math.ceil(totalCount / 3);
 
@@ -75,7 +77,7 @@ When('I clear first_name and submit',() => {
 })
 
 Then('I should get first_name required error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"First name is required!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',FIRST_NAME_REQUIRED_MESSAGE)
 })
 
 When('I clear last_name and submit',() => {
@@ -87,7 +89,7 @@ When('I clear last_name and submit',() => {
 })
 
 Then('I should get last_name required error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Last name is required!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',LAST_NAME_REQUIRED_MESSAGE)
 })
 
 When('I clear email and submit',() => {
@@ -99,7 +101,7 @@ When('I clear email and submit',() => {
 })
 
 Then('I should get email required error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Email is required!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',EMAIL_REQUIRED_MESSAGE)
 })
 
 When('I type invalid email and submit',() => {
@@ -111,7 +113,7 @@ When('I type invalid email and submit',() => {
 })
 
 Then('I should get invalid email error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Invalid email format!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',INVALID_EMAIL_FORMAT_MESSAGE)
 })
 
 When('I clear password and submit',() => {
@@ -123,7 +125,7 @@ When('I clear password and submit',() => {
 })
 
 Then('I should get password required error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Password is required!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',PASSWORD_REQUIRED_MESSAGE)
 })
 
 When('I type short password and submit',() => {
@@ -135,7 +137,7 @@ When('I type short password and submit',() => {
 })
 
 Then('I should get invalid password error',() => {
-  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',"Password has to be 5 or more characters long!")
+  cy.get('[data-testid="user-edit-errors"]').should('have.length',1).should('have.text',INVALID_PASSWORD_FORMAT_MESSAGE)
 })
 
 When("I clear all data and submit", () => {
@@ -166,7 +168,7 @@ Then("User should be edited", () => {
 });
 
 Given("I open users page and go to last user listed after edit", () => {
-    cy.visit("http://localhost:3000/users");
+    cy.visit(baseUrl + "users");
     cy.getTotalUserCount().then((totalCount) => {
       const numScrolls = Math.ceil(totalCount / 3);
   

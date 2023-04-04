@@ -1,4 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { baseUrl } from "../../support/e2e";
 
 const adminCredentials = {
     email:"admin@example.com",
@@ -18,7 +19,7 @@ const viewerCredentials = {
 Given('I login as admin',() => {
     cy.login(adminCredentials.email,adminCredentials.password)
     cy.url()
-        .should('eq','http://localhost:3000/') 
+        .should('eq',baseUrl) 
 })
 
 When("I navigate to category page",() => {
@@ -27,7 +28,7 @@ When("I navigate to category page",() => {
 
 Then("I should be on category page",() => {
     cy.url()
-        .should('eq','http://localhost:3000/categories')
+        .should('eq',baseUrl + 'categories')
 })
 
 When("I navigate to users page",() => {
@@ -36,7 +37,7 @@ When("I navigate to users page",() => {
 
 Then("I should be on users page",() => {
     cy.url()
-        .should('eq','http://localhost:3000/users')
+        .should('eq',baseUrl + 'users')
 })
 
 When("I navigate to account page",() => {
@@ -46,13 +47,13 @@ When("I navigate to account page",() => {
 
 Then("I should be on account page",() => {
     cy.url()
-        .should('eq','http://localhost:3000/account')
+        .should('eq',baseUrl + 'account')
 })
 
 Given('I login as viewer',() => {
     cy.login(viewerCredentials.email,viewerCredentials.password)
     cy.url()
-        .should('eq','http://localhost:3000/') 
+        .should('eq',baseUrl) 
 })
 
 When('I navigate to reviews page',() => {
@@ -61,16 +62,16 @@ When('I navigate to reviews page',() => {
 
 Then('I should be on reviews page',() => {
     cy.url()
-        .should('eq','http://localhost:3000/reviews')
+        .should('eq',baseUrl + 'reviews')
 })
 
 Given('I login as editor',() => {
     cy.login(editorCredentials.email,editorCredentials.password)
-    cy.url().should('eq',"http://localhost:3000/")
+    cy.url().should('eq',baseUrl)
 })
 
 When('I open home page',() => {
-    cy.visit('http://localhost:3000/')
+    cy.visit(baseUrl)
 })
 
 Then('I should not see users tab on navbar',() => {
@@ -114,7 +115,7 @@ When('I press logout',() => {
 
 Then('I should be on login page',() => {
     cy.url()
-        .should('eq','http://localhost:3000/login')
+        .should('eq',baseUrl + 'login')
 })
 
 When('I press dark or light mode',() => {

@@ -1,4 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { baseUrl } from "../../support/e2e";
+import {MOVIE_ADDED_SUCCESSFUL} from '../../support/errormessages'
 
 after(() => {
   cy.getAdminToken().then((resp) => {
@@ -6,12 +8,17 @@ after(() => {
   });
 });
 
+const adminCredentials = {
+  email:"admin@example.com",
+  password:"admin"
+}
+
 beforeEach(() => {
-  cy.login("admin@example.com", "admin");
+  cy.login(adminCredentials.email, adminCredentials.password);
 });
 
 Given("I open home page", () => {
-  cy.url().should("eq", "http://localhost:3000/");
+  cy.url().should("eq", baseUrl);
   cy.get('[data-testid="movie-list-card"]').should("have.length", 9);
 });
 
@@ -99,7 +106,7 @@ Then("Add modal should be open", () => {
 When("I fill out all the details and submit", () => {
   cy.get("#title").type("test");
   cy.get("#description").type("test");
-  cy.get("#release_date").type("20/06/1999");
+  cy.get("#release_date").type("1999-06-20");
   cy.get("[role='button']").first().click();
   cy.get("ul").find("li").first().click();
   cy.fixture("test.jpg", "binary").then((fileContent) => {
@@ -115,7 +122,7 @@ When("I fill out all the details and submit", () => {
   cy.get('[data-testid="movie-add"]').click();
   cy.get("#notistack-snackbar").should(
     "have.text",
-    "Movie was added successfully!"
+    MOVIE_ADDED_SUCCESSFUL
   );
 });
 
@@ -164,5 +171,5 @@ When('I click on a movie',() => {
 })
 
 Then('Should navigate to MoviePage of movie',() => {
-    cy.url().should('include', 'http://localhost:3000/movie/')
+    cy.url().should('include', baseUrl + 'movie/')
 })

@@ -1,8 +1,10 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import { aliasQuery } from "../../utils/graphql-test-utils";
+import { baseUrl, graphQlUrl } from "../../support/e2e";
+import { EMAIL_REQUIRED_MESSAGE, INVALID_EMAIL_FORMAT_MESSAGE, INVALID_PASSWORD_FORMAT_MESSAGE, LOGIN_ERROR_MESSAGE, PASSWORD_REQUIRED_MESSAGE } from "../../support/errormessages";
 
 Given("I open login page", () => {
-  cy.visit("http://localhost:3000/login");
+  cy.visit(baseUrl + "login");
 });
 
 When('I click on register link',() => {
@@ -10,7 +12,7 @@ When('I click on register link',() => {
 })
 
 Then('I should be on register page',() => {
-  cy.url().should('eq','http://localhost:3000/register')
+  cy.url().should('eq',baseUrl + 'register')
 })
 
 When('I click on forgot password link',() => {
@@ -18,7 +20,7 @@ When('I click on forgot password link',() => {
 })
 
 Then('I should be on forgot password page',() => {
-  cy.url().should('eq','http://localhost:3000/forgotpass')
+  cy.url().should('eq',baseUrl + 'forgotpass')
 })
 
 When("I submit login", () => {
@@ -28,7 +30,7 @@ When("I submit login", () => {
 });
 
 Then("I should see homepage", () => {
-  cy.intercept("POST", "http://localhost:5000/graphql", (req) => {
+  cy.intercept("POST", graphQlUrl, (req) => {
     aliasQuery(req, "GetHomePageData");
   });
   cy.get("#searchValue").should("be.visible");
@@ -43,7 +45,7 @@ When("I submit login without password", () => {
 Then("I should get password required error", () => {
   cy.get('[data-testid="login-errors"')
     .should("be.visible")
-    .and("have.text", "Password is required!")
+    .and("have.text", PASSWORD_REQUIRED_MESSAGE)
     .and("have.length", 1);
 });
 
@@ -56,7 +58,7 @@ When("I submit login without email", () => {
 Then("I should get email required error", () => {
   cy.get('[data-testid="login-errors"')
     .should("be.visible")
-    .and("have.text", "Email is required!")
+    .and("have.text", EMAIL_REQUIRED_MESSAGE)
     .and("have.length", 1);
 });
 
@@ -69,7 +71,7 @@ When("I submit login with bad credentials", () => {
 Then("I should get user not found error", () => {
   cy.get("#notistack-snackbar").should(
     "have.text",
-    "Invalid Email! Could not log in!"
+    LOGIN_ERROR_MESSAGE
   );
 });
 
@@ -82,7 +84,7 @@ When("I submit login with invalid email", () => {
 Then("I should get invalid email error", () => {
   cy.get('[data-testid="login-errors"')
     .should("be.visible")
-    .and("have.text", "Invalid email format!")
+    .and("have.text", INVALID_EMAIL_FORMAT_MESSAGE)
     .and("have.length", 1);
 });
 
@@ -95,7 +97,7 @@ When("I submit login with invalid password", () => {
 Then("I should get invalid password error", () => {
   cy.get('[data-testid="login-errors"')
     .should("be.visible")
-    .and("have.text", "Password has to be 5 or more characters long!")
+    .and("have.text", INVALID_PASSWORD_FORMAT_MESSAGE)
     .and("have.length", 1);
 });
 

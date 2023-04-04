@@ -1,4 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { baseUrl } from "../../support/e2e";
+import { DESCRIPTION_REQUIRED_MESSAGE } from "../../support/errormessages";
 
 const userId = "YWRtaW4=";
 
@@ -16,6 +18,11 @@ const testReviewEdited = {
   user_id: "YWRtaW4=",
 };
 
+const adminCredentials = {
+  email:"admin@example.com",
+  password:"admin"
+}
+
 before(() => {
   cy.getAdminToken().then((resp) => {
     cy.addReview(testReview,resp.body.data.logIn.token)
@@ -23,16 +30,16 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.login("admin@example.com", "admin");
+  cy.login(adminCredentials.email, adminCredentials.password);
   cy.wait(300);
 });
 
 Given("I open reviews page", () => {
-  cy.visit("http://localhost:3000/reviews");
+  cy.visit(baseUrl + "reviews");
 });
 
 When("I arrive on page", () => {
-  cy.url().should("eq", "http://localhost:3000/reviews");
+  cy.url().should("eq", baseUrl + "reviews");
 });
 
 Then("I should see at most three reviews", () => {
@@ -49,7 +56,7 @@ Then("I should see at most six reviews", () => {
 });
 
 Given("I open reviews page and scroll to last review", () => {
-  cy.visit("http://localhost:3000/reviews");
+  cy.visit(baseUrl + "reviews");
   cy.getTotalReviewsOfUserCount(userId).then((totalCount) => {
     const numScrolls = Math.ceil(totalCount / 3);
 
@@ -85,7 +92,7 @@ When("I submit without description", () => {
 Then("I should get description required error", () => {
   cy.get('[data-testid="review-edit-errors"]').should(
     "have.text",
-    "Description is required!"
+    DESCRIPTION_REQUIRED_MESSAGE
   );
 });
 
@@ -102,7 +109,7 @@ Then("I should see edited review", () => {
 });
 
 Given("I open reviews page and scroll to last review after edit", () => {
-  cy.visit("http://localhost:3000/reviews");
+  cy.visit(baseUrl + "reviews");
   cy.getTotalReviewsOfUserCount(userId).then((totalCount) => {
     const numScrolls = Math.ceil(totalCount / 3);
 

@@ -19,7 +19,7 @@ import { MemoryRouter } from "react-router-dom";
 const addMovie = {
   title: "title1",
   description: "description1",
-  release_date: "22/02/2023",
+  release_date: "2023-02-22",
   category_id: "idC1",
   poster: "chucknorris.jpg",
 };

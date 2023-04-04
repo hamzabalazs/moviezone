@@ -20,7 +20,7 @@ const testMovie: Movie = {
   id: "idM1",
   title: "title1",
   description: "description1",
-  release_date: "22/02/2023",
+  release_date: "2023-02-22",
   poster: "poster1",
   category: {
     id: "idC1",
@@ -33,7 +33,7 @@ const testNewMovie = {
   id: "idM1",
   title: "titleEDITED",
   description: "descriptionEDITED",
-  release_date: "03/03/2023",
+  release_date: "2023-03-03",
   poster: "poster1",
   categoryId: "idC3",
 };
