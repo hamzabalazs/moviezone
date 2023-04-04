@@ -29,6 +29,11 @@ export function getUsers(input: any, context: MyContext): Promise<FullUser[]> {
 
 export function getNumberOfUsers(context: MyContext): Promise<number | null> {
   const sql = `SELECT COUNT(*) as totalCount FROM user`;
+  let list = []
+  for(let i = 0; i < 100; i++){
+    list.push(uuidv4())
+  }
+  console.log(list)
   return context.db.get<number>(sql);
 }
 

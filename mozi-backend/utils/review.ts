@@ -23,6 +23,16 @@ export function getNumberOfReviewsOfMovie(movie_id:string,context:MyContext): Pr
   return context.db.get<number>(sql,[movie_id])
 }
 
+export function getNumberOfReviewsOfMoviePerMonth(movie_id:any,context:MyContext): Promise<any[]>{
+  const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp) DESC`
+  return context.db.all(sql,[movie_id])
+}
+
+export function getAverageOfReviewsOfMoviePerMonth(movie_id:any,context:MyContext): Promise<any[]>{
+  const sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp) DESC`
+  return context.db.all(sql,[movie_id])
+}
+
 export async function getReviewById(id: string, context: MyContext): Promise<Review|null> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
   const result = await context.db.get<Review>(sql, [id]);
@@ -66,8 +76,8 @@ export async function createReview(
 ): Promise<Review|null> {
   const validation = await reviewSchema.isValid(review)
   if(!validation) throw new GraphQLError(NOT_VALID_REVIEW,{extensions:{code:'VALIDATION_FAILED'}})
-  const sql = `INSERT INTO review (id,rating,description,movie_id,user_id)
-    VALUES (?,?,?,?,?)`;
+  const sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp)
+    VALUES (?,?,?,?,?,date("now"))`;
   context.db.run(sql, [
     review.id,
     review.rating,

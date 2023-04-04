@@ -17,6 +17,12 @@ export async function getCategoryById(id: string, context:MyContext):Promise<Cat
   return result
 }
 
+export async function getNumberOfMoviesPerCategory(context:MyContext){
+  const sql = `SELECT c.name as name,COUNT(m.id) as totalCount FROM movie m JOIN category c ON m.category_id = c.id GROUP BY c.id ORDER BY COUNT(m.id)`
+  const result = await context.db.all(sql)
+  return result
+}
+
 export async function createCategory(name:string, context:MyContext):Promise<Category|null> {
   const newCategory = {
     id:uuidv4(),

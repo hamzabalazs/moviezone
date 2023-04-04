@@ -4,6 +4,11 @@ import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { CreateMovieType, Movie, UpdateMovieInput } from "./types";
 
+export function getAllMovies(context:MyContext):Promise<any[]> {
+  const sql = 'SELECT id,title FROM movie'
+  return context.db.all(sql)
+}
+
 export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let sql = "SELECT * FROM movie";
   let params = []
@@ -68,6 +73,13 @@ export async function getMovieById(id:string, context:MyContext):Promise<Movie|n
   const sql = `SELECT * FROM movie WHERE id = ?`;
   const result = await context.db.get<Movie>(sql,[id])
   if(result === undefined) return null;
+  return result
+}
+
+export async function getNumberOfMoviesPerYear(context:MyContext): Promise<any[]>{
+  const sql = `SELECT COUNT(*) as totalCount,strftime('%Y',release_date) as year from movie WHERE strftime('%Y',release_date) > "1999" GROUP BY strftime('%Y',release_date)`
+  const result = await context.db.all(sql)
+  console.log(result)
   return result
 }
 

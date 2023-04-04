@@ -21,6 +21,7 @@ import i18n from "../../i18n";
 import { themeSwitchContext } from "../../themeSwitchContext";
 import { useSessionContext } from "../../auth/SessionContext";
 import { useSnackbar } from 'notistack'
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 export default function NavigationBar() {
   const context = useSessionContext();
@@ -40,6 +41,10 @@ export default function NavigationBar() {
   const handleAccountNav = () => {
     navigate("/account");
   };
+
+  const handleDashboardNav = () => {
+    navigate("/dashboard")
+  }
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [anchorLang, setAnchorLang] = useState<null | HTMLElement>(null);
@@ -270,6 +275,13 @@ export default function NavigationBar() {
             >
               <Avatar /> {t("navbar.myaccount")}
             </MenuItem>
+            {currUser.role === "admin" && (
+              <MenuItem
+                onClick={handleDashboardNav}
+                data-testid="navbar-account-dashboard">
+                  <DashboardIcon sx={{marginRight:1.5}}/> Dashboard
+                </MenuItem>
+            )}
             <MenuItem
               onClick={handleLogout}
               data-testid="navbar-logout-menuitem"

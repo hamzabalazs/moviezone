@@ -93,3 +93,46 @@ export const GET_USER_FOR_PASS_CHANGE = gql`
     }
   }
 `;
+
+export const GET_ALL_MOVIES = gql`
+  query GetAllMovies {
+  getAllMovies {
+    id
+    title
+  }
+}
+`
+
+export const GET_REVIEW_DATA_NR = gql`
+  query GetNumberOfReviewsOfMoviePerMonth($input: numOfReviewsForChart!) {
+  getNumberOfReviewsOfMoviePerMonth(input: $input) {
+    totalCount
+  }
+}
+`
+
+export const GET_REVIEW_DATA_AVG = gql`
+  query GetNumberOfReviewsOfMoviePerMonth($input: numOfReviewsForChart!) {
+  getAverageOfReviewsOfMoviePerMonth(input: $input) {
+    average
+  }
+}
+`
+
+export const GET_MOVIE_DATA_NR_CATEGORY = gql`
+  query GetNumberOfMoviesPerCategory {
+  getNumberOfMoviesPerCategory {
+    name
+    totalCount
+  }
+}
+`
+
+export const GET_MOVIE_DATA_NR_YEAR = gql`
+  query GetNumberOfMoviesPerYear {
+  getNumberOfMoviesPerYear {
+    totalCount
+    year
+  }
+}
+`

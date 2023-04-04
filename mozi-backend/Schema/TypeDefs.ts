@@ -276,6 +276,29 @@ export const typeDefs = gql`
     token:String!
   }
 
+  type MovieAutocompleteList {
+    id:ID!,
+    title:String!
+  }
+
+  input numOfReviewsForChart {
+    movie_id:String!
+  }
+
+  type avgOfReviews {
+    average: Float!
+  }
+
+  type numOfMoviesPerCategory { 
+    name: String!
+    totalCount: Int!
+  }
+
+  type numOfMoviesPerYear {
+    totalCount: Int!
+    year: String!
+  }
+
   # Queries
   type Query {
     getUsers(input: UserPaginationInput): [FullUser!]!
@@ -285,9 +308,12 @@ export const typeDefs = gql`
     getUserForPassChange(input:getUserForPassChangeInput!): FullUser!
     checkForUser(input: UserEmailInput!): User
     getNumberOfUsers: numOfUsers!
+    getAllMovies: [MovieAutocompleteList]!
     getMovies(input: MoviePaginationInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie
     getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
+    getNumberOfMoviesPerCategory: [numOfMoviesPerCategory!]!
+    getNumberOfMoviesPerYear: [numOfMoviesPerYear!]!
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
@@ -297,6 +323,8 @@ export const typeDefs = gql`
     getReviewsOfUser(input: GetReviewsOfUserInput!): [Review!]!
     getNumberOfReviewsOfUser(input: numOfReviewsInput!): numOfReviews!
     getNumberOfReviewsOfMovie(input: numOfReviewsInput!): numOfReviews!
+    getNumberOfReviewsOfMoviePerMonth(input: numOfReviewsForChart!): [numOfReviews!]!
+    getAverageOfReviewsOfMoviePerMonth(input: numOfReviewsForChart!): [avgOfReviews!]!
     getToken: Expiry!
     getResetToken(input: resetTokenInput!): String!
   }

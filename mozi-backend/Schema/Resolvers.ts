@@ -21,6 +21,8 @@ import {
   updateMovie,
   createMovie,
   getNumberOfMovies,
+  getAllMovies,
+  getNumberOfMoviesPerYear,
 } from "../utils/movie";
 import {
   getReviews,
@@ -32,6 +34,8 @@ import {
   getReviewsOfUser,
   getNumberOfReviewsOfUser,
   getNumberOfReviewsOfMovie,
+  getNumberOfReviewsOfMoviePerMonth,
+  getAverageOfReviewsOfMoviePerMonth,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -41,6 +45,7 @@ import {
   updateCategory,
   createCategory,
   checkForCategory,
+  getNumberOfMoviesPerCategory,
 } from "../utils/category";
 import { MyContext } from "../server";
 import {
@@ -101,6 +106,9 @@ export const resolvers = {
     async checkForCategory(_: any, { input }: any, context: MyContext) {
       return await checkForCategory(input.name, context);
     },
+    async getNumberOfMoviesPerCategory(_:any,__:any,context:MyContext){
+      return await getNumberOfMoviesPerCategory(context)
+    },
     // Reviews
     async getReviews(_: any, __: any, context: MyContext) {
       return await getReviews(context);
@@ -120,8 +128,17 @@ export const resolvers = {
     async getReviewsOfUser(_:any,{input}:any,context:MyContext){
       return await getReviewsOfUser(input,context);
     },
+    async getNumberOfReviewsOfMoviePerMonth(_:any,{input}:any,context:MyContext){
+      return await getNumberOfReviewsOfMoviePerMonth(input.movie_id,context);
+    },
+    async getAverageOfReviewsOfMoviePerMonth(_:any,{input}:any,context:MyContext){
+      return await getAverageOfReviewsOfMoviePerMonth(input.movie_id,context)
+    },
 
     // Movies
+    async getAllMovies(_:any, __:any, context:MyContext){
+      return await getAllMovies(context)
+    },
     async getMovies(_: any, { input }: any, context: MyContext) {
       return await getMovies(input, context);
     },
@@ -130,6 +147,9 @@ export const resolvers = {
     },
     async getMovieById(_: any, { input }: any, context: MyContext) {
       return await getMovieById(input.id, context);
+    },
+    async getNumberOfMoviesPerYear(_:any,__:any,context:MyContext){
+      return await getNumberOfMoviesPerYear(context);
     },
     // Authentication
     async getToken(_: any, __: any, context: MyContext) {

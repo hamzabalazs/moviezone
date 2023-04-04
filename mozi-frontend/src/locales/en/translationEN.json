@@ -138,7 +138,7 @@
         "titleReq": "Title is required!",
         "descriptionReq": "Description is required!",
         "release_dateReq": "Release date is required!",
-        "release_dateFormat": "Invalid date format! Format is:dd/MM/yyyy",
+        "release_dateFormat": "Invalid date format! Format is:yyyy-mm-dd",
         "firstNameReq": "First name is required!",
         "lastNameReq":  "Last name is required!",
         "passwordReq":"Password is required!",

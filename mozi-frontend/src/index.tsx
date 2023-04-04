@@ -29,6 +29,7 @@ import Forgotpass from "./users/Forgotpass";
 import { Users } from "./users/Users";
 import Account from "./users/Account";
 import ResetPassword from "./users/ResetPassword";
+import Dashboard from "./users/Dashboard";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -89,7 +90,7 @@ const client = new ApolloClient({
               if (incoming.length === 0) return [];
               if (!args) return [];
               const merged = existing ? existing.slice(0) : [];
-              if(incoming.length > 9) return [...merged]; //if new movie is added
+              if (incoming.length > 9) return [...merged]; //if new movie is added
               const existingIdSet = new Set(
                 merged.map((movie) => readField("id", movie))
               );
@@ -106,12 +107,18 @@ const client = new ApolloClient({
                 merged.map((movie) =>
                   readField("id", readField("category", movie))
                 )
-              );  
-              if(args.input.offset === 0 && incoming.length !== 9) return [...incoming] //if search has less than 9 elements
-              if(args.input.searchField === "" && merged.length < 9) return [...incoming] //search reset
-              if(args.input.searchField !== "" && incoming.length !== 9 && merged.length < 9){
-                return [...incoming]
-              }// search after search
+              );
+              if (args.input.offset === 0 && incoming.length !== 9)
+                return [...incoming]; //if search has less than 9 elements
+              if (args.input.searchField === "" && merged.length < 9)
+                return [...incoming]; //search reset
+              if (
+                args.input.searchField !== "" &&
+                incoming.length !== 9 &&
+                merged.length < 9
+              ) {
+                return [...incoming];
+              } // search after search
               if (args.input.orderByTitle !== undefined) {
                 if (args.input.orderByTitle === true) {
                   if (!isOrderedAsc(existingTitleSort)) return [...incoming];
@@ -122,9 +129,9 @@ const client = new ApolloClient({
               if (args.input.orderByCategory !== undefined) {
                 if (args.input.orderByCategory === true) {
                   if (!isOrderedAsc(existingCategorySort)) return [...incoming];
-                }
-                else if(args.input.orderByCategory === false){
-                  if(!isOrderedDesc(existingCategorySort)) return [...incoming]
+                } else if (args.input.orderByCategory === false) {
+                  if (!isOrderedDesc(existingCategorySort))
+                    return [...incoming];
                 }
               }
               return [...merged, ...incoming];
@@ -181,11 +188,23 @@ const client = new ApolloClient({
             keyArgs: ["id"],
             merge(existing: any[], incoming: any[], { readField }) {
               const merged = existing ? existing.slice(0) : [];
-              console.log("incoming",incoming)
-              console.log("merged",merged)
-              if(merged.length < 3 && incoming.length <= 3 && incoming.length - merged.length === 1) return [...incoming]
-              if(merged.length < 3 && incoming.length <= 3 && incoming.length - merged.length !== 1 && merged.length <= incoming.length) return [...merged,...incoming]
-              if(incoming.length > 3 && incoming.length - merged.length === 1) return [...merged]
+              console.log("incoming", incoming);
+              console.log("merged", merged);
+              if (
+                merged.length < 3 &&
+                incoming.length <= 3 &&
+                incoming.length - merged.length === 1
+              )
+                return [...incoming];
+              if (
+                merged.length < 3 &&
+                incoming.length <= 3 &&
+                incoming.length - merged.length !== 1 &&
+                merged.length <= incoming.length
+              )
+                return [...merged, ...incoming];
+              if (incoming.length > 3 && incoming.length - merged.length === 1)
+                return [...merged];
               if (incoming.length === 0) return [];
               const existingIdSet = new Set(
                 merged.map((review) => readField("id", review))
@@ -210,13 +229,13 @@ const client = new ApolloClient({
                 return [...incoming];
               }
               if (merged.length - incoming.length === 1) {
-                const isDelete = eqSet(existingIdSet,incomingIdSet)
+                const isDelete = eqSet(existingIdSet, incomingIdSet);
                 // incomingIdSet.forEach((id) => {
                 //   if (!isDelete) return;
                 //   if (existingIdSet.has(id)) isDelete = true;
                 //   else isDelete = false;
                 // });
-                
+
                 if (isDelete) return [...incoming];
               }
               return [...merged, ...incoming];
@@ -240,7 +259,18 @@ root.render(
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
                 <Route path="forgotpass" element={<Forgotpass />} />
-                <Route path="/resetpassword/:token" element={<ResetPassword/>} />
+                <Route
+                  path="/resetpassword/:token"
+                  element={<ResetPassword />}
+                />
+                <Route
+                  path="dashboard"
+                  element={
+                    <RoleWrapper role={UserRole["Admin"]}>
+                      <Dashboard />
+                    </RoleWrapper>
+                  }
+                />
                 <Route
                   path="categories"
                   element={
