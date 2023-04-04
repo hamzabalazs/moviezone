@@ -5,7 +5,7 @@ export const testMovie:Movie = {
     title:"title1",
     description:"description1",
     poster:"poster1",
-    release_date:"20/12/2020",
+    release_date:"2020-12-20",
     category:{
         id:"idC2",
         name:"name2"
@@ -18,7 +18,7 @@ export const editMovie = {
     title:"title1EDITED",
     description:"description1ED",
     poster:"poster1ED",
-    release_date:"20/12/2012",
+    release_date:"2012-12-20",
     category_id:"idC3"
 }
 
@@ -27,7 +27,7 @@ export const editResponseMovie:Movie = {
     title:"title1EDITED",
     description:"description1ED",
     poster:"poster1ED",
-    release_date:"20/12/2012",
+    release_date:"2012-12-20",
     category:{
         id:"idC3",
         name:"name3"
@@ -40,7 +40,7 @@ export const deleteMovie:Movie = {
     title:"title3",
     description:"description3",
     poster:"poster3",
-    release_date:"25/09/2000",
+    release_date:"2000-09-25",
     category:{
         id:"idC1",
         name:"name1"
@@ -52,6 +52,6 @@ export const addMovie = {
     title:"newTitle",
     description:"newDescription",
     poster:"newPoster",
-    release_date:"13/03/2023",
+    release_date:"2023-03-13",
     category_id:"idC3"
 }

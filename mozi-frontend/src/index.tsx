@@ -188,8 +188,6 @@ const client = new ApolloClient({
             keyArgs: ["id"],
             merge(existing: any[], incoming: any[], { readField }) {
               const merged = existing ? existing.slice(0) : [];
-              console.log("incoming", incoming);
-              console.log("merged", merged);
               if (
                 merged.length < 3 &&
                 incoming.length <= 3 &&

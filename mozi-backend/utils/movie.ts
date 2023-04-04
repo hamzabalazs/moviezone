@@ -79,7 +79,6 @@ export async function getMovieById(id:string, context:MyContext):Promise<Movie|n
 export async function getNumberOfMoviesPerYear(context:MyContext): Promise<any[]>{
   const sql = `SELECT COUNT(*) as totalCount,strftime('%Y',release_date) as year from movie WHERE strftime('%Y',release_date) > "1999" GROUP BY strftime('%Y',release_date)`
   const result = await context.db.all(sql)
-  console.log(result)
   return result
 }
 

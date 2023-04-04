@@ -107,7 +107,6 @@ export function useMovie(): MovieData {
       }
       return null;
     } catch (e: any) {
-      console.log(e.message);
     }
   }
 

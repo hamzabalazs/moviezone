@@ -4,7 +4,7 @@ export const movieData = [
         title:"title1",
         description:"description1",
         poster:"poster1",
-        release_date:"20/12/2020",
+        release_date:"2020-12-20",
         category_id:"idC2",
     },
     {
@@ -12,7 +12,7 @@ export const movieData = [
         title:"title2",
         description:"description2",
         poster:"poster2",
-        release_date:"30/06/2015",
+        release_date:"2015-06-30",
         category_id:"idC1",
     },
     {
@@ -20,7 +20,7 @@ export const movieData = [
         title:"title3",
         description:"description3",
         poster:"poster3",
-        release_date:"25/09/2000",
+        release_date:"2000-09-25",
         category_id:"idC1",
     },
     {
@@ -28,7 +28,7 @@ export const movieData = [
         title:"title4",
         description:"description4",
         poster:"poster4",
-        release_date:"02/01/2001",
+        release_date:"2001-01-02",
         category_id:"idC2",
     },
     {
@@ -36,7 +36,7 @@ export const movieData = [
         title:"title5",
         description:"description5",
         poster:"poster5",
-        release_date:"01/11/1998",
+        release_date:"1998-11-01",
         category_id:"idC3",
     },
     {
@@ -44,7 +44,7 @@ export const movieData = [
         title:"title6",
         description:"description6",
         poster:"poster6",
-        release_date:"11/03/2003",
+        release_date:"2003-03-11",
         category_id:"idC1",
     },
 ]
@@ -114,49 +114,56 @@ export const reviewData = [
         rating:"5",
         description:"Looked good",
         movie_id:"idM1",
-        user_id:"idU1"
+        user_id:"idU1",
+        timestamp:"2023-02-04"
     },
     {
         id:"idR2",
         rating:"3",
         description:"Was alright",
         movie_id:"idM3",
-        user_id:"idU1"
+        user_id:"idU1",
+        timestamp:"2023-03-04"
     },
     {
         id:"idR3",
         rating:"1",
         description:"Didnt like",
         movie_id:"idM2",
-        user_id:"idU2"
+        user_id:"idU2",
+        timestamp:"2023-04-04"
     },
     {
         id:"idR4",
         rating:"5",
         description:"Best",
         movie_id:"idM1",
-        user_id:"idU2"
+        user_id:"idU2",
+        timestamp:"2023-01-04"
     },
     {
         id:"idR5",
         rating:"4",
         description:"I mean its alright",
         movie_id:"idM4",
-        user_id:"idU2"
+        user_id:"idU2",
+        timestamp:"2022-12-04"
     },
     {
         id:"idR6",
         rating:"4",
         description:"IT WAS PERFECT",
         movie_id:"idM3",
-        user_id:"idU4"
+        user_id:"idU4",
+        timestamp:"2023-02-04"
     },
     {
         id:"idR7",
         rating:"1",
         description:"badbad",
         movie_id:"idM2",
-        user_id:"idU1"
+        user_id:"idU1",
+        timestamp:"2023-02-04"
     },
 ]
 

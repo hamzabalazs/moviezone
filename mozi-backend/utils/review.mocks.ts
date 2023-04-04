@@ -64,7 +64,7 @@ export const editExtendedReview = {
     title: "title1",
     description: "description1",
     poster: "poster1",
-    release_date: "20/12/2020",
+    release_date: "2020-12-20",
     rating:"3",
     category: {
       id: "idC2",
@@ -89,7 +89,7 @@ export const editReview2 = {
     title: "title1",
     description: "description1",
     poster: "poster1",
-    release_date: "20/12/2020",
+    release_date: "2020-12-20",
     rating:"4",
     category: {
       id: "idC2",
@@ -114,7 +114,7 @@ export const editExtendedReview2 = {
     title: "title1",
     description: "description1",
     poster: "poster1",
-    release_date: "20/12/2020",
+    release_date: "2020-12-20",
     rating:"1",
     category: {
       id: "idC2",
@@ -139,7 +139,7 @@ export const deleteReview2 = {
     title: "title3",
     description: "description3",
     poster: "poster3",
-    release_date: "25/09/2000",
+    release_date: "2000-09-25",
     category: {
       id: "idC1",
       name: "name1",
@@ -165,7 +165,7 @@ export const deleteReview = {
     title: "title2",
     description: "description2",
     poster: "poster2",
-    release_date: "30/06/2015",
+    release_date: "2015-06-30",
     category: {
       id: "idC1",
       name: "name1",

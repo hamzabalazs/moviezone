@@ -49,7 +49,6 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
         onClose?.();
       }
     } catch (e: any) {
-      console.log(e.message)
       if (e.message === EXPIRED_TOKEN_MESSAGE) {
         const msg = t("failMessages.expiredToken");
         enqueueSnackbar(msg, { variant: "error" });
