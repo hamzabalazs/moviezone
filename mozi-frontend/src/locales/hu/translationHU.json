@@ -19,7 +19,8 @@
         "Language": "Nyelv",
         "English": "Angol",
         "Hungarian": "Magyar",
-        "logoutSuccess":"Sikeres kilépés!"
+        "logoutSuccess":"Sikeres kilépés!",
+        "dashboard":"Irányítópult"
     },
     "footer":"© 2023 MovieZone Minden jog fenntartva.",
     "review":{

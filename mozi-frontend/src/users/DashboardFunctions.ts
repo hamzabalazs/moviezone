@@ -92,18 +92,18 @@ export function getMovieDataYear(yearList:string[],countList:number[]){
     }
     return data;
 }
-export function getMovieYearChart(data:any[],t:TFunction<"translation", undefined, "translation">){
+export function getMovieYearChart(data:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
   const chart = {
     chart: {
       backgroundColor: "transparent",
       type: "column",
       borderWidth: 1,
-      borderColor: "white",
+      borderColor: (mode === 'light') ? "black" : "white",
       borderRadius: 2,
     },
     title: {
       text: t('dashboard.movieYearChartText'),
-      style: { color: "white" },
+      style: { color: (mode === 'light') ? "black" : "white"},
     },
     xAxis: {
       categories: [
@@ -113,80 +113,80 @@ export function getMovieYearChart(data:any[],t:TFunction<"translation", undefine
       crosshair: true,
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
     yAxis: {
       title: {
         text: t('dashboard.nrOfMovies'),
-        style: { color: "white" },
+        style: { color: (mode === 'light') ? "black" : "white" },
       },
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: "white",
+        color: (mode === 'light') ? "black" : "white",
       },
     },
     series: [
       {
         name: t('dashboard.nrOfMovies'),
         type: "column",
-        color: "#86cc35",
+        color: (mode === 'light') ? "#124116" :"#5d8e25",
         data: data,
       },
     ],
   };
   return chart
 }
-export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:any[],t:TFunction<"translation", undefined, "translation">){
+export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
   const chart = {
     chart: {
       type: "line",
       backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: "white",
+      borderColor: (mode === 'light') ? "black" : "white",
       borderRadius: 2,
     },
     title: {
       text: t('dashboard.nrOfReviewsText'),
-      style: { color: "white" },
+      style: { color: (mode === 'light') ? "black" : "white" },
     },
     xAxis: {
       categories: monthlist,
       crosshair: true,
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
     yAxis: {
       title: {
         text: t('dashboard.nrOfReviews'),
-        style: { color: "white" },
+        style: { color: (mode === 'light') ? "black" : "white" },
       },
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: "white",
+        color: (mode === 'light') ? "black" : "white",
       },
     },
     series: [
       {
         name: movie!,
         type: "line",
-        color: "#86cc35",
+        color: (mode === 'light') ? "#124116" :"#5d8e25",
         lineWidth: 4,
         data: [
           nrList[5],
@@ -201,25 +201,25 @@ export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:a
   };
   return chart
 }
-export function getReviewAvgChart(monthlist:string[],movie:string | null, avgList:any[],t:TFunction<"translation", undefined, "translation">){
+export function getReviewAvgChart(monthlist:string[],movie:string | null, avgList:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
   const chart = {
     chart: {
       type: "column",
       backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: "white",
+      borderColor: (mode === 'light') ? "black" : "white",
       borderRadius: 2,
     },
     title: {
       text: t('dashboard.avgOfReviewsText'),
-      style: { color: "white" },
+      style: { color: (mode === 'light') ? "black" : "white" },
     },
     xAxis: {
       categories: monthlist,
       crosshair: true,
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
@@ -228,24 +228,24 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
       max: 5.0,
       title: {
         text: t('dashboard.avgOfReviews'),
-        style: { color: "white" },
+        style: { color: (mode === 'light') ? "black" : "white" },
       },
       labels: {
         style: {
-          color: "white",
+          color: (mode === 'light') ? "black" : "white",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: "white",
+        color: (mode === 'light') ? "black" : "white",
       },
     },
     series: [
       {
         name: movie!,
         type: "column",
-        color: "#86cc35",
+        color: (mode === 'light') ? "#124116" :"#5d8e25",
         data: [
           avgList[5],
           avgList[4],
@@ -260,7 +260,7 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
 
   return chart
 }
-export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined, "translation">){
+export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
   const chart = {
     chart: {
       backgroundColor: "transparent",
@@ -271,7 +271,7 @@ export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined,
     },
     title: {
       text: t('dashboard.movieNrChartText'),
-      style: { color: "white" },
+      style: { color: (mode === 'light') ? "black" : "white" },
     },
     plotOptions: {
       pie: {
@@ -281,7 +281,7 @@ export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined,
           enabled: true,
           format: "<b>{point.name}</b>: {point.y}",
           style: {
-            color: "white",
+            color: (mode === 'light') ? "black" : "white",
           },
         },
       },

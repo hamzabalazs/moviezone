@@ -30,6 +30,7 @@ export default function Dashboard() {
     movie = "movie",
   }
   const { t } = useTranslation()
+  const mode = localStorage.getItem("color-mode");
   const [pageTab, setPageTab] = useState<Tab>(Tab["movie"]);
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
@@ -76,10 +77,10 @@ export default function Dashboard() {
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
   const yearChartData = getMovieDataYear(yearList, countYearList);
-  const mChartNrYear = getMovieYearChart(yearChartData,t)
-  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList,t)
-  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList,t)
-  const mChartNrCat = getMovieNrChart(catChartData,t)
+  const mChartNrYear = getMovieYearChart(yearChartData,t,mode)
+  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList,t,mode)
+  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList,t,mode)
+  const mChartNrCat = getMovieNrChart(catChartData,t,mode)
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -137,7 +138,7 @@ export default function Dashboard() {
               height: "10vh",
               width: "33.333%",
               backgroundColor:
-                pageTab === Tab["movie"] ? "primary.main" : "primary.dark",
+                pageTab === Tab["movie"] ? "primary.dark" : "primary.main",
             }}
           >
             <Button onClick={handleMovieTab} sx={{ color: "text.primary" }}>
@@ -152,7 +153,7 @@ export default function Dashboard() {
               justifyContent: "center",
               width: "33.333%",
               backgroundColor:
-                pageTab === Tab["review"] ? "primary.main" : "primary.dark",
+                pageTab === Tab["review"] ? "primary.dark" : "primary.main",
             }}
           >
             <Button onClick={handleReviewTab} sx={{ color: "text.primary" }}>
@@ -167,7 +168,7 @@ export default function Dashboard() {
               justifyContent: "center",
               width: "33.334%",
               backgroundColor:
-                pageTab === Tab["category"] ? "primary.main" : "primary.dark",
+                pageTab === Tab["category"] ? "primary.dark" : "primary.main",
             }}
           >
             <Button onClick={handleCategoryTab} sx={{ color: "text.primary" }}>
@@ -181,7 +182,7 @@ export default function Dashboard() {
             sx={{
               height: "140vh",
               width: "90%",
-              backgroundColor: "primary.dark",
+              backgroundColor: "primary.main",
               marginLeft: "5%",
               marginRight: "5%",
             }}
@@ -244,7 +245,7 @@ export default function Dashboard() {
               display: "flex",
               height: "90vh",
               width: "90%",
-              backgroundColor: "primary.dark",
+              backgroundColor: "primary.main",
               marginLeft: "5%",
               marginRight: "5%",
             }}
@@ -270,14 +271,13 @@ export default function Dashboard() {
               display: "flex",
               height: "90vh",
               width: "90%",
-              backgroundColor: "primary.dark",
+              backgroundColor: "primary.main",
               marginLeft: "5%",
               marginRight: "5%",
             }}
           >
             <div
               style={{
-                height: "50vh",
                 width: "90%",
                 marginLeft: "5%",
                 marginRight: "5%",

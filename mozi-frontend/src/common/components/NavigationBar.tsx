@@ -279,7 +279,7 @@ export default function NavigationBar() {
               <MenuItem
                 onClick={handleDashboardNav}
                 data-testid="navbar-account-dashboard">
-                  <DashboardIcon sx={{marginRight:1.5}}/> Dashboard
+                  <DashboardIcon sx={{marginRight:1.5}}/> {t('navbar.dashboard')}
                 </MenuItem>
             )}
             <MenuItem
