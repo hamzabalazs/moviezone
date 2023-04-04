@@ -9,18 +9,18 @@ import MyFooter from "../common/components/MyFooter";
 import NavigationBar from "../common/components/NavigationBar";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import {
-  GET_ALL_MOVIES,
-  GET_MOVIE_DATA_NR_CATEGORY,
-  GET_MOVIE_DATA_NR_YEAR,
-  GET_REVIEW_DATA_AVG,
-  GET_REVIEW_DATA_NR,
-} from "./userQueries";
+import { GET_DASHBOARD_DATA } from "./userQueries";
 import Highcharts from "highcharts";
-import { getMonthList, getMovieDataCat, getMovieDataYear } from "./DashboardFunctions";
+import {
+  getMonthList,
+  getMovieYearChart,
+  getMovieNrChart,
+  getMovieDataCat,
+  getMovieDataYear,
+  getReviewAvgChart,
+  getReviewNrChart,
+} from "./DashboardFunctions";
 import HighChartsReact from "highcharts-react-official";
-
-<script src="https://code.highcharts.com/highcharts.js"></script>;
 
 export default function Dashboard() {
   enum Tab {
@@ -33,258 +33,51 @@ export default function Dashboard() {
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
   const [movieOptions, setMovieOptions] = useState<string[]>([]);
   const [inputValueMovie, setInputValueMovie] = useState("");
-  const { data, loading } = useQuery(GET_ALL_MOVIES,{fetchPolicy:"network-only"});
-  const { data: reviewNrData, loading: reviewNrLoading } = useQuery(
-    GET_REVIEW_DATA_NR,
-    { variables: { input: { movie_id: selectedMovieId } },fetchPolicy:"network-only" }
-  );
-  const { data: reviewAvgData, loading: reviewAvgLoading } = useQuery(
-    GET_REVIEW_DATA_AVG,
-    { variables: { input: { movie_id: selectedMovieId } },fetchPolicy:"network-only" }
-  );
-  const { data: movieNrCatData, loading: movieNrCatLoading } =
-    useQuery(GET_MOVIE_DATA_NR_CATEGORY,{fetchPolicy:"network-only"});
-  const {data: movieNrYearData, loading: movieNrYearLoading } = useQuery(GET_MOVIE_DATA_NR_YEAR,{fetchPolicy:"network-only"})
+  const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
+    fetchPolicy: "network-only",
+    variables: {
+      input: {
+        movie_id: selectedMovieId,
+      },
+    },
+  });
   const d = new Date();
   const month = d.getMonth();
   const monthlist = getMonthList(month);
   const nrList = [];
   const avgList = [];
-  if (
-    !reviewNrLoading &&
-    reviewNrData &&
-    !reviewAvgLoading &&
-    reviewAvgData &&
-    pageTab === Tab["review"]
-  ) {
+  const nameList: string[] = [];
+  const countCatList: number[] = [];
+  const yearList: string[] = [];
+  const countYearList: number[] = [];
+  if (!loading && data) {
     for (let i = 0; i < 6; i++) {
-      if (reviewNrData.getNumberOfReviewsOfMoviePerMonth[i]) {
+      if (data.getNumberOfReviewsOfMoviePerMonth[i]) {
         nrList.push(
-          reviewNrData.getNumberOfReviewsOfMoviePerMonth[i].totalCount
+          data.getNumberOfReviewsOfMoviePerMonth[i].totalCount
         );
       } else nrList.push(0);
-      if (reviewAvgData.getAverageOfReviewsOfMoviePerMonth[i]) {
+      if (data.getAverageOfReviewsOfMoviePerMonth[i]) {
         avgList.push(
-          reviewAvgData.getAverageOfReviewsOfMoviePerMonth[i].average
+          data.getAverageOfReviewsOfMoviePerMonth[i].average
         );
       } else avgList.push(0.0);
     }
-  }
-
-  const chartNr = {
-    chart: {
-      type: "line",
-      backgroundColor: "transparent",
-      borderWidth: 1,
-      borderColor: "white",
-      borderRadius: 2,
-    },
-    title: {
-      text: "Number of reviews of a movie over a period of the last six months",
-      style: { color: "white" },
-    },
-    xAxis: {
-      categories: monthlist,
-      crosshair: true,
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    yAxis: {
-      title: {
-        text: "Nr. of reviews",
-        style: { color: "white" },
-      },
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    legend: {
-      itemStyle: {
-        color: "white",
-      },
-    },
-    series: [
-      {
-        name: selectedMovie!,
-        type: "line",
-        color: "#86cc35",
-        lineWidth: 4,
-        data: [
-          nrList[5],
-          nrList[4],
-          nrList[3],
-          nrList[2],
-          nrList[1],
-          nrList[0],
-        ],
-      },
-    ],
-  };
-  const chartAvg = {
-    chart: {
-      type: "column",
-      backgroundColor: "transparent",
-      borderWidth: 1,
-      borderColor: "white",
-      borderRadius: 2,
-    },
-    title: {
-      text: "Average of reviews of a movie over a period of the last six months",
-      style: { color: "white" },
-    },
-    xAxis: {
-      categories: monthlist,
-      crosshair: true,
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    yAxis: {
-      min: 0.0,
-      title: {
-        text: "Avg. of reviews",
-        style: { color: "white" },
-      },
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    legend: {
-      itemStyle: {
-        color: "white",
-      },
-    },
-    series: [
-      {
-        name: selectedMovie!,
-        type: "column",
-        color: "#86cc35",
-        data: [
-          avgList[5],
-          avgList[4],
-          avgList[3],
-          avgList[2],
-          avgList[1],
-          avgList[0],
-        ],
-      },
-    ],
-  };
-  const nameList: string[] = [];
-  const countCatList: number[] = [];
-
-  if (!movieNrCatLoading && movieNrCatData) {
-    movieNrCatData.getNumberOfMoviesPerCategory.map((x: any) => {
+    data.getNumberOfMoviesPerCategory.map((x: any) => {
       nameList.push(x.name);
       countCatList.push(x.totalCount);
     });
+    data.getNumberOfMoviesPerYear.map((x: any) => {
+      yearList.push(x.year);
+      countYearList.push(x.totalCount);
+    });
   }
-  const yearList: string[] = [];
-  const countYearList:number[] = [];
-  if(!movieNrYearLoading && movieNrYearData){
-    movieNrYearData.getNumberOfMoviesPerYear.map((x:any) => {
-      yearList.push(x.year)
-      countYearList.push(x.totalCount)
-    })
-  }
-  const yearChartData = getMovieDataYear(yearList,countYearList);
-  const mChartNrYear = {
-    chart:{
-      backgroundColor:"transparent",
-      type:"column",
-      borderWidth: 1,
-      borderColor: "white",
-      borderRadius: 2,
-    },
-    title: {
-      text: "Number of movies release by year from 2000",
-      style: { color: "white" },
-    },
-    xAxis: {
-      categories: [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],
-      crosshair: true,
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    yAxis: {
-      title: {
-        text: "Nr. of movies",
-        style: { color: "white" },
-      },
-      labels: {
-        style: {
-          color: "white",
-        },
-      },
-    },
-    legend: {
-      itemStyle: {
-        color: "white",
-      },
-    },
-    series: [
-      {
-        name:"Nr. of movies",
-        type: "column",
-        color: "#86cc35",
-        data: yearChartData
-      },
-    ],
-  }
-
   const catChartData = getMovieDataCat(nameList, countCatList);
-  const mChartNrCat = {
-    chart: {
-      backgroundColor: "transparent",
-      plotBackgroundColor: null,
-      plotBorderWidth: null,
-      plotShadow: false,
-      type: "pie",
-    },
-    title: {
-      text: "Number of movies per category",
-      style: { color: "white" },
-    },
-    accessibility: {
-      point: {
-        valueSuffix: "%",
-      },
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: "pointer",
-        dataLabels: {
-          enabled: true,
-          format: "<b>{point.name}</b>: {point.y}",
-          style: {
-            color: "white",
-          },
-        },
-      },
-    },
-    series: [
-      {
-        name: "Categories",
-        colorByPoint: true,
-        data: catChartData,
-      },
-    ],
-  };
-
-
+  const yearChartData = getMovieDataYear(yearList, countYearList);
+  const mChartNrYear = getMovieYearChart(yearChartData)
+  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList)
+  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList)
+  const mChartNrCat = getMovieNrChart(catChartData)
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -301,7 +94,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (!loading) {
       if (data) {
-        console.log(data.getAllMovies);
         const movieList: string[] = [];
         data.getAllMovies.map((x: any) => {
           movieList.push(x.title);
@@ -467,7 +259,6 @@ export default function Dashboard() {
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrYear} />
             </div>
-
           </Container>
         )}
         {pageTab === Tab["category"] && (
