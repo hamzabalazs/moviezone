@@ -130,7 +130,8 @@
     "resetPass":{
         "resetpassword":"Reset Password",
         "password":"Password",
-        "confirmPassword":"Confirm password"
+        "confirmPassword":"Confirm password",
+        "passwordResetTimeout":"Time has run out for resetting your password! Request password reset again!"
     },
     "dashboard":{
         "reviewTab": "Review Tab",
@@ -144,7 +145,6 @@
         "avgOfReviewsText":"Average of reviews of a movie over a period of the last six months",
         "avgOfReviews": "Avg. of reviews",
         "movieNrChartText":"Number of movies per category"
-
     },
     "formikErrors": {
         "categoryReq": "Category name is required!",
@@ -161,7 +161,8 @@
         "nameReq":"Name is required!",
         "ratingReq":"Rating is required!",
         "posterReq": "Poster is required!",
-        "confirmPasswordReq": "Confirm password is required!"
+        "confirmPasswordReq": "Confirm password is required!",
+        "passwordsDontMatch": "Passwords do not match!"
     },
     "someError": "Something went wrong, please try again later!",
     "validityFailure":{

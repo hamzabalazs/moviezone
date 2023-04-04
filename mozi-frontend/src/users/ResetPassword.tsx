@@ -58,7 +58,7 @@ function ResetPassword() {
         errors.confirmPassword = msg;
       }
       if (values.password !== values.confirmPassword) {
-        const msg = "Passwords do not match!";
+        const msg = t('formikErrors.passwordsDontMatch');
         errors.confirmPassword = msg;
       }
       return errors;
@@ -67,7 +67,8 @@ function ResetPassword() {
 
   useEffect(() => {
     if(error){
-      enqueueSnackbar("Time has run out for resetting your password! Request again!",{variant:"error"})
+      const msg = t('resetPass.passwordResetTimeout')
+      enqueueSnackbar(msg,{variant:"error"})
       navigate('../../login')
     }
   },[error])

@@ -131,7 +131,8 @@
     "resetPass":{
         "resetpassword":"Jelszó visszaállítás",
         "password":"Jelszó",
-        "confirmPassword":"Jelszó megerősítése"
+        "confirmPassword":"Jelszó megerősítése",
+        "passwordResetTimeout":"Lejárt az idő a jelszó visszaállításához! Kérje ujra a visszaállítást!"
     },
     "dashboard":{
         "reviewTab": "Véleménylap",
@@ -161,7 +162,8 @@
         "nameReq":"A név kötelező!",
         "ratingReq":"Az értékelés kötelező!",
         "posterReq": "A poszter kötelező!",
-        "confirmPasswordReq": "A jelszó megerősítése kötelező!"
+        "confirmPasswordReq": "A jelszó megerősítése kötelező!",
+        "passwordsDontMatch": "A két jelszó nem egyezik!"
     },
     "someError": "Valami rosszul sült el, kérjük, próbálja meg később újra!",
     "validityFailure":{
