@@ -213,7 +213,7 @@ Cypress.Commands.add("addReview", (review,token) => {
         },
       },
     },
-  }).then((resp) => console.log(resp))
+  })
 });
 
 Cypress.Commands.add("getTotalReviewsOfUserCount", (userId) => {

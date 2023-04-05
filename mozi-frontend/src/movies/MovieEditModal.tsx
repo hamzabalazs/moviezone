@@ -10,6 +10,7 @@ import {
   TextField as MuiTextField,
   TextFieldProps,
   Typography,
+  Grow,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
@@ -33,8 +34,7 @@ interface Props {
 export default function MovieEditModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const { updateMovie: UpdateMovieAPI } = useMovie();
-  const { categories, loading } =
-    useCategoriesData();
+  const { categories, loading } = useCategoriesData();
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext();
 
@@ -53,7 +53,7 @@ export default function MovieEditModal({ movie, onClose }: Props) {
         editedMovie.release_date,
         editedMovie.category.id
       );
-      if(result){
+      if (result) {
         const msg = t("successMessages.movieEdit");
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();
@@ -95,96 +95,99 @@ export default function MovieEditModal({ movie, onClose }: Props) {
       open={Boolean(movie)}
       onClose={() => onClose?.()}
       data-testid="movie-edit-modal"
+      style={{display:'flex',alignItems:'center',justifyContent:'center'}}
     >
-      <Box
-        sx={{
-          position: "absolute" as "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          p: 4,
-        }}
-        component="form"
-        onSubmit={formik.handleSubmit}
-      >
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {t("movie.selectedMovie")}
-        </Typography>
-        <Card
+      <Grow in={Boolean(movie)}>
+        <Box
           sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
+            position: "absolute" as "absolute",
+            top: "15%",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
           }}
+          component="form"
+          onSubmit={formik.handleSubmit}
         >
-          <CardContent>
-            <Typography variant="subtitle1">{t("movie.title")}: </Typography>
-            <TextField
-              id="title"
-              name="title"
-              onChange={formik.handleChange}
-              value={formik.values.title}
-              sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "movie-edit-title" }}
-              error={formik.errors.title}
-            ></TextField>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {t("movie.selectedMovie")}
+          </Typography>
+          <Card
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <CardContent>
+              <Typography variant="subtitle1">{t("movie.title")}: </Typography>
+              <TextField
+                id="title"
+                name="title"
+                onChange={formik.handleChange}
+                value={formik.values.title}
+                sx={{ border: 1, borderRadius: 1 }}
+                inputProps={{ "data-testid": "movie-edit-title" }}
+                error={formik.errors.title}
+              ></TextField>
 
-            <Typography variant="subtitle1">
-              {t("movie.description")}:{" "}
-            </Typography>
-            <TextField
-              id="description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "movie-edit-description" }}
-              error={formik.errors.description}
-            ></TextField>
+              <Typography variant="subtitle1">
+                {t("movie.description")}:{" "}
+              </Typography>
+              <TextField
+                id="description"
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                sx={{ border: 1, borderRadius: 1 }}
+                inputProps={{ "data-testid": "movie-edit-description" }}
+                error={formik.errors.description}
+              ></TextField>
 
-            <Typography variant="subtitle1">
-              {t("movie.release_date")}:{" "}
-            </Typography>
-            <TextField
-              id="release_date"
-              value={formik.values.release_date}
-              onChange={formik.handleChange}
-              sx={{ border: 1, borderRadius: 1 }}
-              inputProps={{ "data-testid": "movie-edit-release_date" }}
-              error={formik.errors.release_date}
-            ></TextField>
+              <Typography variant="subtitle1">
+                {t("movie.release_date")}:{" "}
+              </Typography>
+              <TextField
+                id="release_date"
+                value={formik.values.release_date}
+                onChange={formik.handleChange}
+                sx={{ border: 1, borderRadius: 1 }}
+                inputProps={{ "data-testid": "movie-edit-release_date" }}
+                error={formik.errors.release_date}
+              ></TextField>
 
-            <InputLabel id="category-select">{t("movie.category")}</InputLabel>
-            <Select
-              labelId="category-select"
-              label={t("movie.category")}
-              name="category.id"
-              value={formik.values.category.id}
-              onChange={formik.handleChange}
-              sx={{ border: 1, borderRadius: 1 }}
-              data-testid="movie-edit-category"
-              inputProps={{ "data-testid": "movie-edit-categoryId" }}
-            >
-              {categories.map((category: Category) => (
-                <MenuItem key={category.id} value={category.id}>
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </CardContent>
-        </Card>
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{ border: 1, borderRadius: 1 }}
-          data-testid="movie-edit-button"
-        >
-          {t("buttons.edit")}
-        </Button>
-      </Box>
+              <InputLabel id="category-select">
+                {t("movie.category")}
+              </InputLabel>
+              <Select
+                labelId="category-select"
+                label={t("movie.category")}
+                name="category.id"
+                value={formik.values.category.id}
+                onChange={formik.handleChange}
+                sx={{ border: 1, borderRadius: 1 }}
+                data-testid="movie-edit-category"
+                inputProps={{ "data-testid": "movie-edit-categoryId" }}
+              >
+                {categories.map((category: Category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </CardContent>
+          </Card>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ border: 1, borderRadius: 1 }}
+            data-testid="movie-edit-button"
+          >
+            {t("buttons.edit")}
+          </Button>
+        </Box>
+      </Grow>
     </Modal>
   );
 }

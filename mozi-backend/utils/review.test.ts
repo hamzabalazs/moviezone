@@ -204,7 +204,6 @@ test("Should add review if user and movie exists, and movie has not been rated b
       },
     },
   });
-  console.log(result)
   expect(result.errors).toBeUndefined();
   expect(result.data?.createReview).not.toBeNull();
 });

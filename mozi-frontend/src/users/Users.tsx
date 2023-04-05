@@ -1,5 +1,5 @@
-import { Container, Fab, Grid, Typography } from "@mui/material";
-import {useState } from "react";
+import { Container, Fab, Grid, Grow, Typography } from "@mui/material";
+import { useState } from "react";
 import MyFooter from "../common/components/MyFooter";
 import NavigationBar from "../common/components/NavigationBar";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -22,19 +22,19 @@ export default function Users() {
     undefined
   );
   let currentLength = 0;
-  const { users, loading, totalCount,fetchMore } = useUserData();
+  const { users, loading, totalCount, fetchMore } = useUserData();
 
-  useBottomScrollListener(() => { 
-    currentLength += users.length
-    if(currentLength >= totalCount) return;
+  useBottomScrollListener(() => {
+    currentLength += users.length;
+    if (currentLength >= totalCount) return;
     fetchMore({
-      variables:{
-        input:{
-          limit:3,
-          offset: currentLength
-        }
-      }
-    })
+      variables: {
+        input: {
+          limit: 3,
+          offset: currentLength,
+        },
+      },
+    });
   });
 
   return (
@@ -52,11 +52,7 @@ export default function Users() {
         />
         <div>
           <Container maxWidth="sm" sx={{ marginBottom: 3, marginTop: "56px" }}>
-            <Typography
-              variant="h2"
-              align="center"
-              color="textPrimary"
-            >
+            <Typography variant="h2" align="center" color="textPrimary">
               {t("navbar.Users")}
             </Typography>
           </Container>
@@ -74,7 +70,7 @@ export default function Users() {
             ))}
           </Grid>
           {loading && (
-            <Grid container spacing={4} sx={{marginTop:0}}>
+            <Grid container spacing={4} sx={{ marginTop: 0 }}>
               <CardSkeletonComponent />
               <CardSkeletonComponent />
               <CardSkeletonComponent />

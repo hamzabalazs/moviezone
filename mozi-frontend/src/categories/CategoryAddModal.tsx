@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Box, Grow, Modal } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import AddCategoryCard from "./AddCategoryCard";
 
@@ -14,24 +14,22 @@ export default function CategoryAddModal(props: Props) {
       open={props.isOpenAdd}
       onClose={() => props.setIsOpenAdd?.(false)}
       data-testid="category-add-modal"
+      style={{display:'flex',alignItems:'center',justifyContent:'center'}}
     >
-      <Box
-        sx={{
-          position: "absolute" as "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <AddCategoryCard
-          setIsOpenAdd={setIsOpenAdd}
-        />
-      </Box>
+      <Grow in={props.isOpenAdd}>
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "33%",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <AddCategoryCard setIsOpenAdd={setIsOpenAdd} />
+        </Box>
+      </Grow>
     </Modal>
   );
 }

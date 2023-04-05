@@ -10,6 +10,8 @@ import {
   TextField as MuiTextField,
   TextFieldProps,
   Typography,
+  Grow,
+  Backdrop,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
@@ -94,13 +96,20 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
       open={Boolean(user)}
       onClose={() => onClose?.()}
       data-testid="user-edit-modal"
+      closeAfterTransition
+      slots={{backdrop: Backdrop}}
+      slotProps={{
+        backdrop:{
+          timeout:500
+        }
+      }}
+      style={{display:'flex',alignItems:'center',justifyContent:'center'}}
     >
+      <Grow in={Boolean(user)}>
         <Box
           sx={{
             position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            top: "16%",
             width: 400,
             bgcolor: "background.paper",
             border: "2px solid #000",
@@ -199,6 +208,7 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
             {t("buttons.edit")}
           </Button>
         </Box>
+      </Grow>
     </Modal>
   );
 }

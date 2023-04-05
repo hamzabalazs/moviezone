@@ -87,9 +87,6 @@ export default function AddCategoryCard(props: Props) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          border: 2,
-          borderColor: "primary.light",
-          borderRadius: 2,
         }}
         data-testid="category-add-card"
       >
