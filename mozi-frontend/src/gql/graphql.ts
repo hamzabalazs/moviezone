@@ -169,6 +169,12 @@ export type Movie = {
   title: Scalars['String'];
 };
 
+export type MovieAutocompleteList = {
+  __typename?: 'MovieAutocompleteList';
+  id: Scalars['ID'];
+  title: Scalars['String'];
+};
+
 export type MovieInput = {
   id: Scalars['ID'];
 };
@@ -184,6 +190,7 @@ export type MoviePaginationInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: RunResult;
   createCategory?: Maybe<Category>;
   createMovie?: Maybe<Movie>;
   createReview?: Maybe<Review>;
@@ -195,10 +202,16 @@ export type Mutation = {
   deleteToken: RunResult;
   deleteUser: FullUser;
   logIn: CurrentUser;
+  sendForgotPassEmail: Scalars['Boolean'];
   updateCategory: Category;
   updateMovie: Movie;
   updateReview?: Maybe<Review>;
   updateUser: FullUser;
+};
+
+
+export type MutationChangePasswordArgs = {
+  input: ChangePasswordInput;
 };
 
 
@@ -257,6 +270,11 @@ export type MutationLogInArgs = {
 };
 
 
+export type MutationSendForgotPassEmailArgs = {
+  input: ResetTokenInput;
+};
+
+
 export type MutationUpdateCategoryArgs = {
   input: UpdateCategoryInput;
 };
@@ -280,14 +298,20 @@ export type Query = {
   __typename?: 'Query';
   checkForCategory: Category;
   checkForUser?: Maybe<User>;
+  getAllMovies: Array<Maybe<MovieAutocompleteList>>;
+  getAverageOfReviewsOfMoviePerMonth: Array<AvgOfReviews>;
   getCategories: Array<Category>;
   getCategoryById?: Maybe<Category>;
   getMovieById?: Maybe<Movie>;
   getMovies: Array<Movie>;
   getNumberOfMovies: NumOfMovies;
+  getNumberOfMoviesPerCategory: Array<NumOfMoviesPerCategory>;
+  getNumberOfMoviesPerYear: Array<NumOfMoviesPerYear>;
   getNumberOfReviewsOfMovie: NumOfReviews;
+  getNumberOfReviewsOfMoviePerMonth: Array<NumOfReviews>;
   getNumberOfReviewsOfUser: NumOfReviews;
   getNumberOfUsers: NumOfUsers;
+  getResetToken: Scalars['String'];
   getReviewById?: Maybe<Review>;
   getReviews: Array<Review>;
   getReviewsOfMovie: Array<Review>;
@@ -296,6 +320,7 @@ export type Query = {
   getUserById?: Maybe<User>;
   getUserByToken: CurrentUser;
   getUserForLogin: CurrentUser;
+  getUserForPassChange: FullUser;
   getUsers: Array<FullUser>;
 };
 
@@ -307,6 +332,11 @@ export type QueryCheckForCategoryArgs = {
 
 export type QueryCheckForUserArgs = {
   input: UserEmailInput;
+};
+
+
+export type QueryGetAverageOfReviewsOfMoviePerMonthArgs = {
+  input: NumOfReviewsForChart;
 };
 
 
@@ -335,8 +365,18 @@ export type QueryGetNumberOfReviewsOfMovieArgs = {
 };
 
 
+export type QueryGetNumberOfReviewsOfMoviePerMonthArgs = {
+  input: NumOfReviewsForChart;
+};
+
+
 export type QueryGetNumberOfReviewsOfUserArgs = {
   input: NumOfReviewsInput;
+};
+
+
+export type QueryGetResetTokenArgs = {
+  input: ResetTokenInput;
 };
 
 
@@ -362,6 +402,11 @@ export type QueryGetUserByIdArgs = {
 
 export type QueryGetUserForLoginArgs = {
   input: LoginInput;
+};
+
+
+export type QueryGetUserForPassChangeArgs = {
+  input: GetUserForPassChangeInput;
 };
 
 
@@ -452,6 +497,20 @@ export enum UserRole {
   Viewer = 'viewer'
 }
 
+export type AvgOfReviews = {
+  __typename?: 'avgOfReviews';
+  average: Scalars['Float'];
+};
+
+export type ChangePasswordInput = {
+  password: Scalars['String'];
+  user_id: Scalars['String'];
+};
+
+export type GetUserForPassChangeInput = {
+  token: Scalars['String'];
+};
+
 export type NumOfMovies = {
   __typename?: 'numOfMovies';
   totalCount?: Maybe<Scalars['Int']>;
@@ -462,9 +521,25 @@ export type NumOfMoviesInput = {
   searchField?: InputMaybe<Scalars['String']>;
 };
 
+export type NumOfMoviesPerCategory = {
+  __typename?: 'numOfMoviesPerCategory';
+  name: Scalars['String'];
+  totalCount: Scalars['Int'];
+};
+
+export type NumOfMoviesPerYear = {
+  __typename?: 'numOfMoviesPerYear';
+  totalCount: Scalars['Int'];
+  year: Scalars['String'];
+};
+
 export type NumOfReviews = {
   __typename?: 'numOfReviews';
   totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type NumOfReviewsForChart = {
+  movie_id: Scalars['String'];
 };
 
 export type NumOfReviewsInput = {
@@ -475,6 +550,10 @@ export type NumOfReviewsInput = {
 export type NumOfUsers = {
   __typename?: 'numOfUsers';
   totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type ResetTokenInput = {
+  email: Scalars['String'];
 };
 
 export type LogInMutationVariables = Exact<{
@@ -584,6 +663,13 @@ export type GetFullUsersQueryVariables = Exact<{
 
 export type GetFullUsersQuery = { __typename?: 'Query', getUsers: Array<{ __typename?: 'FullUser', id: string, first_name: string, last_name: string, email: string, password: string, role: UserRole }>, getNumberOfUsers: { __typename?: 'numOfUsers', totalCount?: number | null } };
 
+export type CheckForUserQueryVariables = Exact<{
+  input: UserEmailInput;
+}>;
+
+
+export type CheckForUserQuery = { __typename?: 'Query', checkForUser?: { __typename?: 'User', id: string, first_name: string, last_name: string, role: UserRole, email: string } | null };
+
 export type CreateUserMutationVariables = Exact<{
   input: AddUserInput;
 }>;
@@ -605,6 +691,34 @@ export type DeleteUserMutationVariables = Exact<{
 
 export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'FullUser', id: string, first_name: string, last_name: string, role: UserRole, email: string, password: string } };
 
+export type ChangePasswordMutationVariables = Exact<{
+  input: ChangePasswordInput;
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'RunResult', lastID: number, changes: number } };
+
+export type SendForgotPassEmailMutationVariables = Exact<{
+  input: ResetTokenInput;
+}>;
+
+
+export type SendForgotPassEmailMutation = { __typename?: 'Mutation', sendForgotPassEmail: boolean };
+
+export type GetUserForPassChangeQueryVariables = Exact<{
+  input: GetUserForPassChangeInput;
+}>;
+
+
+export type GetUserForPassChangeQuery = { __typename?: 'Query', getUserForPassChange: { __typename?: 'FullUser', id: string, first_name: string, last_name: string, role: UserRole, email: string, password: string } };
+
+export type GetDashboardDataQueryVariables = Exact<{
+  input: NumOfReviewsForChart;
+}>;
+
+
+export type GetDashboardDataQuery = { __typename?: 'Query', getAllMovies: Array<{ __typename?: 'MovieAutocompleteList', id: string, title: string } | null>, getNumberOfReviewsOfMoviePerMonth: Array<{ __typename?: 'numOfReviews', totalCount?: number | null }>, getAverageOfReviewsOfMoviePerMonth: Array<{ __typename?: 'avgOfReviews', average: number }>, getNumberOfMoviesPerCategory: Array<{ __typename?: 'numOfMoviesPerCategory', name: string, totalCount: number }>, getNumberOfMoviesPerYear: Array<{ __typename?: 'numOfMoviesPerYear', totalCount: number, year: string }> };
+
 
 export const LogInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LogIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logIn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<LogInMutation, LogInMutationVariables>;
 export const GetCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetCategoriesQuery, GetCategoriesQueryVariables>;
@@ -621,6 +735,11 @@ export const CreateReviewDocument = {"kind":"Document","definitions":[{"kind":"O
 export const UpdateReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateReviewInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"movie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"poster"}},{"kind":"Field","name":{"kind":"Name","value":"release_date"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rating"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateReviewMutation, UpdateReviewMutationVariables>;
 export const DeleteReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteReviewInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"movie"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"poster"}},{"kind":"Field","name":{"kind":"Name","value":"release_date"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<DeleteReviewMutation, DeleteReviewMutationVariables>;
 export const GetFullUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetFullUsers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UserPaginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUsers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"getNumberOfUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<GetFullUsersQuery, GetFullUsersQueryVariables>;
+export const CheckForUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CheckForUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkForUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CheckForUserQuery, CheckForUserQueryVariables>;
 export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
 export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
 export const DeleteUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}}]}}]} as unknown as DocumentNode<DeleteUserMutation, DeleteUserMutationVariables>;
+export const ChangePasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangePassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"changePasswordInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changePassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lastID"}},{"kind":"Field","name":{"kind":"Name","value":"changes"}}]}}]}}]} as unknown as DocumentNode<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const SendForgotPassEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendForgotPassEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"resetTokenInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendForgotPassEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<SendForgotPassEmailMutation, SendForgotPassEmailMutationVariables>;
+export const GetUserForPassChangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserForPassChange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"getUserForPassChangeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUserForPassChange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"first_name"}},{"kind":"Field","name":{"kind":"Name","value":"last_name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}}]}}]} as unknown as DocumentNode<GetUserForPassChangeQuery, GetUserForPassChangeQueryVariables>;
+export const GetDashboardDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDashboardData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"numOfReviewsForChart"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllMovies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"getNumberOfReviewsOfMoviePerMonth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"getAverageOfReviewsOfMoviePerMonth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"average"}}]}},{"kind":"Field","name":{"kind":"Name","value":"getNumberOfMoviesPerCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"getNumberOfMoviesPerYear"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"year"}}]}}]}}]} as unknown as DocumentNode<GetDashboardDataQuery, GetDashboardDataQueryVariables>;

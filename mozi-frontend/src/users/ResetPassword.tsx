@@ -17,6 +17,7 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { ChangePasswordMutation, GetUserForPassChangeQuery } from "../gql/graphql";
 
 interface Values {
   password: string;
@@ -26,8 +27,8 @@ interface Values {
 function ResetPassword() {
   const { t } = useTranslation();
   const { token } = useParams();
-  const [changePasswordAPI] = useMutation(CHANGE_PASSWORD);
-  const { data,error } = useQuery(GET_USER_FOR_PASS_CHANGE, {
+  const [changePasswordAPI] = useMutation<ChangePasswordMutation>(CHANGE_PASSWORD);
+  const { data,error } = useQuery<GetUserForPassChangeQuery>(GET_USER_FOR_PASS_CHANGE, {
     variables: { input: { token } },
   });
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ function ResetPassword() {
       confirmPassword: "",
     },
     onSubmit: async (values) => {
+      if(!data) return;
       const result = await changePasswordAPI({
         variables: { input: { user_id:data.getUserForPassChange.id,password: values.password } },
       });

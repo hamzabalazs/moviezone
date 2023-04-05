@@ -28,9 +28,14 @@ const documents = {
     "\n  mutation UpdateReview($input: UpdateReviewInput!) {\n    updateReview(input: $input) {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        category {\n          id\n          name\n        }\n        rating\n      }\n      user {\n        first_name\n        last_name\n        id\n        role\n        email\n      }\n    }\n  }\n": types.UpdateReviewDocument,
     "\n  mutation DeleteReview($input: DeleteReviewInput!) {\n    deleteReview(input: $input) {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        rating\n        category {\n          id\n          name\n        }\n      }\n      user {\n        id\n        first_name\n        last_name\n        role\n        email\n      }\n    }\n  }\n": types.DeleteReviewDocument,
     "\n  query GetFullUsers($input: UserPaginationInput) {\n    getUsers(input: $input) {\n      id\n      first_name\n      last_name\n      email\n      password\n      role\n    }\n    getNumberOfUsers {\n      totalCount\n    }\n  }\n": types.GetFullUsersDocument,
+    "\n  query CheckForUser($input: UserEmailInput!) {\n    checkForUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n": types.CheckForUserDocument,
     "\n  mutation CreateUser($input: AddUserInput!) {\n    createUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n": types.CreateUserDocument,
     "\n  mutation UpdateUser($input: UpdateUserInput!) {\n    updateUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n": types.UpdateUserDocument,
     "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n": types.DeleteUserDocument,
+    "\n  mutation ChangePassword($input: changePasswordInput!) {\n    changePassword(input: $input) {\n      lastID\n      changes\n    }\n  }\n": types.ChangePasswordDocument,
+    "\n  mutation SendForgotPassEmail($input: resetTokenInput!) {\n    sendForgotPassEmail(input: $input)\n  }\n": types.SendForgotPassEmailDocument,
+    "\n  query GetUserForPassChange($input: getUserForPassChangeInput!) {\n    getUserForPassChange(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n": types.GetUserForPassChangeDocument,
+    "\n  query GetDashboardData($input:numOfReviewsForChart!) {\n    getAllMovies {\n      id\n      title\n    },\n    getNumberOfReviewsOfMoviePerMonth(input: $input) {\n      totalCount\n    },\n    getAverageOfReviewsOfMoviePerMonth(input: $input) {\n      average\n    },\n    getNumberOfMoviesPerCategory {\n      name\n      totalCount\n    },\n    getNumberOfMoviesPerYear {\n      totalCount\n      year\n    },\n  }\n": types.GetDashboardDataDocument,
 };
 
 /**
@@ -110,6 +115,10 @@ export function graphql(source: "\n  query GetFullUsers($input: UserPaginationIn
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query CheckForUser($input: UserEmailInput!) {\n    checkForUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n"): (typeof documents)["\n  query CheckForUser($input: UserEmailInput!) {\n    checkForUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation CreateUser($input: AddUserInput!) {\n    createUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n"): (typeof documents)["\n  mutation CreateUser($input: AddUserInput!) {\n    createUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -119,6 +128,22 @@ export function graphql(source: "\n  mutation UpdateUser($input: UpdateUserInput
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation ChangePassword($input: changePasswordInput!) {\n    changePassword(input: $input) {\n      lastID\n      changes\n    }\n  }\n"): (typeof documents)["\n  mutation ChangePassword($input: changePasswordInput!) {\n    changePassword(input: $input) {\n      lastID\n      changes\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation SendForgotPassEmail($input: resetTokenInput!) {\n    sendForgotPassEmail(input: $input)\n  }\n"): (typeof documents)["\n  mutation SendForgotPassEmail($input: resetTokenInput!) {\n    sendForgotPassEmail(input: $input)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUserForPassChange($input: getUserForPassChangeInput!) {\n    getUserForPassChange(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n"): (typeof documents)["\n  query GetUserForPassChange($input: getUserForPassChangeInput!) {\n    getUserForPassChange(input: $input) {\n      id\n      first_name\n      last_name\n      role\n      email\n      password\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetDashboardData($input:numOfReviewsForChart!) {\n    getAllMovies {\n      id\n      title\n    },\n    getNumberOfReviewsOfMoviePerMonth(input: $input) {\n      totalCount\n    },\n    getAverageOfReviewsOfMoviePerMonth(input: $input) {\n      average\n    },\n    getNumberOfMoviesPerCategory {\n      name\n      totalCount\n    },\n    getNumberOfMoviesPerYear {\n      totalCount\n      year\n    },\n  }\n"): (typeof documents)["\n  query GetDashboardData($input:numOfReviewsForChart!) {\n    getAllMovies {\n      id\n      title\n    },\n    getNumberOfReviewsOfMoviePerMonth(input: $input) {\n      totalCount\n    },\n    getAverageOfReviewsOfMoviePerMonth(input: $input) {\n      average\n    },\n    getNumberOfMoviesPerCategory {\n      name\n      totalCount\n    },\n    getNumberOfMoviesPerYear {\n      totalCount\n      year\n    },\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

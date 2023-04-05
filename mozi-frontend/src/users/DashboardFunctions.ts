@@ -18,7 +18,7 @@ export function getMonthList(month: number) {
 
   return [...months, ...months].slice(13 - month, 19 - month);
 }
-export function getMovieDataCat(nameList: string[], countList: number[]) {
+export function getMovieDataCat(nameList: string[], countList: number[]):{name:string,y:number}[] {
   const data = [];
   while (nameList.length !== 0) {
     data.push({
@@ -30,7 +30,7 @@ export function getMovieDataCat(nameList: string[], countList: number[]) {
   }
   return data;
 }
-export function getMovieDataYear(yearList: string[], countList: number[]) {
+export function getMovieDataYear(yearList: string[], countList: number[]):{name:string,y:number}[] {
   const data = [];
   for (let i = 0; i < 24; i++) {
     const year = i + 2000;

@@ -23,6 +23,7 @@ import {
 } from "./DashboardFunctions";
 import HighChartsReact from "highcharts-react-official";
 import { useTranslation } from "react-i18next";
+import { GetDashboardDataQuery, MovieAutocompleteList, NumOfMoviesPerCategory, NumOfMoviesPerYear } from "../gql/graphql";
 
 export default function Dashboard() {
   HC_exporting(Highcharts)
@@ -37,8 +38,8 @@ export default function Dashboard() {
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
   const [movieOptions, setMovieOptions] = useState<string[]>([]);
-  const [inputValueMovie, setInputValueMovie] = useState("");
-  const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
+  const [inputValueMovie, setInputValueMovie] = useState<string>("");
+  const { data, loading } = useQuery<GetDashboardDataQuery>(GET_DASHBOARD_DATA, {
     fetchPolicy: "network-only",
     variables: {
       input: {
@@ -68,11 +69,11 @@ export default function Dashboard() {
         );
       } else avgList.push(0.0);
     }
-    data.getNumberOfMoviesPerCategory.map((x: any) => {
+    data.getNumberOfMoviesPerCategory.map((x: NumOfMoviesPerCategory) => {
       nameList.push(x.name);
       countCatList.push(x.totalCount);
     });
-    data.getNumberOfMoviesPerYear.map((x: any) => {
+    data.getNumberOfMoviesPerYear.map((x: NumOfMoviesPerYear) => {
       yearList.push(x.year);
       countYearList.push(x.totalCount);
     });
@@ -100,8 +101,8 @@ export default function Dashboard() {
     if (!loading) {
       if (data) {
         const movieList: string[] = [];
-        data.getAllMovies.map((x: any) => {
-          movieList.push(x.title);
+        data.getAllMovies.map((x: MovieAutocompleteList | null) => {
+            movieList.push(x!.title);
         });
         setMovieOptions(movieList);
       }
@@ -109,11 +110,11 @@ export default function Dashboard() {
   }, [loading]);
 
   useEffect(() => {
-    if (selectedMovie) {
+    if (selectedMovie && data) {
       const movie = data.getAllMovies.filter(
-        (x: any) => x.title === selectedMovie
+        (x: MovieAutocompleteList | null) => x!.title === selectedMovie
       );
-      setSelectedMovieId(movie[0].id);
+      setSelectedMovieId(movie[0]!.id);
     }
   }, [selectedMovie]);
 
