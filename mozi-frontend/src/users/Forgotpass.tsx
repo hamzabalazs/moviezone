@@ -18,6 +18,7 @@ import LoadingComponent from "../common/components/LoadingComponent";
 import { useUserData } from "./useUserData";
 import { useMutation } from "@apollo/client";
 import { SEND_FORGOT_PASS } from "./userQueries";
+import { SendForgotPassEmailMutation } from "../gql/graphql";
 
 interface Values {
   email: string;
@@ -29,7 +30,7 @@ function Forgotpass() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { users, loading } = useUserData(0, 100);
-  const [SendForgotPassMailAPI] = useMutation(SEND_FORGOT_PASS);
+  const [SendForgotPassMailAPI] = useMutation<SendForgotPassEmailMutation>(SEND_FORGOT_PASS);
 
   useEffect(() => {
     if (context.user) {
