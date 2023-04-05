@@ -15,22 +15,22 @@ import { setContext } from "@apollo/client/link/context";
 import {
   SessionContextProvider,
   useSessionContext,
-} from "./auth/SessionContext";
+} from "./auth/context/SessionContext";
 import { SnackbarProvider } from "notistack";
 import { User, UserRole } from "./gql/graphql";
 import LoadingComponent from "./common/components/LoadingComponent";
 
-const Home = lazy(() => import("./movies/Home"));
-const Login = lazy(() => import("./auth/Login"));
-const Categories = lazy(() => import("./categories/Categories"));
-const Reviews = lazy(() => import("./reviews/Reviews"));
-const MoviePage = lazy(() => import("./movies/MoviePage"));
-const Register = lazy(() => import("./users/Register"));
-const Forgotpass = lazy(() => import("./users/Forgotpass"));
-const Users = lazy(() => import("./users/Users"));
-const Account = lazy(() => import("./users/Account"));
-const ResetPassword = lazy(() => import("./users/ResetPassword"));
-const Dashboard = lazy(() => import("./users/Dashboard"));
+const Home = lazy(() => import("./movies/pages/Home"));
+const Login = lazy(() => import("./auth/pages/Login"));
+const Categories = lazy(() => import("./categories/pages/Categories"));
+const Reviews = lazy(() => import("./reviews/pages/Reviews"));
+const MoviePage = lazy(() => import("./movies/pages/MoviePage"));
+const Register = lazy(() => import("./users/pages/Register"));
+const Forgotpass = lazy(() => import("./users/pages/Forgotpass"));
+const Users = lazy(() => import("./users/pages/Users"));
+const Account = lazy(() => import("./users/pages/Account"));
+const ResetPassword = lazy(() => import("./users/pages/ResetPassword"));
+const Dashboard = lazy(() => import("./users/pages/Dashboard"));
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

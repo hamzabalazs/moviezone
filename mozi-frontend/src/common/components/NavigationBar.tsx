@@ -19,7 +19,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import { themeSwitchContext } from "../../themeSwitchContext";
-import { useSessionContext } from "../../auth/SessionContext";
+import { useSessionContext } from "../../auth/context/SessionContext";
 import { useSnackbar } from 'notistack'
 import DashboardIcon from '@mui/icons-material/Dashboard';
 

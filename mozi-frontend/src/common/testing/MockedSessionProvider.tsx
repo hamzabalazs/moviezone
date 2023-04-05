@@ -1,6 +1,6 @@
 import React from "react";
-import { sessionContext, SessionContextData } from "../../auth/SessionContext";
-import { useLogIn } from "../../auth/useLogIn";
+import { sessionContext, SessionContextData } from "../../auth/context/SessionContext";
+import { useLogIn } from "../../auth/hooks/useLogIn";
 import { UserRole } from "../../gql/graphql";
 
 export function MockedSessionContext({
