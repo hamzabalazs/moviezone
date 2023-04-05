@@ -13,7 +13,7 @@ import UserCard from "./UserCard";
 import UserDeleteDialog from "./UserDeleteDialog";
 import UserEditModal from "./UserEditModal";
 
-export function Users() {
+export default function Users() {
   const { t } = useTranslation();
   const [editingUser, setEditingUser] = useState<FullUser | undefined>(
     undefined

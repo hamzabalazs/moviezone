@@ -1,5 +1,5 @@
 import { Container, Fab, Grid, IconButton, Typography } from "@mui/material";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import NavigationBar from "../common/components/NavigationBar";
 import MyFooter from "../common/components/MyFooter";

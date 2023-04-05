@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   Typography,
   Container,
@@ -15,7 +15,7 @@ import { useSessionContext } from "../auth/SessionContext";
 import MovieAddModal from "./MovieAddModal";
 import MovieList from "./MovieList";
 
-export function Home() {
+export default function Home() {
   const context = useSessionContext();
   const currUser = context.user;
   const navigate = useNavigate();

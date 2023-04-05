@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
-import { Home } from "./Home";
+import Home from "./Home";
 import { GET_HOME_PAGE_DATA } from "./movieQueries";
 
 const category: string[] = [];

@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { Home } from "./movies/Home";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import styles from "./styles";
-import Categories from "./categories/Categories";
-import Reviews from "./reviews/Reviews";
-import MoviePage from "./movies/MoviePage";
 import {
   ApolloClient,
   InMemoryCache,
@@ -23,13 +19,19 @@ import {
 } from "./auth/SessionContext";
 import { SnackbarProvider } from "notistack";
 import { User, UserRole } from "./gql/graphql";
-import Login from "./auth/Login";
-import Register from "./users/Register";
-import Forgotpass from "./users/Forgotpass";
-import { Users } from "./users/Users";
-import Account from "./users/Account";
-import ResetPassword from "./users/ResetPassword";
-import Dashboard from "./users/Dashboard";
+import LoadingComponent from "./common/components/LoadingComponent";
+
+const Home = lazy(() => import("./movies/Home"));
+const Login = lazy(() => import("./auth/Login"));
+const Categories = lazy(() => import("./categories/Categories"));
+const Reviews = lazy(() => import("./reviews/Reviews"));
+const MoviePage = lazy(() => import("./movies/MoviePage"));
+const Register = lazy(() => import("./users/Register"));
+const Forgotpass = lazy(() => import("./users/Forgotpass"));
+const Users = lazy(() => import("./users/Users"));
+const Account = lazy(() => import("./users/Account"));
+const ResetPassword = lazy(() => import("./users/ResetPassword"));
+const Dashboard = lazy(() => import("./users/Dashboard"));
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -252,53 +254,55 @@ root.render(
         <MyThemeProvider>
           <BrowserRouter>
             <SessionContextProvider>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="forgotpass" element={<Forgotpass />} />
-                <Route
-                  path="/resetpassword/:token"
-                  element={<ResetPassword />}
-                />
-                <Route
-                  path="dashboard"
-                  element={
-                    <RoleWrapper role={UserRole["Admin"]}>
-                      <Dashboard />
-                    </RoleWrapper>
-                  }
-                />
-                <Route
-                  path="categories"
-                  element={
-                    <RoleWrapper role={UserRole["Editor"]}>
-                      <Categories />
-                    </RoleWrapper>
-                  }
-                />
-                <Route
-                  path="reviews"
-                  element={
-                    <RoleWrapper role={UserRole["Viewer"]}>
-                      <Reviews />
-                    </RoleWrapper>
-                  }
-                />
-                <Route
-                  path="users"
-                  element={
-                    <RoleWrapper role={UserRole["Admin"]}>
-                      <Users />
-                    </RoleWrapper>
-                  }
-                ></Route>
-                <Route
-                  path="/movie/:currmovie_id"
-                  element={<MoviePage />}
-                ></Route>
-                <Route path="account" element={<Account />}></Route>
-              </Routes>
+              <Suspense fallback={LoadingComponent(true)}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="forgotpass" element={<Forgotpass />} />
+                  <Route
+                    path="/resetpassword/:token"
+                    element={<ResetPassword />}
+                  />
+                  <Route
+                    path="dashboard"
+                    element={
+                      <RoleWrapper role={UserRole["Admin"]}>
+                        <Dashboard />
+                      </RoleWrapper>
+                    }
+                  />
+                  <Route
+                    path="categories"
+                    element={
+                      <RoleWrapper role={UserRole["Editor"]}>
+                        <Categories />
+                      </RoleWrapper>
+                    }
+                  />
+                  <Route
+                    path="reviews"
+                    element={
+                      <RoleWrapper role={UserRole["Viewer"]}>
+                        <Reviews />
+                      </RoleWrapper>
+                    }
+                  />
+                  <Route
+                    path="users"
+                    element={
+                      <RoleWrapper role={UserRole["Admin"]}>
+                        <Users />
+                      </RoleWrapper>
+                    }
+                  ></Route>
+                  <Route
+                    path="/movie/:currmovie_id"
+                    element={<MoviePage />}
+                  ></Route>
+                  <Route path="account" element={<Account />}></Route>
+                </Routes>
+              </Suspense>
             </SessionContextProvider>
           </BrowserRouter>
         </MyThemeProvider>

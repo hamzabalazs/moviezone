@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { MockedSessionContext } from "../common/testing/MockedSessionProvider";
 import { CurrentUser, UserRole } from "../gql/graphql";
-import { Users } from "./Users";
+import Users from "./Users";
 import { GET_USERS } from "./userQueries";
 
 const mockUserData = [
