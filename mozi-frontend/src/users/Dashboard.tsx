@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import MyFooter from "../common/components/MyFooter";
 import NavigationBar from "../common/components/NavigationBar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_DASHBOARD_DATA } from "./userQueries";
 import Highcharts from "highcharts";
@@ -32,6 +32,7 @@ import {
   NumOfMoviesPerCategory,
   NumOfMoviesPerYear,
 } from "../gql/graphql";
+import { themeSwitchContext } from "../themeSwitchContext";
 
 export default function Dashboard() {
   HC_exporting(Highcharts);
@@ -41,7 +42,7 @@ export default function Dashboard() {
     movie = "movie",
   }
   const { t } = useTranslation();
-  const mode = localStorage.getItem("color-mode");
+  const { mode } = useContext(themeSwitchContext)
   const [pageTab, setPageTab] = useState<Tab>(Tab["movie"]);
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
