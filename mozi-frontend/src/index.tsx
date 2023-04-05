@@ -1,7 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import styles from "./styles";
@@ -358,5 +357,3 @@ export function MyThemeProvider({
     </themeSwitchContext.Provider>
   );
 }
-
-reportWebVitals();

@@ -82,14 +82,17 @@ export default function Dashboard() {
     data.getNumberOfMoviesPerCategory.map((x: NumOfMoviesPerCategory) => {
       nameList.push(x.name);
       countCatList.push(x.totalCount);
+      return [nameList,countCatList];
     });
     data.getNumberOfMoviesPerYear.map((x: NumOfMoviesPerYear) => {
       yearList.push(x.year);
       countYearList.push(x.totalCount);
+      return [yearList,countYearList];
     });
     data.getAverageRatingOfCategories.map((x: AvgOfCategories) => {
       categoryList.push(x.name);
       avgCatList.push(x.average)
+      return [categoryList,avgCatList];
     })
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
@@ -124,11 +127,12 @@ export default function Dashboard() {
         const movieList: string[] = [];
         data.getAllMovies.map((x: MovieAutocompleteList | null) => {
           movieList.push(x!.title);
+          return movieList
         });
         setMovieOptions(movieList);
       }
     }
-  }, [loading]);
+  }, [loading,data]);
 
   useEffect(() => {
     if (selectedMovie && data) {
@@ -137,7 +141,7 @@ export default function Dashboard() {
       );
       setSelectedMovieId(movie[0]!.id);
     }
-  }, [selectedMovie]);
+  }, [selectedMovie,data]);
 
   return (
     <>
