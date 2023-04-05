@@ -15,7 +15,6 @@ export function getMonthList(month: number) {
     "Nov",
     "Dec",
   ];
-
   return [...months, ...months].slice(13 - month, 19 - month);
 }
 export function getMovieDataCat(nameList: string[], countList: number[]):{name:string,y:number}[] {
@@ -154,12 +153,12 @@ export function getReviewNrChart(
         color: mode === "light" ? "#124116" : "#5d8e25",
         lineWidth: 4,
         data: [
-          nrList[5],
-          nrList[4],
-          nrList[3],
-          nrList[2],
-          nrList[1],
           nrList[0],
+          nrList[1],
+          nrList[2],
+          nrList[3],
+          nrList[4],
+          nrList[5],
         ],
       },
     ],
@@ -218,12 +217,12 @@ export function getReviewAvgChart(
         type: "column",
         color: mode === "light" ? "#124116" : "#5d8e25",
         data: [
-          avgList[5],
-          avgList[4],
-          avgList[3],
-          avgList[2],
-          avgList[1],
           avgList[0],
+          avgList[1],
+          avgList[2],
+          avgList[3],
+          avgList[4],
+          avgList[5],
         ],
       },
     ],

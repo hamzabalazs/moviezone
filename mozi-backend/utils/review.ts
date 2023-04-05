@@ -24,12 +24,12 @@ export function getNumberOfReviewsOfMovie(movie_id:string,context:MyContext): Pr
 }
 
 export function getNumberOfReviewsOfMoviePerMonth(movie_id:any,context:MyContext): Promise<any[]>{
-  const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp) DESC`
+  const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY timestamp`
   return context.db.all(sql,[movie_id])
 }
 
 export function getAverageOfReviewsOfMoviePerMonth(movie_id:any,context:MyContext): Promise<any[]>{
-  const sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp) DESC`
+  const sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY timestamp`
   return context.db.all(sql,[movie_id])
 }
 
