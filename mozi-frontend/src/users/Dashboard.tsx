@@ -21,10 +21,12 @@ import {
   getMovieDataYear,
   getReviewAvgChart,
   getReviewNrChart,
+  getCategoryAvgChart,
 } from "./DashboardFunctions";
 import HighChartsReact from "highcharts-react-official";
 import { useTranslation } from "react-i18next";
 import {
+  AvgOfCategories,
   GetDashboardDataQuery,
   MovieAutocompleteList,
   NumOfMoviesPerCategory,
@@ -65,6 +67,8 @@ export default function Dashboard() {
   const countCatList: number[] = [];
   const yearList: string[] = [];
   const countYearList: number[] = [];
+  const categoryList:string[] = [];
+  const avgCatList:any[] = []
   if (!loading && data) {
     for (let i = 0; i < 6; i++) {
       if (data.getNumberOfReviewsOfMoviePerMonth[i]) {
@@ -82,6 +86,10 @@ export default function Dashboard() {
       yearList.push(x.year);
       countYearList.push(x.totalCount);
     });
+    data.getAverageRatingOfCategories.map((x: AvgOfCategories) => {
+      categoryList.push(x.name);
+      avgCatList.push(x.average)
+    })
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
   const yearChartData = getMovieDataYear(yearList, countYearList);
@@ -95,6 +103,7 @@ export default function Dashboard() {
     mode
   );
   const mChartNrCat = getMovieNrChart(catChartData, t, mode);
+  const catChartAvg = getCategoryAvgChart(avgCatList,categoryList,mode,t)
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -309,8 +318,7 @@ export default function Dashboard() {
           <Container
             maxWidth={false}
             sx={{
-              display: "flex",
-              height: "90vh",
+              height: "150vh",
               width: "90%",
               backgroundColor: "primary.main",
               marginLeft: "5%",
@@ -322,9 +330,20 @@ export default function Dashboard() {
                 width: "90%",
                 marginLeft: "5%",
                 marginRight: "5%",
-                marginTop: "5%",
+                paddingTop:"5%"
               }}
-              id="mChartNrCat"
+              id="catChartAvg"
+            >
+              <HighChartsReact highcharts={Highcharts} options={catChartAvg} />
+            </div>
+            <div
+            style={{
+              width: "90%",
+              marginLeft: "5%",
+              marginRight: "5%",
+              paddingTop:"3%"
+            }}
+            id="mChartNrCat"
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrCat} />
             </div>

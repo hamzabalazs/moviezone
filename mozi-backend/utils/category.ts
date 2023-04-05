@@ -23,6 +23,12 @@ export async function getNumberOfMoviesPerCategory(context:MyContext){
   return result
 }
 
+export async function getAverageRatingOfCategories(context:MyContext){
+  const sql =`SELECT name,ROUND(AVG(r.rating),2) as average FROM review r JOIN movie m ON r.movie_id = m.id JOIN category c ON c.id = m.category_id GROUP BY c.name`
+  const result = await context.db.all(sql)
+  return result
+}
+
 export async function createCategory(name:string, context:MyContext):Promise<Category|null> {
   const newCategory = {
     id:uuidv4(),

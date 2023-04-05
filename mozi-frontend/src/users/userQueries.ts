@@ -95,24 +95,28 @@ export const GET_USER_FOR_PASS_CHANGE = gql`
 `;
 
 export const GET_DASHBOARD_DATA = gql`
-  query GetDashboardData($input:numOfReviewsForChart!) {
+  query GetDashboardData($input: numOfReviewsForChart!) {
     getAllMovies {
       id
       title
-    },
+    }
     getNumberOfReviewsOfMoviePerMonth(input: $input) {
       totalCount
-    },
+    }
     getAverageOfReviewsOfMoviePerMonth(input: $input) {
       average
-    },
+    }
     getNumberOfMoviesPerCategory {
       name
       totalCount
-    },
+    }
     getNumberOfMoviesPerYear {
       totalCount
       year
-    },
+    }
+    getAverageRatingOfCategories {
+      name
+      average
+    }
   }
 `;

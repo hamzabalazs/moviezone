@@ -46,6 +46,7 @@ import {
   createCategory,
   checkForCategory,
   getNumberOfMoviesPerCategory,
+  getAverageRatingOfCategories,
 } from "../utils/category";
 import { MyContext } from "../server";
 import {
@@ -108,6 +109,9 @@ export const resolvers = {
     },
     async getNumberOfMoviesPerCategory(_:any,__:any,context:MyContext){
       return await getNumberOfMoviesPerCategory(context)
+    },
+    async getAverageRatingOfCategories(_:any,__:any,context:MyContext){
+      return await getAverageRatingOfCategories(context)
     },
     // Reviews
     async getReviews(_: any, __: any, context: MyContext) {

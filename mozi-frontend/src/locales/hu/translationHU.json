@@ -147,7 +147,9 @@
         "avgOfReviewsText":"Egy film átlagértékelése a legutóbbi hat honapban",
         "avgOfReviews": "Vélemények átlaga",
         "movieNrChartText":"Filmek száma kategóriák szerint",
-        "noReviews":"Nem található vélemény a választott filmhez!"
+        "noReviews":"Nem található vélemény a választott filmhez!",
+        "avgOfCategoriesText":"Vélemények átlaga kategóriák szerint",
+        "reviews":"Vélemények"
     },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",

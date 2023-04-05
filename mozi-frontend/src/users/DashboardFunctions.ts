@@ -17,7 +17,10 @@ export function getMonthList(month: number) {
   ];
   return [...months, ...months].slice(13 - month, 19 - month);
 }
-export function getMovieDataCat(nameList: string[], countList: number[]):{name:string,y:number}[] {
+export function getMovieDataCat(
+  nameList: string[],
+  countList: number[]
+): { name: string; y: number }[] {
   const data = [];
   while (nameList.length !== 0) {
     data.push({
@@ -29,7 +32,10 @@ export function getMovieDataCat(nameList: string[], countList: number[]):{name:s
   }
   return data;
 }
-export function getMovieDataYear(yearList: string[], countList: number[]):{name:string,y:number}[] {
+export function getMovieDataYear(
+  yearList: string[],
+  countList: number[]
+): { name: string; y: number }[] {
   const data = [];
   for (let i = 0; i < 24; i++) {
     const year = i + 2000;
@@ -256,7 +262,7 @@ export function getMovieNrChart(
           format: "<b>{point.name}</b>: {point.y}",
           style: {
             color: mode === "light" ? "black" : "#A8A8A8",
-            textOutline:'none'
+            textOutline: "none",
           },
         },
       },
@@ -271,4 +277,55 @@ export function getMovieNrChart(
   };
 
   return chart;
+}
+
+export function getCategoryAvgChart(avgList:any[],categoryList:any[],mode:string|null,t:TFunction<"translation", undefined, "translation">) {
+  const chart = {
+    chart: {
+      type: "column",
+      backgroundColor: "transparent",
+      borderWidth: 1,
+      borderColor: mode === "light" ? "black" : "#A8A8A8",
+      borderRadius: 2,
+    },
+    title: {
+      text: t("dashboard.avgOfCategoriesText"),
+      style: { color: mode === "light" ? "black" : "#A8A8A8" },
+    },
+    xAxis: {
+      categories: categoryList,
+      crosshair: true,
+      labels: {
+        style: {
+          color: mode === "light" ? "black" : "#A8A8A8",
+        },
+      },
+    },
+    yAxis: {
+      min: 0.0,
+      title: {
+        text: t("dashboard.avgOfReviews"),
+        style: { color: mode === "light" ? "black" : "#A8A8A8" },
+      },
+      labels: {
+        style: {
+          color: mode === "light" ? "black" : "#A8A8A8",
+        },
+      },
+    },
+    legend: {
+      itemStyle: {
+        color: mode === "light" ? "black" : "#A8A8A8",
+      },
+    },
+    series: [
+      {
+        name: t('dashboard.reviews'),
+        type: "column",
+        color: mode === "light" ? "#124116" : "#5d8e25",
+        data: avgList
+      },
+    ],
+  };
+  return chart
 }

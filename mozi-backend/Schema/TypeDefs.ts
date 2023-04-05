@@ -299,6 +299,11 @@ export const typeDefs = gql`
     year: String!
   }
 
+  type avgOfCategories {
+    name:String!,
+    average: Float!
+  }
+
   # Queries
   type Query {
     getUsers(input: UserPaginationInput): [FullUser!]!
@@ -317,6 +322,7 @@ export const typeDefs = gql`
     getCategories: [Category!]!
     getCategoryById(input: CategoryInput!): Category
     checkForCategory(input: CategoryNameInput!): Category!
+    getAverageRatingOfCategories: [avgOfCategories!]!
     getReviews: [Review!]!
     getReviewById(input: ReviewInput!): Review
     getReviewsOfMovie(input: GetReviewsOfMovieInput!): [Review!]!
