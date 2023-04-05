@@ -146,7 +146,8 @@
         "nrOfReviews":"Vélemények száma",
         "avgOfReviewsText":"Egy film átlagértékelése a legutóbbi hat honapban",
         "avgOfReviews": "Vélemények átlaga",
-        "movieNrChartText":"Filmek száma kategóriák szerint"
+        "movieNrChartText":"Filmek száma kategóriák szerint",
+        "noReviews":"Nem található vélemény a választott filmhez!"
     },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",
@@ -158,7 +159,7 @@
         "firstNameReq": "A keresztnév kötelező!",
         "lastNameReq": "A vezetéknév kötelező!",
         "passwordReq":"A jelszó kötelező!",
-        "passwordLength": "A jelszó 5  vagy több karakterből kell álljon!",
+        "passwordLength": "A jelszó 5 vagy több karakterből kell álljon!",
         "emailFormat": "Érvénytelen email formátum!",
         "nameReq":"A név kötelező!",
         "ratingReq":"Az értékelés kötelező!",

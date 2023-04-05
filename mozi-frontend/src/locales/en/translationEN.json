@@ -145,7 +145,8 @@
         "nrOfReviews":"Nr. of reviews",
         "avgOfReviewsText":"Average of reviews of a movie over a period of the last six months",
         "avgOfReviews": "Avg. of reviews",
-        "movieNrChartText":"Number of movies per category"
+        "movieNrChartText":"Number of movies per category",
+        "noReviews":"No Reviews found for selected movie!"
     },
     "formikErrors": {
         "categoryReq": "Category name is required!",

@@ -4,6 +4,7 @@ import {
   Container,
   Grid,
   TextField,
+  Typography,
 } from "@mui/material";
 import MyFooter from "../common/components/MyFooter";
 import NavigationBar from "../common/components/NavigationBar";
@@ -11,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_DASHBOARD_DATA } from "./userQueries";
 import Highcharts from "highcharts";
-import HC_exporting from 'highcharts/modules/exporting'
+import HC_exporting from "highcharts/modules/exporting";
 import {
   getMonthList,
   getMovieYearChart,
@@ -23,30 +24,38 @@ import {
 } from "./DashboardFunctions";
 import HighChartsReact from "highcharts-react-official";
 import { useTranslation } from "react-i18next";
-import { GetDashboardDataQuery, MovieAutocompleteList, NumOfMoviesPerCategory, NumOfMoviesPerYear } from "../gql/graphql";
+import {
+  GetDashboardDataQuery,
+  MovieAutocompleteList,
+  NumOfMoviesPerCategory,
+  NumOfMoviesPerYear,
+} from "../gql/graphql";
 
 export default function Dashboard() {
-  HC_exporting(Highcharts)
+  HC_exporting(Highcharts);
   enum Tab {
     review = "review",
     category = "category",
     movie = "movie",
   }
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const mode = localStorage.getItem("color-mode");
   const [pageTab, setPageTab] = useState<Tab>(Tab["movie"]);
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
   const [movieOptions, setMovieOptions] = useState<string[]>([]);
   const [inputValueMovie, setInputValueMovie] = useState<string>("");
-  const { data, loading } = useQuery<GetDashboardDataQuery>(GET_DASHBOARD_DATA, {
-    fetchPolicy: "network-only",
-    variables: {
-      input: {
-        movie_id: selectedMovieId,
+  const { data, loading } = useQuery<GetDashboardDataQuery>(
+    GET_DASHBOARD_DATA,
+    {
+      fetchPolicy: "network-only",
+      variables: {
+        input: {
+          movie_id: selectedMovieId,
+        },
       },
-    },
-  });
+    }
+  );
   const d = new Date();
   const month = d.getMonth();
   const monthlist = getMonthList(month);
@@ -59,14 +68,10 @@ export default function Dashboard() {
   if (!loading && data) {
     for (let i = 0; i < 6; i++) {
       if (data.getNumberOfReviewsOfMoviePerMonth[i]) {
-        nrList.push(
-          data.getNumberOfReviewsOfMoviePerMonth[i].totalCount
-        );
+        nrList.push(data.getNumberOfReviewsOfMoviePerMonth[i].totalCount);
       } else nrList.push(0);
       if (data.getAverageOfReviewsOfMoviePerMonth[i]) {
-        avgList.push(
-          data.getAverageOfReviewsOfMoviePerMonth[i].average
-        );
+        avgList.push(data.getAverageOfReviewsOfMoviePerMonth[i].average);
       } else avgList.push(0.0);
     }
     data.getNumberOfMoviesPerCategory.map((x: NumOfMoviesPerCategory) => {
@@ -80,10 +85,16 @@ export default function Dashboard() {
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
   const yearChartData = getMovieDataYear(yearList, countYearList);
-  const mChartNrYear = getMovieYearChart(yearChartData,t,mode)
-  const chartNr = getReviewNrChart(monthlist,selectedMovie,nrList,t,mode)
-  const chartAvg = getReviewAvgChart(monthlist,selectedMovie,avgList,t,mode)
-  const mChartNrCat = getMovieNrChart(catChartData,t,mode)
+  const mChartNrYear = getMovieYearChart(yearChartData, t, mode);
+  const chartNr = getReviewNrChart(monthlist, selectedMovie, nrList, t, mode);
+  const chartAvg = getReviewAvgChart(
+    monthlist,
+    selectedMovie,
+    avgList,
+    t,
+    mode
+  );
+  const mChartNrCat = getMovieNrChart(catChartData, t, mode);
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -102,7 +113,7 @@ export default function Dashboard() {
       if (data) {
         const movieList: string[] = [];
         data.getAllMovies.map((x: MovieAutocompleteList | null) => {
-            movieList.push(x!.title);
+          movieList.push(x!.title);
         });
         setMovieOptions(movieList);
       }
@@ -144,8 +155,12 @@ export default function Dashboard() {
                 pageTab === Tab["movie"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleMovieTab} sx={{ color: "text.primary" }} id="movieTab">
-              {t('dashboard.movieTab')}
+            <Button
+              onClick={handleMovieTab}
+              sx={{ color: "text.primary" }}
+              id="movieTab"
+            >
+              {t("dashboard.movieTab")}
             </Button>
           </Grid>
           <Grid
@@ -159,8 +174,12 @@ export default function Dashboard() {
                 pageTab === Tab["review"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleReviewTab} sx={{ color: "text.primary" }} id="reviewTab">
-            {t('dashboard.reviewTab')}
+            <Button
+              onClick={handleReviewTab}
+              sx={{ color: "text.primary" }}
+              id="reviewTab"
+            >
+              {t("dashboard.reviewTab")}
             </Button>
           </Grid>
           <Grid
@@ -174,8 +193,12 @@ export default function Dashboard() {
                 pageTab === Tab["category"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleCategoryTab} sx={{ color: "text.primary" }} id ="categoryTab">
-            {t('dashboard.categoryTab')}
+            <Button
+              onClick={handleCategoryTab}
+              sx={{ color: "text.primary" }}
+              id="categoryTab"
+            >
+              {t("dashboard.categoryTab")}
             </Button>
           </Grid>
         </Grid>
@@ -209,7 +232,9 @@ export default function Dashboard() {
               onInputChange={(event, newInputValue) => {
                 setInputValueMovie(newInputValue);
               }}
-              renderInput={(params) => <TextField {...params} label={t('dashboard.movies')} />}
+              renderInput={(params) => (
+                <TextField {...params} label={t("dashboard.movies")} />
+              )}
               data-testid="movie-autocomplete"
             />
             {selectedMovie !== "" && (
@@ -223,7 +248,15 @@ export default function Dashboard() {
                   }}
                   id="chartNr"
                 >
-                  <HighChartsReact highcharts={Highcharts} options={chartNr} />
+                  {data?.getNumberOfReviewsOfMoviePerMonth.length !== 0 && (
+                    <HighChartsReact
+                      highcharts={Highcharts}
+                      options={chartNr}
+                    />
+                  )}
+                  {data?.getNumberOfReviewsOfMoviePerMonth.length === 0 && (
+                    <Typography>{t('dashboard.noReviews')}</Typography>
+                  )}
                 </div>
                 <div
                   style={{
@@ -235,7 +268,12 @@ export default function Dashboard() {
                   }}
                   id="chartAvg"
                 >
-                  <HighChartsReact highcharts={Highcharts} options={chartAvg} />
+                  {data?.getAverageOfReviewsOfMoviePerMonth.length !== 0 && (
+                    <HighChartsReact
+                      highcharts={Highcharts}
+                      options={chartAvg}
+                    />
+                  )}
                 </div>
               </>
             )}
@@ -289,7 +327,7 @@ export default function Dashboard() {
               id="mChartNrCat"
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrCat} />
-            </div> 
+            </div>
           </Container>
         )}
         <MyFooter />
