@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl } from "../../support/e2e";
 import { EMAIL_REQUIRED_MESSAGE, FIRST_NAME_REQUIRED_MESSAGE, INVALID_EMAIL_FORMAT_MESSAGE, INVALID_PASSWORD_FORMAT_MESSAGE, LAST_NAME_REQUIRED_MESSAGE, PASSWORD_REQUIRED_MESSAGE } from "../../support/errormessages";
 
 const testUser = {
@@ -15,11 +15,6 @@ const editedTestUser = {
   email: "testEDITED@gmail.com",
   password: "testtest",
 };
-
-const adminCredentials = {
-  email:"admin@example.com",
-  password:"admin"
-}
 
 before(() => {
   cy.addUser(testUser);

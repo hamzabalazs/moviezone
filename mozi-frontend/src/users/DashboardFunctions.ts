@@ -1,109 +1,68 @@
 import { TFunction } from "i18next";
 
-export function getMonthList(month:number){
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
+export function getMonthList(month: number) {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-    const monthlist = [];
-    if (month >= 5) {
-      monthlist.push(months[month - 5]);
-      monthlist.push(months[month - 4]);
-      monthlist.push(months[month - 3]);
-      monthlist.push(months[month - 2]);
-      monthlist.push(months[month - 1]);
-      monthlist.push(months[month]);
-    } else if (month === 4) {
-      monthlist.push(months[month + 12 - 5]);
-      monthlist.push(months[month - 4]);
-      monthlist.push(months[month - 3]);
-      monthlist.push(months[month - 2]);
-      monthlist.push(months[month - 1]);
-      monthlist.push(months[month]);
-    } else if (month === 3) {
-      monthlist.push(months[month + 12 - 5]);
-      monthlist.push(months[month + 12 - 4]);
-      monthlist.push(months[month - 3]);
-      monthlist.push(months[month - 2]);
-      monthlist.push(months[month - 1]);
-      monthlist.push(months[month]);
-    } else if (month === 2) {
-      monthlist.push(months[month + 12 - 5]);
-      monthlist.push(months[month + 12 - 4]);
-      monthlist.push(months[month + 12 - 3]);
-      monthlist.push(months[month - 2]);
-      monthlist.push(months[month - 1]);
-      monthlist.push(months[month]);
-    } else if (month === 1) {
-      monthlist.push(months[month + 12 - 5]);
-      monthlist.push(months[month + 12 - 4]);
-      monthlist.push(months[month + 12 - 3]);
-      monthlist.push(months[month + 12 - 2]);
-      monthlist.push(months[month - 1]);
-      monthlist.push(months[month]);
-    } else if (month === 0) {
-      monthlist.push(months[month + 12 - 5]);
-      monthlist.push(months[month + 12 - 4]);
-      monthlist.push(months[month + 12 - 3]);
-      monthlist.push(months[month + 12 - 2]);
-      monthlist.push(months[month + 12 - 1]);
-      monthlist.push(months[month]);
-    }
-
-    return monthlist
+  return [...months, ...months].slice(13 - month, 19 - month);
 }
-export function getMovieDataCat(nameList:string[],countList:number[]){
-    const data = []
-    while(nameList.length !== 0){
-        data.push({
-            name: nameList[nameList.length-1],
-            y: countList[countList.length-1]
-        })
-        nameList.pop()
-        countList.pop()
-    }
-    return data;
+export function getMovieDataCat(nameList: string[], countList: number[]) {
+  const data = [];
+  while (nameList.length !== 0) {
+    data.push({
+      name: nameList[nameList.length - 1],
+      y: countList[countList.length - 1],
+    });
+    nameList.pop();
+    countList.pop();
+  }
+  return data;
 }
-export function getMovieDataYear(yearList:string[],countList:number[]){
-  const data = []
-    for(let i = 0; i < 23; i++){
-      const year = i+2000
-        if(yearList.includes(year.toString())){
-          data.push({
-              name: yearList[yearList.findIndex((x:any) => x === year.toString())],
-              y: countList[yearList.findIndex((x:any) => x === year.toString())]
-          })
-        }
-        else data.push({
-          name:year.toString(),
-          y:0
-        })
-    }
-    return data;
+export function getMovieDataYear(yearList: string[], countList: number[]) {
+  const data = [];
+  for (let i = 0; i < 24; i++) {
+    const year = i + 2000;
+    if (yearList.includes(year.toString())) {
+      data.push({
+        name: yearList[yearList.findIndex((x: any) => x === year.toString())],
+        y: countList[yearList.findIndex((x: any) => x === year.toString())],
+      });
+    } else
+      data.push({
+        name: year.toString(),
+        y: 0,
+      });
+  }
+  return data;
 }
-export function getMovieYearChart(data:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
+export function getMovieYearChart(
+  data: any[],
+  t: TFunction<"translation", undefined, "translation">,
+  mode: string | null
+) {
   const chart = {
     chart: {
       backgroundColor: "transparent",
       type: "column",
       borderWidth: 1,
-      borderColor: (mode === 'light') ? "black" : "white",
+      borderColor: mode === "light" ? "black" : "#A8A8A8",
       borderRadius: 2,
     },
     title: {
-      text: t('dashboard.movieYearChartText'),
-      style: { color: (mode === 'light') ? "black" : "white"},
+      text: t("dashboard.movieYearChartText"),
+      style: { color: mode === "light" ? "black" : "#A8A8A8" },
     },
     xAxis: {
       categories: [
@@ -113,80 +72,86 @@ export function getMovieYearChart(data:any[],t:TFunction<"translation", undefine
       crosshair: true,
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
     yAxis: {
       title: {
-        text: t('dashboard.nrOfMovies'),
-        style: { color: (mode === 'light') ? "black" : "white" },
+        text: t("dashboard.nrOfMovies"),
+        style: { color: mode === "light" ? "black" : "#A8A8A8" },
       },
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: (mode === 'light') ? "black" : "white",
+        color: mode === "light" ? "black" : "#A8A8A8",
       },
     },
     series: [
       {
-        name: t('dashboard.nrOfMovies'),
+        name: t("dashboard.nrOfMovies"),
         type: "column",
-        color: (mode === 'light') ? "#124116" :"#5d8e25",
+        color: mode === "light" ? "#124116" : "#5d8e25",
         data: data,
       },
     ],
   };
-  return chart
+  return chart;
 }
-export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
+export function getReviewNrChart(
+  monthlist: string[],
+  movie: string | null,
+  nrList: any[],
+  t: TFunction<"translation", undefined, "translation">,
+  mode: string | null
+) {
   const chart = {
     chart: {
       type: "line",
       backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: (mode === 'light') ? "black" : "white",
+      borderColor: mode === "light" ? "black" : "#A8A8A8",
       borderRadius: 2,
     },
     title: {
-      text: t('dashboard.nrOfReviewsText'),
-      style: { color: (mode === 'light') ? "black" : "white" },
+      text: t("dashboard.nrOfReviewsText"),
+      style: { color: mode === "light" ? "black" : "#A8A8A8" },
     },
     xAxis: {
       categories: monthlist,
       crosshair: true,
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
     yAxis: {
       title: {
-        text: t('dashboard.nrOfReviews'),
-        style: { color: (mode === 'light') ? "black" : "white" },
+        text: t("dashboard.nrOfReviews"),
+        style: { color: mode === "light" ? "black" : "#A8A8A8" },
       },
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: (mode === 'light') ? "black" : "white",
+        color: mode === "light" ? "black" : "#A8A8A8",
       },
     },
     series: [
       {
         name: movie!,
         type: "line",
-        color: (mode === 'light') ? "#124116" :"#5d8e25",
+        color: mode === "light" ? "#124116" : "#5d8e25",
         lineWidth: 4,
         data: [
           nrList[5],
@@ -199,27 +164,33 @@ export function getReviewNrChart(monthlist:string[],movie:string | null,nrList:a
       },
     ],
   };
-  return chart
+  return chart;
 }
-export function getReviewAvgChart(monthlist:string[],movie:string | null, avgList:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
+export function getReviewAvgChart(
+  monthlist: string[],
+  movie: string | null,
+  avgList: any[],
+  t: TFunction<"translation", undefined, "translation">,
+  mode: string | null
+) {
   const chart = {
     chart: {
       type: "column",
       backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: (mode === 'light') ? "black" : "white",
+      borderColor: mode === "light" ? "black" : "#A8A8A8",
       borderRadius: 2,
     },
     title: {
-      text: t('dashboard.avgOfReviewsText'),
-      style: { color: (mode === 'light') ? "black" : "white" },
+      text: t("dashboard.avgOfReviewsText"),
+      style: { color: mode === "light" ? "black" : "#A8A8A8" },
     },
     xAxis: {
       categories: monthlist,
       crosshair: true,
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
@@ -227,25 +198,25 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
       min: 0.0,
       max: 5.0,
       title: {
-        text: t('dashboard.avgOfReviews'),
-        style: { color: (mode === 'light') ? "black" : "white" },
+        text: t("dashboard.avgOfReviews"),
+        style: { color: mode === "light" ? "black" : "#A8A8A8" },
       },
       labels: {
         style: {
-          color: (mode === 'light') ? "black" : "white",
+          color: mode === "light" ? "black" : "#A8A8A8",
         },
       },
     },
     legend: {
       itemStyle: {
-        color: (mode === 'light') ? "black" : "white",
+        color: mode === "light" ? "black" : "#A8A8A8",
       },
     },
     series: [
       {
         name: movie!,
         type: "column",
-        color: (mode === 'light') ? "#124116" :"#5d8e25",
+        color: mode === "light" ? "#124116" : "#5d8e25",
         data: [
           avgList[5],
           avgList[4],
@@ -258,9 +229,13 @@ export function getReviewAvgChart(monthlist:string[],movie:string | null, avgLis
     ],
   };
 
-  return chart
+  return chart;
 }
-export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined, "translation">,mode:string|null){
+export function getMovieNrChart(
+  data: any[],
+  t: TFunction<"translation", undefined, "translation">,
+  mode: string | null
+) {
   const chart = {
     chart: {
       backgroundColor: "transparent",
@@ -270,8 +245,8 @@ export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined,
       type: "pie",
     },
     title: {
-      text: t('dashboard.movieNrChartText'),
-      style: { color: (mode === 'light') ? "black" : "white" },
+      text: t("dashboard.movieNrChartText"),
+      style: { color: mode === "light" ? "black" : "#A8A8A8" },
     },
     plotOptions: {
       pie: {
@@ -281,19 +256,20 @@ export function getMovieNrChart(data:any[],t:TFunction<"translation", undefined,
           enabled: true,
           format: "<b>{point.name}</b>: {point.y}",
           style: {
-            color: (mode === 'light') ? "black" : "white",
+            color: mode === "light" ? "black" : "#A8A8A8",
+            textOutline:'none'
           },
         },
       },
     },
     series: [
       {
-        name: t('dashboard.movies'),
+        name: t("dashboard.movies"),
         colorByPoint: true,
         data: data,
       },
     ],
   };
 
-  return chart
+  return chart;
 }

@@ -239,7 +239,6 @@ export async function sendForgotPassEmail(
     subject: "Reset password",
     text: `Dear ${user.first_name} \n\n You have sent a request to reset your password. By clicking on the link provided, you will be able to give a new password to your account. You have one hour to reset your password! If you did not ask to reset your password, ignore this message \n Link:http://localhost:3000/resetpassword/${resetToken}`,
   });
-  console.log(info)
   if(!info) return false;
   return true;
 }

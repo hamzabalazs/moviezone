@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_DASHBOARD_DATA } from "./userQueries";
 import Highcharts from "highcharts";
+import HC_exporting from 'highcharts/modules/exporting'
 import {
   getMonthList,
   getMovieYearChart,
@@ -24,6 +25,7 @@ import HighChartsReact from "highcharts-react-official";
 import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
+  HC_exporting(Highcharts)
   enum Tab {
     review = "review",
     category = "category",
@@ -141,7 +143,7 @@ export default function Dashboard() {
                 pageTab === Tab["movie"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleMovieTab} sx={{ color: "text.primary" }}>
+            <Button onClick={handleMovieTab} sx={{ color: "text.primary" }} id="movieTab">
               {t('dashboard.movieTab')}
             </Button>
           </Grid>
@@ -156,7 +158,7 @@ export default function Dashboard() {
                 pageTab === Tab["review"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleReviewTab} sx={{ color: "text.primary" }}>
+            <Button onClick={handleReviewTab} sx={{ color: "text.primary" }} id="reviewTab">
             {t('dashboard.reviewTab')}
             </Button>
           </Grid>
@@ -171,7 +173,7 @@ export default function Dashboard() {
                 pageTab === Tab["category"] ? "primary.dark" : "primary.main",
             }}
           >
-            <Button onClick={handleCategoryTab} sx={{ color: "text.primary" }}>
+            <Button onClick={handleCategoryTab} sx={{ color: "text.primary" }} id ="categoryTab">
             {t('dashboard.categoryTab')}
             </Button>
           </Grid>
@@ -258,7 +260,7 @@ export default function Dashboard() {
                 marginRight: "5%",
                 marginTop: "5%",
               }}
-              id="mChartNr"
+              id="mChartNrYear"
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrYear} />
             </div>
@@ -283,10 +285,10 @@ export default function Dashboard() {
                 marginRight: "5%",
                 marginTop: "5%",
               }}
-              id="mChartNr"
+              id="mChartNrCat"
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrCat} />
-            </div>
+            </div> 
           </Container>
         )}
         <MyFooter />

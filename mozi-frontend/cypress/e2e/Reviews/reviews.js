@@ -1,27 +1,23 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl } from "../../support/e2e";
 import { DESCRIPTION_REQUIRED_MESSAGE } from "../../support/errormessages";
 
-const userId = "YWRtaW4=";
+const userId = "e7a34320-ff37-455c-98c8-b36f2d80d427";
 
 const testReview = {
   rating: "5",
   description: "test",
   movie_id: "91bc8f13-bec6-4182-a99b-8bd1a7e7924c",
-  user_id: "YWRtaW4=",
+  user_id: "e7a34320-ff37-455c-98c8-b36f2d80d427",
 };
 
 const testReviewEdited = {
   rating: "5",
   description: "testEDITED",
   movie_id: "91bc8f13-bec6-4182-a99b-8bd1a7e7924c",
-  user_id: "YWRtaW4=",
+  user_id: "e7a34320-ff37-455c-98c8-b36f2d80d427",
 };
 
-const adminCredentials = {
-  email:"admin@example.com",
-  password:"admin"
-}
 
 before(() => {
   cy.getAdminToken().then((resp) => {

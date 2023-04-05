@@ -1,20 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from "../../support/e2e";
-
-const adminCredentials = {
-    email:"admin@example.com",
-    password:"admin"
-}
-
-const editorCredentials = {
-    email:"editor@example.com",
-    password:"editor"
-}
-
-const viewerCredentials = {
-    email:"viewer@example.com",
-    password:"viewer"
-}
+import { adminCredentials, baseUrl, editorCredentials, viewerCredentials } from "../../support/e2e";
 
 Given('I login as admin',() => {
     cy.login(adminCredentials.email,adminCredentials.password)

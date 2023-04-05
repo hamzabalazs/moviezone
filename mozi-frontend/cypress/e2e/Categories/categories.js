@@ -1,13 +1,9 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from '../../support/e2e'
+import { adminCredentials, baseUrl } from '../../support/e2e'
 import {NAME_REQUIRED_MESSAGE,CATEGORY_NAME_REQUIRED_MESSAGE} from '../../support/errormessages'
 
 const newCategoryName = "test";
 const editCategoryName = "testEDITED";
-const adminCredentials = {
-  email:"admin@example.com",
-  password:"admin"
-}
 
 beforeEach(() => {
   cy.login(adminCredentials.email, adminCredentials.password);

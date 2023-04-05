@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl } from "../../support/e2e";
 import {
   TITLE_REQUIRED_MESSAGE,
   NO_RATING_MESSAGE,
@@ -16,11 +16,6 @@ const testMovie = {
   poster: "poster",
   release_date: "2022-02-02",
   category_id: "570d66a7-449e-4d28-b61a-bcff1fc4dfdc",
-};
-
-const adminCredentials = {
-  email: "admin@example.com",
-  password: "admin",
 };
 
 beforeEach(() => {

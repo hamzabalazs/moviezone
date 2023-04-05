@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl } from "../../support/e2e";
 import {MOVIE_ADDED_SUCCESSFUL} from '../../support/errormessages'
 
 after(() => {
@@ -7,11 +7,6 @@ after(() => {
     cy.deleteMovie("test", resp.body.data.logIn.token);
   });
 });
-
-const adminCredentials = {
-  email:"admin@example.com",
-  password:"admin"
-}
 
 beforeEach(() => {
   cy.login(adminCredentials.email, adminCredentials.password);
