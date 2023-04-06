@@ -378,7 +378,7 @@ export const resolvers = {
     },
     async deleteCast(_:any, { input }:any, context:MyContext){
       context.user = await tokenChecker(context);
-      return await deleteCast(input.id,context)
+      return await deleteCast(input,context)
     }
   },
 };

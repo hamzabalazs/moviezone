@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import { MyContext } from "../server";
 import { v4 as uuidv4 } from "uuid";
-import { Cast } from "./types";
+import { Cast, MovieCast } from "./types";
 
 export async function getCast(movie_id:any,context:MyContext): Promise<Cast[]>{
     const sql = `SELECT * FROM cast c JOIN movie_cast mc ON c.id = mc.cast_id WHERE mc.movie_id = ?`
@@ -18,7 +18,7 @@ export async function checkForCast(name:any,context:MyContext): Promise<Cast | n
     return context.db.get<Cast>(sql,[name])
 }
 
-export async function createCast(input:any,context:MyContext):Promise<Cast>{
+export async function createCast(input:any,context:MyContext):Promise<Cast & Omit<MovieCast,"cast_id">>{
     let id = ""
     const cast = await checkForCast(input.name,context)
     if(cast) id = cast.id;
@@ -33,11 +33,12 @@ export async function createCast(input:any,context:MyContext):Promise<Cast>{
     return {
         id:id,
         name:input.name,
-        photo:input.photo
+        photo:input.photo,
+        movie_id:input.movie_id
     };
 }
 
-export async function updateCast(input:any,context:MyContext):Promise<Cast> {
+export async function updateCast(input:any,context:MyContext):Promise<Cast & Omit<MovieCast,"cast_id">> {
     const cast = await getCastById(input.id,context)
     if(!cast) throw new GraphQLError("No cast member found",{extensions:{code:"NOT_FOUND"}})
     const sql = `UPDATE cast SET name = ? WHERE id = ?`
@@ -45,14 +46,20 @@ export async function updateCast(input:any,context:MyContext):Promise<Cast> {
     return {
         id:input.id,
         name:input.name,
-        photo:cast.photo
+        photo:cast.photo,
+        movie_id:input.movie_id || ""
     };
 }
 
-export async function deleteCast(id:any,context:MyContext): Promise<Cast>{
-    const cast = await getCastById(id,context);
+export async function deleteCast(input:any,context:MyContext): Promise<Cast & Omit<MovieCast,"cast_id">>{
+    const cast = await getCastById(input.id,context);
     if(!cast) throw new GraphQLError("No cast member found",{extensions:{code:"NOT_FOUND"}})
     const sql = `DELETE FROM cast WHERE id = ?`
-    await context.db.run(sql,[id])
-    return cast;
+    await context.db.run(sql,[input.id])
+    return {
+        id:cast.id,
+        name:cast.name,
+        photo:cast.photo,
+        movie_id:input.movie_id || "",
+    };
 }

@@ -10,7 +10,7 @@ import {
   DELETE_MOVIE,
   GET_HOME_PAGE_DATA,
   UPDATE_MOVIE,
-  GET_MOVIE_BY_ID
+  GET_MOVIE_BY_ID,
 } from "../movieQueries";
 
 type MovieData = {
@@ -95,9 +95,9 @@ export function useMovie(): MovieData {
             data: {
               getCategories: [...pageData.getCategories],
               getMovies: [...pageData.getMovies, data.createMovie],
-              getNumberOfMovies:{
-                totalCount: pageData.getNumberOfMovies.totalCount + 1
-              }
+              getNumberOfMovies: {
+                totalCount: pageData.getNumberOfMovies.totalCount + 1,
+              },
             },
           });
         },
@@ -106,8 +106,7 @@ export function useMovie(): MovieData {
         return result.data.createMovie;
       }
       return null;
-    } catch (e: any) {
-    }
+    } catch (e: any) {}
   }
 
   async function updateMovie(
@@ -145,17 +144,35 @@ export function useMovie(): MovieData {
               movie_id: id,
               user_id: "",
             },
+            input4: {
+              movie_id: id,
+            },
           },
         });
         if (!res) return;
         if (!data) return;
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
-          variables: { input: { id: id } },
+          variables: {
+            input: { id: id },
+            input2: {
+              movie_id: id,
+              limit: 3,
+              offset: 0,
+            },
+            input3: {
+              movie_id: id,
+              user_id: "",
+            },
+            input4: {
+              movie_id: id,
+            },
+          },
           data: {
             getMovieById: data.updateMovie,
             getReviewsOfMovie: res.getReviewsOfMovie,
             getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie,
+            getCast: res.getCast,
           },
         });
       },
@@ -210,9 +227,9 @@ export function useMovie(): MovieData {
             getMovies: pageData.getMovies.filter(
               (x: any) => x.id !== data.deleteMovie.id
             ),
-            getNumberOfMovies:{
-              totalCount: pageData.getNumberOfMovies.totalCount -1
-            }
+            getNumberOfMovies: {
+              totalCount: pageData.getNumberOfMovies.totalCount - 1,
+            },
           },
         });
       },

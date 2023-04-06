@@ -74,6 +74,13 @@ export const typeDefs = gql`
     cast_id: ID!
   }
 
+  type CastWithMovie{
+    id: ID!
+    name: String!
+    photo: String!
+    movie_id: ID!
+  }
+
   type DbReview {
     id: ID!
     rating: String!
@@ -332,10 +339,12 @@ export const typeDefs = gql`
   input EditCastInput {
     id:ID!
     name: String!
+    movie_id: ID
   }
 
   input DeleteCastInput {
     id: ID!
+    movie_id: ID
   }
 
   input CastInput { 
@@ -395,8 +404,8 @@ export const typeDefs = gql`
     createToken(input: AddTokenInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!
     sendForgotPassEmail(input: resetTokenInput!): Boolean!
-    createCast(input: AddCastInput!): Cast!
-    updateCast(input: EditCastInput!): Cast!
-    deleteCast(input: DeleteCastInput!): Cast!
+    createCast(input: AddCastInput!): CastWithMovie!
+    updateCast(input: EditCastInput!): CastWithMovie!
+    deleteCast(input: DeleteCastInput!): CastWithMovie!
   }
 `;

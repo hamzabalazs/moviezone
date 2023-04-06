@@ -78,6 +78,11 @@ export type Cast = {
   photo:string
 }
 
+export type MovieCast = {
+  cast_id:string,
+  movie_id:string,
+}
+
 export type Role = {
   role: string;
 };

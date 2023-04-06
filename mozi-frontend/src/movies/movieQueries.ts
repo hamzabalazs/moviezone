@@ -5,6 +5,7 @@ export const GET_MOVIE_BY_ID = gql`
     $input: MovieInput!
     $input2: GetReviewsOfMovieInput!
     $input3: numOfReviewsInput!
+    $input4: CastOfMovieInput!
   ) {
     getMovieById(input: $input) {
       id
@@ -44,6 +45,11 @@ export const GET_MOVIE_BY_ID = gql`
     }
     getNumberOfReviewsOfMovie(input: $input3) {
       totalCount
+    }
+    getCast(input: $input4) {
+      id
+      name
+      photo
     }
   }
 `;
@@ -122,6 +128,39 @@ export const DELETE_MOVIE = gql`
         name
       }
       rating
+    }
+  }
+`;
+
+export const CREATE_CAST = gql`
+  mutation CreateCast($input: AddCastInput!) {
+    createCast(input: $input) {
+      id
+      name
+      photo
+      movie_id
+    }
+  }
+`;
+
+export const UPDATE_CAST = gql`
+  mutation UpdateCast($input: EditCastInput!) {
+    updateCast(input: $input) {
+      id
+      name
+      photo
+      movie_id
+    }
+  }
+`;
+
+export const DELETE_CAST = gql`
+  mutation DeleteCast($input: DeleteCastInput!) {
+    deleteCast(input: $input) {
+      id
+      name
+      photo
+      movie_id
     }
   }
 `;

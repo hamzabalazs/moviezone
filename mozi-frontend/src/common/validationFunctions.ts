@@ -96,6 +96,13 @@ export function useAddMovieSchema() {
     release_date: Yup.string()
       .required(t("formikErrors.release_dateReq") || "")
       .matches(datevalidator, t("formikErrors.release_dateFormat") || ""),
-    //category: Yup.string().required(t("formikErrors.categoryReq") || ""),
   });
+}
+
+export function useAddCastSchema(){
+  const { t } = useTranslation();
+
+  return Yup.object({
+    name: Yup.string().required(t("formikErrors.nameReq") || "")
+  })
 }
