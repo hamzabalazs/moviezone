@@ -40,7 +40,7 @@ export default function CastAddModal({ movie, onClose }: Props) {
       const result = await AddCastAPI(addedCast.name, photo);
       if (result) {
         setPhoto("")
-        const msg = "Cast add success";
+        const msg = t('successMessages.castAdd');
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();
       }
@@ -93,10 +93,10 @@ export default function CastAddModal({ movie, onClose }: Props) {
           >
             <CardContent>
               <Typography variant="h4" gutterBottom>
-                Add cast member to movie
+                {t('cast.addCastTitle')}
               </Typography>
               <Typography variant="subtitle1" sx={{ mt: "auto" }}>
-                Name
+                {t('cast.name')}
               </Typography>
               <TextField
                 fullWidth
@@ -110,7 +110,7 @@ export default function CastAddModal({ movie, onClose }: Props) {
                 error={formik.errors.name}
               ></TextField>
               <Typography variant="subtitle1" sx={{ mt: "auto", marginTop: 1 }}>
-                Photo
+                {t('cast.photo')}
               </Typography>
 
               <IconButton
@@ -123,8 +123,8 @@ export default function CastAddModal({ movie, onClose }: Props) {
                   hidden
                   accept="image/*"
                   type="file"
-                  name="poster"
-                  id="poster"
+                  name="photo"
+                  id="photo"
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -154,7 +154,7 @@ export default function CastAddModal({ movie, onClose }: Props) {
                 type="submit"
                 data-testid="movie-add-cast"
               >
-                Add
+                {t('buttons.add')}
               </Button>
             </CardActions>
           </Card>

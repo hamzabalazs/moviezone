@@ -55,6 +55,12 @@
         "selectedUser":"Választott felhasználó",
         "emailExists":"Nem lehetséges az emailt egy már meglévőre cserélni!"
     },
+    "cast":{
+        "addCastTitle":"Szereplő hozzáadása a filmhez",
+        "name":"Szereplő neve",
+        "photo":"Fotó",
+        "selectedCast":"Választott szereplő"
+    },
     "failMessages" : {
         "reviewAddMultiple": "Már van vélemény adva az adott filmről!",
         "reviewDescriptionMissing": "Nincs megadva a vélemény leirása!",
@@ -88,7 +94,8 @@
         "edit": "Szerkesztés",
         "delete": "Törlés",
         "accept": "Elfogad",
-        "quit": "Kilépés"
+        "quit": "Kilépés",
+        "addCast": "Szereplő Hozzáadás"
     },
     "deleteMessages": {
         "deleteMovieTitle": "Szeretné kitörölni ezt a filmet?",
@@ -100,7 +107,9 @@
         "deleteUserTitle": "Szeretné kitörölni ezt a felhasználót?",
         "deleteUserContent": "Ha elfogadja, ez a felhasználó örökre törölve lesz az adatbázisból!",
         "deleteCurrentUserTitle": "Szeretné kitörölni a saját fiokját?",
-        "deleteCurrentUserContent": "Ha elfogadja, a fiokja örökre törölve lesz! Ezt a műveletet nem lehet visszafordítani! Biztosan törölni szeretné a fiokját?"
+        "deleteCurrentUserContent": "Ha elfogadja, a fiokja örökre törölve lesz! Ezt a műveletet nem lehet visszafordítani! Biztosan törölni szeretné a fiokját?",
+        "deleteCastTitle": "Szeretné kitörölni ezt a szereplőt?",
+        "deleteCastContent": "Ha elfogadja, ez a szereplő örökre törölve lesz az adatbázisból!"
     },
     "login": {
         "login": "Bejelentkezés",
@@ -150,6 +159,10 @@
         "noReviews":"Nem található vélemény a választott filmhez!",
         "avgOfCategoriesText":"Vélemények átlaga kategóriák szerint",
         "reviews":"Vélemények"
+    },
+    "moviepage":{
+        "cast":"Szereplők",
+        "allReviews": "Összes vélemény"
     },
     "formikErrors": {
         "categoryReq": "A kategória neve kötelező!",

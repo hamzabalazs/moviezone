@@ -54,6 +54,12 @@
         "selectedUser":"Selected User",
         "emailExists":"Cannot change email to already existing one!"
     },
+    "cast":{
+        "addCastTitle":"Add cast member to movie",
+        "name":"Cast member name",
+        "photo":"Photo",
+        "selectedCast":"Selected cast member"
+    },
     "failMessages" : {
         "reviewAddMultiple": "You have already rated this movie!",
         "reviewDescriptionMissing": "No description has been given!",
@@ -71,6 +77,7 @@
         "movieEdit": "Movie was edited successfully!",
         "categoryEdit": "Category was edited successfully!",
         "userEdit": "User was edited successfully!",
+        "castAdd":"Cast member was added successfully!",
         "reviewDelete": "Review was deleted successfully!",
         "movieDelete": "Movie was deleted successfully!",
         "categoryDelete": "Category was deleted successfully!",
@@ -87,7 +94,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "accept": "Accept",
-        "quit": "Quit"
+        "quit": "Quit",
+        "addCast": "Add cast"
     },
     "deleteMessages": {
         "deleteMovieTitle": "Do you wish to delete this movie?",
@@ -99,7 +107,9 @@
         "deleteUserTitle": "Do you wish to delete this user?",
         "deleteUserContent": "If you accept, this user will forever be deleted from the database!",
         "deleteCurrentUserTitle": "Do you wish to delete your account?",
-        "deleteCurrentUserContent": "If you accept, you will delete your account permanently! This action cannot be reversed! Are you sure you want to delete your account?"
+        "deleteCurrentUserContent": "If you accept, you will delete your account permanently! This action cannot be reversed! Are you sure you want to delete your account?",
+        "deleteCastTitle": "Do you wish to delete this cast member?",
+        "deleteCastContent": "If you accept, this cast member will forever be deleted from the database!"
     },
     "login": {
         "login": "Login",
@@ -149,6 +159,10 @@
         "noReviews":"No Reviews found for selected movie!",
         "avgOfCategoriesText":"Average of reviews by category",
         "reviews":"Reviews"
+    },
+    "moviepage":{
+        "cast":"Cast",
+        "allReviews": "All reviews"
     },
     "formikErrors": {
         "categoryReq": "Category name is required!",

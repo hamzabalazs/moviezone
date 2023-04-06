@@ -2,6 +2,7 @@ import { GraphQLError } from "graphql";
 import { MyContext } from "../server";
 import { v4 as uuidv4 } from "uuid";
 import { Cast, MovieCast } from "./types";
+import { INSERT_CAST_ERROR, NO_CAST_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 
 export async function getCast(movie_id:any,context:MyContext): Promise<Cast[]>{
     const sql = `SELECT * FROM cast c JOIN movie_cast mc ON c.id = mc.cast_id WHERE mc.movie_id = ?`
@@ -26,7 +27,7 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
         id = uuidv4()
         const sqlCast = `INSERT INTO cast(id,name,photo) VALUES (?,?,?)`
         const res = await context.db.run(sqlCast,[id,input.name,input.photo])
-        if(!res) throw new GraphQLError('CAST INSERT ERROR',{extensions:{code:"INSERT_ERROR"}})   
+        if(!res) throw new GraphQLError(INSERT_CAST_ERROR,{extensions:{code:"INSERT_ERROR"}})   
     }
     const sqlConn = `INSERT INTO movie_cast(movie_id,cast_id) VALUES(?,?)`
     await context.db.run(sqlConn,[input.movie_id,id])
@@ -40,7 +41,7 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
 
 export async function updateCast(input:any,context:MyContext):Promise<Cast> {
     const cast = await getCastById(input.id,context)
-    if(!cast) throw new GraphQLError("No cast member found",{extensions:{code:"NOT_FOUND"}})
+    if(!cast) throw new GraphQLError(NO_CAST_MESSAGE,{extensions:{code:"NOT_FOUND"}})
     const sql = `UPDATE cast SET name = ? WHERE id = ?`
     await context.db.run(sql,[input.name,input.id])
     return {
@@ -52,9 +53,9 @@ export async function updateCast(input:any,context:MyContext):Promise<Cast> {
 
 export async function deleteCast(input:any,context:MyContext): Promise<Cast & Omit<MovieCast,"cast_id">>{
     const cast = await getCastById(input.id,context);
-    if(!cast) throw new GraphQLError("No cast member found",{extensions:{code:"NOT_FOUND"}})
-    const sql = `DELETE FROM cast WHERE id = ?`
-    await context.db.run(sql,[input.id])
+    if(!cast) throw new GraphQLError(NO_CAST_MESSAGE,{extensions:{code:"NOT_FOUND"}})
+    const sqlConn = `DELETE FROM movie_cast WHERE cast_id = ? AND movie_id = ?`
+    await context.db.run(sqlConn,[input.id,input.movie_id])
     return {
         id:cast.id,
         name:cast.name,

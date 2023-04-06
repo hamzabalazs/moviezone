@@ -106,3 +106,11 @@ export function useAddCastSchema(){
     name: Yup.string().required(t("formikErrors.nameReq") || "")
   })
 }
+
+export function useEditCastSchema(){
+  const { t } = useTranslation();
+
+  return Yup.object({
+    name: Yup.string().required(t("formikErrors.nameReq") || "")
+  })
+}

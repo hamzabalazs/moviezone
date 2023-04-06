@@ -24,7 +24,7 @@ export default function CastCard({cast,onEdit,onDelete}:Props) {
     >
       {cast.photo && (
         <CardMedia
-          sx={{ paddingTop: "100%" }}
+          sx={{ paddingTop: "144px", paddingLeft:"144px" }}
           image={cast.photo}
           title={cast.name}
         />

@@ -85,7 +85,7 @@ export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Pr
               size="medium"
               sx={{
                 color: "text.secondary",
-                fontSize: 20,
+                fontSize: 18,
               }}
               onClick={() => onEdit()}
               data-testid="moviepage-edit-button"
@@ -98,12 +98,12 @@ export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Pr
             size="medium"
             sx={{
               color: "text.secondary",
-              fontSize: 20,
+              fontSize: 18,
             }}
             onClick={() => onCastAdd()}
             data-testid="moviepage-cast-add-button"
           >
-            Add Cast
+            {t('buttons.addCast')}
           </Button>
           )}
           {onDelete && (
@@ -111,7 +111,7 @@ export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Pr
               size="medium"
               sx={{
                 color: "text.secondary",
-                fontSize: 20,
+                fontSize: 18,
               }}
               onClick={() => onDelete()}
               data-testid="moviepage-delete-button"

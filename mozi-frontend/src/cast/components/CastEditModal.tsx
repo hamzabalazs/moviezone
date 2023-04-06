@@ -88,10 +88,10 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
           >
             <CardContent>
               <Typography variant="h4" gutterBottom>
-                Edit cast member
+                {t('cast.selectedCast')}
               </Typography>
               <Typography variant="subtitle1" sx={{ mt: "auto" }}>
-                Name
+                {t('cast.name')}
               </Typography>
               <TextField
                 fullWidth
@@ -112,7 +112,7 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
                 type="submit"
                 data-testid="movie-edit-cast"
               >
-                Edit
+                {t('buttons.edit')}
               </Button>
             </CardActions>
           </Card>

@@ -46,10 +46,10 @@ export default function CastDeleteDialog({ cast, movie, onClose }: Props) {
       aria-describedby="alert-delete-description"
       data-testid="cast-delete-dialog"
     >
-      <DialogTitle id="alert-delete-title">Delete Cast?</DialogTitle>
+      <DialogTitle id="alert-delete-title">{t('deleteMessages.deleteCastTitle')}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-delete-description">
-          Would you really like to delete this cast member from movie?
+        {t('deleteMessages.deleteCastContent')}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

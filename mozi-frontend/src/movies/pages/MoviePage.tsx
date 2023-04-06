@@ -20,9 +20,11 @@ import CastAddModal from "../../cast/components/CastAddModal";
 import CastCard from "../../cast/components/CastCard";
 import CastEditModal from "../../cast/components/CastEditModal";
 import CastDeleteDialog from "../../cast/components/CastDeleteDialog";
+import { useTranslation } from "react-i18next";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user: currUser } = useSessionContext();
   let currentLength = 0;
@@ -131,7 +133,7 @@ export default function MoviePage() {
             variant="h4"
             sx={{ marginLeft: "5%", marginTop: "3%", marginBottom: "2%" }}
           >
-            Cast
+            {t('moviepage.cast')}
           </Typography>
           <Grid
             container
@@ -163,7 +165,7 @@ export default function MoviePage() {
           </Grid>
           <AddReviewCard currmovie_id={currmovie_id!} reviews={reviews} />
           <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 10 }}>
-            All reviews
+            {t('moviepage.allReviews')}
           </Typography>
           <div
             style={{
