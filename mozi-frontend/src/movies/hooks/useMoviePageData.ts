@@ -1,10 +1,11 @@
 import { ApolloError, useQuery } from "@apollo/client";
-import { Movie, Review} from "../../gql/graphql";
+import { Cast, Movie, Review} from "../../gql/graphql";
 import { GET_MOVIE_BY_ID } from "../movieQueries";
 
 type MoviePageData = {
   movie: Movie | null;
   reviews: Review[];
+  cast: Cast[];
   error: ApolloError | undefined;
   totalCount: number;
   loading: boolean;
@@ -31,6 +32,9 @@ export function useMoviePageData(
         user_id: "",
         movie_id,
       },
+      input4:{
+        movie_id
+      }
     },
     fetchPolicy:'cache-and-network',notifyOnNetworkStatusChange:true
   });
@@ -38,6 +42,7 @@ export function useMoviePageData(
   return {
     movie: data?.getMovieById || null,
     reviews: data?.getReviewsOfMovie || [],
+    cast: data?.getCast || [],
     totalCount: data?.getNumberOfReviewsOfMovie.totalCount || 0,
     error,
     loading,

@@ -17,7 +17,6 @@ import { useFormik } from "formik";
 import { isString } from "lodash";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Resizer from "react-image-file-resizer";
 import LoadingComponent from "../../common/components/LoadingComponent";
 import { useSnackbar } from "notistack";
 import { useSessionContext } from "../../auth/context/SessionContext";
@@ -29,27 +28,11 @@ import { useAddMovieSchema } from "../../common/validationFunctions";
 import { useMovie } from "../hooks/useMovie";
 import { Category, Movie } from "../../gql/graphql";
 import { useCategoriesData } from "../../categories/hooks/useCategoriesData";
+import { resizeFile } from "../../common/utils/resizeFile";
 
 interface Props {
   setIsOpenAdd?: Dispatch<SetStateAction<boolean>>;
 }
-
-// File resizer for image compression
-export const resizeFile = (file: File) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      640,
-      480,
-      "JPEG",
-      60,
-      0,
-      (uri) => {
-        resolve(uri);
-      },
-      "base64"
-    );
-  });
 
 export default function AddMovieCard(props: Props) {
   const { t } = useTranslation();

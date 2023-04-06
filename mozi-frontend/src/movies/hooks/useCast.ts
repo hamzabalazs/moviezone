@@ -17,25 +17,23 @@ type CastData = {
   addCast: (
     name: string,
     photo: string,
-    movie_id: string
   ) => Promise<CastWithMovie | null>;
   updateCast: (
     name: string,
-    movie_id?: string
   ) => Promise<CastWithMovie | null>;
-  deleteCast: (id: string, movie_id?: string) => Promise<CastWithMovie | null>;
+  deleteCast: (id: string) => Promise<CastWithMovie | null>;
 };
 
-export function useCast(): CastData {
+export function useCast(movie_id?:string): CastData {
   const [AddCastAPI] = useMutation<CreateCastMutation>(CREATE_CAST);
   const [UpdateCastAPI] = useMutation<UpdateCastMutation>(UPDATE_CAST);
   const [DeleteCastAPI] = useMutation<DeleteCastMutation>(DELETE_CAST);
   const client = useApolloClient();
+  console.log(movie_id)
 
   async function addCast(
     name: string,
     photo: string,
-    movie_id: string
   ): Promise<CastWithMovie | null> {
     const result = await AddCastAPI({
       variables: {
@@ -105,7 +103,6 @@ export function useCast(): CastData {
   }
   async function updateCast(
     name: string,
-    movie_id?: string
   ): Promise<CastWithMovie | null> {
     const result = await UpdateCastAPI({
       variables: {
@@ -171,7 +168,6 @@ export function useCast(): CastData {
 
   async function deleteCast(
     id: string,
-    movie_id?: string
   ): Promise<CastWithMovie | null> {
     const result = await DeleteCastAPI({
       variables: {

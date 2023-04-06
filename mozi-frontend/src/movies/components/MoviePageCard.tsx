@@ -101,7 +101,7 @@ export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Pr
               fontSize: 20,
             }}
             onClick={() => onCastAdd()}
-            data-testid="moviepage-delete-button"
+            data-testid="moviepage-cast-add-button"
           >
             Add Cast
           </Button>
