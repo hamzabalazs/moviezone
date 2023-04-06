@@ -11,7 +11,7 @@ import {
   DELETE_CAST,
   GET_MOVIE_BY_ID,
   UPDATE_CAST,
-} from "../movieQueries";
+} from "../../movies/movieQueries";
 
 type CastData = {
   addCast: (
@@ -19,8 +19,9 @@ type CastData = {
     photo: string,
   ) => Promise<CastWithMovie | null>;
   updateCast: (
+    id:string,
     name: string,
-  ) => Promise<CastWithMovie | null>;
+  ) => Promise<Cast | null>;
   deleteCast: (id: string) => Promise<CastWithMovie | null>;
 };
 
@@ -29,7 +30,6 @@ export function useCast(movie_id?:string): CastData {
   const [UpdateCastAPI] = useMutation<UpdateCastMutation>(UPDATE_CAST);
   const [DeleteCastAPI] = useMutation<DeleteCastMutation>(DELETE_CAST);
   const client = useApolloClient();
-  console.log(movie_id)
 
   async function addCast(
     name: string,
@@ -102,11 +102,13 @@ export function useCast(movie_id?:string): CastData {
     return null;
   }
   async function updateCast(
+    id:string,
     name: string,
-  ): Promise<CastWithMovie | null> {
+  ): Promise<Cast | null> {
     const result = await UpdateCastAPI({
       variables: {
         input: {
+          id,
           name,
           movie_id,
         },
@@ -132,8 +134,11 @@ export function useCast(movie_id?:string): CastData {
             },
           },
         });
+        console.log("res",res)
+        console.log("data",data)
         if (!res) return;
         if (!data) return;
+        
         cache.writeQuery({
           query: GET_MOVIE_BY_ID,
           variables: {
@@ -155,7 +160,7 @@ export function useCast(movie_id?:string): CastData {
             getMovieById: res.getMovieById,
             getReviewsOfMovie: res.getReviewsOfMovie,
             getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie,
-            getCast: res.getCast,
+            getCast: [...res.getCast],
           },
         });
       },

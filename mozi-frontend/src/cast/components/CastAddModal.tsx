@@ -28,7 +28,7 @@ interface Props {
   onClose?: () => void;
 }
 
-export default function MovieCastModal({ movie, onClose }: Props) {
+export default function CastAddModal({ movie, onClose }: Props) {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext();
@@ -175,7 +175,7 @@ function TextField({
         <Typography
           variant="subtitle2"
           sx={{ color: "red" }}
-          data-testid="movie-add-errors"
+          data-testid="movie-add-cast-errors"
         >
           {error}
         </Typography>

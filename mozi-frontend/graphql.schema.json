@@ -2602,7 +2602,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "CastWithMovie",
+                "name": "Cast",
                 "ofType": null
               }
             },

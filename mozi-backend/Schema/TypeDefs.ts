@@ -405,7 +405,7 @@ export const typeDefs = gql`
     deleteToken(input: DeleteTokenInput!): RunResult!
     sendForgotPassEmail(input: resetTokenInput!): Boolean!
     createCast(input: AddCastInput!): CastWithMovie!
-    updateCast(input: EditCastInput!): CastWithMovie!
+    updateCast(input: EditCastInput!): Cast!
     deleteCast(input: DeleteCastInput!): CastWithMovie!
   }
 `;

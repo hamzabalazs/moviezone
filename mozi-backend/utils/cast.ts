@@ -38,7 +38,7 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
     };
 }
 
-export async function updateCast(input:any,context:MyContext):Promise<Cast & Omit<MovieCast,"cast_id">> {
+export async function updateCast(input:any,context:MyContext):Promise<Cast> {
     const cast = await getCastById(input.id,context)
     if(!cast) throw new GraphQLError("No cast member found",{extensions:{code:"NOT_FOUND"}})
     const sql = `UPDATE cast SET name = ? WHERE id = ?`
@@ -47,7 +47,6 @@ export async function updateCast(input:any,context:MyContext):Promise<Cast & Omi
         id:input.id,
         name:input.name,
         photo:cast.photo,
-        movie_id:input.movie_id || ""
     };
 }
 

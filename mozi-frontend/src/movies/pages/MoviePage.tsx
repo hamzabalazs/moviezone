@@ -16,8 +16,10 @@ import { useBottomScrollListener } from "react-bottom-scroll-listener";
 import CardSkeletonComponent from "../../common/components/CardSkeletonComponent";
 import MovieEditModal from "../components/MovieEditModal";
 import ReviewCard from "../../reviews/components/ReviewCard";
-import MovieCastModal from "../components/MovieCastModal";
-import MovieCastCard from "../components/MovieCastCard";
+import CastAddModal from "../../cast/components/CastAddModal";
+import CastCard from "../../cast/components/CastCard";
+import CastEditModal from "../../cast/components/CastEditModal";
+import CastDeleteDialog from "../../cast/components/CastDeleteDialog";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
@@ -59,7 +61,9 @@ export default function MoviePage() {
   const [castAddMovie, setCastAddMovie] = useState<Movie | undefined>(
     undefined
   );
-  const [editingCast, setEditingCast] = useState<Cast | undefined>(undefined);
+  const [editingCastMovie, setEditingCastMovie] = useState<Movie | null>(null);
+  const [editingCast,setEditingCast] = useState<Cast | undefined>(undefined)
+  const [deletingCastMovie, setDeletingCastMovie] = useState<Movie | null>(null);
   const [deletingCast, setDeletingCast] = useState<Cast | undefined>(undefined);
   const [editingReview, setEditingReview] = useState<Review | undefined>(
     undefined
@@ -85,9 +89,19 @@ export default function MoviePage() {
             movie={editingMovie}
             onClose={() => setEditingMovie(undefined)}
           />
-          <MovieCastModal
+          <CastAddModal
             movie={castAddMovie}
             onClose={() => setCastAddMovie(undefined)}
+          />
+          <CastEditModal
+            cast={editingCast}
+            movie={editingCastMovie}
+            onClose={() => setEditingCast(undefined)}
+          />
+          <CastDeleteDialog
+            cast={deletingCast}
+            movie={deletingCastMovie}
+            onClose={() => setDeletingCast(undefined)}
           />
           <ReviewEditModal
             review={editingReview}
@@ -133,10 +147,16 @@ export default function MoviePage() {
           >
             {cast.map((cast: Cast) => (
               <Grid item key={cast.id} xs="auto">
-                <MovieCastCard
+                <CastCard
                   cast={cast}
-                  onEdit={() => setEditingCast(cast)}
-                  onDelete={() => setDeletingCast(cast)}
+                  onEdit={() => {
+                    setEditingCast(cast)
+                    setEditingCastMovie(movie)
+                  }}
+                  onDelete={() => {
+                    setDeletingCast(cast)
+                    setDeletingCastMovie(movie)
+                  }}
                 />
               </Grid>
             ))}

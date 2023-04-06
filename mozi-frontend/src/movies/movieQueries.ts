@@ -149,7 +149,6 @@ export const UPDATE_CAST = gql`
       id
       name
       photo
-      movie_id
     }
   }
 `;

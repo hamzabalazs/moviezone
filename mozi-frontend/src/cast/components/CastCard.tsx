@@ -9,7 +9,7 @@ interface Props {
     onDelete?: () => void;
 }
 
-export default function MovieCastCard({cast,onEdit,onDelete}:Props) {
+export default function CastCard({cast,onEdit,onDelete}:Props) {
     const { user } = useSessionContext(); 
     const { t } = useTranslation();
   return (
