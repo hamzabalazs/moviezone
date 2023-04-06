@@ -24,7 +24,7 @@ export async function getNumberOfMoviesPerCategory(context:MyContext){
 }
 
 export async function getAverageRatingOfCategories(context:MyContext){
-  const sql =`SELECT name,ROUND(AVG(r.rating),2) as average FROM review r JOIN movie m ON r.movie_id = m.id JOIN category c ON c.id = m.category_id GROUP BY c.name`
+  const sql =`SELECT name, ROUND(AVG(average),2) as average FROM (SELECT c.name,AVG(r.rating) AS average FROM review r JOIN movie m ON m.id = r.movie_id JOIN category c ON c.id = m.category_id GROUP BY m.id) GROUP BY name;`
   const result = await context.db.all(sql)
   return result
 }

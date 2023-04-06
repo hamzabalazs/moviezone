@@ -55,6 +55,7 @@ export default function MoviePage() {
   const [deletingMovie, setDeletingMovie] = useState<Movie | undefined>(
     undefined
   );
+  const [castAdd,setCastAdd] = useState<Movie | undefined>(undefined)
   const [editingReview, setEditingReview] = useState<Review | undefined>(
     undefined
   );
@@ -79,6 +80,7 @@ export default function MoviePage() {
             movie={editingMovie}
             onClose={() => setEditingMovie(undefined)}
           />
+          
           <ReviewEditModal
             review={editingReview}
             onClose={() => setEditingReview(undefined)}
@@ -99,6 +101,7 @@ export default function MoviePage() {
                 movie={movie}
                 onEdit={() => setEditingMovie(movie)}
                 onDelete={() => setDeletingMovie(movie)}
+                onCastAdd={() => setCastAdd(movie)}
               />
             )}
           </div>

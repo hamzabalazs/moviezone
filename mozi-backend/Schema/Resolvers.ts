@@ -61,6 +61,7 @@ import {
   CATEGORY_EXISTS_MESSAGE,
   NOT_VALID_USER,
   NO_CATEGORY_MESSAGE,
+  NO_MOVIE_MESSAGE,
   NO_TOKEN_MESSAGE,
   NO_USER_MESSAGE,
   REVIEW_INVALID_RATING_MESSAGE,
@@ -72,6 +73,7 @@ import {
   userSchema,
 } from "../common/validation";
 import { GraphQLError } from "graphql";
+import { checkForCast, createCast, deleteCast, getCast, getCastById, updateCast } from "../utils/cast";
 
 export const resolvers = {
   Query: {
@@ -167,6 +169,16 @@ export const resolvers = {
     },
     async getResetToken(_:any,{input}:any,context:MyContext){
       return await getResetToken(input.email,context)
+    },
+    // Cast
+    async getCast(_:any, { input }: any, context: MyContext){
+      return await getCast(input.movie_id,context)
+    },
+    async getCastById(_:any, { input }:any, context:MyContext){
+      return await getCastById(input.id,context)
+    },
+    async checkForCast(_:any, { input }:any, context:MyContext){
+      return await checkForCast(input.name,context)
     }
   },
   Review: {
@@ -352,6 +364,21 @@ export const resolvers = {
     },
     async sendForgotPassEmail(_:any,{ input }:any, context: MyContext) {
       return await sendForgotPassEmail(input.email,context);
+    },
+    // Cast
+    async createCast(_:any,{ input }:any, context:MyContext){
+      context.user = await tokenChecker(context);
+      const isMovie = await getMovieById(input.movie_id,context);
+      if(!isMovie) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:"NOT_FOUND"}})
+      return await createCast(input,context)
+    },
+    async updateCast(_:any, { input }:any, context:MyContext){
+      context.user = await tokenChecker(context);
+      return await updateCast(input,context);
+    },
+    async deleteCast(_:any, { input }:any, context:MyContext){
+      context.user = await tokenChecker(context);
+      return await deleteCast(input.id,context)
     }
   },
 };

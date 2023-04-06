@@ -14,6 +14,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type AddCastInput = {
+  movie_id: Scalars['ID'];
+  name: Scalars['String'];
+  photo: Scalars['String'];
+};
+
 export type AddCategoryInput = {
   name: Scalars['String'];
 };
@@ -45,6 +51,17 @@ export type AddUserInput = {
   password: Scalars['String'];
 };
 
+export type Cast = {
+  __typename?: 'Cast';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  photo: Scalars['String'];
+};
+
+export type CastOfMovieInput = {
+  movie_id: Scalars['ID'];
+};
+
 export type Category = {
   __typename?: 'Category';
   id: Scalars['ID'];
@@ -56,6 +73,10 @@ export type CategoryInput = {
 };
 
 export type CategoryNameInput = {
+  name: Scalars['String'];
+};
+
+export type CheckForCastInput = {
   name: Scalars['String'];
 };
 
@@ -98,6 +119,10 @@ export type DbUser = {
   role: Scalars['String'];
 };
 
+export type DeleteCastInput = {
+  id: Scalars['ID'];
+};
+
 export type DeleteCategoryInput = {
   id: Scalars['ID'];
 };
@@ -116,6 +141,10 @@ export type DeleteTokenInput = {
 
 export type DeleteUserInput = {
   id: Scalars['ID'];
+};
+
+export type EditCastInput = {
+  name: Scalars['String'];
 };
 
 export type Expiry = {
@@ -188,14 +217,22 @@ export type MoviePaginationInput = {
   searchField?: InputMaybe<Scalars['String']>;
 };
 
+export type Movie_Cast = {
+  __typename?: 'Movie_Cast';
+  cast_id: Scalars['ID'];
+  movie_id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: RunResult;
+  createCast: Cast;
   createCategory?: Maybe<Category>;
   createMovie?: Maybe<Movie>;
   createReview?: Maybe<Review>;
   createToken: RunResult;
   createUser?: Maybe<User>;
+  deleteCast: Cast;
   deleteCategory: Category;
   deleteMovie: Movie;
   deleteReview: Review;
@@ -203,6 +240,7 @@ export type Mutation = {
   deleteUser: FullUser;
   logIn: CurrentUser;
   sendForgotPassEmail: Scalars['Boolean'];
+  updateCast: Cast;
   updateCategory: Category;
   updateMovie: Movie;
   updateReview?: Maybe<Review>;
@@ -212,6 +250,11 @@ export type Mutation = {
 
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput;
+};
+
+
+export type MutationCreateCastArgs = {
+  input: AddCastInput;
 };
 
 
@@ -237,6 +280,11 @@ export type MutationCreateTokenArgs = {
 
 export type MutationCreateUserArgs = {
   input: AddUserInput;
+};
+
+
+export type MutationDeleteCastArgs = {
+  input: DeleteCastInput;
 };
 
 
@@ -275,6 +323,11 @@ export type MutationSendForgotPassEmailArgs = {
 };
 
 
+export type MutationUpdateCastArgs = {
+  input: EditCastInput;
+};
+
+
 export type MutationUpdateCategoryArgs = {
   input: UpdateCategoryInput;
 };
@@ -296,11 +349,13 @@ export type MutationUpdateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  checkForCast: Cast;
   checkForCategory: Category;
   checkForUser?: Maybe<User>;
   getAllMovies: Array<Maybe<MovieAutocompleteList>>;
   getAverageOfReviewsOfMoviePerMonth: Array<AvgOfReviews>;
   getAverageRatingOfCategories: Array<AvgOfCategories>;
+  getCast: Array<Cast>;
   getCategories: Array<Category>;
   getCategoryById?: Maybe<Category>;
   getMovieById?: Maybe<Movie>;
@@ -326,6 +381,11 @@ export type Query = {
 };
 
 
+export type QueryCheckForCastArgs = {
+  input: CheckForCastInput;
+};
+
+
 export type QueryCheckForCategoryArgs = {
   input: CategoryNameInput;
 };
@@ -338,6 +398,11 @@ export type QueryCheckForUserArgs = {
 
 export type QueryGetAverageOfReviewsOfMoviePerMonthArgs = {
   input: NumOfReviewsForChart;
+};
+
+
+export type QueryGetCastArgs = {
+  input: CastOfMovieInput;
 };
 
 

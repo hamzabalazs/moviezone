@@ -15,9 +15,10 @@ interface Props {
   movie: Movie;
   onEdit?: () => void;
   onDelete?: () => void;
+  onCastAdd?: () => void;
 }
 
-export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {
+export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Props) {
   const { t } = useTranslation();
   const { user } = useSessionContext();
 
@@ -91,6 +92,19 @@ export default function MoviePageCard({ movie, onEdit, onDelete }: Props) {
             >
               {t("buttons.edit")}
             </Button>
+          )}
+          {onCastAdd && (
+            <Button
+            size="medium"
+            sx={{
+              color: "text.secondary",
+              fontSize: 20,
+            }}
+            onClick={() => onCastAdd()}
+            data-testid="moviepage-delete-button"
+          >
+            Add Cast
+          </Button>
           )}
           {onDelete && (
             <Button

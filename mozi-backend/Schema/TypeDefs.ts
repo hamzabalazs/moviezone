@@ -63,6 +63,17 @@ export const typeDefs = gql`
     user: User!
   }
 
+  type Cast {
+    id: ID!
+    name: String!
+    photo: String!
+  }
+
+  type Movie_Cast {
+    movie_id: ID!,
+    cast_id: ID!
+  }
+
   type DbReview {
     id: ID!
     rating: String!
@@ -304,6 +315,33 @@ export const typeDefs = gql`
     average: Float!
   }
 
+  input CastOfMovieInput {
+    movie_id: ID!
+  }
+
+  input CheckForCastInput {
+    name:String!
+  }
+
+  input AddCastInput {
+    name: String!
+    photo: String!
+    movie_id: ID!
+  }
+
+  input EditCastInput {
+    id:ID!
+    name: String!
+  }
+
+  input DeleteCastInput {
+    id: ID!
+  }
+
+  input CastInput { 
+    id: ID!
+  }
+
   # Queries
   type Query {
     getUsers(input: UserPaginationInput): [FullUser!]!
@@ -333,6 +371,9 @@ export const typeDefs = gql`
     getAverageOfReviewsOfMoviePerMonth(input: numOfReviewsForChart!): [avgOfReviews!]!
     getToken: Expiry!
     getResetToken(input: resetTokenInput!): String!
+    getCast(input: CastOfMovieInput!): [Cast!]!
+    getCastById(input: CastInput!): Cast!
+    checkForCast(input: CheckForCastInput!): Cast!
   }
 
   # Mutations
@@ -354,5 +395,8 @@ export const typeDefs = gql`
     createToken(input: AddTokenInput!): RunResult!
     deleteToken(input: DeleteTokenInput!): RunResult!
     sendForgotPassEmail(input: resetTokenInput!): Boolean!
+    createCast(input: AddCastInput!): Cast!
+    updateCast(input: EditCastInput!): Cast!
+    deleteCast(input: DeleteCastInput!): Cast!
   }
 `;

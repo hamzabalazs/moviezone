@@ -72,6 +72,12 @@ export type ExtendedReview = {
   rating: string;
 };
 
+export type Cast = {
+  id:string;
+  name:string;
+  photo:string
+}
+
 export type Role = {
   role: string;
 };

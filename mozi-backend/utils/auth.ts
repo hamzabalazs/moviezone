@@ -4,7 +4,6 @@ import { CurrentUser } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { NO_USER_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 import { GraphQLError } from "graphql";
-import { checkForUser } from "./user";
 
 export async function logIn(
   loginDetails: { email: string; password: string },
