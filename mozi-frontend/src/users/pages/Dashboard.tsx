@@ -42,7 +42,7 @@ export default function Dashboard() {
     movie = "movie",
   }
   const { t } = useTranslation();
-  const { mode } = useContext(themeSwitchContext)
+  const { mode } = useContext(themeSwitchContext);
   const [pageTab, setPageTab] = useState<Tab>(Tab["movie"]);
   const [selectedMovie, setSelectedMovie] = useState<string | null>("");
   const [selectedMovieId, setSelectedMovieId] = useState<string>("");
@@ -68,8 +68,8 @@ export default function Dashboard() {
   const countCatList: number[] = [];
   const yearList: string[] = [];
   const countYearList: number[] = [];
-  const categoryList:string[] = [];
-  const avgCatList:any[] = []
+  const categoryList: string[] = [];
+  const avgCatList: any[] = [];
   if (!loading && data) {
     for (let i = 0; i < 6; i++) {
       if (data.getNumberOfReviewsOfMoviePerMonth[i]) {
@@ -82,18 +82,18 @@ export default function Dashboard() {
     data.getNumberOfMoviesPerCategory.map((x: NumOfMoviesPerCategory) => {
       nameList.push(x.name);
       countCatList.push(x.totalCount);
-      return [nameList,countCatList];
+      return [nameList, countCatList];
     });
     data.getNumberOfMoviesPerYear.map((x: NumOfMoviesPerYear) => {
       yearList.push(x.year);
       countYearList.push(x.totalCount);
-      return [yearList,countYearList];
+      return [yearList, countYearList];
     });
     data.getAverageRatingOfCategories.map((x: AvgOfCategories) => {
       categoryList.push(x.name);
-      avgCatList.push(x.average)
-      return [categoryList,avgCatList];
-    })
+      avgCatList.push(x.average);
+      return [categoryList, avgCatList];
+    });
   }
   const catChartData = getMovieDataCat(nameList, countCatList);
   const yearChartData = getMovieDataYear(yearList, countYearList);
@@ -107,7 +107,7 @@ export default function Dashboard() {
     mode
   );
   const mChartNrCat = getMovieNrChart(catChartData, t, mode);
-  const catChartAvg = getCategoryAvgChart(avgCatList,categoryList,mode,t)
+  const catChartAvg = getCategoryAvgChart(avgCatList, categoryList, mode, t);
 
   const handleReviewTab = () => {
     setPageTab(Tab["review"]);
@@ -127,12 +127,12 @@ export default function Dashboard() {
         const movieList: string[] = [];
         data.getAllMovies.map((x: MovieAutocompleteList | null) => {
           movieList.push(x!.title);
-          return movieList
+          return movieList;
         });
         setMovieOptions(movieList);
       }
     }
-  }, [loading,data]);
+  }, [loading, data]);
 
   useEffect(() => {
     if (selectedMovie && data) {
@@ -141,7 +141,7 @@ export default function Dashboard() {
       );
       setSelectedMovieId(movie[0]!.id);
     }
-  }, [selectedMovie,data]);
+  }, [selectedMovie, data]);
 
   return (
     <>
@@ -156,6 +156,7 @@ export default function Dashboard() {
             marginLeft: "5%",
             marginRight: "5%",
             marginTop: "2%",
+
           }}
         >
           <Grid
@@ -225,6 +226,7 @@ export default function Dashboard() {
               backgroundColor: "primary.main",
               marginLeft: "5%",
               marginRight: "5%",
+              paddingTop:"3%"
             }}
             id="container"
           >
@@ -236,8 +238,10 @@ export default function Dashboard() {
               sx={{
                 marginLeft: "5%",
                 marginRight: "5%",
-                paddingTop: 3,
-                paddingBottom: 3,
+                width: "90%",
+                border: 1,
+                borderRadius: 1,
+
               }}
               onChange={(event: any, newValue: string | null) => {
                 setSelectedMovie(newValue);
@@ -259,6 +263,7 @@ export default function Dashboard() {
                     width: "90%",
                     marginLeft: "5%",
                     marginRight: "5%",
+                    marginTop:"3%"
                   }}
                   id="chartNr"
                 >
@@ -269,7 +274,7 @@ export default function Dashboard() {
                     />
                   )}
                   {data?.getNumberOfReviewsOfMoviePerMonth.length === 0 && (
-                    <Typography>{t('dashboard.noReviews')}</Typography>
+                    <Typography>{t("dashboard.noReviews")}</Typography>
                   )}
                 </div>
                 <div
@@ -335,20 +340,20 @@ export default function Dashboard() {
                 width: "90%",
                 marginLeft: "5%",
                 marginRight: "5%",
-                paddingTop:"5%"
+                paddingTop: "5%",
               }}
               id="catChartAvg"
             >
               <HighChartsReact highcharts={Highcharts} options={catChartAvg} />
             </div>
             <div
-            style={{
-              width: "90%",
-              marginLeft: "5%",
-              marginRight: "5%",
-              paddingTop:"3%"
-            }}
-            id="mChartNrCat"
+              style={{
+                width: "90%",
+                marginLeft: "5%",
+                marginRight: "5%",
+                paddingTop: "3%",
+              }}
+              id="mChartNrCat"
             >
               <HighChartsReact highcharts={Highcharts} options={mChartNrCat} />
             </div>
