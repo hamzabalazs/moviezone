@@ -83,7 +83,8 @@
         "movieDelete": "Movie was deleted successfully!",
         "categoryDelete": "Category was deleted successfully!",
         "userDelete": "User was deleted successfully!",
-        "passwordChanged":"Password was changed successfully!"
+        "passwordChanged":"Password was changed successfully!",
+        "castDelete": "Cast member was deleted successfully!"
     },
     "addTitle": {
         "category":"Add Category",

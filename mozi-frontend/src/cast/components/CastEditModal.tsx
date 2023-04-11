@@ -17,6 +17,7 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   cast?: Cast;
@@ -41,6 +42,14 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
       }
     } catch (error: any) {
       console.log(error.message);
+      if( error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      } else {
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
   };
 

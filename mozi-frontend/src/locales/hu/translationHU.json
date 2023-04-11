@@ -83,7 +83,8 @@
         "movieDelete": "A film törlése sikeres!",
         "categoryDelete": "A kategória törlése sikeres!",
         "userDelete": "A felhasználó törlése sikeres!",
-        "passwordChanged":"A jelszó szerkesztése sikeres!"
+        "passwordChanged":"A jelszó szerkesztése sikeres!",
+        "castDelete": "A szereplő törlése sikeres!"
     },
     "addTitle": {
         "category":"Kategória hozzáadása",

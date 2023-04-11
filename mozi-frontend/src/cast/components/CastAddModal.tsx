@@ -22,6 +22,7 @@ import {
 import { resizeFile } from "../../common/utils/resizeFile";
 import { isString } from "lodash";
 import { PhotoCamera } from "@mui/icons-material";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   movie?: Movie;
@@ -46,6 +47,11 @@ export default function CastAddModal({ movie, onClose }: Props) {
       }
     } catch (error: any) {
       console.log(error.message);
+      if(error.message === EXPIRED_TOKEN_MESSAGE){
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      }
     }
   };
 

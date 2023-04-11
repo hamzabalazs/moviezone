@@ -11,6 +11,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
 
 interface Props {
   cast?: Cast;
@@ -29,12 +30,20 @@ export default function CastDeleteDialog({ cast, movie, onClose }: Props) {
     try {
       const result = await DeleteCastAPI(cast.id);
       if (result) {
-        const msg = "cast delete success";
+        const msg = t("successMessages.castDelete");
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();
       }
     } catch (error: any) {
       console.log(error);
+      if (error.message === EXPIRED_TOKEN_MESSAGE) {
+        const msg = t("failMessages.expiredToken");
+        enqueueSnackbar(msg, { variant: "error" });
+        logOut();
+      } else {
+        const msg = t("someError");
+        enqueueSnackbar(msg, { variant: "error" });
+      }
     }
   };
 
@@ -46,10 +55,12 @@ export default function CastDeleteDialog({ cast, movie, onClose }: Props) {
       aria-describedby="alert-delete-description"
       data-testid="cast-delete-dialog"
     >
-      <DialogTitle id="alert-delete-title">{t('deleteMessages.deleteCastTitle')}</DialogTitle>
+      <DialogTitle id="alert-delete-title">
+        {t("deleteMessages.deleteCastTitle")}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-delete-description">
-        {t('deleteMessages.deleteCastContent')}
+          {t("deleteMessages.deleteCastContent")}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
