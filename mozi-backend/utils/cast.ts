@@ -1,11 +1,11 @@
 import { GraphQLError } from "graphql";
 import { MyContext } from "../server";
 import { v4 as uuidv4 } from "uuid";
-import { Cast, MovieCast } from "./types";
+import { Cast, Movie, MovieCast } from "./types";
 import { INSERT_CAST_ERROR, NO_CAST_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
 
 export async function getCast(movie_id:any,context:MyContext): Promise<Cast[]>{
-    const sql = `SELECT * FROM cast c JOIN movie_cast mc ON c.id = mc.cast_id WHERE mc.movie_id = ?`
+    const sql = `SELECT c.id,c.name,c.photo,c.description FROM cast c JOIN movie_cast mc ON c.id = mc.cast_id WHERE mc.movie_id = ?`
     return context.db.all<Cast>(sql,[movie_id])
 }
 
@@ -17,6 +17,11 @@ export async function getCastById(id:any,context:MyContext): Promise<Cast|null> 
 export async function checkForCast(name:any,context:MyContext): Promise<Cast | null>{
     const sql = `SELECT * FROM cast WHERE name = ?`
     return context.db.get<Cast>(sql,[name])
+}
+
+export async function getMoviesOfCast(id:any,context:MyContext):Promise<Movie[]> {
+    const sql = `SELECT m.id,m.title,m.description,m.release_date,m.poster FROM movie m JOIN movie_cast mc ON m.id = mc.movie_id JOIN cast c ON mc.cast_id = c.id WHERE c.id = ?`
+    return context.db.all<Movie>(sql,[id])
 }
 
 export async function createCast(input:any,context:MyContext):Promise<Cast & Omit<MovieCast,"cast_id">>{
@@ -35,6 +40,7 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
         id:id,
         name:input.name,
         photo:input.photo,
+        description:input.description,
         movie_id:input.movie_id
     };
 }
@@ -48,6 +54,7 @@ export async function updateCast(input:any,context:MyContext):Promise<Cast> {
         id:input.id,
         name:input.name,
         photo:cast.photo,
+        description:input.description
     };
 }
 
@@ -60,6 +67,7 @@ export async function deleteCast(input:any,context:MyContext): Promise<Cast & Om
         id:cast.id,
         name:cast.name,
         photo:cast.photo,
+        description:cast.description,
         movie_id:input.movie_id || "",
     };
 }

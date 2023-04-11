@@ -37,7 +37,7 @@ export default function CastAddModal({ movie, onClose }: Props) {
 
   const handleAddCast = async (addedCast: Omit<Cast, "id" | "photo">) => {
     try {
-      const result = await AddCastAPI(addedCast.name, photo);
+      const result = await AddCastAPI(addedCast.name,addedCast.description, photo);
       if (result) {
         setPhoto("")
         const msg = t('successMessages.castAdd');
@@ -51,6 +51,7 @@ export default function CastAddModal({ movie, onClose }: Props) {
 
   const formikValues: Omit<Cast, "id" | "photo"> = {
     name: "",
+    description:"",
   };
 
   const schema = useAddCastSchema();
@@ -108,6 +109,20 @@ export default function CastAddModal({ movie, onClose }: Props) {
                 sx={{ border: 1, borderRadius: 1 }}
                 inputProps={{ "data-testid": "movie-add-cast-name" }}
                 error={formik.errors.name}
+              ></TextField>
+              <Typography variant="subtitle1" sx={{ mt: "auto" }}>
+                {t('cast.description')}
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                id="description"
+                name="description"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+                sx={{ border: 1, borderRadius: 1 }}
+                inputProps={{ "data-testid": "movie-edit-cast-description" }}
+                error={formik.errors.description}
               ></TextField>
               <Typography variant="subtitle1" sx={{ mt: "auto", marginTop: 1 }}>
                 {t('cast.photo')}

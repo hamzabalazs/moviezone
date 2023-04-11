@@ -4,7 +4,7 @@ import { Cast, Movie } from "../../gql/graphql";
 import { useSnackbar } from "notistack";
 import { useCast } from "../hooks/useCast";
 import { useFormik } from "formik";
-import { useAddCastSchema } from "../../common/validationFunctions";
+import { useEditCastSchema } from "../../common/validationFunctions";
 import {
   Box,
   Button,
@@ -33,7 +33,7 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
   const handleUpdateCast = async (editedCast: Omit<Cast, "id" | "photo">) => {
     if(!cast) return;
     try {
-      const result = await UpdateCastAPI(cast.id,editedCast.name);
+      const result = await UpdateCastAPI(cast.id,editedCast.name,editedCast.description);
       if (result) {
         const msg = "Cast edit success";
         enqueueSnackbar(msg, { variant: "success" });
@@ -45,10 +45,11 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
   };
 
   const formikValues: Omit<Cast, "id" | "photo"> = {
-    name: "",
+    name: cast?.name || "",
+    description: cast?.description || "",
   };
 
-  const schema = useAddCastSchema(); // change this
+  const schema = useEditCastSchema();
   const formik = useFormik({
     initialValues: formikValues,
     onSubmit: handleUpdateCast,
@@ -103,6 +104,20 @@ export default function CastEditModal({ cast,movie, onClose }: Props) {
                 sx={{ border: 1, borderRadius: 1 }}
                 inputProps={{ "data-testid": "movie-edit-cast-name" }}
                 error={formik.errors.name}
+              ></TextField>
+              <Typography variant="subtitle1" sx={{ mt: "auto" }}>
+                {t('cast.description')}
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                id="description"
+                name="description"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+                sx={{ border: 1, borderRadius: 1 }}
+                inputProps={{ "data-testid": "movie-edit-cast-description" }}
+                error={formik.errors.description}
               ></TextField>
             </CardContent>
             <CardActions disableSpacing sx={{ mt: "auto" }}>

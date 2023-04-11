@@ -18,8 +18,6 @@ import MovieEditModal from "../components/MovieEditModal";
 import ReviewCard from "../../reviews/components/ReviewCard";
 import CastAddModal from "../../cast/components/CastAddModal";
 import CastCard from "../../cast/components/CastCard";
-import CastEditModal from "../../cast/components/CastEditModal";
-import CastDeleteDialog from "../../cast/components/CastDeleteDialog";
 import { useTranslation } from "react-i18next";
 
 export default function MoviePage() {
@@ -95,16 +93,6 @@ export default function MoviePage() {
             movie={castAddMovie}
             onClose={() => setCastAddMovie(undefined)}
           />
-          <CastEditModal
-            cast={editingCast}
-            movie={editingCastMovie}
-            onClose={() => setEditingCast(undefined)}
-          />
-          <CastDeleteDialog
-            cast={deletingCast}
-            movie={deletingCastMovie}
-            onClose={() => setDeletingCast(undefined)}
-          />
           <ReviewEditModal
             review={editingReview}
             onClose={() => setEditingReview(undefined)}
@@ -137,7 +125,7 @@ export default function MoviePage() {
           </Typography>
           <Grid
             container
-            spacing={2}
+            spacing={1.5}
             sx={{
               marginLeft: "7%",
               marginRight: "7%",
@@ -151,14 +139,6 @@ export default function MoviePage() {
               <Grid item key={cast.id} xs="auto">
                 <CastCard
                   cast={cast}
-                  onEdit={() => {
-                    setEditingCast(cast)
-                    setEditingCastMovie(movie)
-                  }}
-                  onDelete={() => {
-                    setDeletingCast(cast)
-                    setDeletingCastMovie(movie)
-                  }}
                 />
               </Grid>
             ))}

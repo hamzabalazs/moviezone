@@ -103,7 +103,8 @@ export function useAddCastSchema(){
   const { t } = useTranslation();
 
   return Yup.object({
-    name: Yup.string().required(t("formikErrors.nameReq") || "")
+    name: Yup.string().required(t("formikErrors.nameReq") || ""),
+    description: Yup.string().required(t("formikErrors.descriptionReq") || "")
   })
 }
 
@@ -111,6 +112,7 @@ export function useEditCastSchema(){
   const { t } = useTranslation();
 
   return Yup.object({
-    name: Yup.string().required(t("formikErrors.nameReq") || "")
+    name: Yup.string().required(t("formikErrors.nameReq") || ""),
+    description: Yup.string().required(t("formikErrors.descriptionReq") || "")
   })
 }

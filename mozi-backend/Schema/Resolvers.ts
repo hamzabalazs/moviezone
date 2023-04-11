@@ -73,7 +73,7 @@ import {
   userSchema,
 } from "../common/validation";
 import { GraphQLError } from "graphql";
-import { checkForCast, createCast, deleteCast, getCast, getCastById, updateCast } from "../utils/cast";
+import { checkForCast, createCast, deleteCast, getCast, getCastById, getMoviesOfCast, updateCast } from "../utils/cast";
 
 export const resolvers = {
   Query: {
@@ -179,6 +179,9 @@ export const resolvers = {
     },
     async checkForCast(_:any, { input }:any, context:MyContext){
       return await checkForCast(input.name,context)
+    },
+    async getMoviesOfCast(_:any, { input }:any, context:MyContext){
+      return await getMoviesOfCast(input.id,context);
     }
   },
   Review: {

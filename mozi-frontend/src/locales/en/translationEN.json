@@ -57,6 +57,7 @@
     "cast":{
         "addCastTitle":"Add cast member to movie",
         "name":"Cast member name",
+        "description":"Description",
         "photo":"Photo",
         "selectedCast":"Selected cast member"
     },

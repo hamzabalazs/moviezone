@@ -14,6 +14,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  mutation LogIn($input: LoginInput!) {\n  logIn(input: $input) {\n    id\n    first_name\n    last_name\n    role\n    email\n    token\n  }\n}\n": types.LogInDocument,
+    "\n  query GetCastById($input: CastInput!) {\n    getCastById(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n    getMoviesOfCast(input: $input) {\n      id\n      title\n      description\n      release_date\n      poster\n    }\n  }\n": types.GetCastByIdDocument,
+    "\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n": types.CreateCastDocument,
+    "\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n  }\n": types.UpdateCastDocument,
+    "\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n": types.DeleteCastDocument,
     "\n  query GetCategories {\n    getCategories {\n      id\n      name\n    }\n  }\n": types.GetCategoriesDocument,
     "\n  mutation CreateCategory($input: AddCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n    }\n  }\n": types.CreateCategoryDocument,
     "\n  mutation UpdateCategory($input: UpdateCategoryInput!) {\n    updateCategory(input: $input) {\n      id\n      name\n    }\n  }\n": types.UpdateCategoryDocument,
@@ -23,9 +27,6 @@ const documents = {
     "\n  mutation UpdateMovie($input: UpdateMovieInput!) {\n    updateMovie(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n  }\n": types.UpdateMovieDocument,
     "\n  mutation CreateMovie($input: AddMovieInput!) {\n    createMovie(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n  }\n": types.CreateMovieDocument,
     "\n  mutation DeleteMovie($input: DeleteMovieInput!) {\n    deleteMovie(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n  }\n": types.DeleteMovieDocument,
-    "\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n": types.CreateCastDocument,
-    "\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n    }\n  }\n": types.UpdateCastDocument,
-    "\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n": types.DeleteCastDocument,
     "\n  query getReviews(\n    $input: GetReviewsOfUserInput!\n    $input2: numOfReviewsInput!\n  ) {\n    getReviewsOfUser(input: $input) {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        rating\n        category {\n          id\n          name\n        }\n      }\n      user {\n        id\n        first_name\n        last_name\n        role\n        email\n      }\n    }\n    getNumberOfReviewsOfUser(input: $input2) {\n      totalCount\n    }\n  }\n": types.GetReviewsDocument,
     "\n  mutation CreateReview($input: AddReviewInput!) {\n    createReview(input: $input) {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        rating\n        category {\n          id\n          name\n        }\n      }\n      user {\n        id\n        first_name\n        last_name\n        role\n        email\n      }\n    }\n  }\n": types.CreateReviewDocument,
     "\n  mutation UpdateReview($input: UpdateReviewInput!) {\n    updateReview(input: $input) {\n      id\n      rating\n      description\n      movie {\n        id\n        title\n        description\n        poster\n        release_date\n        category {\n          id\n          name\n        }\n        rating\n      }\n      user {\n        first_name\n        last_name\n        id\n        role\n        email\n      }\n    }\n  }\n": types.UpdateReviewDocument,
@@ -62,6 +63,22 @@ export function graphql(source: "\n  mutation LogIn($input: LoginInput!) {\n  lo
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query GetCastById($input: CastInput!) {\n    getCastById(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n    getMoviesOfCast(input: $input) {\n      id\n      title\n      description\n      release_date\n      poster\n    }\n  }\n"): (typeof documents)["\n  query GetCastById($input: CastInput!) {\n    getCastById(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n    getMoviesOfCast(input: $input) {\n      id\n      title\n      description\n      release_date\n      poster\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n      description\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      description\n      movie_id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetCategories {\n    getCategories {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetCategories {\n    getCategories {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -95,18 +112,6 @@ export function graphql(source: "\n  mutation CreateMovie($input: AddMovieInput!
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteMovie($input: DeleteMovieInput!) {\n    deleteMovie(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteMovie($input: DeleteMovieInput!) {\n    deleteMovie(input: $input) {\n      id\n      title\n      description\n      poster\n      release_date\n      category {\n        id\n        name\n      }\n      rating\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateCast($input: AddCastInput!) {\n    createCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateCast($input: EditCastInput!) {\n    updateCast(input: $input) {\n      id\n      name\n      photo\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteCast($input: DeleteCastInput!) {\n    deleteCast(input: $input) {\n      id\n      name\n      photo\n      movie_id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

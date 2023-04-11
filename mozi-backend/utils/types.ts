@@ -75,7 +75,8 @@ export type ExtendedReview = {
 export type Cast = {
   id:string;
   name:string;
-  photo:string
+  photo:string;
+  description:string;
 }
 
 export type MovieCast = {

@@ -132,34 +132,3 @@ export const DELETE_MOVIE = gql`
   }
 `;
 
-export const CREATE_CAST = gql`
-  mutation CreateCast($input: AddCastInput!) {
-    createCast(input: $input) {
-      id
-      name
-      photo
-      movie_id
-    }
-  }
-`;
-
-export const UPDATE_CAST = gql`
-  mutation UpdateCast($input: EditCastInput!) {
-    updateCast(input: $input) {
-      id
-      name
-      photo
-    }
-  }
-`;
-
-export const DELETE_CAST = gql`
-  mutation DeleteCast($input: DeleteCastInput!) {
-    deleteCast(input: $input) {
-      id
-      name
-      photo
-      movie_id
-    }
-  }
-`;

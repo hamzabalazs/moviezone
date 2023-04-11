@@ -58,6 +58,7 @@
     "cast":{
         "addCastTitle":"Szereplő hozzáadása a filmhez",
         "name":"Szereplő neve",
+        "description":"Leírás",
         "photo":"Fotó",
         "selectedCast":"Választott szereplő"
     },

@@ -9,18 +9,20 @@ import {
 import {
   CREATE_CAST,
   DELETE_CAST,
-  GET_MOVIE_BY_ID,
   UPDATE_CAST,
-} from "../../movies/movieQueries";
+} from "../castQueries";
+import { GET_MOVIE_BY_ID } from "../../movies/movieQueries";
 
 type CastData = {
   addCast: (
     name: string,
     photo: string,
+    description:string,
   ) => Promise<CastWithMovie | null>;
   updateCast: (
     id:string,
     name: string,
+    description:string,
   ) => Promise<Cast | null>;
   deleteCast: (id: string) => Promise<CastWithMovie | null>;
 };
@@ -34,12 +36,14 @@ export function useCast(movie_id?:string): CastData {
   async function addCast(
     name: string,
     photo: string,
+    description:string,
   ): Promise<CastWithMovie | null> {
     const result = await AddCastAPI({
       variables: {
         input: {
           name,
           photo,
+          description,
           movie_id,
         },
       },
@@ -104,12 +108,14 @@ export function useCast(movie_id?:string): CastData {
   async function updateCast(
     id:string,
     name: string,
+    description:string,
   ): Promise<Cast | null> {
     const result = await UpdateCastAPI({
       variables: {
         input: {
           id,
           name,
+          description,
           movie_id,
         },
       },

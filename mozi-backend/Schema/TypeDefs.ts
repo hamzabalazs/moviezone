@@ -55,6 +55,14 @@ export const typeDefs = gql`
     rating: String!
   }
 
+  type CastWithMovie{
+    id: ID!
+    name: String!
+    photo: String!
+    description: String!
+    movie_id: ID!
+  }
+
   type Review {
     id: ID!
     rating: String!
@@ -67,18 +75,12 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     photo: String!
+    description: String!
   }
 
   type Movie_Cast {
     movie_id: ID!,
     cast_id: ID!
-  }
-
-  type CastWithMovie{
-    id: ID!
-    name: String!
-    photo: String!
-    movie_id: ID!
   }
 
   type DbReview {
@@ -105,6 +107,14 @@ export const typeDefs = gql`
     last_name: String!
     role: String!
     email: String!
+  }
+
+  type MovieOfCast {
+    id: ID!
+    title: String!
+    description: String!
+    release_date: String!
+    poster: String!
   }
 
   input MovieInput {
@@ -333,12 +343,14 @@ export const typeDefs = gql`
   input AddCastInput {
     name: String!
     photo: String!
+    description: String!
     movie_id: ID!
   }
 
   input EditCastInput {
     id:ID!
     name: String!
+    description: String!
     movie_id: ID
   }
 
@@ -383,6 +395,7 @@ export const typeDefs = gql`
     getCast(input: CastOfMovieInput!): [Cast!]!
     getCastById(input: CastInput!): Cast!
     checkForCast(input: CheckForCastInput!): Cast!
+    getMoviesOfCast(input: CastInput!): [MovieOfCast!]!
   }
 
   # Mutations

@@ -25,6 +25,7 @@ const Login = lazy(() => import("./auth/pages/Login"));
 const Categories = lazy(() => import("./categories/pages/Categories"));
 const Reviews = lazy(() => import("./reviews/pages/Reviews"));
 const MoviePage = lazy(() => import("./movies/pages/MoviePage"));
+const CastPage = lazy(() => import("./cast/pages/CastPage"));
 const Register = lazy(() => import("./users/pages/Register"));
 const Forgotpass = lazy(() => import("./users/pages/Forgotpass"));
 const Users = lazy(() => import("./users/pages/Users"));
@@ -298,6 +299,10 @@ root.render(
                   <Route
                     path="/movie/:currmovie_id"
                     element={<MoviePage />}
+                  ></Route>
+                  <Route
+                    path="/cast/:currcast_id"
+                    element={<CastPage />}
                   ></Route>
                   <Route path="account" element={<Account />}></Route>
                 </Routes>
