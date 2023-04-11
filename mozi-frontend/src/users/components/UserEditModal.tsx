@@ -115,6 +115,8 @@ export default function UserEditModal({ user, onClose, allowEditRole }: Props) {
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
+            maxHeight:"80%",
+            overflow:'auto'
           }}
           component="form"
           onSubmit={formik.handleSubmit}

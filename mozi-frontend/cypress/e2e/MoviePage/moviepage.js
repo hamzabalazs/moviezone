@@ -87,6 +87,7 @@ When("I rate movie", () => {
     .first()
     .click();
   cy.get('[data-testid="review-add"]').click();
+  cy.wait(100)
 });
 
 Then("List should have one element", () => {
@@ -157,6 +158,7 @@ Then("I should not see review delete dialog", () => {
 
 When("I click accept review", () => {
   cy.get('[data-testid="review-delete-dialog-accept"]').click();
+  cy.wait(100)
 });
 
 When("I click on movie edit button", () => {

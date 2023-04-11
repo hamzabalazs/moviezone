@@ -32,8 +32,7 @@
         },
         "selectedReview": "Választott vélemény",
         "noReviewFound": "Úgy néz ki még nincsenek vélemények írva ezzel a felhasználóval. Véleményezni a főoldalon lehetséges a filmekre kattintva!",
-        "noReviewFoundForMovie": "Úgy néz ki még nincsenek vélemények írva erről a filmről. Légy az első aki véleményezi ezt a filmet"
-        
+        "noReviewFoundForMovie": "Úgy néz ki még nincsenek vélemények írva erről a filmről. Légy az első aki véleményezi ezt a filmet"     
     },
     "category":{
         "categoryName": "Kategória neve",

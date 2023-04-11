@@ -20,7 +20,7 @@ Given("I open home page", () => {
 When("I sort by title", () => {
   cy.get("#sort-button").click();
   cy.get("#sort-title").click();
-  cy.wait(50);
+  cy.wait(100);
 });
 
 Then("Movie List should be sorted ascending", () => {

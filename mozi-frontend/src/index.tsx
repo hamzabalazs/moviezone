@@ -19,6 +19,8 @@ import {
 import { SnackbarProvider } from "notistack";
 import { User, UserRole } from "./gql/graphql";
 import LoadingComponent from "./common/components/LoadingComponent";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n";
 
 const Home = lazy(() => import("./movies/pages/Home"));
 const Login = lazy(() => import("./auth/pages/Login"));
@@ -243,69 +245,71 @@ const client = new ApolloClient({
 
 root.render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={1}>
-      <ApolloProvider client={client}>
-        <MyThemeProvider>
-          <BrowserRouter>
-            <SessionContextProvider>
-              <Suspense fallback={LoadingComponent(true)}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="login" element={<Login />} />
-                  <Route path="register" element={<Register />} />
-                  <Route path="forgotpass" element={<Forgotpass />} />
-                  <Route
-                    path="/resetpassword/:token"
-                    element={<ResetPassword />}
-                  />
-                  <Route
-                    path="dashboard"
-                    element={
-                      <RoleWrapper role={UserRole["Admin"]}>
-                        <Dashboard />
-                      </RoleWrapper>
-                    }
-                  />
-                  <Route
-                    path="categories"
-                    element={
-                      <RoleWrapper role={UserRole["Editor"]}>
-                        <Categories />
-                      </RoleWrapper>
-                    }
-                  />
-                  <Route
-                    path="reviews"
-                    element={
-                      <RoleWrapper role={UserRole["Viewer"]}>
-                        <Reviews />
-                      </RoleWrapper>
-                    }
-                  />
-                  <Route
-                    path="users"
-                    element={
-                      <RoleWrapper role={UserRole["Admin"]}>
-                        <Users />
-                      </RoleWrapper>
-                    }
-                  ></Route>
-                  <Route
-                    path="/movie/:currmovie_id"
-                    element={<MoviePage />}
-                  ></Route>
-                  <Route
-                    path="/cast/:currmovie_id/:currcast_id"
-                    element={<CastPage />}
-                  ></Route>
-                  <Route path="account" element={<Account />}></Route>
-                </Routes>
-              </Suspense>
-            </SessionContextProvider>
-          </BrowserRouter>
-        </MyThemeProvider>
-      </ApolloProvider>
-    </SnackbarProvider>
+    <I18nextProvider i18n={i18n}>
+      <SnackbarProvider maxSnack={1}>
+        <ApolloProvider client={client}>
+          <MyThemeProvider>
+            <BrowserRouter>
+              <SessionContextProvider>
+                <Suspense fallback={LoadingComponent(true)}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                    <Route path="forgotpass" element={<Forgotpass />} />
+                    <Route
+                      path="/resetpassword/:token"
+                      element={<ResetPassword />}
+                    />
+                    <Route
+                      path="dashboard"
+                      element={
+                        <RoleWrapper role={UserRole["Admin"]}>
+                          <Dashboard />
+                        </RoleWrapper>
+                      }
+                    />
+                    <Route
+                      path="categories"
+                      element={
+                        <RoleWrapper role={UserRole["Editor"]}>
+                          <Categories />
+                        </RoleWrapper>
+                      }
+                    />
+                    <Route
+                      path="reviews"
+                      element={
+                        <RoleWrapper role={UserRole["Viewer"]}>
+                          <Reviews />
+                        </RoleWrapper>
+                      }
+                    />
+                    <Route
+                      path="users"
+                      element={
+                        <RoleWrapper role={UserRole["Admin"]}>
+                          <Users />
+                        </RoleWrapper>
+                      }
+                    ></Route>
+                    <Route
+                      path="/movie/:currmovie_id"
+                      element={<MoviePage />}
+                    ></Route>
+                    <Route
+                      path="/cast/:currmovie_id/:currcast_id"
+                      element={<CastPage />}
+                    ></Route>
+                    <Route path="account" element={<Account />}></Route>
+                  </Routes>
+                </Suspense>
+              </SessionContextProvider>
+            </BrowserRouter>
+          </MyThemeProvider>
+        </ApolloProvider>
+      </SnackbarProvider>
+    </I18nextProvider>
   </React.StrictMode>
 );
 

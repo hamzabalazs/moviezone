@@ -39,7 +39,10 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
           variables: {
             input: { id: movie_id },
             input2: { movie_id: movie_id, limit:3, offset:0 },
-            input3: { user_id:"",movie_id: movie_id}
+            input3: { user_id:"",movie_id: movie_id},
+            input4:{
+              movie_id
+            }
           },
         });
         if (!res) return;
@@ -49,14 +52,18 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
           variables: {
             input: { id: movie_id },
             input2: { movie_id: movie_id, limit:3, offset:0 },
-            input3: { user_id:"",movie_id: movie_id}
+            input3: { user_id:"",movie_id: movie_id},
+            input4:{
+              movie_id
+            }
           },
           data: {
             getMovieById: data.createReview.movie,
             getReviewsOfMovie: [...res.getReviewsOfMovie,data.createReview],
             getNumberOfReviewsOfMovie: {
               totalCount: res.getNumberOfReviewsOfMovie.totalCount + 1
-            }
+            },
+            getCast: res.getCast
           },
         });
       },
@@ -85,6 +92,9 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
               offset:0,
             },
             input3: { movie_id:movie_id,user_id: "" },
+            input4:{
+              movie_id
+            }
           },
         });
         if (!res || !data || !data.updateReview) return;
@@ -98,11 +108,15 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
               offset:0,
             },
             input3: { user_id: "",movie_id:movie_id },
+            input4:{
+              movie_id
+            }
           },
           data: {
             getMovieById: data.updateReview.movie,
             getReviewsOfMovie: [...res.getReviewsOfMovie],
-            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie
+            getNumberOfReviewsOfMovie: res.getNumberOfReviewsOfMovie,
+            getCast: res.getCast
           },
         });
       },
@@ -129,6 +143,9 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
               offset:0,
             },
             input3: { user_id: "",movie_id:movie_id },
+            input4:{
+              movie_id
+            }
           },
         });
         if (!data || res === undefined) return;
@@ -143,13 +160,17 @@ export function useReview(movie_id: string,user_id:string): ReviewData {
                 offset:0,
               },
               input3: { movie_id:movie_id,user_id: "" },
+              input4:{
+                movie_id
+              }
             },
             data: {
               getMovieById: data.deleteReview.movie,
               getReviewsOfMovie: res.getReviewsOfMovie.filter((x:Review) => x.id !== data.deleteReview.id),
               getNumberOfReviewsOfMovie: {
                 totalCount: res.getNumberOfReviewsOfMovie.totalCount - 1
-              }
+              },
+              getCast: res.getCast
             },
           });
         }

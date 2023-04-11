@@ -27,6 +27,8 @@ export default function MovieAddModal(props: Props) {
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
+            maxHeight:"80%",
+            overflow:'auto'
           }}
         >
           <AddMovieCard setIsOpenAdd={setIsOpenAdd} />
