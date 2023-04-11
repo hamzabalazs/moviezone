@@ -19,6 +19,7 @@
         "Language": "Nyelv",
         "English": "Angol",
         "Hungarian": "Magyar",
+        "Romanian":"Román",
         "logoutSuccess":"Sikeres kilépés!",
         "dashboard":"Irányítópult"
     },
@@ -60,7 +61,8 @@
         "name":"Szereplő neve",
         "description":"Leírás",
         "photo":"Fotó",
-        "selectedCast":"Választott szereplő"
+        "selectedCast":"Választott szereplő",
+        "featuredIn":"Szerepelt"
     },
     "failMessages" : {
         "reviewAddMultiple": "Már van vélemény adva az adott filmről!",
@@ -79,6 +81,7 @@
         "movieEdit": "A film szerkesztése sikeres!",
         "categoryEdit": "A kategória szerkesztése sikeres!",
         "userEdit": "A felhasználó szerkesztése sikeres!",
+        "castAdd":"A szereplő hozzáadása sikeres!",
         "reviewDelete": "A vélemény törlése sikeres!",
         "movieDelete": "A film törlése sikeres!",
         "categoryDelete": "A kategória törlése sikeres!",
@@ -172,7 +175,7 @@
         "titleReq": "A cím kötelező!",
         "descriptionReq": "A leírás kötelező!",
         "release_dateReq": "A kiadási dátum kötelező!",
-        "release_dateFormat": "Érvénytelen formátum! Formátum kinézete:dd/MM/yyyy",
+        "release_dateFormat": "Érvénytelen formátum! Formátum kinézete:éééé-hh-nn",
         "firstNameReq": "A keresztnév kötelező!",
         "lastNameReq": "A vezetéknév kötelező!",
         "passwordReq":"A jelszó kötelező!",
@@ -190,5 +193,7 @@
         "categoryNotValid":"A kategória nem érvényes!",
         "reviewNotValid":"A vélemény nem érvényes!",
         "userNotValid":"A felhasználó nem érvényes!"
-    }
+    },
+    "search":"Keresés..",
+    "sort":"Rendezés"
 }

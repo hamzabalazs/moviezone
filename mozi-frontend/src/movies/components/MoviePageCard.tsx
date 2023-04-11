@@ -63,7 +63,7 @@ export default function MoviePageCard({ movie, onEdit, onDelete, onCastAdd }: Pr
           <span style={{ fontWeight: "bold" }}>{t("movie.description")}:</span>{" "}
           {movie.description}
         </Typography>
-        <Typography variant="h5" gutterBottom sx={{ mt: "auto" }}>
+        <Typography variant="h5" gutterBottom sx={{ mt: "auto",display:"inline-flex", alignItems:"center"  }}>
           <span style={{ fontWeight: "bold" }}>{t("movie.rating")}:</span>{" "}
           {
             <Rating

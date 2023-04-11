@@ -19,6 +19,7 @@
         "Language": "Language",
         "English": "English",
         "Hungarian": "Hungarian",
+        "Romanian":"Romanian",
         "logoutSuccess":"Logout successful!",
         "dashboard": "Dashboard"
     },
@@ -59,7 +60,8 @@
         "name":"Cast member name",
         "description":"Description",
         "photo":"Photo",
-        "selectedCast":"Selected cast member"
+        "selectedCast":"Selected cast member",
+        "featuredIn":"Featured in"
     },
     "failMessages" : {
         "reviewAddMultiple": "You have already rated this movie!",
@@ -190,5 +192,7 @@
         "categoryNotValid":"Category is not valid!",
         "reviewNotValid":"Review is not valid!",
         "userNotValid":"User is not valid!"
-    }
+    },
+    "search":"Search..",
+    "sort":"Sort"
 }

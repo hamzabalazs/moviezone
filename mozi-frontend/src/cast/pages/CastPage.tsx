@@ -66,7 +66,7 @@ export default function CastPage() {
           variant="h4"
           sx={{ marginTop: "3%", marginBottom: "2%", marginLeft: "5%" }}
         >
-          Featured in
+          {t('cast.featuredIn')}
         </Typography>
         <Grid container spacing={4} sx={{marginLeft:"5%",marginRight:"5%",width:"90%",marginBottom:"2%"}}>
           {movies.map((movie: Movie) => (

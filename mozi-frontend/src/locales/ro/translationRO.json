@@ -1,0 +1,198 @@
+{
+    "movie":{
+        "title": "Titlu",
+        "description": "Descriere",
+        "category": "Categorie",
+        "release_date":"Data lansării",
+        "rating":"Rating",
+        "poster":"Poster",
+        "selectedMovie":"Filmul selectat"
+    },
+    "navbar":{
+        "Categories": "Categorii",
+        "Movies": "Filme",
+        "Users": "Utilizatorii",
+        "myaccount": "Contul meu",
+        "logout": "Deconectare",
+        "myReviews": "Recenziile mele",
+        "Reviews": "Recenzii",
+        "Language": "Limbă",
+        "English": "Engleză",
+        "Hungarian": "Maghiară",
+        "Romanian": "Română",
+        "logoutSuccess":"Deconectare reușită!",
+        "dashboard":"Bord"
+    },
+    "footer":"© 2023 MovieZone Toate drepturile rezervate.",
+    "review":{
+        "reviewCard":{
+            "nameOfUser": "Numele utilizatorului",
+            "description":"Descriere",
+            "rating":"Rating"
+        },
+        "selectedReview": "Recenzia selectată",
+        "noReviewFound": "Se pare că nu au fost scrise recenzii cu acest cont. Recenziile pot fi făcute pe pagina de start făcând clic pe filme!",
+        "noReviewFoundForMovie": "Se pare că nu au fost scrise recenzii pentru acest film. Fii primul care scrie o recenzie a acestui film!"    
+    },
+    "category":{
+        "categoryName": "Numele categoriei",
+        "selectedCategory": "Categoria selectată",
+        "name": "Nume",
+        "noCategoryFound": "Nu s-au găsit categorii! Adaugă unul cu butonul din colțul din stânga sus!",
+        "categoryExists": "Categoria există deja! Încearcă o altă nume!"
+    },
+    "user":{
+        "userCard":{
+            "fullName": "Nume complet",
+            "email": "Email",
+            "role": "Rol"
+        },
+        "first_name":"Prenume",
+        "last_name": "Nume",
+        "email": "Email",
+        "password": "Parolă",
+        "role":"Rol",
+        "selectedUser":"Utilizator selectat",
+        "emailExists":"Nu se poate schimba e-mailul cu unul deja existent!"
+    },
+    "cast":{
+        "addCastTitle":"Adaugarea unui actor la film",
+        "name":"Numele actorului",
+        "description":"Descriere",
+        "photo":"Foto",
+        "selectedCast":"Actorul selectat",
+        "featuredIn":"A apărut în"
+    },
+    "failMessages" : {
+        "reviewAddMultiple": "Ai evaluat deja acest film!",
+        "reviewDescriptionMissing": "Nu a fost acordat nicio descriere!",
+        "reviewRatingMissing": "Nu a fost acordat niciun rating!",
+        "loginFailedEmail":"E-mail invalid! Nu s-a putut conecta!",
+        "loginFailedPassword":"Parolă Invalidă! Nu s-a putut conecta!",
+        "addSameCategory":"Categoria există deja!",
+        "expiredToken":"Sesiunea a expirat! Te rog loghează-te din nou!"
+    },
+    "successMessages": {
+        "reviewAdd": "Recenzia a fost adăugată cu succes!",
+        "movieAdd": "Filmul a fost adăugat cu succes!",
+        "categoryAdd": "Categoria a fost adăugată cu succes!",
+        "reviewEdit": "Recenzia a fost editată cu succes!",
+        "movieEdit": "Filmul a fost editat cu succes!",
+        "categoryEdit": "Categoria a fost editată cu succes!",
+        "userEdit": "Utilizatorul a fost editat cu succes!",
+        "castAdd":"Actorul a fost adăugat cu succes!",
+        "reviewDelete": "Recenzia a fost ștearsă cu succes!",
+        "movieDelete": "Filmul a fost șters cu succes!",
+        "categoryDelete": "Categoria a fost ștearsă cu succes!",
+        "userDelete": "Utilizatorul a fost șters cu succes!",
+        "passwordChanged":"Parola a fost schimbată cu succes!",
+        "castDelete": "Actorul a fost șters cu succes!"
+    },
+    "addTitle": {
+        "category":"Adăugați o categorie",
+        "movie":"Adăugați un film",
+        "review":"Evaluează acest film"
+    },
+    "buttons": {
+        "add": "Adaugare",
+        "edit": "Editare",
+        "delete": "Șterge",
+        "accept": "Accept",
+        "quit": "Ieșire",
+        "addCast": "Adaugă actor"
+    },
+    "deleteMessages": {
+        "deleteMovieTitle": "Doriți să ștergeți acest film?",
+        "deleteMovieContent": "Dacă acceptați, acest film va fi șters pentru totdeauna din baza de date!",
+        "deleteReviewTitle": "Doriți să ștergeți această recenzie?",
+        "deleteReviewContent": "Dacă acceptați, această recenzie va fi ștearsă pentru totdeauna din baza de date!",
+        "deleteCategoryTitle": "Doriți să ștergeți această categorie?",
+        "deleteCategoryContent": "Dacă acceptați, această categorie va fi ștearsă pentru totdeauna din baza de date!",
+        "deleteUserTitle": "Doriți să ștergeți acest utilizator?",
+        "deleteUserContent": "Dacă acceptați, acest utilizator va fi șters pentru totdeauna din baza de date!",
+        "deleteCurrentUserTitle": "Doriți să vă ștergeți contul?",
+        "deleteCurrentUserContent": "Dacă acceptați, vă veți șterge definitiv contul! Această acțiune nu poate fi inversată! Sigur doriți să vă ștergeți contul?",
+        "deleteCastTitle": "Doriți să ștergeți acest actor?",
+        "deleteCastContent": "Dacă acceptați, acest actor va fi șters pentru totdeauna din baza de date!"
+    },
+    "login": {
+        "login": "Autentificare",
+        "email":"Email",
+        "password":"Parolă",
+        "noAccount":"Nu ai un cont? Înregistrează-te aici!",
+        "forgotPass": "Aţi uitat parola?",
+        "invalidLogin": "Email-ul sau parola nu sunt valide!",
+        "success":"Autentificare reușită!"
+    },
+    "register": {
+        "register": "Înregistrare",
+        "first_name":"Prenume",
+        "last_name": "Nume",
+        "email": "Email",
+        "password": "Parolă",
+        "hasAccount": "Ai deja un cont? Click pentru a te autentifica!",
+        "accountExists": "Contul Există deja!",
+        "success":"Înregistrare reușită!"
+    },
+    "forgotPass": {
+        "passwordReset":"Reseteaza parola",
+        "content":"Nu vă faceți griji, dacă e-mailul dvs. se află în sistemul nostru, vă vom oferi instrucțiunile de resetare",
+        "email":"Email",
+        "hasAccount": "Ai deja un cont? Click pentru a te autentifica!",
+        "noUser": "E-mailul nu poate fi găsit în sistemul nostru!",
+        "isUser": "V-am trimis un e-mail cu instrucțiunile pentru a vă reseta parola!"
+    },
+    "resetPass":{
+        "resetpassword":"Reseteaza parola",
+        "password":"Parolă",
+        "confirmPassword":"Confirmă parola",
+        "passwordResetTimeout":"Timpul a expirat pentru resetarea parolei! Solicitați din nou resetarea parolei!"
+    },
+    "dashboard":{
+        "reviewTab": "Fila recenzi",
+        "movieTab": "Fila film",
+        "categoryTab": "Fila categorie",
+        "movies": "Filme",
+        "movieYearChartText":"Numărul de filme lansate pe an din 2000",
+        "nrOfMovies":"Nr. de filme",
+        "nrOfReviewsText":"Numărul de recenzii ale unui film pe o perioadă din ultimele șase luni",
+        "nrOfReviews":"Nr. de recenzi",
+        "avgOfReviewsText":"Media recenziilor unui film pe o perioadă din ultimele șase luni",
+        "avgOfReviews": "Media recenziilor",
+        "movieNrChartText":"Numărul de filme pe categorie",
+        "noReviews":"Nu s-au găsit recenzii pentru filmul selectat!",
+        "avgOfCategoriesText":"Media recenziilor pe categorii",
+        "reviews":"Recenzii"
+    },
+    "moviepage":{
+        "cast":"Actori",
+        "allReviews": "Toate recenziile"
+    },
+    "formikErrors": {
+        "categoryReq": "Numele categoriei este obligatoriu!",
+        "emailReq": "E-mailul este necesar!",
+        "titleReq": "Titlul este obligatoriu!",
+        "descriptionReq": "Descrierea este obligatoriu",
+        "release_dateReq": "Data lansării este obligatorie!",
+        "release_dateFormat": "Format de dată nevalid! Formatul este:aaaa-mm-zz",
+        "firstNameReq": "Prenumele este obligatoriu!",
+        "lastNameReq": "Numele este obligatoriu!",
+        "passwordReq":"Parola este obligatoriu!",
+        "passwordLength": "Parola trebuie să aibă 5 sau mai multe caractere!",
+        "emailFormat": "Format de email invalid!",
+        "nameReq":"Numele este obligatoriu!",
+        "ratingReq":"Rating-ul este obligatoriu!",
+        "posterReq": "Posterul este obligatoriu!",
+        "confirmPasswordReq": "Confirmarea parolei este obligatoriu!",
+        "passwordsDontMatch": "Parolele nu se potrivesc!"
+    },
+    "someError": "Vă rugăm să încercați din nou mai târziu!",
+    "validityFailure":{
+        "movieNotValid":"Filmul nu este valabil!",
+        "categoryNotValid":"Categoria nu este valabil!",
+        "reviewNotValid":"Recenzia nu este valabil!",
+        "userNotValid":"Utilizatorul nu este valabil!"
+    },
+    "search": "Cautare..",
+    "sort": "Sortare"
+}

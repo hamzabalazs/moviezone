@@ -230,12 +230,6 @@ const client = new ApolloClient({
               }
               if (merged.length - incoming.length === 1) {
                 const isDelete = eqSet(existingIdSet, incomingIdSet);
-                // incomingIdSet.forEach((id) => {
-                //   if (!isDelete) return;
-                //   if (existingIdSet.has(id)) isDelete = true;
-                //   else isDelete = false;
-                // });
-
                 if (isDelete) return [...incoming];
               }
               return [...merged, ...incoming];

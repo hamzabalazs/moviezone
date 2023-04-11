@@ -129,7 +129,7 @@ function MovieList() {
               type={"search"}
               id="searchValue"
               name="searchValue"
-              placeholder="Search.."
+              placeholder={t('search') || ""}
               sx={{ border: 2, width: "70%" }}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 searchDebounce.clear();
@@ -145,7 +145,7 @@ function MovieList() {
               onClick={handleClick}
               sx={{width:"28.5%", marginLeft:1, height:"100%", color:"text.primary",border:2}}
             >
-              Sort
+              {t("sort") || ""}
             </Button>
             <Menu
               id="sort-menu"

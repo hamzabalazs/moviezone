@@ -58,8 +58,8 @@ export default function MovieListCard({ movie }: Props) {
           >
             {t("movie.release_date")}: {movie.release_date}
           </Typography>
-          <Typography variant="subtitle2" gutterBottom sx={{ mt: "auto" }}>
-            {t("movie.rating")}:{" "}
+          <Typography variant="subtitle1" sx={{ mt: "auto",display:"inline-flex", alignItems:"center" }}>
+            {t("movie.rating")}: {" "}
             {
               <Rating
                 name="read-only"
@@ -68,6 +68,7 @@ export default function MovieListCard({ movie }: Props) {
                 readOnly
                 data-value={rating}
                 data-testid="movie-list-card-rating"
+
               />
             }
           </Typography>
