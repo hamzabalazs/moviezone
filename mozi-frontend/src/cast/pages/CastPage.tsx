@@ -9,8 +9,11 @@ import CastDeleteDialog from "../components/CastDeleteDialog";
 import { useCastPageData } from "../hooks/useCastPageData";
 import CastPageCard from "../components/CastPageCard";
 import { useMoviePageData } from "../../movies/hooks/useMoviePageData";
-import { Grid, Typography } from "@mui/material";
+import { Fab, Grid, Typography } from "@mui/material";
 import MovieListCard from "../../movies/components/MovieListCard";
+import MyFooter from "../../common/components/MyFooter";
+import ScrollTop from "../../common/components/ScrollTop";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export default function CastPage() {
   const { currcast_id, currmovie_id } = useParams();
@@ -65,14 +68,20 @@ export default function CastPage() {
         >
           Featured in
         </Typography>
-        <Grid container spacing={4} sx={{marginLeft:"5%",marginRight:"5%",width:"90%"}}>
+        <Grid container spacing={4} sx={{marginLeft:"5%",marginRight:"5%",width:"90%",marginBottom:"2%"}}>
           {movies.map((movie: Movie) => (
             <Grid item key={movie.id} xs={3}>
               <MovieListCard movie={movie}/>
             </Grid>
           ))}
         </Grid>
+        <MyFooter />
       </main>
+      <ScrollTop>
+        <Fab size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </>
   );
 }

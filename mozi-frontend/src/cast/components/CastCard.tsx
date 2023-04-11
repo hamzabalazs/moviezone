@@ -34,6 +34,7 @@ export default function CastCard({ cast }: Props) {
           flexDirection: "column",
           borderRadius: 3,
         }}
+        data-testid="cast-card"
       >
         {cast.photo && (
           <CardMedia

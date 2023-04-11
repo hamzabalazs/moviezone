@@ -1,5 +1,9 @@
+import { adminCredentials } from "./e2e";
+import { graphQlUrl } from "./e2e";
+import { baseUrl } from "./e2e";
+
 Cypress.Commands.add("login", (email, password) => {
-  cy.visit("http://localhost:3000/login");
+  cy.visit(baseUrl);
   cy.get("#email").type(email);
   cy.get("#password").type(password);
   cy.get("#submit").click();
@@ -7,7 +11,7 @@ Cypress.Commands.add("login", (email, password) => {
 
 Cypress.Commands.add("getAdminToken", () => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -19,8 +23,8 @@ Cypress.Commands.add("getAdminToken", () => {
       `,
       variables: {
         input: {
-          email: "admin@example.com",
-          password: "admin",
+          email: adminCredentials.email,
+          password: adminCredentials.password,
         },
       },
     },
@@ -29,7 +33,7 @@ Cypress.Commands.add("getAdminToken", () => {
 
 Cypress.Commands.add("deleteUser", (email, token) => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -51,7 +55,7 @@ Cypress.Commands.add("deleteUser", (email, token) => {
     },
   }).then((resp) => {
     cy.request({
-      url: "http://localhost:5000/graphql",
+      url: graphQlUrl,
       method: "POST",
       headers: {
         "auth-token": token,
@@ -80,7 +84,7 @@ Cypress.Commands.add("deleteUser", (email, token) => {
 
 Cypress.Commands.add("deleteMovie", (name, token) => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -103,7 +107,7 @@ Cypress.Commands.add("deleteMovie", (name, token) => {
     },
   }).then((resp) => {
     cy.request({
-      url: "http://localhost:5000/graphql",
+      url: graphQlUrl,
       method: "POST",
       headers: {
         "auth-token": token,
@@ -137,7 +141,7 @@ Cypress.Commands.add("deleteMovie", (name, token) => {
 
 Cypress.Commands.add("addUser", (user) => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -165,7 +169,7 @@ Cypress.Commands.add("addUser", (user) => {
 
 Cypress.Commands.add("getTotalUserCount", () => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -181,12 +185,12 @@ Cypress.Commands.add("getTotalUserCount", () => {
   });
 });
 
-Cypress.Commands.add("addReview", (review,token) => {
+Cypress.Commands.add("addReview", (review, token) => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
-    headers:{
-      'auth-token': token
+    headers: {
+      "auth-token": token,
     },
     body: {
       query: `
@@ -213,12 +217,12 @@ Cypress.Commands.add("addReview", (review,token) => {
         },
       },
     },
-  })
+  });
 });
 
 Cypress.Commands.add("getTotalReviewsOfUserCount", (userId) => {
   cy.request({
-    url: "http://localhost:5000/graphql",
+    url: graphQlUrl,
     method: "POST",
     body: {
       query: `
@@ -240,15 +244,46 @@ Cypress.Commands.add("getTotalReviewsOfUserCount", (userId) => {
   });
 });
 
-Cypress.Commands.add("addMovie",(movie,token) => {
-    cy.request({
-      url:'http://localhost:5000/graphql',
-      method: "POST",
-      headers:{
-        'auth-token':token
+Cypress.Commands.add("addCast", (cast, movie_id, token) => {
+  cy.request({
+    url: graphQlUrl,
+    method: "POST",
+    headers: {
+      "auth-token": token,
+    },
+    body: {
+      query: `
+      mutation CreateCast($input: AddCastInput!) {
+        createCast(input: $input) {
+          id
+          name
+          photo
+          description
+          movie_id
+        }
+      }
+      `,
+      variables: {
+        input: {
+          name: cast.name,
+          photo: cast.photo,
+          description: cast.description,
+          movie_id:movie_id,
+        },
       },
-      body:{
-        query: `
+    },
+  });
+});
+
+Cypress.Commands.add("addMovie", (movie, token) => {
+  cy.request({
+    url: graphQlUrl,
+    method: "POST",
+    headers: {
+      "auth-token": token,
+    },
+    body: {
+      query: `
         mutation CreateMovie($input: AddMovieInput!) {
           createMovie(input: $input) {
             id
@@ -264,16 +299,15 @@ Cypress.Commands.add("addMovie",(movie,token) => {
           }
         }
         `,
-        variables:{
-          input:{
-            title:movie.title,
-            description:movie.description,
-            poster:movie.poster,
-            release_date:movie.release_date,
-            category_id:movie.category_id
-          }
-        }
-      }
-    })
-})
-
+      variables: {
+        input: {
+          title: movie.title,
+          description: movie.description,
+          poster: movie.poster,
+          release_date: movie.release_date,
+          category_id: movie.category_id,
+        },
+      },
+    },
+  });
+});

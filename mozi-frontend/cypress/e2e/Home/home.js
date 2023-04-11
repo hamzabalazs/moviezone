@@ -1,10 +1,10 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { adminCredentials, baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl, testMovie } from "../../support/e2e";
 import {MOVIE_ADDED_SUCCESSFUL} from '../../support/errormessages'
 
 after(() => {
   cy.getAdminToken().then((resp) => {
-    cy.deleteMovie("test", resp.body.data.logIn.token);
+    cy.deleteMovie(testMovie.title, resp.body.data.logIn.token);
   });
 });
 

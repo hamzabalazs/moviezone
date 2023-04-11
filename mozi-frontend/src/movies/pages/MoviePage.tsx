@@ -19,6 +19,7 @@ import ReviewCard from "../../reviews/components/ReviewCard";
 import CastAddModal from "../../cast/components/CastAddModal";
 import CastCard from "../../cast/components/CastCard";
 import { useTranslation } from "react-i18next";
+import MyFooter from "../../common/components/MyFooter";
 
 export default function MoviePage() {
   const { currmovie_id } = useParams();
@@ -70,7 +71,7 @@ export default function MoviePage() {
 
   useEffect(() => {
     if (!currUser) navigate("/login");
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0);
   }, []);
 
   return (
@@ -118,7 +119,7 @@ export default function MoviePage() {
             variant="h4"
             sx={{ marginLeft: "7%", marginTop: "3%", marginBottom: "2%" }}
           >
-            {t('moviepage.cast')}
+            {t("moviepage.cast")}
           </Typography>
           <Grid
             container
@@ -128,21 +129,19 @@ export default function MoviePage() {
               marginRight: "7%",
               marginBottom: "3%",
               border: 2,
-              borderRadius:5,
+              borderRadius: 5,
               width: "86%",
             }}
           >
             {cast.map((cast: Cast) => (
               <Grid item key={cast.id} xs="auto">
-                <CastCard
-                  cast={cast}
-                />
+                <CastCard cast={cast} />
               </Grid>
             ))}
           </Grid>
           <AddReviewCard currmovie_id={currmovie_id!} reviews={reviews} />
           <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 10 }}>
-            {t('moviepage.allReviews')}
+            {t("moviepage.allReviews")}
           </Typography>
           <div
             style={{
@@ -170,6 +169,7 @@ export default function MoviePage() {
             )}
           </div>
         </div>
+        <MyFooter />
       </main>
       <ScrollTop>
         <Fab size="small" aria-label="scroll back to top">

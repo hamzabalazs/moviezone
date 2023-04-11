@@ -33,7 +33,7 @@ export default function CastPageCard({ cast, onEdit, onDelete }: Props) {
             />
         )}
         <CardContent>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h3" gutterBottom data-testid="castpage-name">
                 {cast.name}
             </Typography>
             <Typography variant="h5" sx={{mt:"auto"}} gutterBottom data-testid="castpage-description">

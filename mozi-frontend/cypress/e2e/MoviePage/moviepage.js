@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { adminCredentials, baseUrl } from "../../support/e2e";
+import { adminCredentials, baseUrl, testMovie } from "../../support/e2e";
 import {
   TITLE_REQUIRED_MESSAGE,
   NO_RATING_MESSAGE,
@@ -9,14 +9,6 @@ import {
   RELEASE_DATE_REQUIRED_MESSAGE,
   INVALID_DATE_FORMAT_MESSAGE,
 } from "../../support/errormessages";
-
-const testMovie = {
-  title: "test",
-  description: "test",
-  poster: "poster",
-  release_date: "2022-02-02",
-  category_id: "570d66a7-449e-4d28-b61a-bcff1fc4dfdc",
-};
 
 beforeEach(() => {
   cy.login(adminCredentials.email, adminCredentials.password);
