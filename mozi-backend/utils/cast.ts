@@ -30,8 +30,8 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
     if(cast) id = cast.id;
     else{
         id = uuidv4()
-        const sqlCast = `INSERT INTO cast(id,name,photo) VALUES (?,?,?)`
-        const res = await context.db.run(sqlCast,[id,input.name,input.photo])
+        const sqlCast = `INSERT INTO cast(id,name,photo,description) VALUES (?,?,?,?)`
+        const res = await context.db.run(sqlCast,[id,input.name,input.photo,input.description])
         if(!res) throw new GraphQLError(INSERT_CAST_ERROR,{extensions:{code:"INSERT_ERROR"}})   
     }
     const sqlConn = `INSERT INTO movie_cast(movie_id,cast_id) VALUES(?,?)`
@@ -48,8 +48,8 @@ export async function createCast(input:any,context:MyContext):Promise<Cast & Omi
 export async function updateCast(input:any,context:MyContext):Promise<Cast> {
     const cast = await getCastById(input.id,context)
     if(!cast) throw new GraphQLError(NO_CAST_MESSAGE,{extensions:{code:"NOT_FOUND"}})
-    const sql = `UPDATE cast SET name = ? WHERE id = ?`
-    await context.db.run(sql,[input.name,input.id])
+    const sql = `UPDATE cast SET name = ?, description = ? WHERE id = ?`
+    await context.db.run(sql,[input.name,input.description,input.id])
     return {
         id:input.id,
         name:input.name,
@@ -62,7 +62,9 @@ export async function deleteCast(input:any,context:MyContext): Promise<Cast & Om
     const cast = await getCastById(input.id,context);
     if(!cast) throw new GraphQLError(NO_CAST_MESSAGE,{extensions:{code:"NOT_FOUND"}})
     const sqlConn = `DELETE FROM movie_cast WHERE cast_id = ? AND movie_id = ?`
-    await context.db.run(sqlConn,[input.id,input.movie_id])
+    const res = await context.db.run(sqlConn,[input.id,input.movie_id])
+    console.log("resut",res)
+    if(!res) throw new GraphQLError("delete rror")
     return {
         id:cast.id,
         name:cast.name,

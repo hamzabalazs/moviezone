@@ -61,10 +61,6 @@ export default function MoviePage() {
   const [castAddMovie, setCastAddMovie] = useState<Movie | undefined>(
     undefined
   );
-  const [editingCastMovie, setEditingCastMovie] = useState<Movie | null>(null);
-  const [editingCast,setEditingCast] = useState<Cast | undefined>(undefined)
-  const [deletingCastMovie, setDeletingCastMovie] = useState<Movie | null>(null);
-  const [deletingCast, setDeletingCast] = useState<Cast | undefined>(undefined);
   const [editingReview, setEditingReview] = useState<Review | undefined>(
     undefined
   );

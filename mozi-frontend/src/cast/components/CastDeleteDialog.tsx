@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { EXPIRED_TOKEN_MESSAGE } from "../../common/errorMessages";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   cast?: Cast;
@@ -23,6 +24,7 @@ export default function CastDeleteDialog({ cast, movie, onClose }: Props) {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { logOut } = useSessionContext();
+  const navigate = useNavigate();
   const { deleteCast: DeleteCastAPI } = useCast(movie?.id || "");
 
   const handleDeletion = async () => {
@@ -32,7 +34,7 @@ export default function CastDeleteDialog({ cast, movie, onClose }: Props) {
       if (result) {
         const msg = t("successMessages.castDelete");
         enqueueSnackbar(msg, { variant: "success" });
-        onClose?.();
+        navigate(-1)
       }
     } catch (error: any) {
       console.log(error);

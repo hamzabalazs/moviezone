@@ -301,7 +301,7 @@ root.render(
                     element={<MoviePage />}
                   ></Route>
                   <Route
-                    path="/cast/:currcast_id"
+                    path="/cast/:currmovie_id/:currcast_id"
                     element={<CastPage />}
                   ></Route>
                   <Route path="account" element={<Account />}></Route>

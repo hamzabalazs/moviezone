@@ -50,6 +50,7 @@ export const GET_MOVIE_BY_ID = gql`
       id
       name
       photo
+      description
     }
   }
 `;

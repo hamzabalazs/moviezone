@@ -8,13 +8,15 @@ import CastEditModal from "../components/CastEditModal";
 import CastDeleteDialog from "../components/CastDeleteDialog";
 import { useCastPageData } from "../hooks/useCastPageData";
 import CastPageCard from "../components/CastPageCard";
+import { useMoviePageData } from "../../movies/hooks/useMoviePageData";
 
 export default function CastPage() {
-  const { currcast_id } = useParams();
+  const { currcast_id, currmovie_id } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user: currUser } = useSessionContext();
   const {cast,movies,error,loading} = useCastPageData(currcast_id!)
+  const { movie } = useMoviePageData(currmovie_id!)
 
   const [editingCast, setEditingCast] = useState<Cast | undefined>(undefined);
   const [deletingCast, setDeletingCast] = useState<Cast | undefined>(undefined);
@@ -35,7 +37,7 @@ export default function CastPage() {
           />
           <CastDeleteDialog
             cast={deletingCast}
-            movie={null}
+            movie={movie}
             onClose={() => setDeletingCast(undefined)}
           />
         </div>

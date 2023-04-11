@@ -8,19 +8,20 @@ import {
 import { Cast } from "../../gql/graphql";
 import { useSessionContext } from "../../auth/context/SessionContext";
 import { useTranslation } from "react-i18next";
-import { Link as ReactLink } from "react-router-dom";
+import { Link as ReactLink, useParams } from "react-router-dom";
 
 interface Props {
   cast: Cast;
 }
 
 export default function CastCard({ cast }: Props) {
+  const { currmovie_id } = useParams()
   const { user } = useSessionContext();
   const { t } = useTranslation();
   return (
     <Link
       component={ReactLink}
-      to={"/cast/" + cast.id}
+      to={"/cast/" + currmovie_id + "/" +cast.id}
       underline="none"
       data-testid="cast-card-link"
     >
