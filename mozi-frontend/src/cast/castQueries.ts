@@ -14,10 +14,10 @@ export const GET_CAST_BY_ID = gql`
       description
       release_date
       poster
+      rating
     }
   }
 `;
-
 
 export const CREATE_CAST = gql`
   mutation CreateCast($input: AddCastInput!) {

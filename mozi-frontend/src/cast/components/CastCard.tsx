@@ -29,6 +29,7 @@ export default function CastCard({ cast }: Props) {
         variant="outlined"
         sx={{
           height: "100%",
+          width: "144px",
           display: "flex",
           flexDirection: "column",
           borderRadius: 3,

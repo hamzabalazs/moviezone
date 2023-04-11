@@ -114,8 +114,10 @@ export async function deleteMovie(id:string, context:MyContext):Promise<Movie|nu
   }
   const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;
   const sqlReviewDelete = `DELETE FROM review WHERE review.movie_id = ?`
+  const sqlCastDelete = `DELETE FROM movie_cast WHERE movie_id = ?`
   context.db.run(sqlReviewDelete,[id])
   context.db.run(sqlDelete,[id])
+  context.db.run(sqlCastDelete,[id])
   return movie
 }
 

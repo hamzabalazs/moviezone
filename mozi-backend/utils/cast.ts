@@ -20,7 +20,7 @@ export async function checkForCast(name:any,context:MyContext): Promise<Cast | n
 }
 
 export async function getMoviesOfCast(id:any,context:MyContext):Promise<Movie[]> {
-    const sql = `SELECT m.id,m.title,m.description,m.release_date,m.poster FROM movie m JOIN movie_cast mc ON m.id = mc.movie_id JOIN cast c ON mc.cast_id = c.id WHERE c.id = ?`
+    const sql = `SELECT m.* FROM movie m JOIN movie_cast mc ON m.id = mc.movie_id JOIN cast c ON mc.cast_id = c.id WHERE c.id = ?`
     return context.db.all<Movie>(sql,[id])
 }
 

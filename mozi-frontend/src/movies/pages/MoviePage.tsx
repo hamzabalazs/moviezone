@@ -70,6 +70,7 @@ export default function MoviePage() {
 
   useEffect(() => {
     if (!currUser) navigate("/login");
+    window.scrollTo(0,0)
   }, []);
 
   return (
@@ -115,13 +116,13 @@ export default function MoviePage() {
           </div>
           <Typography
             variant="h4"
-            sx={{ marginLeft: "5%", marginTop: "3%", marginBottom: "2%" }}
+            sx={{ marginLeft: "7%", marginTop: "3%", marginBottom: "2%" }}
           >
             {t('moviepage.cast')}
           </Typography>
           <Grid
             container
-            spacing={1.5}
+            spacing={2}
             sx={{
               marginLeft: "7%",
               marginRight: "7%",

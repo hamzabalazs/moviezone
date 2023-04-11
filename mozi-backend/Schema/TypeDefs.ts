@@ -395,7 +395,7 @@ export const typeDefs = gql`
     getCast(input: CastOfMovieInput!): [Cast!]!
     getCastById(input: CastInput!): Cast!
     checkForCast(input: CheckForCastInput!): Cast!
-    getMoviesOfCast(input: CastInput!): [MovieOfCast!]!
+    getMoviesOfCast(input: CastInput!): [Movie!]!
   }
 
   # Mutations
