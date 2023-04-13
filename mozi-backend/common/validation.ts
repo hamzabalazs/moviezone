@@ -5,7 +5,7 @@ import { getToken } from "../utils/auth";
 import { getMovieById } from "../utils/movie";
 import { getReviews } from "../utils/review";
 import { getUserById, getUserByToken } from "../utils/user";
-import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, REVIEW_EXISTS_MESSAGE, REVIEW_INVALID_RATING_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
+import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, REVIEW_EXISTS_MESSAGE, REVIEW_INVALID_RATING_MESSAGE } from "./errorMessages";
 
 export const datevalidator =
 /^\d{4}-\d{2}-\d{2}$/;

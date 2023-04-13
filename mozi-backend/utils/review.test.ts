@@ -21,7 +21,7 @@ import {
   NO_USER_MESSAGE,
   REVIEW_EXISTS_MESSAGE,
   UNAUTHORIZED_MESSAGE,
-} from "../../mozi-frontend/src/common/errorMessages";
+} from "../common/errorMessages";
 import { sessionData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW,GET_REVIEWS } from "../../mozi-frontend/src/reviews/reviewQueries";

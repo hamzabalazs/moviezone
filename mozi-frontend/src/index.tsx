@@ -40,7 +40,7 @@ const root = ReactDOM.createRoot(
 );
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql",
+  uri: window.location.href.includes("localhost") ? "http://localhost:5000/graphql" : window.location.href.replace("3000","5000").replace(/.com\/(\w+)(\/.*)?/g,".com/") + "graphql",
 });
 
 const authLink = setContext((_, { headers }) => {

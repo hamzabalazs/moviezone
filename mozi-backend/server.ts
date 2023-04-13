@@ -5,7 +5,6 @@ import { resolvers } from "./Schema/Resolvers";
 import express from "express";
 import { DocumentNode } from "graphql";
 import { CurrentUser } from "./utils/types";
-const nodemailer = require('nodemailer')
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 
 export interface MyContext {
@@ -16,7 +15,7 @@ export interface MyContext {
 
 async function startApolloServer(typeDefs: DocumentNode, resolvers: any) {
   let db:Database;
-  Database.open('db.sqlite').then((_db:Database) => {
+  Database.open('common/db/db.sqlite').then((_db:Database) => {
     db=_db
     console.log("Connected to database!")
   })

@@ -3,7 +3,7 @@ import {
   NOT_VALID_REVIEW,
   NO_REVIEW_MESSAGE,
   UNAUTHORIZED_MESSAGE,
-} from "../../mozi-frontend/src/common/errorMessages";
+} from "../common/errorMessages";
 import { reviewSchema } from "../common/validation";
 import { MyContext } from "../server";
 import { DbReview, Review } from "./types";

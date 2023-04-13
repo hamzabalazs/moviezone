@@ -14,7 +14,7 @@ import {
   NO_CATEGORY_MESSAGE,
   NO_TOKEN_MESSAGE,
   UNAUTHORIZED_MESSAGE,
-} from "../../mozi-frontend/src/common/errorMessages";
+} from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "../../mozi-frontend/src/categories/categoryQueries"

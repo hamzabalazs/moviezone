@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql";
 import { MyContext } from "../server";
 import { v4 as uuidv4 } from "uuid";
 import { Cast, Movie, MovieCast } from "./types";
-import { INSERT_CAST_ERROR, NO_CAST_MESSAGE } from "../../mozi-frontend/src/common/errorMessages";
+import { INSERT_CAST_ERROR, NO_CAST_MESSAGE } from "../common/errorMessages";
 
 export async function getCast(movie_id:any,context:MyContext): Promise<Cast[]>{
     const sql = `SELECT c.id,c.name,c.photo,c.description FROM cast c JOIN movie_cast mc ON c.id = mc.cast_id WHERE mc.movie_id = ?`
