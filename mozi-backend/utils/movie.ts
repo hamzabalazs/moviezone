@@ -25,7 +25,7 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let categoryString = ""
   if(input.searchField){
     params.push(input.searchField)
-    sql = sql.concat(` title LIKE '%' || ? || '%'`)
+    sql = sql.concat(` title LIKE CONCAT('%', ? , '%')`)
   }
   if(input.searchField && input.category.length !==0) sql = sql.concat(` AND`)
   if(input.category.length !== 0){

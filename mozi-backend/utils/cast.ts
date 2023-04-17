@@ -81,9 +81,10 @@ export async function createCast(
       input.photo,
       input.description,
     ]);
+    context.db.database.commit()
   }
   const sqlConn = `INSERT INTO movie_cast (movie_id,cast_id) VALUES(?,?)`;
-  context.db.query(sqlConn, [input.movie_id, id]);
+  context.db.query(sqlConn, [input.movie_id,id]);
   return {
     id: id,
     name: input.name,
