@@ -170,7 +170,6 @@ export type DbMovie = {
   poster: string;
   release_date: string;
   category_id: string;
-  rating: string;
 };
 
 export type DbUser = {

@@ -1,17 +1,26 @@
 import { GraphQLError } from "graphql/error";
-import { NOT_VALID_MOVIE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
+import { NOT_VALID_MOVIE, NO_CATEGORY_MESSAGE, NO_MOVIE_MESSAGE, UNAUTHORIZED_MESSAGE } from "../common/errorMessages";
 import { createMovieSchema, movieSchema } from "../common/validation";
 import { MyContext } from "../server";
-import { CreateMovieType, Movie, UpdateMovieInput } from "./types";
+import { CreateMovieType, DbMovie, Movie, UpdateMovieInput } from "./types";
+import { getCategoryById } from "./category";
 
 export function getAllMovies(context:MyContext):Promise<any[]> {
   const sql = 'SELECT id,title FROM movie'
-  return context.db.all(sql)
+  // return context.db.query(sql)
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res)
+    })
+  });
 }
 
 export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
   let sql = "SELECT * FROM movie";
-  let params = []
+  let params:any[] = []
   if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
   let categoryString = ""
   if(input.searchField){
@@ -44,10 +53,18 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
     sql = sql.concat(` OFFSET ?`)
     params.push(input.offset)
   }
-  return context.db.all<Movie>(sql,params)
+  // return context.db.query(sql,params)
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,params,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res)
+    })
+  });
 }
 
-export function getNumberOfMovies(input:any,context:MyContext): Promise<number | null> {
+export function getNumberOfMovies(input:any,context:MyContext): Promise<number | undefined> {
   let sql = `SELECT COUNT(*) as totalCount FROM movie`
   if(input.searchField || input.category.length !== 0) sql = sql.concat(" WHERE")
   let searchFieldString = ""
@@ -66,34 +83,61 @@ export function getNumberOfMovies(input:any,context:MyContext): Promise<number |
     categoryString = categoryString.concat(")")
     sql = sql.concat(categoryString)
   }
-  return context.db.get<number>(sql)
+  // return context.db.query(sql)
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
-export async function getMovieById(id:string, context:MyContext):Promise<Movie|null> {
+export async function getMovieById(id:string, context:MyContext):Promise<Movie|undefined> {
   const sql = `SELECT * FROM movie WHERE id = ?`;
-  const result = await context.db.get<Movie>(sql,[id])
-  if(result === undefined) return null;
-  return result
+  // return result
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[id],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function getNumberOfMoviesPerYear(context:MyContext): Promise<any[]>{
-  const sql = `SELECT COUNT(*) as totalCount,strftime('%Y',release_date) as year from movie WHERE strftime('%Y',release_date) > "1999" GROUP BY strftime('%Y',release_date)`
-  const result = await context.db.all(sql)
-  return result
+  const sql = `SELECT COUNT(*) as totalCount,YEAR(release_date) as year from movie WHERE YEAR(release_date) > "1999" GROUP BY YEAR(release_date)`
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res)
+    })
+  });
 }
 
-export async function createMovie(movie:CreateMovieType, context:MyContext):Promise<Movie|null> {
+export async function createMovie(movie:CreateMovieType, context:MyContext):Promise<DbMovie|undefined> {
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const validation = await createMovieSchema.isValid(movie);
   if(!validation) throw new GraphQLError(NOT_VALID_MOVIE,{extensions:{code:'VALIDATION_FAILED'}})
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
-  context.db.run(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
-  return getMovieById(movie.id,context)
+  context.db.query(sql,[movie.id,movie.title,movie.description,movie.poster,movie.release_date,movie.category.id])
+  return {
+    id:movie.id,
+    title:movie.title,
+    description:movie.description,
+    poster:movie.poster,
+    release_date:movie.release_date,
+    category_id:movie.category.id,
+  }
 }
 
-export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<Movie|null> {
+export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Promise<DbMovie|undefined> {
   const isMovie = await getMovieById(movie.id,context)
-  if(!isMovie) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
+  if(isMovie === undefined) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   const validation = await movieSchema.isValid(movie)
   if(!validation) throw new GraphQLError(NOT_VALID_MOVIE,{extensions:{code:'VALIDATION_FAILED'}})
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
@@ -102,22 +146,34 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
     poster = ?, 
     release_date = ?, 
     category_id=? WHERE movie.id = ?`;
-  context.db.run(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id])
-  return getMovieById(movie.id,context)
+  context.db.query(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id])
+  const category = await getCategoryById(movie.category_id,context);
+  console.log(category)
+  if(category === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:"NOT_FOUND"}})
+  const resmovie:DbMovie = {
+    id:movie.id,
+    title:movie.title,
+    description:movie.description,
+    poster:movie.poster,
+    release_date:movie.release_date,
+    category_id:movie.category_id,
+  }
+  console.log(resmovie)
+  return resmovie
 }
 
-export async function deleteMovie(id:string, context:MyContext):Promise<Movie|null> {
+export async function deleteMovie(id:string, context:MyContext):Promise<Movie|undefined> {
   if(context.user?.role.toString() === "viewer") throw new GraphQLError(UNAUTHORIZED_MESSAGE,{extensions:{code:'UNAUTHORIZED'}})
   const movie = await getMovieById(id, context);
-  if(movie === null){
+  if(movie === undefined){
     throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
   }
   const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;
   const sqlReviewDelete = `DELETE FROM review WHERE review.movie_id = ?`
   const sqlCastDelete = `DELETE FROM movie_cast WHERE movie_id = ?`
-  context.db.run(sqlReviewDelete,[id])
-  context.db.run(sqlDelete,[id])
-  context.db.run(sqlCastDelete,[id])
+  context.db.query(sqlReviewDelete,[id])
+  context.db.query(sqlDelete,[id])
+  context.db.query(sqlCastDelete,[id])
   return movie
 }
 

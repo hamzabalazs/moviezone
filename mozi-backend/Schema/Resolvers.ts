@@ -36,6 +36,7 @@ import {
   getNumberOfReviewsOfMovie,
   getNumberOfReviewsOfMoviePerMonth,
   getAverageOfReviewsOfMoviePerMonth,
+  getReviewForUpdate,
 } from "../utils/review";
 import { deleteToken, getToken, getUserForLogin, logIn } from "../utils/auth";
 import {
@@ -51,6 +52,7 @@ import {
 import { MyContext } from "../server";
 import {
   CreateMovieType,
+  DbReview,
   FullUser,
   Movie,
   Review,
@@ -62,6 +64,7 @@ import {
   NOT_VALID_USER,
   NO_CATEGORY_MESSAGE,
   NO_MOVIE_MESSAGE,
+  NO_REVIEW_MESSAGE,
   NO_TOKEN_MESSAGE,
   NO_USER_MESSAGE,
   REVIEW_INVALID_RATING_MESSAGE,
@@ -218,7 +221,8 @@ export const resolvers = {
     async createUser(_: any, args: any, context: MyContext) {
       const newUser = args.input;
       const isUser = await checkForUser(newUser.email, context);
-      if (isUser !== null) {
+      console.log(isUser)
+      if (isUser !== undefined) {
         throw new GraphQLError(USER_EMAIL_USED_MESSAGE, {
           extensions: { code: "ALREADY_EXISTS" },
         });
@@ -242,7 +246,7 @@ export const resolvers = {
       const updatedUser = args.input;
       const isUser = await getUserById(updatedUser.id, context);
       context.user = await tokenChecker(context);
-      if (isUser === null)
+      if (isUser === undefined)
         throw new GraphQLError(NO_USER_MESSAGE, {
           extensions: { code: "NOT_FOUND" },
         });
@@ -252,7 +256,7 @@ export const resolvers = {
       const user_id = args.input.id;
       const isUser = await getUserById(user_id, context);
       context.user = await tokenChecker(context);
-      if (isUser === null)
+      if (isUser === undefined)
         throw new GraphQLError(NO_USER_MESSAGE, {
           extensions: { code: "NOT_FOUND" },
         });
@@ -266,7 +270,7 @@ export const resolvers = {
       context.user = await tokenChecker(context);
       const newCategory = args.input.name;
       const isCategory = await checkForCategory(newCategory, context);
-      if (isCategory !== null) {
+      if (isCategory !== undefined) {
         throw new GraphQLError(CATEGORY_EXISTS_MESSAGE, {
           extensions: { code: "ALREADY_EXISTS" },
         });
@@ -285,7 +289,7 @@ export const resolvers = {
           extensions: { code: "ALREADY_EXISTS" },
         });
       const isCategory = await getCategoryById(updatedCategory.id, context);
-      if (isCategory === null)
+      if (isCategory === undefined)
         throw new GraphQLError(NO_CATEGORY_MESSAGE, {
           extensions: { code: "NOT_FOUND" },
         });
@@ -295,7 +299,7 @@ export const resolvers = {
       context.user = await tokenChecker(context);
       const categoryId = args.input.id;
       const category = await getCategoryById(categoryId, context);
-      if (category === null)
+      if (category === undefined)
         throw new GraphQLError(NO_CATEGORY_MESSAGE, {
           extensions: { code: "NOT_FOUND" },
         });
@@ -306,7 +310,7 @@ export const resolvers = {
       context.user = await tokenChecker(context);
       const newMovie = args.input;
       const isCategory = await getCategoryById(newMovie.category_id, context);
-      if (isCategory === null) {
+      if (isCategory === undefined) {
         throw new GraphQLError(BAD_CATEGORYID_MESSAGE, {
           extensions: { code: "NOT_FOUND" },
         });
@@ -343,7 +347,17 @@ export const resolvers = {
       return await createReview(review, context);
     },
     async updateReview(_: any, args: any, context: MyContext) {
-      const updatedReview = args.input;
+      const id = args.input.id;
+      const res = await getReviewForUpdate(id,context)
+      console.log(res)
+      if(res === undefined) throw new GraphQLError(NO_REVIEW_MESSAGE,{extensions:{code:"NOT_FOUND"}})
+      const updatedReview:DbReview = {
+        id:args.input.id,
+        rating: args.input.rating,
+        description: args.input.description,
+        movie_id: res.movie_id,
+        user_id: res.user_id
+      }
       context.user = await tokenChecker(context);
       if (updatedReview.rating === "0")
         throw new GraphQLError(REVIEW_INVALID_RATING_MESSAGE, {
@@ -359,6 +373,7 @@ export const resolvers = {
     // Authentication
     async logIn(_: any, { input }: any, context: MyContext) {
       const user = await getUserForLogin(input, context);
+      console.log(user)
       context.user = user;
       return await logIn(input, context);
     },

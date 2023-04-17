@@ -6,19 +6,28 @@ import express from "express";
 import { DocumentNode } from "graphql";
 import { CurrentUser } from "./utils/types";
 const expressGraphQL = require("express-graphql").graphqlHTTP;
+const mysql = require('mysql2')
+const db = mysql.createPool({
+  host:'localhost',
+  user:'root',
+  password:"jelszo1234",
+  database:"moviezone"
+})
+
+
 
 export interface MyContext {
-  db: Database;
+  db:any;
   req: express.Request;
   user?: CurrentUser;
 }
 
 async function startApolloServer(typeDefs: DocumentNode, resolvers: any) {
-  let db:Database;
-  Database.open('common/db/db.sqlite').then((_db:Database) => {
-    db=_db
-    console.log("Connected to database!")
-  })
+  // let db:Database;
+  // Database.open('db/db.sqlite').then((_db:Database) => {
+  //   db=_db
+  //   console.log("Connected to database!")
+  // })
   const server = new ApolloServer<MyContext>({
     typeDefs,
     resolvers,

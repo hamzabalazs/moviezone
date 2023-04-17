@@ -217,11 +217,6 @@ export const typeDefs = gql`
     password: String!
   }
 
-  input AddTokenInput {
-    email: String!
-    password: String!
-  }
-
   input GetTokenInput {
     id: ID!
     first_name: String!
@@ -251,8 +246,8 @@ export const typeDefs = gql`
   }
 
   type RunResult {
-    lastID: Int!
-    changes: Int!
+    lastID: Int
+    changes: Int
   }
 
   input MoviePaginationInput {
@@ -404,18 +399,17 @@ export const typeDefs = gql`
     createUser(input: AddUserInput!): User
     updateUser(input: UpdateUserInput!): FullUser!
     deleteUser(input: DeleteUserInput!): FullUser!
-    changePassword(input: changePasswordInput!): RunResult!
+    changePassword(input: changePasswordInput!): RunResult
     createCategory(input: AddCategoryInput!): Category
     updateCategory(input: UpdateCategoryInput!): Category!
     deleteCategory(input: DeleteCategoryInput!): Category!
     createMovie(input: AddMovieInput!): Movie
     updateMovie(input: UpdateMovieInput!): Movie!
     deleteMovie(input: DeleteMovieInput!): Movie!
-    createReview(input: AddReviewInput!): Review
+    createReview(input: AddReviewInput!): DbReview
     updateReview(input: UpdateReviewInput!): Review
     deleteReview(input: DeleteReviewInput!): Review!
-    createToken(input: AddTokenInput!): RunResult!
-    deleteToken(input: DeleteTokenInput!): RunResult!
+    deleteToken(input: DeleteTokenInput!): RunResult
     sendForgotPassEmail(input: resetTokenInput!): Boolean!
     createCast(input: AddCastInput!): CastWithMovie!
     updateCast(input: EditCastInput!): Cast!

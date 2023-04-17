@@ -15,7 +15,7 @@ const nodemailer = require("nodemailer");
 
 export function getUsers(input: any, context: MyContext): Promise<FullUser[]> {
   let sql = `SELECT * from user`;
-  let params = [];
+  let params:any[] = [];
   let offsetString = "";
   sql = sql.concat(` LIMIT ?`);
   params.push(input.limit);
@@ -24,12 +24,27 @@ export function getUsers(input: any, context: MyContext): Promise<FullUser[]> {
     sql = sql.concat(offsetString);
     params.push(input.offset);
   }
-  return context.db.all<FullUser>(sql, params);
+  
+  return new Promise((resolve,reject) => {
+    context.db.query(sql, params,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res)
+    })
+  });
 }
 
 export function getNumberOfUsers(context: MyContext): Promise<number | null> {
   const sql = `SELECT COUNT(*) as totalCount FROM user`;
-  return context.db.get<number>(sql);
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function getUserById(
@@ -37,9 +52,14 @@ export async function getUserById(
   context: MyContext
 ): Promise<User | null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.id = ?`;
-  const result = await context.db.get<User>(sql, [id]);
-  if (result === undefined) return null;
-  return result;
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[id],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function getFullUserById(
@@ -47,25 +67,40 @@ export async function getFullUserById(
   context: MyContext
 ): Promise<FullUser | null> {
   const sql = `SELECT * FROM user WHERE id = ?`;
-  const result = await context.db.get<FullUser>(sql, [id]);
-  if (result === undefined) return null;
-  return result;
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[id],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function getUserByToken(
   context: MyContext
 ): Promise<CurrentUser | null> {
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.password,u.role,s.token FROM user u JOIN session s ON u.id = s.user_id WHERE s.token = ?`;
-  const result = await context.db.get<CurrentUser>(sql, [
-    context.req.headers["auth-token"],
-  ]);
-  if (result === undefined) return null;
-  return result;
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[context.req.headers["auth-token"]],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function getUserForPassChange(token:string,context:MyContext): Promise<FullUser | null>{
   const sql = `SELECT u.id,u.first_name,u.last_name,u.email,u.password,u.role FROM user u JOIN reset_password rs ON u.id = rs.user_id WHERE rs.token = ?`
-  return await context.db.get(sql,[token])
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[token],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function checkForUser(
@@ -73,9 +108,14 @@ export async function checkForUser(
   context: MyContext
 ): Promise<User | null> {
   const sql = `SELECT id,first_name,last_name,email,role FROM user WHERE user.email = ?`;
-  const result = await context.db.get<User>(sql, [email]);
-  if (result === undefined) return null;
-  return result;
+  return new Promise((resolve,reject) => {
+    context.db.query(sql,[email],(err:any,res:any) => {
+      if(err){
+        reject(err)
+      }
+      resolve(res[0])
+    })
+  });
 }
 
 export async function createUser(
@@ -83,7 +123,7 @@ export async function createUser(
   context: MyContext
 ): Promise<User | null> {
   const sql = `INSERT INTO user (id,first_name,last_name,email,password,role) VALUES (?,?,?,?,?,?)`;
-  context.db.run(sql, [
+  const result = context.db.query(sql, [
     user.id,
     user.first_name,
     user.last_name,
@@ -91,13 +131,19 @@ export async function createUser(
     user.password,
     user.role,
   ]);
-  return getUserById(user.id, context);
+  return{
+    id:user.id,
+    first_name:user.first_name,
+    last_name:user.last_name,
+    email:user.email,
+    role:user.role
+  }
 }
 
 export async function updateUser(
   user: FullUser,
   context: MyContext
-): Promise<User | null> {
+): Promise<FullUser | null> {
   if (
     context.user!.id === user.id ||
     context.user!.role.toString() === "admin"
@@ -109,8 +155,8 @@ export async function updateUser(
       });
     const currentUser = await getUserById(user.id, context);
     const userExists = await checkForUser(user.email, context);
-    if (userExists !== null && currentUser !== null)
-      if (userExists.email !== currentUser.email)
+    if (userExists !== undefined && currentUser !== undefined)
+      if (userExists!.email !== currentUser!.email)
         throw new GraphQLError(USER_EMAIL_USED_MESSAGE, {
           extensions: { code: "BAD_USER_INPUT" },
         });
@@ -129,7 +175,7 @@ export async function updateUser(
             role=? WHERE user.id = ?`;
 
     if (!user.role)
-      context.db.run(sql, [
+      context.db.query(sql, [
         user.first_name,
         user.last_name,
         user.email,
@@ -137,7 +183,7 @@ export async function updateUser(
         user.id,
       ]);
     else
-      context.db.run(sql, [
+      context.db.query(sql, [
         user.first_name,
         user.last_name,
         user.email,
@@ -145,7 +191,15 @@ export async function updateUser(
         user.role,
         user.id,
       ]);
-    return getFullUserById(user.id, context);
+    const result = await getFullUserById(user.id, context);
+    return {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email:user.email,
+      password: user.password,
+      role: user?.role ? user!.role : result!.role,
+    }
   }
   throw new GraphQLError(UNAUTHORIZED_MESSAGE, {
     extensions: { code: "UNAUTHORIZED" },
@@ -161,9 +215,9 @@ export async function deleteUser(
     const sqlReviewDelete = `DELETE FROM review WHERE review.user_id = ?`;
     const sqlTokenDelete = `DELETE from session WHERE user_id = ?`;
     const user = await getFullUserById(id, context);
-    context.db.run(sqlReviewDelete, [id]);
-    context.db.run(sqlTokenDelete, [id]);
-    context.db.run(sqlDelete, [id]);
+    context.db.query(sqlReviewDelete, [id]);
+    context.db.query(sqlTokenDelete, [id]);
+    context.db.query(sqlDelete, [id]);
     return user;
   }
 
@@ -180,7 +234,15 @@ export async function changePassword(
   context: MyContext
 ): Promise<any> {
   const sql = `UPDATE user SET password = ? WHERE id = ?`;
-  return context.db.run(sql, [md5(input.password),input.user_id]);
+  // return context.db.query(sql, [md5(input.password),input.user_id]);
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [md5(input.password),input.user_id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(res[0]);
+    });
+  });
 }
 
 export async function getResetToken(email:string,context:MyContext): Promise<string | null> {
@@ -189,9 +251,16 @@ export async function getResetToken(email:string,context:MyContext): Promise<str
     throw new GraphQLError(NO_USER_MESSAGE, {
       extensions: { code: "NOT_FOUND" },
     });
-  const sqlGetToken = "SELECT token FROM reset_password WHERE user_id = ?";
-  const result = await context.db.get<any>(sqlGetToken,[user.id])
-  return result.token;
+  const sqlGetToken = "SELECT rp.token FROM reset_password rp JOIN user u ON rp.user_id = u.id WHERE u.email = ?";
+  context.db.query(sqlGetToken,[user.id])
+  return new Promise((resolve, reject) => {
+    context.db.query(sqlGetToken, [email], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(res[0].token);
+    });
+  });
 }
 
 export async function sendForgotPassEmail(
@@ -203,25 +272,20 @@ export async function sendForgotPassEmail(
     throw new GraphQLError(NO_USER_MESSAGE, {
       extensions: { code: "NOT_FOUND" },
     });
-  const sqlInsert = `INSERT INTO reset_password (user_id,token,expiry) VALUES (?,?,datetime("now","+1 hour","localtime"))`;
+  const sqlInsert = `INSERT INTO reset_password (id,user_id,token,expiry) VALUES (?,?,?,DATE_ADD(now(), INTERVAL 1 HOUR))`;
   const sqlExpired =
-    'SELECT expiry < datetime("now","localtime") as expired FROM reset_password WHERE user_id = ?';
+    'SELECT expiry < now() as expired FROM reset_password WHERE user_id = ?';
   const sqlDelete = "DELETE FROM reset_password WHERE user_id = ?";
   
-  const isExpired = await context.db.get<any>(sqlExpired, [user.id]);
+  const isExpired = context.db.query(sqlExpired, [user.id]);
   const token = Buffer.from(uuidv4()).toString("base64");
-  if (isExpired === undefined){
-    await context.db.run(sqlInsert, [user.id, token]);
+  if (isExpired[0] === undefined){
+    context.db.query(sqlInsert, [uuidv4(),user.id, token]);
   }
   else if (isExpired.expired === 1) {
-    await context.db.run(sqlDelete, [user.id]);
-    await context.db.run(sqlInsert, [user.id, token]);
+    context.db.query(sqlDelete, [user.id]);
+    context.db.query(sqlInsert, [user.id, token]);
   }
-    const resetToken = await getResetToken(email,context);
-  if (!resetToken)
-    throw new GraphQLError(NO_RESET_TOKEN, {
-      extensions: { code: "NOT_FOUND" },
-    });
 
   const transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",
@@ -237,10 +301,10 @@ export async function sendForgotPassEmail(
     from: '"Movie Zone" <moviezone@ethereal.email>',
     to: email,
     subject: "Reset password",
-    text: `Dear ${user.first_name} \n\n You have sent a request to reset your password. By clicking on the link provided, you will be able to give a new password to your account. You have one hour to reset your password! If you did not ask to reset your password, ignore this message \n Link:http://localhost:3000/resetpassword/${resetToken}`,
+    text: `Dear ${user.first_name} \n\n You have sent a request to reset your password. By clicking on the link provided, you will be able to give a new password to your account. You have one hour to reset your password! If you did not ask to reset your password, ignore this message \n Link:http://localhost:3000/resetpassword/${token}`,
   });
-  if(!info) return false;
-  return true;
+  if(!info) return false
+  return true
 }
 
 
