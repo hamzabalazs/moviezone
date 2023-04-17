@@ -1,0 +1,54 @@
+# Front-End
+# dependencies
+/mozi-frontend/node_modules
+/mozi-frontend/.pnp
+/mozi-frontend/.pnp.js
+
+# testing
+/mozi-frontend/coverage
+/mozi-frontend/build
+/mozi-frontend/Dockerfile
+
+# production
+/mozi-frontend/.DS_Store
+/mozi-frontend/.env.local
+/mozi-frontend/.env.development.local
+/mozi-frontend/.env.test.local
+/mozi-frontend/.env.production.local
+
+# misc
+/mozi-frontend/npm-debug.log*
+/mozi-frontend/yarn-debug.log*
+/mozi-frontend/yarn-error.log*
+
+# Back-End
+# dependencies
+/mozi-backend/node_modules
+/mozi-backend/.pnp
+/mozi-backend/.pnp.js
+
+# testing
+/mozi-backend/coverage
+
+/mozi-backend/lcov-report
+
+# production
+/mozi-backend/build
+/mozi-backend/DockerFile
+
+# misc
+/mozi-backend/.DS_Store
+/mozi-backend/.env.local
+/mozi-backend/.env.development.local
+/mozi-backend/.env.test.local
+/mozi-backend/.env.production.local
+/mozi-backend/clover.xml
+/mozi-backend/coverage-final.json
+/mozi-backend/lcov.info
+
+/mozi-backend/npm-debug.log*
+/mozi-backend/yarn-debug.log*
+/mozi-backend/yarn-error.log*
+
+docker-compose.yml
+mysql.env
