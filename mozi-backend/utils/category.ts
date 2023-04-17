@@ -13,7 +13,7 @@ export function getCategories(_: any, context:MyContext):Promise<Category[]> {
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -26,7 +26,7 @@ export async function getCategoryById(id: string, context:MyContext):Promise<Cat
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -38,7 +38,7 @@ export async function getNumberOfMoviesPerCategory(context:MyContext): Promise<n
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -50,7 +50,7 @@ export async function getAverageRatingOfCategories(context:MyContext): Promise<n
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }

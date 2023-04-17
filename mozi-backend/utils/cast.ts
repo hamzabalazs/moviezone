@@ -14,7 +14,7 @@ export async function getCast(
       if (err) {
         reject(err);
       }
-      resolve(res);
+      if(res) resolve(res);
     });
   });
 }
@@ -29,7 +29,7 @@ export async function getCastById(
       if (err) {
         reject(err);
       }
-      resolve(res[0]);
+      if(res) resolve(res[0]);
     });
   });
 }
@@ -44,7 +44,7 @@ export async function checkForCast(
       if (err) {
         reject(err);
       }
-      resolve(res[0]);
+      if(res) resolve(res[0]);
     });
   });
 }
@@ -59,7 +59,7 @@ export async function getMoviesOfCast(
       if (err) {
         reject(err);
       }
-      resolve(res);
+      if(res) resolve(res);
     });
   });
 }

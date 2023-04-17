@@ -13,7 +13,7 @@ export function getAllMovies(context:MyContext):Promise<any[]> {
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -59,7 +59,7 @@ export function getMovies(input:any, context:MyContext):Promise<Movie[]> {
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -89,7 +89,7 @@ export function getNumberOfMovies(input:any,context:MyContext): Promise<number |
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -102,7 +102,7 @@ export async function getMovieById(id:string, context:MyContext):Promise<Movie|u
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -114,7 +114,7 @@ export async function getNumberOfMoviesPerYear(context:MyContext): Promise<any[]
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }

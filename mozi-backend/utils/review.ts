@@ -16,7 +16,7 @@ export function getReviews(context: MyContext): Promise<Review[]> {
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -29,7 +29,7 @@ export function getNumberOfReviewsOfUser(user_id:string,context:MyContext): Prom
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -42,7 +42,7 @@ export function getNumberOfReviewsOfMovie(movie_id:string,context:MyContext): Pr
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -55,7 +55,7 @@ export function getNumberOfReviewsOfMoviePerMonth(movie_id:any,context:MyContext
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -68,7 +68,7 @@ export function getAverageOfReviewsOfMoviePerMonth(movie_id:any,context:MyContex
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -81,7 +81,7 @@ export async function getReviewById(id: string, context: MyContext): Promise<Rev
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -99,7 +99,7 @@ export async function getReviewsOfMovie(input:any,context:MyContext): Promise<Re
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -117,7 +117,7 @@ export async function getReviewsOfUser(input:any,context:MyContext): Promise<Rev
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -133,7 +133,7 @@ export async function getReviewForUpdate(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }

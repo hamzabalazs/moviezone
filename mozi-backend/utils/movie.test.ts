@@ -21,7 +21,7 @@ import {
   NO_TOKEN_MESSAGE,
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
-import { Database } from "../common/sqlite-async-ts";
+const mysql = require('mysql2')
 
 const GET_MOVIES = gql`
   query GetMovies($input: MoviePaginationInput!) {
@@ -40,7 +40,6 @@ const GET_MOVIES = gql`
   }
 `;
 
-let db: Database;
 let req = {
   headers: {
     "auth-token": "admintoken1423",
@@ -49,18 +48,21 @@ let req = {
 let server: ApolloServer;
 
 test("Should open database",async() => {
-    await Database.open(":memory:").then((_db:Database) => {
-      db = _db
-    })
-    server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      context:async() => {
-        return {db,req}
-      }
-    })
-    await fillDatabase(db)
-    expect(db).not.toBeUndefined()
+  const db = mysql.createPool({
+    host:'localhost',
+    user:'root',
+    password:"jelszo1234",
+    database:"moviezone_test"
+  })
+  server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context:async() => {
+      return {db,req}
+    }
+  })
+  fillDatabase(db)
+  expect(db).not.toBeUndefined()
   })
 
 test("Should get all movies", async () => {

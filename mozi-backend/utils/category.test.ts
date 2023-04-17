@@ -18,6 +18,7 @@ import {
 import { categoryData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "../../mozi-frontend/src/categories/categoryQueries"
+const mysql = require('mysql2')
 
 const GET_CATEGORY_BY_ID = gql`
   query GetCategoryById($input: CategoryInput!) {
@@ -36,7 +37,7 @@ const GET_CATEGORY_BY_NAME = gql`
   }
 `;
 
-let db: Database;
+let db: any;
 let req = {
   headers: {
     "auth-token": "admintoken1423",
@@ -45,8 +46,11 @@ let req = {
 let server: ApolloServer;
 
 test("Should open database",async() => {
-  await Database.open(":memory:").then((_db:Database) => {
-    db = _db
+  const db = mysql.createPool({
+    host:'localhost',
+    user:'root',
+    password:"jelszo1234",
+    database:"moviezone_test"
   })
   server = new ApolloServer({
     typeDefs,
@@ -55,7 +59,7 @@ test("Should open database",async() => {
       return {db,req}
     }
   })
-  await fillDatabase(db)
+  fillDatabase(db)
   expect(db).not.toBeUndefined()
 })
 

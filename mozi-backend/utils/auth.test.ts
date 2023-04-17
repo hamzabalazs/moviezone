@@ -5,6 +5,7 @@ import { ApolloServer, gql } from "apollo-server";
 import { existingTestUser, newTestUser } from "./auth.mocks";
 import { NO_USER_MESSAGE } from "../common/errorMessages";
 import { Database } from "../common/sqlite-async-ts";
+const mysql = require('mysql2')
 
 const LOGIN = gql`
   mutation LogIn($input: LoginInput!) {
@@ -28,8 +29,11 @@ let req = {
 let server:ApolloServer
 
 test("Should not login, if user does not exist", async () => {
-  await Database.open(":memory:").then((_db:Database) => {
-    db = _db
+  const db = mysql.createPool({
+    host:'localhost',
+    user:'root',
+    password:"jelszo1234",
+    database:"moviezone_test"
   })
   server = new ApolloServer({
     typeDefs,
@@ -38,7 +42,8 @@ test("Should not login, if user does not exist", async () => {
       return {db,req}
     }
   })
-  await fillDatabase(db)
+  fillDatabase(db)
+  expect(db).not.toBeUndefined()
   const result = await server.executeOperation({
     query: LOGIN,
     variables: {

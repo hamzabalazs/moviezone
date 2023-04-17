@@ -1,5 +1,4 @@
 import { ApolloServer } from "apollo-server-express";
-import {Database} from './common/sqlite-async-ts'
 import { typeDefs } from "./Schema/TypeDefs";
 import { resolvers } from "./Schema/Resolvers";
 import express from "express";
@@ -8,12 +7,16 @@ import { CurrentUser } from "./utils/types";
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 const mysql = require('mysql2')
 const db = mysql.createPool({
-  host:'localhost',
+  host:'host.docker.internal',
   user:'root',
   password:"jelszo1234",
   database:"moviezone"
 })
 
+db.query('SELECT * FROM category',(err:any,res:any) => {
+  if(err) console.log(err)
+  else console.log(res)
+})
 
 
 export interface MyContext {
@@ -23,11 +26,6 @@ export interface MyContext {
 }
 
 async function startApolloServer(typeDefs: DocumentNode, resolvers: any) {
-  // let db:Database;
-  // Database.open('db/db.sqlite').then((_db:Database) => {
-  //   db=_db
-  //   console.log("Connected to database!")
-  // })
   const server = new ApolloServer<MyContext>({
     typeDefs,
     resolvers,

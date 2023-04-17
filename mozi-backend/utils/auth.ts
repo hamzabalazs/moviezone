@@ -29,7 +29,7 @@ export async function logIn(
         reject(err)
       }
       console.log("res",res)
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -47,7 +47,7 @@ export async function getUserForLogin(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   })
   if (!isToken) {
@@ -58,7 +58,7 @@ export async function getUserForLogin(
         if(err){
           reject(err)
         }
-        resolve(res[0])
+        if(res) resolve(res[0])
       })
     });
   }
@@ -67,7 +67,7 @@ export async function getUserForLogin(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -81,7 +81,7 @@ export async function getToken(context: MyContext): Promise<any> {
         reject(err)
       }
       console.log("expiry",res)
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -93,7 +93,7 @@ export async function deleteToken(token:string,context: MyContext): Promise<any>
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }

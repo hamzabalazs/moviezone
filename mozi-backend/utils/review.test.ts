@@ -25,6 +25,7 @@ import {
 import { sessionData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW,GET_REVIEWS } from "../../mozi-frontend/src/reviews/reviewQueries";
+const mysql = require('mysql2')
 
 const GET_REVIEW_BY_ID = gql`
   query GetReviewById($input: ReviewInput!) {
@@ -53,8 +54,11 @@ let req = {
 let server:ApolloServer
 
 test("Should open database",async() => {
-  await Database.open(":memory:").then((_db:Database) => {
-    db = _db
+  const db = mysql.createPool({
+    host:'localhost',
+    user:'root',
+    password:"jelszo1234",
+    database:"moviezone_test"
   })
   server = new ApolloServer({
     typeDefs,
@@ -63,7 +67,7 @@ test("Should open database",async() => {
       return {db,req}
     }
   })
-  await fillDatabase(db)
+  fillDatabase(db)
   expect(db).not.toBeUndefined()
 })
 

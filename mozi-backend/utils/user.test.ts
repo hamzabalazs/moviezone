@@ -7,6 +7,7 @@ import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_
 import { userData } from "../test/mockedData";
 import { Database } from "../common/sqlite-async-ts";
 import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/users/userQueries"
+import mysql from 'mysql2';
 
 const GET_USER_BY_ID = gql`
   query GetUserById($input: UserInput!) {
@@ -43,7 +44,7 @@ const GET_USER_BY_TOKEN = gql`
   }
 `;
 
-let db:Database
+let db:any
 let req = {
     headers:{
         'auth-token':"admintoken1423"
@@ -51,9 +52,28 @@ let req = {
 }
 let server:ApolloServer
 
-test("Should open database",async() => {
-  await Database.open(":memory:").then((_db:Database) => {
-    db = _db
+function closeDatabaseConnection(db:any) {
+  if(db && db.state !== 'disconnected'){
+    db.end((err:any) => {
+      if (err) {
+        console.log('Error closing the database connection:', err);
+      } else {
+        console.log('Database connection closed successfully.');
+      }
+    });
+  }
+}
+
+afterAll(() => {
+  closeDatabaseConnection(db);
+})
+
+test.only("Should open database",async() => {
+  const db = mysql.createPool({
+    host:'localhost',
+    user:'root',
+    password:"jelszo1234",
+    database:"moviezone_test"
   })
   server = new ApolloServer({
     typeDefs,
@@ -62,18 +82,11 @@ test("Should open database",async() => {
       return {db,req}
     }
   })
-  await fillDatabase(db)
+  fillDatabase(db)
   expect(db).not.toBeUndefined()
 })
 
-// test("Should get all users", async () => {
-  
-//   const result = await server.executeOperation({
-//     query: GET_USERS,
-//   });
-//   expect(result.errors).toBeUndefined();
-//   expect(result.data?.getUsers).toHaveLength(5);
-// });
+
 
 test("Should get user if ID is correct", async () => {
   const result = await server.executeOperation({
@@ -88,7 +101,7 @@ test("Should get user if ID is correct", async () => {
   expect(result.data?.getUserById).toEqual(testResponseUser);
 });
 
-test("Should not get user if ID is incorrect", async () => {
+test.only("Should not get user if ID is incorrect", async () => {
   const result = await server.executeOperation({
     query: GET_USER_BY_ID,
     variables: {

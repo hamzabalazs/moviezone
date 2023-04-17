@@ -30,7 +30,7 @@ export function getUsers(input: any, context: MyContext): Promise<FullUser[]> {
       if(err){
         reject(err)
       }
-      resolve(res)
+      if(res) resolve(res)
     })
   });
 }
@@ -42,7 +42,7 @@ export function getNumberOfUsers(context: MyContext): Promise<number | null> {
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -57,7 +57,7 @@ export async function getUserById(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -72,7 +72,7 @@ export async function getFullUserById(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -86,7 +86,8 @@ export async function getUserByToken(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      console.log(res)
+      if(res) resolve(res[0])
     })
   });
 }
@@ -98,7 +99,7 @@ export async function getUserForPassChange(token:string,context:MyContext): Prom
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -113,7 +114,7 @@ export async function checkForUser(
       if(err){
         reject(err)
       }
-      resolve(res[0])
+      if(res) resolve(res[0])
     })
   });
 }
@@ -240,7 +241,7 @@ export async function changePassword(
       if (err) {
         reject(err);
       }
-      resolve(res[0]);
+      if(res) resolve(res[0])
     });
   });
 }
@@ -258,7 +259,7 @@ export async function getResetToken(email:string,context:MyContext): Promise<str
       if (err) {
         reject(err);
       }
-      resolve(res[0].token);
+      if(res) resolve(res[0].token)
     });
   });
 }
