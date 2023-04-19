@@ -7,7 +7,10 @@
 # testing
 /mozi-frontend/coverage
 /mozi-frontend/build
+
+# production
 /mozi-frontend/Dockerfile
+/mozi-frontend/.dockerignore
 
 # production
 /mozi-frontend/.DS_Store
@@ -35,6 +38,7 @@
 # production
 /mozi-backend/build
 /mozi-backend/DockerFile
+/mozi-backend/.dockerignore
 
 # misc
 /mozi-backend/.DS_Store
@@ -51,4 +55,5 @@
 /mozi-backend/yarn-error.log*
 
 docker-compose.yml
+*.yaml
 mysql.env
