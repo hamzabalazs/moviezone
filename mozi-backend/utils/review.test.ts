@@ -1,8 +1,9 @@
 import { typeDefs } from "../Schema/TypeDefs";
 import { resolvers } from "../Schema/Resolvers";
-import { fillDatabase } from "../test/createDatabase";
+import { createServer, emptyDatabase, fillDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
 import {
+  GET_REVIEW_BY_ID,
   addReview,
   badAddReview,
   deleteReview,
@@ -23,56 +24,27 @@ import {
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
 import { sessionData } from "../test/mockedData";
-import { Database } from "../common/sqlite-async-ts";
-import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW,GET_REVIEWS } from "../../mozi-frontend/src/reviews/reviewQueries";
-const mysql = require('mysql2')
+import { CREATE_REVIEW, DELETE_REVIEW, UPDATE_REVIEW,GET_REVIEWS } from "./review.mocks";
 
-const GET_REVIEW_BY_ID = gql`
-  query GetReviewById($input: ReviewInput!) {
-    getReviewById(input: $input) {
-      id
-      rating
-      description
-      movie {
-        id
-      }
-      user {
-        id
-        first_name
-        last_name
-      }
-    }
-  }
-`;
 
-let db:Database
 let req = {
-    headers:{
-        'auth-token':""
-    }
-}
-let server:ApolloServer
+  headers: {
+    "auth-token": "admintoken1423",
+  },
+};
+let con:{server:ApolloServer,db:any};
 
-test("Should open database",async() => {
-  const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:"jelszo1234",
-    database:"moviezone_test"
-  })
-  server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context:async() => {
-      return {db,req}
-    }
-  })
-  fillDatabase(db)
-  expect(db).not.toBeUndefined()
+afterAll(() => {
+  emptyDatabase(con.db)
+  con.server.stop()
+  con.db.end()
+})
+test("servercreation",async() => {
+  con = await createServer(req);
 })
 
 test("Should get all reviews of a user", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_REVIEWS,
     variables:{
       input:{
@@ -92,7 +64,7 @@ test("Should get all reviews of a user", async () => {
 
 
 test("Should not get review if ID is invalid", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -104,7 +76,7 @@ test("Should not get review if ID is invalid", async () => {
 });
 
 test("Should get review if ID is valid", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -118,7 +90,7 @@ test("Should get review if ID is valid", async () => {
 
 test("Should not add review if movie already rated by user", async () => {
   req.headers['auth-token'] = sessionData[0].token
-  const testResult = await server.executeOperation({
+  const testResult = await con.server.executeOperation({
     query: GET_REVIEWS,
     variables:{
       input:{
@@ -135,7 +107,7 @@ test("Should not add review if movie already rated by user", async () => {
   expect(testResult.errors).toBeUndefined();
   expect(testResult.data?.getReviewsOfUser).toHaveLength(3);
 
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
       input: {
@@ -149,7 +121,7 @@ test("Should not add review if movie already rated by user", async () => {
 
 test("Should not add review if movie does not exist ( bad ID )", async () => {
   req.headers['auth-token'] = sessionData[3].token
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
       input: {
@@ -166,7 +138,7 @@ test("Should not add review if movie does not exist ( bad ID )", async () => {
 
 test("Should not add review if user session has expired", async () => {
   req.headers['auth-token'] = "expiredToken"
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
       input: {
@@ -183,7 +155,7 @@ test("Should not add review if user session has expired", async () => {
 
 test("Should not add review if user does not exist ( bad ID )", async () => {
   req.headers['auth-token'] = sessionData[3].token
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
       input: {
@@ -200,7 +172,7 @@ test("Should not add review if user does not exist ( bad ID )", async () => {
 
 test("Should add review if user and movie exists, and movie has not been rated by user", async () => {
   req.headers['auth-token'] = "admintoken1423"
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_REVIEW,
     variables: {
       input: {
@@ -214,7 +186,7 @@ test("Should add review if user and movie exists, and movie has not been rated b
 
 test("Should not edit review if user does not own said review", async () => {
   req.headers["auth-token"] = "tokenviewer4321";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -230,7 +202,7 @@ test("Should not edit review if user does not own said review", async () => {
 
 test("Should not edit review if no token is provided", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -246,7 +218,7 @@ test("Should not edit review if no token is provided", async () => {
 
 test("Should not edit review if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -262,7 +234,7 @@ test("Should not edit review if user session has expired", async () => {
 
 test("Should not edit review if review does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -277,7 +249,7 @@ test("Should not edit review if review does not exist ( bad ID )", async () => {
 });
 
 test("Should edit review if user owns said review", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -289,7 +261,7 @@ test("Should edit review if user owns said review", async () => {
   expect(beforeResult.data?.getReviewById).toEqual(testReviewEdit);
 
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -301,7 +273,7 @@ test("Should edit review if user owns said review", async () => {
   });
   expect(result.errors).toBeUndefined();
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -314,7 +286,7 @@ test("Should edit review if user owns said review", async () => {
 });
 
 test("Should edit review if user does not own review,but is admin/editor", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -325,7 +297,7 @@ test("Should edit review if user does not own review,but is admin/editor", async
   expect(beforeResult.errors).toBeUndefined();
 
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_REVIEW,
     variables: {
       input: {
@@ -337,7 +309,7 @@ test("Should edit review if user does not own review,but is admin/editor", async
   });
   expect(result.errors).toBeUndefined();
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -350,7 +322,7 @@ test("Should edit review if user does not own review,but is admin/editor", async
 
 test("Should not delete review if user does not own said review", async () => {
   req.headers["auth-token"] = "tokenviewer4321";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -364,7 +336,7 @@ test("Should not delete review if user does not own said review", async () => {
 
 test("Should not delete review if no token is provided", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -378,7 +350,7 @@ test("Should not delete review if no token is provided", async () => {
 
 test("Should not delete review if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -392,7 +364,7 @@ test("Should not delete review if user session has expired", async () => {
 
 test("Should not delete review if review does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -405,7 +377,7 @@ test("Should not delete review if review does not exist ( bad ID )", async () =>
 });
 
 test("Should delete review if user does own said review", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -416,7 +388,7 @@ test("Should delete review if user does own said review", async () => {
   expect(beforeResult.errors).toBeUndefined();
   expect(beforeResult.data?.getReviewById).toEqual(testReviewDelete);
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -427,7 +399,7 @@ test("Should delete review if user does own said review", async () => {
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteReview).toEqual(deleteReview);
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -439,7 +411,7 @@ test("Should delete review if user does own said review", async () => {
 });
 
 test("Should delete review if user does not own review,but is admin/editor", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {
@@ -451,7 +423,7 @@ test("Should delete review if user does not own review,but is admin/editor", asy
   expect(beforeResult.data?.getReviewById).toEqual(testReviewDelete2);
 
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_REVIEW,
     variables: {
       input: {
@@ -462,7 +434,7 @@ test("Should delete review if user does not own review,but is admin/editor", asy
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteReview).toEqual(deleteReview2);
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_REVIEW_BY_ID,
     variables: {
       input: {

@@ -41,7 +41,6 @@ export default function CastAddModal({ movie, onClose }: Props) {
       const result = await AddCastAPI(addedCast.name, photo,addedCast.description);
       if (result) {
         setPhoto("")
-        console.log(result)
         const msg = t('successMessages.castAdd');
         enqueueSnackbar(msg, { variant: "success" });
         onClose?.();

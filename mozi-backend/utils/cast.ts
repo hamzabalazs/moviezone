@@ -74,7 +74,6 @@ export async function createCast(
   else {
     id = uuidv4();
     const sqlCast = "INSERT INTO `cast` (id,name,photo,description) VALUES (?,?,?,?)";
-    console.log(input)
     const res = context.db.query(sqlCast, [
       id,
       input.name,

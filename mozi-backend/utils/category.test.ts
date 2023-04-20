@@ -1,6 +1,4 @@
-import { typeDefs } from "../Schema/TypeDefs";
-import { resolvers } from "../Schema/Resolvers";
-import { fillDatabase } from "../test/createDatabase";
+import { createServer, emptyDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
 import {
   addCategory,
@@ -16,9 +14,7 @@ import {
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
-import { Database } from "../common/sqlite-async-ts";
-import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "../../mozi-frontend/src/categories/categoryQueries"
-const mysql = require('mysql2')
+import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "./category.mocks"
 
 const GET_CATEGORY_BY_ID = gql`
   query GetCategoryById($input: CategoryInput!) {
@@ -37,35 +33,25 @@ const GET_CATEGORY_BY_NAME = gql`
   }
 `;
 
-let db: any;
 let req = {
   headers: {
     "auth-token": "admintoken1423",
   },
 };
-let server: ApolloServer;
+let con:{server:ApolloServer,db:any};
 
-test("Should open database",async() => {
-  const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:"jelszo1234",
-    database:"moviezone_test"
-  })
-  server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context:async() => {
-      return {db,req}
-    }
-  })
-  fillDatabase(db)
-  expect(db).not.toBeUndefined()
+afterAll(() => {
+  emptyDatabase(con.db)
+  con.server.stop()
+  con.db.end()
+})
+test("servercreation",async() => {
+  con = await createServer(req);
 })
 
 test("Should get all categories", async () => {
   req.headers['auth-token'] = "admintoken1423"
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(result.data?.getCategories).toHaveLength(3);
@@ -73,7 +59,7 @@ test("Should get all categories", async () => {
 
 
 test("Should get category if ID is correct", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_CATEGORY_BY_ID,
     variables: {
       input: {
@@ -86,7 +72,7 @@ test("Should get category if ID is correct", async () => {
 });
 
 test("Should reject if ID is incorrect", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_CATEGORY_BY_ID,
     variables: {
       input: {
@@ -98,7 +84,7 @@ test("Should reject if ID is incorrect", async () => {
 });
 
 test("Should get category by name", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_CATEGORY_BY_NAME,
     variables: {
       input: {
@@ -112,7 +98,7 @@ test("Should get category by name", async () => {
 
 test("Should not add new category if no token was given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_CATEGORY,
     variables: {
       input: {
@@ -126,7 +112,7 @@ test("Should not add new category if no token was given", async () => {
 
 test("Should not add new category if user is viewer", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_CATEGORY,
     variables: {
       input: {
@@ -140,7 +126,7 @@ test("Should not add new category if user is viewer", async () => {
 
 test("Should not add new category if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_CATEGORY,
     variables: {
       input: {
@@ -154,12 +140,12 @@ test("Should not add new category if user session has expired", async () => {
 
 test("Should add new category if good token was given", async () => {
   req.headers['auth-token'] = "admintoken1423"
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(beforeResult.data?.getCategories).toHaveLength(3);
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_CATEGORY,
     variables: {
       input: {
@@ -168,7 +154,7 @@ test("Should add new category if good token was given", async () => {
     },
   });
   expect(result.data?.createCategory.name).toBe(addCategory.name);
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(afterResult.data?.getCategories).toHaveLength(4);
@@ -176,7 +162,7 @@ test("Should add new category if good token was given", async () => {
 
 test("Should not change category if no token was given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -191,7 +177,7 @@ test("Should not change category if no token was given", async () => {
 
 test("Should not change category if bad ID was given", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -206,7 +192,7 @@ test("Should not change category if bad ID was given", async () => {
 
 test("Should not change category if category already exists", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -221,7 +207,7 @@ test("Should not change category if category already exists", async () => {
 
 test("Should not change category if user is viewer", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -236,7 +222,7 @@ test("Should not change category if user is viewer", async () => {
 
 test("Should not change category if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -250,7 +236,7 @@ test("Should not change category if user session has expired", async () => {
 });
 
 test("Should change category if good token was given", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_CATEGORY_BY_ID,
     variables: {
       input: {
@@ -260,7 +246,7 @@ test("Should change category if good token was given", async () => {
   });
   expect(beforeResult.data?.getCategoryById).toEqual(testCategory);
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_CATEGORY,
     variables: {
       input: {
@@ -271,7 +257,7 @@ test("Should change category if good token was given", async () => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.updateCategory).toEqual(editCategory);
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_CATEGORY_BY_ID,
     variables: {
       input: {
@@ -284,7 +270,7 @@ test("Should change category if good token was given", async () => {
 
 test("Should not delete category if no token was given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {
       input: {
@@ -298,7 +284,7 @@ test("Should not delete category if no token was given", async () => {
 
 test("Should not delete category if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {
       input: {
@@ -312,7 +298,7 @@ test("Should not delete category if user session has expired", async () => {
 
 test("Should not delete category if bad ID was given", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {
       input: {
@@ -326,7 +312,7 @@ test("Should not delete category if bad ID was given", async () => {
 
 test("Should not delete category if user is viewer", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {
       input: {
@@ -339,12 +325,12 @@ test("Should not delete category if user is viewer", async () => {
 });
 
 test("Should delete category if good token was given", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   req.headers['auth-token'] = "admintoken1423"
   expect(beforeResult.data?.getCategories).toHaveLength(4);
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
     variables: {
       input: {
@@ -355,7 +341,7 @@ test("Should delete category if good token was given", async () => {
 
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteCategory).toEqual(deleteCategory);
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(afterResult.data?.getCategories).toHaveLength(3);

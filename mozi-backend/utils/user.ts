@@ -86,7 +86,6 @@ export async function getUserByToken(
       if(err){
         reject(err)
       }
-      console.log(res)
       if(res) resolve(res[0])
     })
   });

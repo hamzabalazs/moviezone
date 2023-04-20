@@ -28,6 +28,9 @@ const mockMovieData = [
           movie_id: "idM4",
           user_id: "",
         },
+        input4: {
+          movie_id: "idM4",
+        }
       },
     },
     result: {
@@ -75,6 +78,26 @@ const mockMovieData = [
         getNumberOfReviewsOfMovie: {
           totalCount: 2,
         },
+        getCast: [
+          {
+            id: "idCast1",
+            name: "cast1",
+            photo: "castphoto1",
+            description: "castDesc1"
+          },
+          {
+            id: "idCast2",
+            name: "cast2",
+            photo: "castphoto2",
+            description: "castDesc2"
+          },
+          {
+            id: "idCast3",
+            name: "cast3",
+            photo: "castphoto3",
+            description: "castDesc3"
+          },
+        ]
       },
     },
   },

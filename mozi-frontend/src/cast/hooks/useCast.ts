@@ -68,8 +68,6 @@ export function useCast(movie_id?:string): CastData {
             },
           },
         });
-        console.log("res", res);
-        console.log("data", data);
         if (!res) return;
         if (!data) return;
         cache.writeQuery({
@@ -140,8 +138,6 @@ export function useCast(movie_id?:string): CastData {
             },
           },
         });
-        console.log("res",res)
-        console.log("data",data)
         if (!res) return;
         if (!data) return;
         

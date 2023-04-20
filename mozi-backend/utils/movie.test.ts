@@ -1,14 +1,11 @@
-import { typeDefs } from "../Schema/TypeDefs";
-import { resolvers } from "../Schema/Resolvers";
-import { fillDatabase } from "../test/createDatabase";
-import { ApolloServer, gql } from "apollo-server";
+import { createServer, emptyDatabase } from "../test/createDatabase";
+import { ApolloServer } from "apollo-server";
 import {
   CREATE_MOVIE,
   DELETE_MOVIE,
-  UPDATE_MOVIE,
+  GET_MOVIES,
   GET_MOVIE_BY_ID,
-} from "../../mozi-frontend/src/movies/movieQueries";
-import {
+  UPDATE_MOVIE,
   addMovie,
   deleteMovie,
   editMovie,
@@ -21,52 +18,25 @@ import {
   NO_TOKEN_MESSAGE,
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
-const mysql = require('mysql2')
-
-const GET_MOVIES = gql`
-  query GetMovies($input: MoviePaginationInput!) {
-    getMovies(input: $input) {
-      id
-      title
-      description
-      poster
-      release_date
-      category {
-        id
-        name
-      }
-      rating
-    }
-  }
-`;
 
 let req = {
   headers: {
     "auth-token": "admintoken1423",
   },
 };
-let server: ApolloServer;
+let con:{server:ApolloServer,db:any};
 
-test("Should open database",async() => {
-  const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:"jelszo1234",
-    database:"moviezone_test"
-  })
-  server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context:async() => {
-      return {db,req}
-    }
-  })
-  fillDatabase(db)
-  expect(db).not.toBeUndefined()
-  })
+afterAll(() => {
+  emptyDatabase(con.db)
+  con.server.stop()
+  con.db.end()
+})
+test("servercreation",async() => {
+  con = await createServer(req);
+})
 
 test("Should get all movies", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_MOVIES,
     variables:{
       input:{
@@ -84,7 +54,7 @@ test("Should get all movies", async () => {
 });
 
 test("Should not get movie, if ID is invalid", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_MOVIE_BY_ID,
     variables: {
       input: {
@@ -98,6 +68,9 @@ test("Should not get movie, if ID is invalid", async () => {
       input3:{
         movie_id: testMovie.id,
         user_id:""
+      },
+      input4:{
+        movie_id: testMovie.id
       }
     },
   });
@@ -106,7 +79,7 @@ test("Should not get movie, if ID is invalid", async () => {
 
 test("Should get movie,if ID is valid", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_MOVIE_BY_ID,
     variables: {
       input: {
@@ -120,6 +93,9 @@ test("Should get movie,if ID is valid", async () => {
       input3:{
         movie_id: testMovie.id,
         user_id:""
+      },
+      input4:{
+        movie_id: testMovie.id
       }
     },
   });
@@ -129,7 +105,7 @@ test("Should get movie,if ID is valid", async () => {
 
 test("Should not add movie, if token is invalid", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_MOVIE,
     variables: {
       input: {
@@ -144,7 +120,7 @@ test("Should not add movie, if token is invalid", async () => {
 
 test("Should not add movie, if token is valid but not admin/editor", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_MOVIE,
     variables: {
       input: {
@@ -158,7 +134,7 @@ test("Should not add movie, if token is valid but not admin/editor", async () =>
 
 test("Should not add movie, if token is valid but session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_MOVIE,
     variables: {
       input: {
@@ -172,7 +148,7 @@ test("Should not add movie, if token is valid but session has expired", async ()
 
 test("Should add movie, if token is valid and is admin/editor", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_MOVIES,
     variables:{
       input:{
@@ -189,7 +165,7 @@ test("Should add movie, if token is valid and is admin/editor", async () => {
   expect(beforeResult.errors).toBeUndefined();
   expect(beforeResult.data?.getMovies).toHaveLength(6);
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_MOVIE,
     variables: {
       input: {
@@ -200,7 +176,7 @@ test("Should add movie, if token is valid and is admin/editor", async () => {
   expect(result.errors).toBeUndefined();
   expect(result.data).not.toBeNull();
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_MOVIES,
     variables:{
       input:{
@@ -219,7 +195,7 @@ test("Should add movie, if token is valid and is admin/editor", async () => {
 
 test("Should not edit movie, if token is invalid", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_MOVIE,
     variables: {
       input: {
@@ -233,7 +209,7 @@ test("Should not edit movie, if token is invalid", async () => {
 
 test("Should not edit movie, if token is valid, but not admin/editor", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_MOVIE,
     variables: {
       input: {
@@ -247,7 +223,7 @@ test("Should not edit movie, if token is valid, but not admin/editor", async () 
 
 test("Should not edit movie, if token is valid, but session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_MOVIE,
     variables: {
       input: {
@@ -261,7 +237,7 @@ test("Should not edit movie, if token is valid, but session has expired", async 
 
 test("Should not edit movie, if movie does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_MOVIE,
     variables: {
       input: {
@@ -280,7 +256,7 @@ test("Should not edit movie, if movie does not exist ( bad ID )", async () => {
 
 test("Should edit movie, if movie exists and token is valid and is admin/editor", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_MOVIE_BY_ID,
     variables: {
       input: {
@@ -294,6 +270,9 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
       input3:{
         movie_id: testMovie.id,
         user_id:""
+      },
+      input4:{
+        movie_id: testMovie.id
       }
     },
   });
@@ -301,7 +280,7 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
   expect(beforeResult.data?.getMovieById).toEqual(testMovie);
 
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_MOVIE,
     variables: {
       input: {
@@ -312,7 +291,7 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
   expect(result.errors).toBeUndefined();
   expect(result.data?.updateMovie).toEqual(editResponseMovie);
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_MOVIE_BY_ID,
     variables: {
       input: {
@@ -326,6 +305,9 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
       input3:{
         movie_id: testMovie.id,
         user_id:""
+      },
+      input4:{
+        movie_id: testMovie.id
       }
     },
   });
@@ -335,7 +317,7 @@ test("Should edit movie, if movie exists and token is valid and is admin/editor"
 
 test("Should not delete movie, if token is invalid", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_MOVIE,
     variables: {
       input: {
@@ -349,7 +331,7 @@ test("Should not delete movie, if token is invalid", async () => {
 
 test("Should not delete movie, if token is valid, but not admin/editor", async () => {
   req.headers["auth-token"] = "viewertoken1234";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_MOVIE,
     variables: {
       input: {
@@ -363,7 +345,7 @@ test("Should not delete movie, if token is valid, but not admin/editor", async (
 
 test("Should not delete movie, if token is valid, but session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_MOVIE,
     variables: {
       input: {
@@ -377,7 +359,7 @@ test("Should not delete movie, if token is valid, but session has expired", asyn
 
 test("Should not delete movie, if movie does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_MOVIE,
     variables: {
       input: {
@@ -390,7 +372,7 @@ test("Should not delete movie, if movie does not exist ( bad ID )", async () => 
 });
 
 test("Should delete movie, if movie exists and token is valid and is admin/editor", async () => {
-  const beforeResult = await server.executeOperation({
+  const beforeResult = await con.server.executeOperation({
     query: GET_MOVIES,
     variables:{
       input:{
@@ -407,7 +389,7 @@ test("Should delete movie, if movie exists and token is valid and is admin/edito
   expect(beforeResult.data?.getMovies).toHaveLength(7);
 
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_MOVIE,
     variables: {
       input: {
@@ -418,7 +400,7 @@ test("Should delete movie, if movie exists and token is valid and is admin/edito
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteMovie).toEqual(deleteMovie);
 
-  const afterResult = await server.executeOperation({
+  const afterResult = await con.server.executeOperation({
     query: GET_MOVIES,
     variables:{
       input:{

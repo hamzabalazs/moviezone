@@ -49,6 +49,54 @@ export const movieData = [
     },
 ]
 
+export const castData = [
+    {
+        id:"idCast1",
+        name:"castname1",
+        photo:"photo1",
+        description:"description1"
+    },
+    {
+        id:"idCast2",
+        name:"castname2",
+        photo:"photo2",
+        description:"description2"
+    },
+    {
+        id:"idCast3",
+        name:"castname3",
+        photo:"photo3",
+        description:"description3"
+    },
+    {
+        id:"idCast4",
+        name:"castname4",
+        photo:"photo4",
+        description:"description4"
+    },
+    {
+        id:"idCast5",
+        name:"castname5",
+        photo:"photo5",
+        description:"description5"
+    },
+]
+
+export const movieCastData = [
+    {
+        movie_id:"idM1",
+        cast_id:"idCast3"
+    },
+    {
+        movie_id:"idM3",
+        cast_id:"idCast1"
+    },
+    {
+        movie_id:"idM3",
+        cast_id:"idCast2"
+    }
+]
+
 export const userData = [
     {
         id:"idU1",

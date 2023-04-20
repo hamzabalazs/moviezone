@@ -28,7 +28,6 @@ export async function logIn(
       if(err){
         reject(err)
       }
-      console.log("res",res)
       if(res) resolve(res[0])
     })
   });
@@ -73,6 +72,7 @@ export async function getUserForLogin(
 }
 
 export async function getToken(context: MyContext): Promise<any> {
+  if(context.user === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:"NOT_FOUND"}})
   const token = context.user!.token;
   const sql = `SELECT expiry < now() as expired FROM session WHERE token = ?`;
   return new Promise((resolve,reject) => {
@@ -80,7 +80,6 @@ export async function getToken(context: MyContext): Promise<any> {
       if(err){
         reject(err)
       }
-      console.log("expiry",res)
       if(res) resolve(res[0])
     })
   });

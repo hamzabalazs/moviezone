@@ -221,7 +221,6 @@ export const resolvers = {
     async createUser(_: any, args: any, context: MyContext) {
       const newUser = args.input;
       const isUser = await checkForUser(newUser.email, context);
-      console.log(isUser)
       if (isUser !== undefined) {
         throw new GraphQLError(USER_EMAIL_USED_MESSAGE, {
           extensions: { code: "ALREADY_EXISTS" },
@@ -349,7 +348,6 @@ export const resolvers = {
     async updateReview(_: any, args: any, context: MyContext) {
       const id = args.input.id;
       const res = await getReviewForUpdate(id,context)
-      console.log(res)
       if(res === undefined) throw new GraphQLError(NO_REVIEW_MESSAGE,{extensions:{code:"NOT_FOUND"}})
       const updatedReview:DbReview = {
         id:args.input.id,
@@ -373,7 +371,6 @@ export const resolvers = {
     // Authentication
     async logIn(_: any, { input }: any, context: MyContext) {
       const user = await getUserForLogin(input, context);
-      console.log(user)
       context.user = user;
       return await logIn(input, context);
     },

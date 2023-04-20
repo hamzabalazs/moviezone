@@ -9,7 +9,6 @@
 /mozi-frontend/build
 
 # production
-/mozi-frontend/Dockerfile
 /mozi-frontend/.dockerignore
 
 # production
@@ -37,7 +36,6 @@
 
 # production
 /mozi-backend/build
-/mozi-backend/DockerFile
 /mozi-backend/.dockerignore
 
 # misc
@@ -54,6 +52,7 @@
 /mozi-backend/yarn-debug.log*
 /mozi-backend/yarn-error.log*
 
-docker-compose.yml
-*.yaml
+#kubernetes
+/kubernetes
+
 mysql.env

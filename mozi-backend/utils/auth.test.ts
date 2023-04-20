@@ -1,50 +1,26 @@
-import { typeDefs } from "../Schema/TypeDefs";
-import { resolvers } from "../Schema/Resolvers";
-import { fillDatabase } from "../test/createDatabase";
+import { createServer, emptyDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
-import { existingTestUser, newTestUser } from "./auth.mocks";
+import { LOGIN, existingTestUser, newTestUser } from "./auth.mocks";
 import { NO_USER_MESSAGE } from "../common/errorMessages";
-import { Database } from "../common/sqlite-async-ts";
-const mysql = require('mysql2')
 
-const LOGIN = gql`
-  mutation LogIn($input: LoginInput!) {
-    logIn(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-      token
-    }
-  }
-`;
-
-let db:Database
 let req = {
   headers: {
-    "auth-token": "",
+    "auth-token": "admintoken1423",
   },
 };
-let server:ApolloServer
+let con:{server:ApolloServer,db:any};
+
+afterAll(() => {
+  emptyDatabase(con.db)
+  con.server.stop()
+  con.db.end()
+})
+test("servercreation",async() => {
+  con = await createServer(req);
+})
 
 test("Should not login, if user does not exist", async () => {
-  const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:"jelszo1234",
-    database:"moviezone_test"
-  })
-  server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context:async() => {
-      return {db,req}
-    }
-  })
-  fillDatabase(db)
-  expect(db).not.toBeUndefined()
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: LOGIN,
     variables: {
       input: {
@@ -57,7 +33,7 @@ test("Should not login, if user does not exist", async () => {
   expect(result.data?.logIn).toBeUndefined();
 });
 test("Should login, if user exists and login details match",async() => {
-    const result = await server.executeOperation({
+    const result = await con.server.executeOperation({
         query: LOGIN,
         variables: {
           input: {

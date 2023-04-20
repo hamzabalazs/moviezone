@@ -1,4 +1,128 @@
+import { gql } from "apollo-server";
 import { Movie } from "./types"
+
+export const GET_MOVIE_BY_ID = gql`
+  query GetMovies(
+    $input: MovieInput!
+    $input2: GetReviewsOfMovieInput!
+    $input3: numOfReviewsInput!
+    $input4: CastOfMovieInput!
+  ) {
+    getMovieById(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+    getReviewsOfMovie(input: $input2) {
+      id
+      rating
+      description
+      movie {
+        id
+        title
+        description
+        poster
+        release_date
+        rating
+        category {
+          id
+          name
+        }
+      }
+      user {
+        id
+        first_name
+        last_name
+        role
+        email
+      }
+    }
+    getNumberOfReviewsOfMovie(input: $input3) {
+      totalCount
+    }
+    getCast(input: $input4) {
+      id
+      name
+      photo
+      description
+    }
+  }
+`;
+
+export const GET_MOVIES = gql`
+  query GetMovies($input: MoviePaginationInput!) {
+    getMovies(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+
+export const UPDATE_MOVIE = gql`
+  mutation UpdateMovie($input: UpdateMovieInput!) {
+    updateMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+
+export const CREATE_MOVIE = gql`
+  mutation CreateMovie($input: AddMovieInput!) {
+    createMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
+
+export const DELETE_MOVIE = gql`
+  mutation DeleteMovie($input: DeleteMovieInput!) {
+    deleteMovie(input: $input) {
+      id
+      title
+      description
+      poster
+      release_date
+      category {
+        id
+        name
+      }
+      rating
+    }
+  }
+`;
 
 export const testMovie:Movie = {
     id:"idM1",

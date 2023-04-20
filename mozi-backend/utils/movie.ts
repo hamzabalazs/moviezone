@@ -148,7 +148,6 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
     category_id=? WHERE movie.id = ?`;
   context.db.query(sql,[movie.title,movie.description,movie.poster,movie.release_date,movie.category_id,movie.id])
   const category = await getCategoryById(movie.category_id,context);
-  console.log(category)
   if(category === undefined) throw new GraphQLError(NO_CATEGORY_MESSAGE,{extensions:{code:"NOT_FOUND"}})
   const resmovie:DbMovie = {
     id:movie.id,
@@ -158,7 +157,6 @@ export async function updateMovie(movie:UpdateMovieInput, context:MyContext):Pro
     release_date:movie.release_date,
     category_id:movie.category_id,
   }
-  console.log(resmovie)
   return resmovie
 }
 

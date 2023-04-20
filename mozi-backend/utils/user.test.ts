@@ -1,95 +1,29 @@
-import { typeDefs } from "../Schema/TypeDefs";
-import { resolvers } from "../Schema/Resolvers";
-import { fillDatabase } from "../test/createDatabase";
+import { createServer, emptyDatabase } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
-import { addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testUser } from "./user.mocks";
+import { GET_USERS, GET_USER_BY_EMAIL, GET_USER_BY_ID, GET_USER_BY_TOKEN, addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testUser } from "./user.mocks";
 import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 import { userData } from "../test/mockedData";
-import { Database } from "../common/sqlite-async-ts";
-import { CREATE_USER, DELETE_USER, UPDATE_USER } from "../../mozi-frontend/src/users/userQueries"
-import mysql from 'mysql2';
+import { CREATE_USER, DELETE_USER, UPDATE_USER } from "./user.mocks"
 
-const GET_USER_BY_ID = gql`
-  query GetUserById($input: UserInput!) {
-    getUserById(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
-const GET_USER_BY_EMAIL = gql`
-  query CheckForUser($input: UserEmailInput!) {
-    checkForUser(input: $input) {
-      id
-      first_name
-      last_name
-      role
-      email
-    }
-  }
-`;
-const GET_USER_BY_TOKEN = gql`
-  query GetUserByToken {
-    getUserByToken {
-      id
-      first_name
-      last_name
-      role
-      email
-      token
-    }
-  }
-`;
 
-let db:any
 let req = {
-    headers:{
-        'auth-token':"admintoken1423"
-    }
-}
-let server:ApolloServer
-
-function closeDatabaseConnection(db:any) {
-  if(db && db.state !== 'disconnected'){
-    db.end((err:any) => {
-      if (err) {
-        console.log('Error closing the database connection:', err);
-      } else {
-        console.log('Database connection closed successfully.');
-      }
-    });
-  }
-}
+  headers: {
+    "auth-token": "admintoken1423",
+  },
+};
+let con:{server:ApolloServer,db:any};
 
 afterAll(() => {
-  closeDatabaseConnection(db);
+  emptyDatabase(con.db)
+  con.server.stop()
+  con.db.end()
 })
-
-test.only("Should open database",async() => {
-  const db = mysql.createPool({
-    host:'localhost',
-    user:'root',
-    password:"jelszo1234",
-    database:"moviezone_test"
-  })
-  server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context:async() => {
-      return {db,req}
-    }
-  })
-  fillDatabase(db)
-  expect(db).not.toBeUndefined()
+test("servercreation",async() => {
+  con = await createServer(req);
 })
-
-
 
 test("Should get user if ID is correct", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_ID,
     variables: {
       input: {
@@ -101,8 +35,8 @@ test("Should get user if ID is correct", async () => {
   expect(result.data?.getUserById).toEqual(testResponseUser);
 });
 
-test.only("Should not get user if ID is incorrect", async () => {
-  const result = await server.executeOperation({
+test("Should not get user if ID is incorrect", async () => {
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_ID,
     variables: {
       input: {
@@ -114,7 +48,7 @@ test.only("Should not get user if ID is incorrect", async () => {
 });
 
 test("Should get user if email is correct", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_EMAIL,
     variables: {
       input: {
@@ -127,7 +61,7 @@ test("Should get user if email is correct", async () => {
 });
 
 test("Should not get user if email is incorrect", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_EMAIL,
     variables: {
       input: {
@@ -140,7 +74,7 @@ test("Should not get user if email is incorrect", async () => {
 
 test("Should get current user if token is given", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_TOKEN,
   });
   expect(result.errors).toBeUndefined();
@@ -149,7 +83,7 @@ test("Should get current user if token is given", async () => {
 
 test("Should not get current user if token is not given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: GET_USER_BY_TOKEN,
   });
   expect(result.errors).not.toBeUndefined();
@@ -157,7 +91,7 @@ test("Should not get current user if token is not given", async () => {
 });
 
 test("Should add user", async () => {
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: CREATE_USER,
     variables: {
       input: {
@@ -171,7 +105,7 @@ test("Should add user", async () => {
 
 test("Should not edit user, if bad token is given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -185,7 +119,7 @@ test("Should not edit user, if bad token is given", async () => {
 
 test("Should not edit user, if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -199,7 +133,7 @@ test("Should not edit user, if user session has expired", async () => {
 
 test("Should not edit user, if user does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -218,7 +152,7 @@ test("Should not edit user, if user does not exist ( bad ID )", async () => {
 
 test("Should not edit user, if user is not admin",async() => {
   req.headers["auth-token"] = "tokenviewer4321";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -232,7 +166,7 @@ test("Should not edit user, if user is not admin",async() => {
 
 test("Should not edit user, if email is already in database",async() => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -253,7 +187,7 @@ test("Should not edit user, if email is already in database",async() => {
 
 test("Should edit user if token and ID is good", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -267,7 +201,7 @@ test("Should edit user if token and ID is good", async () => {
 
 test("Should edit user even if no role was given",async() => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: UPDATE_USER,
     variables: {
       input: {
@@ -281,7 +215,7 @@ test("Should edit user even if no role was given",async() => {
 
 test("Should not delete user if bad token is given", async () => {
   req.headers["auth-token"] = "";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_USER,
     variables: {
       input: {
@@ -295,7 +229,7 @@ test("Should not delete user if bad token is given", async () => {
 
 test("Should not delete user if user session has expired", async () => {
   req.headers["auth-token"] = "expiredToken";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_USER,
     variables: {
       input: {
@@ -309,7 +243,7 @@ test("Should not delete user if user session has expired", async () => {
 
 test("Should not delete user if current user is not admin",async() => {
   req.headers["auth-token"] = "tokenviewer4321";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_USER,
     variables: {
       input: {
@@ -323,7 +257,7 @@ test("Should not delete user if current user is not admin",async() => {
 
 test("Should not delete user if user does not exist ( bad ID )", async () => {
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_USER,
     variables: {
       input: {
@@ -336,13 +270,19 @@ test("Should not delete user if user does not exist ( bad ID )", async () => {
 });
 
 test("Should delete user if token and ID is good", async () => {
-  // const beforeResult = await server.executeOperation({
-  //   query: GET_USERS,
-  // });
-  // expect(beforeResult.errors).toBeUndefined();
-  // expect(beforeResult.data?.getUsers).toHaveLength(6);
+  const beforeResult = await con.server.executeOperation({
+    query: GET_USERS,
+    variables:{
+      input:{
+        limit:100,
+        offset:0
+      }
+    }
+  });
+  expect(beforeResult.errors).toBeUndefined();
+  expect(beforeResult.data?.getUsers).toHaveLength(6);
   req.headers["auth-token"] = "admintoken1423";
-  const result = await server.executeOperation({
+  const result = await con.server.executeOperation({
     query: DELETE_USER,
     variables: {
       input: {
@@ -352,9 +292,15 @@ test("Should delete user if token and ID is good", async () => {
   });
   expect(result.errors).toBeUndefined();
   expect(result.data?.deleteUser).toEqual(deleteUser);
-  // const afterResult = await server.executeOperation({
-  //   query: GET_USERS,
-  // });
-  // expect(afterResult.errors).toBeUndefined();
-  // expect(afterResult.data?.getUsers).toHaveLength(5);
+  const afterResult = await con.server.executeOperation({
+    query: GET_USERS,
+    variables:{
+      input:{
+        limit:100,
+        offset:0
+      }
+    }
+  });
+  expect(afterResult.errors).toBeUndefined();
+  expect(afterResult.data?.getUsers).toHaveLength(5);
 });
