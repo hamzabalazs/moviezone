@@ -10,10 +10,6 @@ import { Category } from "./types";
 
 export function getCategories(_: any, context: MyContext): Promise<Category[]> {
   const sql = "SELECT * FROM category";
-
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else {
     return new Promise((resolve, reject) => {
       context.db.query(sql, (err: any, res: any) => {
         if (err) {
@@ -22,7 +18,6 @@ export function getCategories(_: any, context: MyContext): Promise<Category[]> {
         if (res) resolve(res);
       });
     });
-  }
 }
 
 export async function getCategoryById(
@@ -30,9 +25,6 @@ export async function getCategoryById(
   context: MyContext
 ): Promise<Category | undefined> {
   const sql = `SELECT * FROM category WHERE category.id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql,[id]);
-  } else {
     return new Promise((resolve, reject) => {
       context.db.query(sql, [id], (err: any, res: any) => {
         if (err) {
@@ -41,16 +33,12 @@ export async function getCategoryById(
         if (res) resolve(res[0]);
       });
     });
-  }
 }
 
 export async function getNumberOfMoviesPerCategory(
   context: MyContext
 ): Promise<number[]> {
   const sql = `SELECT c.name as name,COUNT(m.id) as totalCount FROM movie m JOIN category c ON m.category_id = c.id GROUP BY c.id ORDER BY COUNT(m.id)`;
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else {
     return new Promise((resolve, reject) => {
       context.db.query(sql, (err: any, res: any) => {
         if (err) {
@@ -59,16 +47,12 @@ export async function getNumberOfMoviesPerCategory(
         if (res) resolve(res);
       });
     });
-  }
 }
 
 export async function getAverageRatingOfCategories(
   context: MyContext
 ): Promise<number[]> {
   const sql = `SELECT name, ROUND(AVG(average),2) as average FROM (SELECT c.name,AVG(r.rating) AS average FROM review r JOIN movie m ON m.id = r.movie_id JOIN category c ON c.id = m.category_id GROUP BY m.id) as T GROUP BY name;`;
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else {
     return new Promise((resolve, reject) => {
       context.db.query(sql, (err: any, res: any) => {
         if (err) {
@@ -77,7 +61,6 @@ export async function getAverageRatingOfCategories(
         if (res) resolve(res);
       });
     });
-  }
 }
 
 export async function createCategory(
@@ -95,9 +78,7 @@ export async function createCategory(
         extensions: { code: "VALIDATION_FAILED" },
       });
     const sql = `INSERT INTO category (id,name) VALUES (?,?)`;
-    if (context.db.filename === ":memory:") {
-      context.db.run(sql, [newCategory.id, newCategory.name]);
-    } else context.db.query(sql, [newCategory.id, newCategory.name]);
+    context.db.query(sql, [newCategory.id, newCategory.name]);
     return newCategory;
   }
   throw new GraphQLError(UNAUTHORIZED_MESSAGE, {
@@ -116,9 +97,7 @@ export async function updateCategory(
         extensions: { code: "VALIDATION_FAILED" },
       });
     const sql = `UPDATE category SET name = ? WHERE category.id = ?`;
-    if (context.db.filename === ":memory:") {
-      context.db.run(sql, [category.name, category.id]);
-    } else context.db.query(sql, [category.name, category.id]);
+    context.db.query(sql, [category.name, category.id]);
     return {
       id: category.id,
       name: category.name,
@@ -137,13 +116,8 @@ export async function deleteCategory(
     const sqlDelete = `DELETE FROM category WHERE category.id = ?`;
     const sqlUpdate = `UPDATE movie SET category_id = "removedID" WHERE category_id = ?`;
     const category = await getCategoryById(id, context);
-    if (context.db.filename === ":memory:") {
-      context.db.run(sqlUpdate, [id]);
-      context.db.run(sqlDelete, [id]);
-    } else {
-      context.db.query(sqlUpdate, [id]);
-      context.db.query(sqlDelete, [id]);
-    }
+    context.db.query(sqlUpdate, [id]);
+    context.db.query(sqlDelete, [id]);
     return category;
   }
   throw new GraphQLError(UNAUTHORIZED_MESSAGE, {
@@ -156,10 +130,7 @@ export async function checkForCategory(
   context: MyContext
 ): Promise<Category | null> {
   const sql = `SELECT * FROM category WHERE category.name = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [name]);
-  } else
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
       context.db.query(sql, [name], (err: any, res: any) => {
         if (err) {
           reject(err);

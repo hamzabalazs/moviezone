@@ -12,17 +12,14 @@ import { getCategoryById } from "./category";
 
 export function getAllMovies(context: MyContext): Promise<any[]> {
   const sql = "SELECT id,title FROM movie";
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export function getMovies(input: any, context: MyContext): Promise<Movie[]> {
@@ -68,17 +65,14 @@ export function getMovies(input: any, context: MyContext): Promise<Movie[]> {
     sql = sql.concat(` OFFSET ?`);
     params.push(input.offset);
   }
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql, params);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, params, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, params, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export function getNumberOfMovies(
@@ -105,17 +99,14 @@ export function getNumberOfMovies(
     categoryString = categoryString.concat(")");
     sql = sql.concat(categoryString);
   }
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export async function getMovieById(
@@ -123,34 +114,28 @@ export async function getMovieById(
   context: MyContext
 ): Promise<Movie | undefined> {
   const sql = `SELECT * FROM movie WHERE id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [id]);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export async function getNumberOfMoviesPerYear(
   context: MyContext
 ): Promise<any[]> {
   const sql = `SELECT COUNT(*) as totalCount,YEAR(release_date) as year from movie WHERE YEAR(release_date) > "1999" GROUP BY YEAR(release_date)`;
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export async function createMovie(
@@ -167,24 +152,14 @@ export async function createMovie(
       extensions: { code: "VALIDATION_FAILED" },
     });
   const sql = `INSERT INTO movie (id,title,description,poster,release_date,category_id) VALUES (?,?,?,?,?,?)`;
-  if (context.db.filename === ":memory:") {
-    context.db.run(sql, [
-      movie.id,
-      movie.title,
-      movie.description,
-      movie.poster,
-      movie.release_date,
-      movie.category.id,
-    ]);
-  } else
-    context.db.query(sql, [
-      movie.id,
-      movie.title,
-      movie.description,
-      movie.poster,
-      movie.release_date,
-      movie.category.id,
-    ]);
+  context.db.query(sql, [
+    movie.id,
+    movie.title,
+    movie.description,
+    movie.poster,
+    movie.release_date,
+    movie.category.id,
+  ]);
   return {
     id: movie.id,
     title: movie.title,
@@ -218,24 +193,14 @@ export async function updateMovie(
     poster = ?, 
     release_date = ?, 
     category_id=? WHERE movie.id = ?`;
-  if (context.db.filename === ":memory:") {
-    context.db.run(sql, [
-      movie.title,
-      movie.description,
-      movie.poster,
-      movie.release_date,
-      movie.category_id,
-      movie.id,
-    ]);
-  } else
-    context.db.query(sql, [
-      movie.title,
-      movie.description,
-      movie.poster,
-      movie.release_date,
-      movie.category_id,
-      movie.id,
-    ]);
+  context.db.query(sql, [
+    movie.title,
+    movie.description,
+    movie.poster,
+    movie.release_date,
+    movie.category_id,
+    movie.id,
+  ]);
   const category = await getCategoryById(movie.category_id, context);
   if (category === undefined || category === null)
     throw new GraphQLError(NO_CATEGORY_MESSAGE, {
@@ -269,14 +234,9 @@ export async function deleteMovie(
   const sqlDelete = `DELETE FROM movie WHERE movie.id = ?`;
   const sqlReviewDelete = `DELETE FROM review WHERE review.movie_id = ?`;
   const sqlCastDelete = `DELETE FROM movie_cast WHERE movie_id = ?`;
-  if (context.db.filename === ":memory:") {
-    context.db.run(sqlReviewDelete, [id]);
-    context.db.run(sqlDelete, [id]);
-    context.db.run(sqlCastDelete, [id]);
-  } else {
-    context.db.query(sqlReviewDelete, [id]);
-    context.db.query(sqlDelete, [id]);
-    context.db.query(sqlCastDelete, [id]);
-  }
+  context.db.query(sqlReviewDelete, [id]);
+  context.db.query(sqlDelete, [id]);
+  context.db.query(sqlCastDelete, [id]);
+
   return movie;
 }

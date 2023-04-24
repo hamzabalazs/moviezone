@@ -10,17 +10,14 @@ import { DbReview, Review } from "./types";
 
 export function getReviews(context: MyContext): Promise<Review[]> {
   const sql = "SELECT * FROM review";
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export function getNumberOfReviewsOfUser(
@@ -28,17 +25,14 @@ export function getNumberOfReviewsOfUser(
   context: MyContext
 ): Promise<number | null> {
   const sql = `SELECT COUNT(*) as totalCount FROM review WHERE user_id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [user_id]);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [user_id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [user_id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export function getNumberOfReviewsOfMovie(
@@ -46,57 +40,48 @@ export function getNumberOfReviewsOfMovie(
   context: MyContext
 ): Promise<number | null> {
   const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [movie_id]);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [movie_id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [movie_id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export function getNumberOfReviewsOfMoviePerMonth(
   movie_id: any,
   context: MyContext
 ): Promise<any[]> {
-  if (context.db.filename === ":memory:") {
-    const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp)`;
-    return context.db.get(sql, [movie_id]);
-  } else {
-    const sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY MONTH(timestamp) ORDER BY MONTH(timestamp)`;
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [movie_id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  let sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY MONTH(timestamp) ORDER BY MONTH(timestamp)`;
+  if (context.db.filename === ":memory:")
+    sql = `SELECT COUNT(*) as totalCount FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp)`;
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [movie_id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
-  }
+  });
 }
 
 export function getAverageOfReviewsOfMoviePerMonth(
   movie_id: any,
   context: MyContext
 ): Promise<any[]> {
-  if (context.db.filename === ":memory:") {
-    const sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp)`;
-    return context.db.get(sql, [movie_id]);
-  } else {
-    const sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY MONTH(timestamp) ORDER BY MONTH(timestamp)`;
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [movie_id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  let sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY MONTH(timestamp) ORDER BY MONTH(timestamp)`;
+  if (context.db.filename === ":memory:")
+    sql = `SELECT ROUND(AVG(rating),2) as average FROM review WHERE movie_id = ? GROUP BY strftime('%m',timestamp) ORDER BY strftime('%m',timestamp)`;
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [movie_id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
-  }
+  });
 }
 
 export async function getReviewById(
@@ -104,17 +89,14 @@ export async function getReviewById(
   context: MyContext
 ): Promise<Review | undefined> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [id]);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export async function getReviewsOfMovie(
@@ -127,17 +109,14 @@ export async function getReviewsOfMovie(
     sql = sql.concat(` OFFSET ?`);
     params.push(input.offset);
   }
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql, params);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, params, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, params, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export async function getReviewsOfUser(
@@ -150,17 +129,14 @@ export async function getReviewsOfUser(
     sql = sql.concat(` OFFSET ?`);
     params.push(input.offset);
   }
-  if (context.db.filename === ":memory:") {
-    return context.db.all(sql, params);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, params, (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, params, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
     });
+  });
 }
 
 export async function getReviewForUpdate(
@@ -168,49 +144,38 @@ export async function getReviewForUpdate(
   context: MyContext
 ): Promise<DbReview | undefined> {
   const sql = `SELECT * FROM review WHERE review.id = ?`;
-  if (context.db.filename === ":memory:") {
-    return context.db.get(sql, [id]);
-  } else
-    return new Promise((resolve, reject) => {
-      context.db.query(sql, [id], (err: any, res: any) => {
-        if (err) {
-          reject(err);
-        }
-        if (res) resolve(res[0]);
-      });
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, [id], (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res[0]);
     });
+  });
 }
 
 export async function createReview(
   review: any,
   context: MyContext
 ): Promise<DbReview | undefined> {
+  let sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp)
+  VALUES (?,?,?,?,?,CURDATE())`;
   const validation = await reviewSchema.isValid(review);
   if (!validation)
     throw new GraphQLError(NOT_VALID_REVIEW, {
       extensions: { code: "VALIDATION_FAILED" },
     });
-  if (context.db.filename === ":memory:") {
-    const sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp) VALUES
+  if (context.db.filename === ":memory:")
+    sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp) VALUES
       (?,?,?,?,?,date("now"))`;
-    context.db.run(sql, [
-      review.id,
-      review.rating,
-      review.description,
-      review.movie_id,
-      review.user_id,
-    ]);
-  } else {
-    const sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp)
-      VALUES (?,?,?,?,?,CURDATE())`;
-    context.db.query(sql, [
-      review.id,
-      review.rating,
-      review.description,
-      review.movie_id,
-      review.user_id,
-    ]);
-  }
+
+  context.db.query(sql, [
+    review.id,
+    review.rating,
+    review.description,
+    review.movie_id,
+    review.user_id,
+  ]);
 
   return {
     id: review.id,
@@ -236,10 +201,7 @@ export async function updateReview(
           extensions: { code: "VALIDATION_FAILED" },
         });
       const sql = `UPDATE review SET rating=?, description=? WHERE review.id = ?`;
-      if (context.db.filename === ":memory:") {
-        context.db.run(sql, [review.rating, review.description, review.id]);
-      } else
-        context.db.query(sql, [review.rating, review.description, review.id]);
+      context.db.query(sql, [review.rating, review.description, review.id]);
       return {
         id: review.id,
         rating: review.rating,
@@ -269,9 +231,7 @@ export async function deleteReview(
   ) {
     const review = await getReviewById(id, context);
     const sql = `DELETE FROM review WHERE review.id = ?`;
-    if (context.db.filename === ":memory:") {
-      context.db.run(sql, [id]);
-    } else context.db.query(sql, [id]);
+    context.db.query(sql, [id]);
     return review;
   }
 

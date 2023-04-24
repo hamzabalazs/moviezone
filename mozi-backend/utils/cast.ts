@@ -85,7 +85,6 @@ export async function createCast(
   if (cast !== undefined) id = cast.id;
   else{
     id = uuidv4();
-    console.log(id)
     const sqlCast =
       "INSERT INTO `cast` (id,name,photo,description) VALUES (?,?,?,?)";
     if (context.db.filename === ":memory:") {
