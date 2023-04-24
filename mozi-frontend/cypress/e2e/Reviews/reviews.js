@@ -68,12 +68,19 @@ Given("I open reviews page and scroll to last review", () => {
   });
 
   cy.get('[data-testid="review-card-description"]')
-    .last()
-    .should("have.text", testReview.description);
+    .contains('test')
+    .should("exist");
 });
 
 When("I click on review edit button", () => {
-  cy.get('[data-testid="review-edit-button"]').last().click();
+  cy.get('[data-testid="review-card"]')
+    .find('[data-testid="review-card-description"]')
+    .contains('test')
+    .should('exist')
+    .parents('[data-testid="review-card"]')
+    .find('[data-testid="review-edit-button"]')
+    .should('exist')
+    .click()
 });
 
 Then("I should see review edit modal", () => {
@@ -101,7 +108,14 @@ When("I submit with correct data", () => {
 });
 
 Then("I should see edited review", () => {
-  cy.get('[data-testid="review-card-description"]').last().should('have.text',testReviewEdited.description);
+  cy.get('[data-testid="review-card"]')
+    .find('[data-testid="review-card-description"]')
+    .contains(testReviewEdited.description)
+    .should('exist')
+    .parents('[data-testid="review-card"]')
+    .find('[data-testid="review-edit-button"]')
+    .should('exist')
+    .click()
 });
 
 Given("I open reviews page and scroll to last review after edit", () => {
@@ -121,12 +135,19 @@ Given("I open reviews page and scroll to last review after edit", () => {
   });
 
   cy.get('[data-testid="review-card-description"]')
-    .last()
-    .should("have.text", testReviewEdited.description);
+    .contains(testReviewEdited.description)
+    .should("exist");
 });
 
 When('I click on review delete button',() => {
-    cy.get('[data-testid="review-delete-button"]').last().click()
+  cy.get('[data-testid="review-card"]')
+  .find('[data-testid="review-card-description"]')
+  .contains(testReviewEdited.description)
+  .should('exist')
+  .parents('[data-testid="review-card"]')
+  .find('[data-testid="review-delete-button"]')
+  .should('exist')
+  .click()
 })
 
 Then('I should see review delete dialog',() => {

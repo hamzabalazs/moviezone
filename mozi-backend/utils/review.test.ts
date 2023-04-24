@@ -1,7 +1,5 @@
-import { typeDefs } from "../Schema/TypeDefs";
-import { resolvers } from "../Schema/Resolvers";
-import { createServer, emptyDatabase, fillDatabase } from "../test/createDatabase";
-import { ApolloServer, gql } from "apollo-server";
+import { createServer } from "../test/createDatabase";
+import { ApolloServer } from "apollo-server";
 import {
   GET_REVIEW_BY_ID,
   addReview,
@@ -34,11 +32,6 @@ let req = {
 };
 let con:{server:ApolloServer,db:any};
 
-afterAll(() => {
-  emptyDatabase(con.db)
-  con.server.stop()
-  con.db.end()
-})
 test("servercreation",async() => {
   con = await createServer(req);
 })

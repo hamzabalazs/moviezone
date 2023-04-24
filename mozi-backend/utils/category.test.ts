@@ -1,6 +1,8 @@
-import { createServer, emptyDatabase } from "../test/createDatabase";
+import { createServer } from "../test/createDatabase";
 import { ApolloServer, gql } from "apollo-server";
 import {
+  GET_CATEGORY_BY_ID,
+  GET_CATEGORY_BY_NAME,
   addCategory,
   deleteCategory,
   editCategory,
@@ -15,38 +17,20 @@ import {
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
 import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "./category.mocks"
+import { Database } from "../common/sqlite-async-ts";
 
-const GET_CATEGORY_BY_ID = gql`
-  query GetCategoryById($input: CategoryInput!) {
-    getCategoryById(input: $input) {
-      id
-      name
-    }
-  }
-`;
-const GET_CATEGORY_BY_NAME = gql`
-  query CheckForCategory($input: CategoryNameInput!) {
-    checkForCategory(input: $input) {
-      id
-      name
-    }
-  }
-`;
 
 let req = {
   headers: {
     "auth-token": "admintoken1423",
   },
 };
-let con:{server:ApolloServer,db:any};
+let con:{server:ApolloServer,db:Database};
 
-afterAll(() => {
-  emptyDatabase(con.db)
-  con.server.stop()
-  con.db.end()
-})
+
 test("servercreation",async() => {
   con = await createServer(req);
+  expect(con.db).not.toBeUndefined()
 })
 
 test("Should get all categories", async () => {

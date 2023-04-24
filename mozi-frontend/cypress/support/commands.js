@@ -199,12 +199,8 @@ Cypress.Commands.add("addReview", (review, token) => {
           id
           rating
           description
-          movie{
-            id
-          }
-          user{
-            id
-          }
+          movie_id
+          user_id
         }
       }
       `,
@@ -265,6 +261,7 @@ Cypress.Commands.add("addCast", (cast, movie_id, token) => {
       `,
       variables: {
         input: {
+          id: cast.id,
           name: cast.name,
           photo: cast.photo,
           description: cast.description,

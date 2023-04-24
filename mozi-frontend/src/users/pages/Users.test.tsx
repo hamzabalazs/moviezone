@@ -99,7 +99,7 @@ test("user edit modal opens and shows correctly", async() => {
   const cardEditButtons = await screen.findAllByRole("button", { name: "Edit" });
   userEvent.click(cardEditButtons[0]);
   const cardEditModal = screen.getByTestId("user-edit-modal");
-  const cardEditModalButton = screen.getByRole("button", { name: "Edit" }); // not tested
+  const cardEditModalButton = screen.getByRole("button", { name: "Edit" });
   const userFirstName = screen.getByTestId("user-edit-modal-first_name");
   const userLastName = screen.getByTestId("user-edit-modal-last_name");
   const userEmail = screen.getByTestId("user-edit-modal-email");

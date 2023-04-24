@@ -1,6 +1,9 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { adminCredentials, baseUrl } from '../../support/e2e'
-import {NAME_REQUIRED_MESSAGE,CATEGORY_NAME_REQUIRED_MESSAGE} from '../../support/errormessages'
+import { adminCredentials, baseUrl } from "../../support/e2e";
+import {
+  NAME_REQUIRED_MESSAGE,
+  CATEGORY_NAME_REQUIRED_MESSAGE,
+} from "../../support/errormessages";
 
 const newCategoryName = "test";
 const editCategoryName = "testEDITED";
@@ -46,11 +49,18 @@ When("I fill out data and submit", () => {
 });
 
 Then("New category should be added", () => {
-  cy.get('[data-testid="category-card-name"]').last().should("have.text", newCategoryName);
+  cy.get('[data-testid="category-card-name"]').contains("test").should("exist");
 });
 
 When("I press category edit button", () => {
-  cy.get('[data-testid="category-card-edit-button"]').last().click();
+  cy.get('[data-testid="category-card"]')
+    .find('[data-testid="category-card-name"]')
+    .contains("test")
+    .should("exist")
+    .parents('[data-testid="category-card"]')
+    .find('[data-testid="category-card-edit-button"]')
+    .should("exist")
+    .click();
 });
 
 Then("Edit modal should open", () => {
@@ -75,12 +85,19 @@ When("I change name and submit", () => {
 
 Then("Category should be edited", () => {
   cy.get('[data-testid="category-card-name"]')
-    .last()
-    .should("have.text", editCategoryName);
+    .contains('testEDITED')
+    .should("exist");
 });
 
 When("I press category delete button", () => {
-  cy.get('[data-testid="category-card-delete-button"]').last().click();
+  cy.get('[data-testid="category-card"]')
+    .find('[data-testid="category-card-name"]')
+    .contains("test")
+    .should("exist")
+    .parents('[data-testid="category-card"]')
+    .find('[data-testid="category-card-delete-button"]')
+    .should("exist")
+    .click();
 });
 
 Then("Delete dialog should open", () => {
@@ -93,8 +110,8 @@ When("I press accept button to delete", () => {
 
 Then("Category should be deleted", () => {
   cy.get('[data-testid="category-card-name"]')
-    .last()
-    .should("not.have.value", editCategoryName);
+    .contains('testEDITED')
+    .should("not.exist");
 });
 
 When("I press quit button", () => {

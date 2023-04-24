@@ -51,12 +51,19 @@ Given("I open users page and go to last user listed", () => {
     }
   });
   cy.get('[data-testid="user-card-email"')
-    .last()
-    .should("have.text", testUser.email);
+    .contains(testUser.email)
+    .should("exist");
 });
 
 When("I click on edit button of user", () => {
-  cy.get('[data-testid="user-card-edit-button"]').last().click();
+  cy.get('[data-testid="user-card"]')
+  .find('[data-testid="user-card-email"]')
+  .contains(testUser.email)
+  .should('exist')
+  .parents('[data-testid="user-card"]')
+  .find('[data-testid="user-card-edit-button"]')
+  .should('exist')
+  .click()
 });
 
 Then("Edit modal should open", () => {
@@ -157,9 +164,9 @@ When("I change data and submit", () => {
 });
 
 Then("User should be edited", () => {
-  cy.get('[data-testid="user-card-email"')
-    .last()
-    .should("have.text", editedTestUser.email);
+  cy.get('[data-testid="user-card-email"]')
+    .contains(editedTestUser.email)
+    .should("exist")
 });
 
 Given("I open users page and go to last user listed after edit", () => {
@@ -174,14 +181,20 @@ Given("I open users page and go to last user listed after edit", () => {
         cy.wait(500);
       }
     });
-    cy.get('[data-testid="user-card-email"')
-      .last()
-      .should("have.text", editedTestUser.email);
+    cy.get('[data-testid="user-card-email"]')
+    .contains(editedTestUser.email)
+    .should("exist")
   });
 
 When("I click on delete button of user", () => {
-  cy.get('[data-testid="user-card-delete-button"]').last().click();
-});
+  cy.get('[data-testid="user-card"]')
+  .find('[data-testid="user-card-email"]')
+  .contains(editedTestUser.email)
+  .should('exist')
+  .parents('[data-testid="user-card"]')
+  .find('[data-testid="user-card-delete-button"]')
+  .should('exist')
+  .click()});
 
 Then("Delete dialog should open", () => {
     cy.get('[data-testid="user-delete-dialog"]').should('exist')

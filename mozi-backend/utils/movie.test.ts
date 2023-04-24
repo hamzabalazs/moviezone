@@ -1,4 +1,4 @@
-import { createServer, emptyDatabase } from "../test/createDatabase";
+import { createServer } from "../test/createDatabase";
 import { ApolloServer } from "apollo-server";
 import {
   CREATE_MOVIE,
@@ -26,11 +26,6 @@ let req = {
 };
 let con:{server:ApolloServer,db:any};
 
-afterAll(() => {
-  emptyDatabase(con.db)
-  con.server.stop()
-  con.db.end()
-})
 test("servercreation",async() => {
   con = await createServer(req);
 })

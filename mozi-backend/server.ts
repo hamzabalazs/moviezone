@@ -6,25 +6,21 @@ import { DocumentNode } from "graphql";
 import { CurrentUser } from "./utils/types";
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 const mysql = require('mysql2')
-// const db = mysql.createPool({
-//   host:'mysql-service',
-//   user:'root',
-//   password:"jelszo1234",
-//   database:"moviezone"
-// })
-
+// for docker-compose
 const db = mysql.createPool({
-  host:'localhost',
+  host:'mysql',
   user:'root',
   password:"jelszo1234",
   database:"moviezone"
 })
 
-db.query('SELECT * FROM category',(err:any,res:any) => {
-  if(err) console.log(err)
-  else console.log(res)
-})
-
+// for local testing
+// const db = mysql.createPool({
+//   host:'localhost',
+//   user:'root',
+//   password:"jelszo1234",
+//   database:"moviezone"
+// })
 
 export interface MyContext {
   db:any;

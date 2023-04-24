@@ -39,13 +39,13 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-// const httpLink = createHttpLink({
-//   uri: window.location.href.includes("localhost") ? "http://localhost:5000/graphql" : window.location.href.replace("3000","5000").replace(/.com\/(\w+)(\/.*)?/g,".com/") + "graphql",
-// });
-
 const httpLink = createHttpLink({
-  uri: 'https://moviezoneapp.com:5000/graphql'
-})
+  uri: window.location.href.includes("localhost") ? "http://localhost:5000/graphql" : window.location.href.replace("3000","5000").replace(/.com\/(\w+)(\/.*)?/g,".com/") + "graphql",
+});
+
+// const httpLink = createHttpLink({
+//   uri: 'https://moviezoneapp.com:5000/graphql'
+// })
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");

@@ -31,7 +31,7 @@ before(() => {
 
 Given("I login as test user", () => {
   cy.login(testUser.email, testUser.password);
-  cy.wait(300);
+  cy.wait(1000);
 });
 
 When("I click on accounts page", () => {

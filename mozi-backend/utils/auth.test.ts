@@ -1,5 +1,5 @@
-import { createServer, emptyDatabase } from "../test/createDatabase";
-import { ApolloServer, gql } from "apollo-server";
+import { createServer } from "../test/createDatabase";
+import { ApolloServer } from "apollo-server";
 import { LOGIN, existingTestUser, newTestUser } from "./auth.mocks";
 import { NO_USER_MESSAGE } from "../common/errorMessages";
 
@@ -10,11 +10,6 @@ let req = {
 };
 let con:{server:ApolloServer,db:any};
 
-afterAll(() => {
-  emptyDatabase(con.db)
-  con.server.stop()
-  con.db.end()
-})
 test("servercreation",async() => {
   con = await createServer(req);
 })

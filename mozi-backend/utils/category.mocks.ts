@@ -1,6 +1,23 @@
 import { gql } from "apollo-server";
 import { Category } from "./types"
 
+export const GET_CATEGORY_BY_ID = gql`
+  query GetCategoryById($input: CategoryInput!) {
+    getCategoryById(input: $input) {
+      id
+      name
+    }
+  }
+`;
+export const GET_CATEGORY_BY_NAME = gql`
+  query CheckForCategory($input: CategoryNameInput!) {
+    checkForCategory(input: $input) {
+      id
+      name
+    }
+  }
+`;
+
 export const GET_CATEGORIES = gql`
   query GetCategories {
     getCategories {

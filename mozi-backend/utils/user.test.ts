@@ -1,5 +1,5 @@
-import { createServer, emptyDatabase } from "../test/createDatabase";
-import { ApolloServer, gql } from "apollo-server";
+import { createServer } from "../test/createDatabase";
+import { ApolloServer } from "apollo-server";
 import { GET_USERS, GET_USER_BY_EMAIL, GET_USER_BY_ID, GET_USER_BY_TOKEN, addUser, adminUser, deleteUser, editResponseUser, editResponseUser2, editUser, editUser2, testResponseUser, testUser } from "./user.mocks";
 import { EXPIRED_TOKEN_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, UNAUTHORIZED_MESSAGE, USER_EMAIL_USED_MESSAGE } from "../common/errorMessages";
 import { userData } from "../test/mockedData";
@@ -13,11 +13,6 @@ let req = {
 };
 let con:{server:ApolloServer,db:any};
 
-afterAll(() => {
-  emptyDatabase(con.db)
-  con.server.stop()
-  con.db.end()
-})
 test("servercreation",async() => {
   con = await createServer(req);
 })
