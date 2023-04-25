@@ -20,6 +20,7 @@ jobs:
         image: hamzabalazs/moviezone
         tags: frontend-v1.0.0, latest
         registry: docker.io
+        directory: ./mozi-frontend
         dockerfile: mozi-frontend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
@@ -29,6 +30,7 @@ jobs:
         image: hamzabalazs/moviezone
         tags: backend-v1.0.0, latest
         registry: docker.io
+        directory: ./mozi-backend
         dockerfile: mozi-backend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
