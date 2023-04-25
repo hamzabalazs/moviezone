@@ -18,7 +18,7 @@ jobs:
       name: Build & push frontend Docker image
       with:
         image: hamzabalazs/moviezone
-        tags: frontend-v1.0.0
+        tags: frontend-v1
         registry: docker.io
         directory: ./mozi-frontend
         dockerfile: mozi-frontend/Dockerfile
@@ -28,7 +28,7 @@ jobs:
       name: Build & push backend Docker image
       with:
         image: hamzabalazs/moviezone
-        tags: backend-v1.0.0
+        tags: backend-v1
         registry: docker.io
         directory: ./mozi-backend
         dockerfile: mozi-backend/Dockerfile
