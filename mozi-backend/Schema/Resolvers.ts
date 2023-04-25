@@ -21,7 +21,6 @@ import {
   updateMovie,
   createMovie,
   getNumberOfMovies,
-  getAllMovies,
   getNumberOfMoviesPerYear,
 } from "../utils/movie";
 import {
@@ -145,9 +144,6 @@ export const resolvers = {
     },
 
     // Movies
-    async getAllMovies(_:any, __:any, context:MyContext){
-      return await getAllMovies(context)
-    },
     async getMovies(_: any, { input }: any, context: MyContext) {
       return await getMovies(input, context);
     },

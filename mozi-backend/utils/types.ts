@@ -88,12 +88,6 @@ export type Role = {
   role: string;
 };
 
-export type Session = {
-  id: number;
-  token: string;
-  user_id: string;
-};
-
 export type CurrentUser = {
   id: string;
   first_name: string;
@@ -101,49 +95,6 @@ export type CurrentUser = {
   role: UserRole;
   email: string;
   token: string;
-};
-
-export type IdInput = {
-  id: string;
-};
-
-export type EmailInput = {
-  email: string;
-};
-
-export type LoginInput = {
-  email: string;
-  password: string;
-};
-
-export type NameInput = {
-  name: string;
-};
-
-export type ReviewForMovieInput = {
-  movie_id: string;
-};
-
-export type CreateUserInput = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-};
-
-export type CreateMovieInput = {
-  title: string;
-  description: string;
-  poster: string;
-  release_date: string;
-  category_id: string;
-};
-
-export type CreateReviewInput = {
-  rating: string;
-  description: string;
-  movie_id: string;
-  user_id: string;
 };
 
 export type UpdateMovieInput = {
@@ -170,12 +121,4 @@ export type DbMovie = {
   poster: string;
   release_date: string;
   category_id: string;
-};
-
-export type DbUser = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-  email: string;
 };

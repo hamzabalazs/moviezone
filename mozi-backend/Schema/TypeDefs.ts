@@ -39,12 +39,6 @@ export const typeDefs = gql`
     name: String!
   }
 
-  type Session {
-    id: ID!
-    token: String!
-    user_id: ID!
-  }
-
   type Movie {
     id: ID!
     title: String!
@@ -78,11 +72,6 @@ export const typeDefs = gql`
     description: String!
   }
 
-  type Movie_Cast {
-    movie_id: ID!,
-    cast_id: ID!
-  }
-
   type DbReview {
     id: ID!
     rating: String!
@@ -99,22 +88,6 @@ export const typeDefs = gql`
     release_date: String!
     category_id: String!
     rating: String!
-  }
-
-  type DbUser {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    role: String!
-    email: String!
-  }
-
-  type MovieOfCast {
-    id: ID!
-    title: String!
-    description: String!
-    release_date: String!
-    poster: String!
   }
 
   input MovieInput {
@@ -217,14 +190,6 @@ export const typeDefs = gql`
     password: String!
   }
 
-  input GetTokenInput {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    email: String!
-    role: String!
-  }
-
   input GetReviewsOfMovieInput {
     movie_id: ID!
     limit: Int!
@@ -299,11 +264,6 @@ export const typeDefs = gql`
     token:String!
   }
 
-  type MovieAutocompleteList {
-    id:ID!,
-    title:String!
-  }
-
   input numOfReviewsForChart {
     movie_id:String!
   }
@@ -367,7 +327,6 @@ export const typeDefs = gql`
     getUserForPassChange(input:getUserForPassChangeInput!): FullUser!
     checkForUser(input: UserEmailInput!): User
     getNumberOfUsers: numOfUsers!
-    getAllMovies: [MovieAutocompleteList]!
     getMovies(input: MoviePaginationInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie
     getNumberOfMovies(input: numOfMoviesInput): numOfMovies!
