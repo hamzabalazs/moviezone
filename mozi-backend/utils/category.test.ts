@@ -16,31 +16,33 @@ import {
   UNAUTHORIZED_MESSAGE,
 } from "../common/errorMessages";
 import { categoryData } from "../test/mockedData";
-import { CREATE_CATEGORY, DELETE_CATEGORY, UPDATE_CATEGORY,GET_CATEGORIES } from "./category.mocks"
+import {
+  CREATE_CATEGORY,
+  DELETE_CATEGORY,
+  UPDATE_CATEGORY,
+  GET_CATEGORIES,
+} from "./category.mocks";
 import { Database } from "../common/sqlite-async-ts";
-
 
 let req = {
   headers: {
     "auth-token": "admintoken1423",
   },
 };
-let con:{server:ApolloServer,db:Database};
+let con: { server: ApolloServer; db: Database };
 
-
-test("servercreation",async() => {
+test("servercreation", async () => {
   con = await createServer(req);
-  expect(con.db).not.toBeUndefined()
-})
+  expect(con.db).not.toBeUndefined();
+});
 
 test("Should get all categories", async () => {
-  req.headers['auth-token'] = "admintoken1423"
+  req.headers["auth-token"] = "admintoken1423";
   const result = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
   expect(result.data?.getCategories).toHaveLength(3);
 });
-
 
 test("Should get category if ID is correct", async () => {
   const result = await con.server.executeOperation({
@@ -123,7 +125,7 @@ test("Should not add new category if user session has expired", async () => {
 });
 
 test("Should add new category if good token was given", async () => {
-  req.headers['auth-token'] = "admintoken1423"
+  req.headers["auth-token"] = "admintoken1423";
   const beforeResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
@@ -312,7 +314,7 @@ test("Should delete category if good token was given", async () => {
   const beforeResult = await con.server.executeOperation({
     query: GET_CATEGORIES,
   });
-  req.headers['auth-token'] = "admintoken1423"
+  req.headers["auth-token"] = "admintoken1423";
   expect(beforeResult.data?.getCategories).toHaveLength(4);
   const result = await con.server.executeOperation({
     query: DELETE_CATEGORY,
