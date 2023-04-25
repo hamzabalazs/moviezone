@@ -11,6 +11,6 @@ FROM node:14-alpine AS frontend
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/package*.json .
+COPY --from=builder /app/package*.json ./
 EXPOSE 3000
 CMD ["npm","run","deploy"]
