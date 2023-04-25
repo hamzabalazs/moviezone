@@ -1,7 +1,7 @@
 FROM node:14-alpine AS builder
 WORKDIR /app
-COPY package-lock.json package.json /app/
-RUN ls
+COPY package*.json /app/
+RUN cd .. && ls
 RUN npm install
 COPY . .
 RUN npm test -- --watchAll=false
