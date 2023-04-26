@@ -264,6 +264,11 @@ export const typeDefs = gql`
     token:String!
   }
 
+  type MovieAutocompleteList {
+    id:ID!,
+    title:String!
+  }
+
   input numOfReviewsForChart {
     movie_id:String!
   }
@@ -327,6 +332,7 @@ export const typeDefs = gql`
     getUserForPassChange(input:getUserForPassChangeInput!): FullUser!
     checkForUser(input: UserEmailInput!): User
     getNumberOfUsers: numOfUsers!
+    getAllMovies: [MovieAutocompleteList]!
     getMovies(input: MoviePaginationInput!): [Movie!]!
     getMovieById(input: MovieInput!): Movie
     getNumberOfMovies(input: numOfMoviesInput): numOfMovies!

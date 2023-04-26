@@ -10,6 +10,18 @@ import { MyContext } from "../server";
 import { CreateMovieType, DbMovie, Movie, UpdateMovieInput } from "./types";
 import { getCategoryById } from "./category";
 
+export function getAllMovies(context: MyContext): Promise<any[]> {
+  const sql = "SELECT id,title FROM movie";
+  return new Promise((resolve, reject) => {
+    context.db.query(sql, (err: any, res: any) => {
+      if (err) {
+        reject(err);
+      }
+      if (res) resolve(res);
+    });
+  });
+}
+
 export function getMovies(input: any, context: MyContext): Promise<Movie[]> {
   let sql = "SELECT * FROM movie";
   let params: any[] = [];

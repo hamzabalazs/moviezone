@@ -24,6 +24,7 @@ jobs:
         dockerfile: mozi-frontend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push backend Docker image
       with:
