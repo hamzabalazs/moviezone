@@ -114,9 +114,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Undo push
-      uses: exions/undo-push@v1
-      with:
-        branch: main
+      run: |
+        cd /github/workspace
+        git branch ${{ github.event.inputs.branch }}
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git reset --hard -- HEAD~1
+        git push --force
     if: |
        needs.check-for-existing-docker-image-frontend.outputs.result == 'success' &&
        needs.check-for-existing-docker-image-backend.outputs.result == 'success'
