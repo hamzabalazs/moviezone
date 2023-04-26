@@ -9,12 +9,11 @@ on:
 jobs:
   get-package-version-backend:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-      - name: Get package info
-        id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: ./mozi-backend
 
@@ -23,9 +22,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Get package info
-        id: package-info
-        uses: luizfelipelaviola/get-package-info@v1
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: ./mozi-frontend
 
@@ -34,6 +33,7 @@ jobs:
     needs: get-package-version-frontend
     continue-on-error: true
     steps:  
+      - uses: actions/checkout@v3
       - name: Check image
         id: image_exists
         uses: cloudposse/github-action-docker-image-exists@main
@@ -43,7 +43,7 @@ jobs:
           repository: "${{ github.event.repository.name }}"
           login: "${{ secrets.DOCKERHUB_USERNAME }}"
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
-          tag: frontend-v${{needs.get-package-version-frontend.outputs.version}}
+          tag: frontend-v${{needs.get-package-version-frontend.outputs.current-version}}
 
     outputs:
       result: ${{ steps.image_exists.conclusion }}  
@@ -55,6 +55,7 @@ jobs:
     needs: get-package-version-backend
     continue-on-error: true  
     steps:  
+      - uses: actions/checkout@v3
       - name: Check image
         id: image_exists
         uses: cloudposse/github-action-docker-image-exists@main
@@ -64,7 +65,7 @@ jobs:
           repository: "${{ github.event.repository.name }}"
           login: "${{ secrets.DOCKERHUB_USERNAME }}"
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
-          tag: backend-v${{needs.get-package-version-backend.outputs.version}}
+          tag: backend-v${{needs.get-package-version-backend.outputs.current-version}}
 
     outputs:
       result: ${{ steps.image_exists.conclusion }}  
