@@ -8,18 +8,22 @@ on:
 
 jobs:
   get-package-version-backend:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Get package info
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
         with:
           path: mozi-backend
 
   get-package-version-frontend:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Get package info
+        id: package-info
+        uses: luizfelipelaviola/get-package-info@v1
         with:
           path: mozi-frontend
 
@@ -37,7 +41,7 @@ jobs:
           repository: "${{ github.event.repository.name }}"
           login: "${{ secrets.DOCKERHUB_USERNAME }}"
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
-          tag: frontend-v${{needs.get-package-version-frontend.outputs.current-version}}
+          tag: frontend-v${{needs.get-package-version-frontend.outputs.version}}
 
     outputs:
       result: ${{ steps.image_exists.conclusion }}  
@@ -58,7 +62,7 @@ jobs:
           repository: "${{ github.event.repository.name }}"
           login: "${{ secrets.DOCKERHUB_USERNAME }}"
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
-          tag: backend-v${{needs.get-package-version-backend.outputs.current-version}}
+          tag: backend-v${{needs.get-package-version-backend.outputs.version}}
 
     outputs:
       result: ${{ steps.image_exists.conclusion }}  
