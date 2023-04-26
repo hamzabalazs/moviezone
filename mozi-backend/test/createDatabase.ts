@@ -150,13 +150,13 @@ async function fillCategoryTable(db: Database) {
 }
 async function fillReviewTable(db: Database) {
   const sql = `INSERT INTO review (id,rating,description,movie_id,user_id,timestamp) VALUES
-  ("${reviewData[0].id}","${reviewData[0].rating}","${reviewData[0].description}","${reviewData[0].movie_id}","${reviewData[0].user_id}","${reviewData[0].timestamp}"),
-  ("${reviewData[1].id}","${reviewData[1].rating}","${reviewData[1].description}","${reviewData[1].movie_id}","${reviewData[1].user_id}","${reviewData[1].timestamp}"),
-  ("${reviewData[2].id}","${reviewData[2].rating}","${reviewData[2].description}","${reviewData[2].movie_id}","${reviewData[2].user_id}","${reviewData[2].timestamp}"),
-  ("${reviewData[3].id}","${reviewData[3].rating}","${reviewData[3].description}","${reviewData[3].movie_id}","${reviewData[3].user_id}","${reviewData[3].timestamp}"),
-  ("${reviewData[4].id}","${reviewData[4].rating}","${reviewData[4].description}","${reviewData[4].movie_id}","${reviewData[4].user_id}","${reviewData[4].timestamp}"),
-  ("${reviewData[5].id}","${reviewData[5].rating}","${reviewData[5].description}","${reviewData[5].movie_id}","${reviewData[5].user_id}","${reviewData[5].timestamp}"),
-  ("${reviewData[6].id}","${reviewData[6].rating}","${reviewData[6].description}","${reviewData[6].movie_id}","${reviewData[6].user_id}","${reviewData[6].timestamp}")`;
+  ("${reviewData[0].id}","${reviewData[0].rating}","${reviewData[0].description}","${reviewData[0].movie.id}","${reviewData[0].user.id}","${reviewData[0].timestamp}"),
+  ("${reviewData[1].id}","${reviewData[1].rating}","${reviewData[1].description}","${reviewData[1].movie.id}","${reviewData[1].user.id}","${reviewData[1].timestamp}"),
+  ("${reviewData[2].id}","${reviewData[2].rating}","${reviewData[2].description}","${reviewData[2].movie.id}","${reviewData[2].user.id}","${reviewData[2].timestamp}"),
+  ("${reviewData[3].id}","${reviewData[3].rating}","${reviewData[3].description}","${reviewData[3].movie.id}","${reviewData[3].user.id}","${reviewData[3].timestamp}"),
+  ("${reviewData[4].id}","${reviewData[4].rating}","${reviewData[4].description}","${reviewData[4].movie.id}","${reviewData[4].user.id}","${reviewData[4].timestamp}"),
+  ("${reviewData[5].id}","${reviewData[5].rating}","${reviewData[5].description}","${reviewData[5].movie.id}","${reviewData[5].user.id}","${reviewData[5].timestamp}"),
+  ("${reviewData[6].id}","${reviewData[6].rating}","${reviewData[6].description}","${reviewData[6].movie.id}","${reviewData[6].user.id}","${reviewData[6].timestamp}")`;
   await db.run(sql);
 }
 async function fillSessionTable(db: Database) {
