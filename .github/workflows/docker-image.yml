@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: ls
       - name: Get package info
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
