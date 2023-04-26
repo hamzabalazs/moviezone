@@ -14,8 +14,6 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
-        with:
-          path: github/workspace/mozi-backend/
 
   get-package-version-frontend:
     runs-on: ubuntu-latest
@@ -24,8 +22,7 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
-        with:
-          path: github/workspace/mozi-frontend
+        run: ls
 
   check-for-existing-docker-image-frontend:
     runs-on: ubuntu-latest
