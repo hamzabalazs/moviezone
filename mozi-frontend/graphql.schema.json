@@ -2036,7 +2036,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "DbReview",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,

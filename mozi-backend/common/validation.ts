@@ -5,10 +5,16 @@ import { getToken } from "../utils/auth";
 import { getMovieById } from "../utils/movie";
 import { getReviews } from "../utils/review";
 import { getUserById, getUserByToken } from "../utils/user";
-import { EXPIRED_TOKEN_MESSAGE, NO_MOVIE_MESSAGE, NO_TOKEN_MESSAGE, NO_USER_MESSAGE, REVIEW_EXISTS_MESSAGE, REVIEW_INVALID_RATING_MESSAGE } from "./errorMessages";
+import {
+  EXPIRED_TOKEN_MESSAGE,
+  NO_MOVIE_MESSAGE,
+  NO_TOKEN_MESSAGE,
+  NO_USER_MESSAGE,
+  REVIEW_EXISTS_MESSAGE,
+  REVIEW_INVALID_RATING_MESSAGE,
+} from "./errorMessages";
 
-export const datevalidator =
-/^\d{4}-\d{2}-\d{2}$/;
+export const datevalidator = /^\d{4}-\d{2}-\d{2}$/;
 
 export const userSchema = object({
   first_name: string().required("First Name is required!"),
@@ -50,23 +56,44 @@ export const createMovieSchema = object({
   release_date: string()
     .required("Release Date is required!")
     .matches(datevalidator, "Invalid date format!"),
-})
+});
 
 export async function tokenChecker(context: MyContext) {
   const user = await getUserByToken(context);
-  if (!user) throw new GraphQLError(NO_TOKEN_MESSAGE,{extensions:{code:'UNAUTHENTICATED'}})
-  context.user = user
+  if (!user)
+    throw new GraphQLError(NO_TOKEN_MESSAGE, {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  context.user = user;
   const isExpired = await getToken(context);
-  if (isExpired.expired === 1) throw new GraphQLError(EXPIRED_TOKEN_MESSAGE,{extensions:{code:'SESSION_EXPIRED'}})
+  if (isExpired.expired === 1)
+    throw new GraphQLError(EXPIRED_TOKEN_MESSAGE, {
+      extensions: { code: "SESSION_EXPIRED" },
+    });
   return user;
 }
 
-export async function createReviewErrorHandling(newReview:any,context:MyContext){
-    const isUser = await getUserById(newReview.user_id, context);
-      if (isUser === undefined) throw new GraphQLError(NO_USER_MESSAGE,{extensions:{code:'NOT_FOUND'}})
-      const isMovie = await getMovieById(newReview.movie_id, context);
-      if (isMovie === undefined) throw new GraphQLError(NO_MOVIE_MESSAGE,{extensions:{code:'NOT_FOUND'}})
-      const reviews = await getReviews(context)
-      const hasReview = reviews.filter((x:any) => x.movie_id === newReview.movie_id && x.user_id === newReview.user_id)
-      if (hasReview.length !== 0) throw new GraphQLError(REVIEW_EXISTS_MESSAGE,{extensions:{code:'ALREADY_EXISTS'}})
+export async function createReviewErrorHandling(
+  newReview: any,
+  context: MyContext
+) {
+  const isUser = await getUserById(newReview.user_id, context);
+  if (isUser === undefined)
+    throw new GraphQLError(NO_USER_MESSAGE, {
+      extensions: { code: "NOT_FOUND" },
+    });
+  const isMovie = await getMovieById(newReview.movie_id, context);
+  if (isMovie === undefined)
+    throw new GraphQLError(NO_MOVIE_MESSAGE, {
+      extensions: { code: "NOT_FOUND" },
+    });
+  const reviews = await getReviews(context);
+  const hasReview = reviews.filter(
+    (x: any) =>
+      x.movie_id === newReview.movie_id && x.user_id === newReview.user_id
+  );
+  if (hasReview.length !== 0)
+    throw new GraphQLError(REVIEW_EXISTS_MESSAGE, {
+      extensions: { code: "ALREADY_EXISTS" },
+    });
 }

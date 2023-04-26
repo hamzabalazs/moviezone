@@ -41,8 +41,25 @@ export const CREATE_REVIEW = gql`
       id
       rating
       description
-      movie_id
-      user_id
+      movie {
+        id
+        title
+        description
+        poster
+        release_date
+        category {
+          id
+          name
+        }
+        rating
+      }
+      user {
+        first_name
+        last_name
+        id
+        role
+        email
+      }
     }
   }
 `;

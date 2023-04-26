@@ -371,7 +371,7 @@ export const typeDefs = gql`
     createMovie(input: AddMovieInput!): Movie
     updateMovie(input: UpdateMovieInput!): Movie!
     deleteMovie(input: DeleteMovieInput!): Movie!
-    createReview(input: AddReviewInput!): DbReview
+    createReview(input: AddReviewInput!): Review
     updateReview(input: UpdateReviewInput!): Review
     deleteReview(input: DeleteReviewInput!): Review!
     deleteToken(input: DeleteTokenInput!): RunResult

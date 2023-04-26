@@ -16,6 +16,7 @@ import { useSessionContext } from "../../auth/context/SessionContext";
 import {
   EXPIRED_TOKEN_MESSAGE,
   NOT_VALID_REVIEW,
+  REVIEW_EXISTS_MESSAGE,
 } from "../../common/errorMessages";
 import { Review } from "../../gql/graphql";
 
@@ -75,6 +76,9 @@ export default function AddReviewCard({
           } else if (error.message === NOT_VALID_REVIEW) {
             const msg = t("validityFailure.reviewNotValid");
             enqueueSnackbar(msg, { variant: "error" });
+          } else if (error.message === REVIEW_EXISTS_MESSAGE){
+            const msg = t("failMessages.reviewAddMultiple");
+            enqueueSnackbar(msg, {variant:"error"})
           } else {
             const msg = t("someError");
             enqueueSnackbar(msg, { variant: "error" });
