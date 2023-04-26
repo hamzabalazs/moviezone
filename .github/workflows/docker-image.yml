@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: ls
+      - uses: actions/checkout@v3
       - name: Get package info
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
       - name: Get package info
         id: package-info
         uses: luizfelipelaviola/get-package-info@v1
