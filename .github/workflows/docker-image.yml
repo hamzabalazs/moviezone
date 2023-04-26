@@ -16,8 +16,6 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
           path: ./mozi-backend/package.json
-        outputs:
-          current-version: ${{steps.package-version.outputs.current-version}}
 
   get-package-version-frontend:
     runs-on: ubuntu-latest
