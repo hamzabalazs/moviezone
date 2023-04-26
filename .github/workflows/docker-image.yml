@@ -19,7 +19,7 @@ jobs:
         outputs:
           current-version: ${{steps.package-version.outputs.current-version}}
 
-get-package-version-frontend:
+  get-package-version-frontend:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,19 +41,19 @@ get-package-version-frontend:
           image: hamzabalazs/moviezone
           tag: frontend-v${{ needs.get-package-version-frontend.outputs.current-version }}
 
-    check-for-existing-docker-image-backend:
-      name: Check Docker For Matching Tag
-      runs-on: ubuntu-latest
-      needs: get-package-version-backend
-      outputs:
-        tag-exists: ${{steps.check-docker-outputs.tag-exists}}
-      steps:
-        - id: check-docker-backend
-        name: Check Docker for Backend Tag
-        uses: hipcamp/docker-tag-exists@v1
-        with:
-          image: hamzabalazs/moviezone
-          tag: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
+  check-for-existing-docker-image-backend:
+    name: Check Docker For Matching Tag
+    runs-on: ubuntu-latest
+    needs: get-package-version-backend
+    outputs:
+      tag-exists: ${{steps.check-docker-outputs.tag-exists}}
+    steps:
+      - id: check-docker-backend
+      name: Check Docker for Backend Tag
+      uses: hipcamp/docker-tag-exists@v1
+      with:
+        image: hamzabalazs/moviezone
+        tag: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
       
 
   build-frontend:
@@ -76,14 +76,14 @@ get-package-version-frontend:
 
     
   
-build-backend:
+  build-backend:
 
-  runs-on: ubuntu-latest
-  needs: [check-for-existing-docker-image-backend, get-package-version-backend]
-  if: needs.check-for-existing-docker-image-backend.outputs.tag-exists != 'true'
-  steps:
-  - uses: actions/checkout@v3
-  - uses: mr-smithers-excellent/docker-build-push@v5
+    runs-on: ubuntu-latest
+    needs: [check-for-existing-docker-image-backend, get-package-version-backend]
+    if: needs.check-for-existing-docker-image-backend.outputs.tag-exists != 'true'
+    steps:
+    - uses: actions/checkout@v3
+    - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push backend Docker image
       with:
         image: hamzabalazs/moviezone
