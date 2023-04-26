@@ -65,7 +65,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: check-for-existing-docker-image-frontend
-    if: needs.check-for-existing-docker-image-frontend.outputs.result == 'failure'
+    if: needs.check-for-existing-docker-image-frontend.outputs.result != 'success'
     steps:
     - uses: actions/checkout@v3
     - uses: mr-smithers-excellent/docker-build-push@v5
@@ -85,7 +85,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: check-for-existing-docker-image-backend
-    if: needs.check-for-existing-docker-image-backend.outputs.result == 'failure'
+    if: needs.check-for-existing-docker-image-backend.outputs.result != 'success'
     steps:
     - run: echo ${{needs.check-for-existing-docker-image-backend.outputs.result}}
     - run: echo ${{needs.check-for-existing-docker-image-backend.outputs.current-version}}
