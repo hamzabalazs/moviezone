@@ -7,18 +7,34 @@ on:
     branches: [ "main" ]
 
 jobs:
-  get-package-version:
+  get-package-version-backend:
     runs-on: ubuntu-latest
 
     steps:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: ./mozi-backend/package.json
+        outputs:
+          current-version: ${{steps.package-version.outputs.current-version}}
 
-  check-for-existing-docker-image:
+get-package-version-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: ./mozi-frontend/package.json
+        outputs:
+          current-version: ${{steps.package-version.outputs.current-version}}
+
+  check-for-existing-docker-image-frontend:
     name: Check Docker for Matching Tag
     runs-on: ubuntu-latest
-    needs: get-package-version
+    needs: get-package-version-frontend
     outputs:
       tag-exists: ${{steps.check-docker-outputs.tag-exists}}
     steps:
@@ -27,37 +43,55 @@ jobs:
         uses: hipcamp/docker-tag-exists@v1
         with:
           image: hamzabalazs/moviezone
-          tag: frontend-v${{ needs.get-package-version.outputs.current-version }}
-      - id: check-docker-backend
+          tag: frontend-v${{ needs.get-package-version-frontend.outputs.current-version }}
+
+    check-for-existing-docker-image-backend:
+      name: Check Docker For Matching Tag
+      runs-on: ubuntu-latest
+      needs: get-package-version-backend
+      outputs:
+        tag-exists: ${{steps.check-docker-outputs.tag-exists}}
+      steps:
+        - id: check-docker-backend
         name: Check Docker for Backend Tag
         uses: hipcamp/docker-tag-exists@v1
         with:
           image: hamzabalazs/moviezone
-          tag: backend-v${{ needs.get-package-version.outputs.current-version }}
+          tag: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
+      
 
-  build:
+  build-frontend:
 
     runs-on: ubuntu-latest
-    needs: [check-for-existing-docker-image, get-package-version]
-    if: needs.check-for-existing-docker-image.outputs.tag-exists != 'true'
+    needs: [check-for-existing-docker-image-frontend, get-package-version-frontend]
+    if: needs.check-for-existing-docker-image-frontend.outputs.tag-exists != 'true'
     steps:
     - uses: actions/checkout@v3
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push frontend Docker image
       with:
         image: hamzabalazs/moviezone
-        tags: frontend-v${{ needs.get-package-version.outputs.current-version }}
+        tags: frontend-v${{ needs.get-package-version-frontend.outputs.current-version }}
         registry: docker.io
         directory: ./mozi-frontend
         dockerfile: mozi-frontend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - uses: mr-smithers-excellent/docker-build-push@v5
+    
+  
+build-backend:
+
+  runs-on: ubuntu-latest
+  needs: [check-for-existing-docker-image-backend, get-package-version-backend]
+  if: needs.check-for-existing-docker-image-backend.outputs.tag-exists != 'true'
+  steps:
+  - uses: actions/checkout@v3
+  - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push backend Docker image
       with:
         image: hamzabalazs/moviezone
-        tags: backend-v${{ needs.get-package-version.outputs.current-version }}
+        tags: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
         registry: docker.io
         directory: ./mozi-backend
         dockerfile: mozi-backend/Dockerfile
