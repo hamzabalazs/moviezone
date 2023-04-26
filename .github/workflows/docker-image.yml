@@ -45,15 +45,13 @@ jobs:
     name: Check Docker For Matching Tag
     runs-on: ubuntu-latest
     needs: get-package-version-backend
-    outputs:
-      tag-exists: ${{steps.check-docker-outputs.tag-exists}}
     steps:
       - id: check-docker-backend
-      name: Check Docker for Backend Tag
-      uses: hipcamp/docker-tag-exists@v1
-      with:
-        image: hamzabalazs/moviezone
-        tag: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
+        name: Check Docker for Backend Tag
+        uses: hipcamp/docker-tag-exists@v1
+        with:
+          image: hamzabalazs/moviezone
+          tag: backend-v${{ needs.get-package-version-backend.outputs.current-version }}
       
 
   build-frontend:
