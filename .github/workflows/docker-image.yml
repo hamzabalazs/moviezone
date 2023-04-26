@@ -21,6 +21,7 @@ jobs:
   check-for-existing-docker-image:
     name: Check Docker for Matching Tag
     runs-on: ubuntu-latest
+    needs: get-package-version
     outputs:
       tag-exists: ${{steps.check-docker-outputs.tag-exists}}
     steps:
@@ -40,7 +41,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    needs: check-for-existing-docker-image
+    needs: [check-for-existing-docker-image, get-package-version]
     if: needs.check-for-existing-docker-image.outputs.tag-exists != 'true'
     steps:
     - uses: actions/checkout@v3
