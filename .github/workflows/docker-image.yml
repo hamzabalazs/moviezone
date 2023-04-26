@@ -116,7 +116,7 @@ jobs:
     - name: Undo push
       uses: exions/undo-push@v1
       with:
-        branch: ${{ github.event.inputs.branch }}
+        branch: main
     if: |
        needs.check-for-existing-docker-image-frontend.outputs.result == 'success' &&
        needs.check-for-existing-docker-image-backend.outputs.result == 'success'
