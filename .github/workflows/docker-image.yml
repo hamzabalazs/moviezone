@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: get-npm-version
         id: package-version
-        uses: martinbeentjes/npm-get-version@v1.3.1
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
 
   check-for-existing-docker-image:
     name: Check Docker for Matching Tag
