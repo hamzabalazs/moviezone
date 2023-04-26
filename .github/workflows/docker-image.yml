@@ -64,49 +64,41 @@ jobs:
   build-frontend:
 
     runs-on: ubuntu-latest
-    - name: build
-      needs: check-for-existing-docker-image-frontend
+    name: build
+    needs: check-for-existing-docker-image-frontend
+    steps:
+    - uses: actions/checkout@v3
+    - uses: mr-smithers-excellent/docker-build-push@v5
+      name: Build & push frontend Docker image
+      with:
+        image: hamzabalazs/moviezone
+        tags: frontend-v${{ needs.check-for-existing-docker-image-frontend.outputs.current-version }}
+        registry: docker.io
+        directory: ./mozi-frontend
+        dockerfile: mozi-frontend/Dockerfile
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }} 
       if: needs.check-for-existing-docker-image-frontend.outputs.result != 'success'
-      steps:
-      - uses: actions/checkout@v3
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Build & push frontend Docker image
-        with:
-          image: hamzabalazs/moviezone
-          tags: frontend-v${{ needs.check-for-existing-docker-image-frontend.outputs.current-version }}
-          registry: docker.io
-          directory: ./mozi-frontend
-          dockerfile: mozi-frontend/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: error
-      needs: check-for-existing-docker-image-frontend
+    - run: echo Tag already exists!
       if: needs.check-for-existing-docker-image-frontend.outputs.result == 'success'
-      run: echo Tag already exists!
-
-    
   
   build-backend:
 
     runs-on: ubuntu-latest
-    - name: build
-      needs: check-for-existing-docker-image-backend
+    name: build
+    needs: check-for-existing-docker-image-backend
+    steps:
+    - uses: actions/checkout@v3
+    - uses: mr-smithers-excellent/docker-build-push@v5
+      name: Build & push backend Docker image
+      with:
+        image: hamzabalazs/moviezone
+        tags: backend-v${{ needs.check-for-existing-docker-image-backend.outputs.current-version }}
+        registry: docker.io
+        directory: ./mozi-backend
+        dockerfile: mozi-backend/Dockerfile
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
       if: needs.check-for-existing-docker-image-backend.outputs.result != 'success'
-      steps:
-      - run: echo ${{needs.check-for-existing-docker-image-backend.outputs.result}}
-      - run: echo ${{needs.check-for-existing-docker-image-backend.outputs.current-version}}
-      - uses: actions/checkout@v3
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Build & push backend Docker image
-        with:
-          image: hamzabalazs/moviezone
-          tags: backend-v${{ needs.check-for-existing-docker-image-backend.outputs.current-version }}
-          registry: docker.io
-          directory: ./mozi-backend
-          dockerfile: mozi-backend/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: error
-      needs: check-for-existing-docker-image-backend
+    - run: echo Tag already exists!
       if: needs.check-for-existing-docker-image-backend.outputs.result == 'success'
-      run: echo Tag already exists!
