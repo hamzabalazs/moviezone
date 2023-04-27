@@ -116,7 +116,7 @@ jobs:
       if: needs.check-for-existing-docker-image-backend.outputs.result == 'success'
 
   Undo:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [build-backend,build-frontend]
     name: undo
     steps:
@@ -125,6 +125,8 @@ jobs:
       uses: exions/undo-push@v1
       with:
         branch: ${{ github.event.inputs.branch }}
+    - run: git branch
+    - run: git log
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
