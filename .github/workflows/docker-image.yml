@@ -133,7 +133,7 @@ jobs:
         PAT_TOKEN: ${{ secrets.UNDO_PUSH_PAT }}
     - run: |
         git remote set-url origin https://github.com/hamzabalazs/moviezone.git
-        git push --force origin HEAD:${{ github.event.inputs.branch }}
+        git push --force origin HEAD:refs/head/main
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
