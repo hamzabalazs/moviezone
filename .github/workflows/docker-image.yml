@@ -82,11 +82,7 @@ jobs:
         dockerfile: mozi-frontend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }} 
-      if: needs.check-for-existing-docker-image-frontend.outputs.result != 'success'
-    - run: |
-        echo Tag already exists!
-        exit 1
-      if: needs.check-for-existing-docker-image-frontend.outputs.result == 'success'
+    if: needs.check-for-existing-docker-image-frontend.outputs.result != 'success'
   
   build-backend:
 
@@ -109,11 +105,8 @@ jobs:
         dockerfile: mozi-backend/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-      if: needs.check-for-existing-docker-image-backend.outputs.result != 'success'
-    - run: |
-        echo Tag already exists!
-        exit 1
-      if: needs.check-for-existing-docker-image-backend.outputs.result == 'success'
+    if: needs.check-for-existing-docker-image-backend.outputs.result != 'success'
+    
 
   Undo:
     runs-on: ubuntu-latest
@@ -130,6 +123,6 @@ jobs:
       with:
         branch: ${{ github.event.inputs.branch }}
     if: |
-       needs.build-frontend.outputs.outcome != 'success' &&
-       needs.build-backend.outputs.outcome != 'success'
+       (needs.build-frontend.outputs.outcome == 'skipped' && needs.build-backend.outputs.outcome == 'skipped') ||
+       (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure')
 
