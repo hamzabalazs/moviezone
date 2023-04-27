@@ -129,6 +129,8 @@ jobs:
       uses: hamzabalazs/undo-push@v1.0.2
       with:
         branch: ${{ github.event.inputs.branch }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.UNDO_PUSH_PAT }}
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
