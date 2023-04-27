@@ -125,16 +125,8 @@ jobs:
         ref: ${{ github.event.inputs.branch }}
         fetch-depth: 0 
     - name: Undo push
-      run: |
-        git reset --hard HEAD~1
-
-    - name: Set git user
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-    - name: Force push changes
-      run: |
-        git push --force
+      continue-on-error: true
+      uses: fabriziocacicia/undo-latest-commit-action@v0.1.0
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
