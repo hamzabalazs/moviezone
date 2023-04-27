@@ -126,14 +126,9 @@ jobs:
         fetch-depth: 0 
     - name: Undo push
       continue-on-error: true
-      uses: exions/undo-push@v1
+      uses: hamzabalazs/undo-push@v1.0.2
       with:
         branch: ${{ github.event.inputs.branch }}
-      env:
-        PAT_TOKEN: ${{ secrets.UNDO_PUSH_PAT }}
-    - run: |
-        git remote set-url origin https://github.com/hamzabalazs/moviezone.git
-        git push --force origin HEAD:refs/head/main
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
