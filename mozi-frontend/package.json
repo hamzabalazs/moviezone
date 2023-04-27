@@ -1,6 +1,6 @@
 {
   "name": "mozi-frontend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.10",
