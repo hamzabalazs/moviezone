@@ -169,7 +169,6 @@ export async function createMovie(
     category_id: movie.category.id,
   };
 }
-
 export async function updateMovie(
   movie: UpdateMovieInput,
   context: MyContext
