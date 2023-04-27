@@ -116,7 +116,7 @@ jobs:
       if: needs.check-for-existing-docker-image-backend.outputs.result == 'success'
 
   Undo:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: [build-backend,build-frontend]
     name: undo
     steps:
