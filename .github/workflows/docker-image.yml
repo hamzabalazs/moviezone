@@ -125,6 +125,7 @@ jobs:
       with:
         branch: ${{ github.event.inputs.branch }}
       if: |
-        (needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
-        (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure')
+        always() &&
+        ((needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
+        (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure'))
 
