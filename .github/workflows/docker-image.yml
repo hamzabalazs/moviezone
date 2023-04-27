@@ -117,12 +117,14 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch }}
         fetch-depth: 0 
+    - run: echo ${{ needs.build-frontend.result }}
+    - run: echo ${{ needs.build-frontend.outputs.outcome }}
     - name: Undo push
       continue-on-error: true
       uses: hamzabalazs/undo-push@v1.0.2
       with:
         branch: ${{ github.event.inputs.branch }}
-    if: |
-       (needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
-       (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure')
+      if: |
+        (needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
+        (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure')
 
