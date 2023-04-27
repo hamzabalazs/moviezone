@@ -138,7 +138,6 @@ export async function getNumberOfMoviesPerYear(
   });
 }
 
-
 export async function createMovie(
   movie: CreateMovieType,
   context: MyContext
