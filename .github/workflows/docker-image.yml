@@ -129,8 +129,9 @@ jobs:
         git config --global user.name ${{ secrets.PUSH_ACTION_USERNAME }}
         git config --global user.email ${{ secrets.PUSH_ACTION_PASSWORD }}
     - name: Undo push
-      continue-on-error: true
-      uses: fabriziocacicia/undo-latest-commit-action@v0.1.0
+      run: |
+        git reset --hard HEAD~1
+        git push --force
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
