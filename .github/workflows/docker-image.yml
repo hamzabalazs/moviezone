@@ -118,11 +118,11 @@ jobs:
   Undo:
     runs-on: ubuntu-latest
     needs: [build-backend,build-frontend]
-    continue-on-error: true
     name: undo
     steps:
     - uses: actions/checkout@v3
     - name: Undo push
+      continue-on-error: true
       uses: exions/undo-push@v1
       with:
         branch: ${{ github.event.inputs.branch }}
