@@ -65,7 +65,6 @@ jobs:
 
     runs-on: ubuntu-latest
     name: build
-    id: build-frontend
     needs: check-for-existing-docker-image-frontend
     outputs:
       outcome: ${{steps.build-frontend.outcome}}
@@ -73,6 +72,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push frontend Docker image
+      id: build-frontend
       with:
         image: hamzabalazs/moviezone
         tags: frontend-v${{ needs.check-for-existing-docker-image-frontend.outputs.current-version }}
@@ -91,7 +91,6 @@ jobs:
 
     runs-on: ubuntu-latest
     name: build
-    id: build-backend
     needs: check-for-existing-docker-image-backend
     outputs:
       outcome: ${{steps.build-backend.outcome}}
@@ -99,6 +98,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push backend Docker image
+      id: build-backend
       with:
         image: hamzabalazs/moviezone
         tags: backend-v${{ needs.check-for-existing-docker-image-backend.outputs.current-version }}
