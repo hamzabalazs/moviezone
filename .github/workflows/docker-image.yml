@@ -129,7 +129,6 @@ jobs:
       uses: hamzabalazs/undo-push@v1.0.1
       with:
         branch: ${{ github.event.inputs.branch }}
-      
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
