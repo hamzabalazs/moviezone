@@ -125,12 +125,16 @@ jobs:
         ref: ${{ github.event.inputs.branch }}
         fetch-depth: 0 
     - name: Undo push
-      continue-on-error: true
-      uses: exions/undo-push@v1
-      with:
-        branch: ${{ github.event.inputs.branch }}
-    - run: git branch
-    - run: git log
+      run: |
+        git reset --hard HEAD~1
+
+    - name: Set git user
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+    - name: Force push changes
+      run: |
+        git push --force
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
