@@ -124,8 +124,8 @@ jobs:
       uses: hamzabalazs/undo-push@v1.0.2
       with:
         branch: ${{ github.event.inputs.branch }}
-      if: |
-        always() &&
-        ((needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
-        (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure'))
+    if: |
+      always() &&
+      ((needs.build-frontend.result == 'skipped' && needs.build-backend.result == 'skipped') ||
+      (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure'))
 
