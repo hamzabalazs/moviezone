@@ -126,7 +126,7 @@ jobs:
         fetch-depth: 0 
     - name: Undo push
       continue-on-error: true
-      uses: exions/undo-push@v1.0.2
+      uses: exions/undo-push@v1
       with:
         branch: ${{ github.event.inputs.branch }}
       env:
