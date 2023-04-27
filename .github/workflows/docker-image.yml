@@ -123,6 +123,6 @@ jobs:
       with:
         branch: ${{ github.event.inputs.branch }}
     if: |
-       (needs.build-frontend.outputs.outcome == 'skipped' && needs.build-backend.outputs.outcome == 'skipped') ||
+       (needs.build-frontend.outputs.result == 'skipped' && needs.build-backend.outputs.result == 'skipped') ||
        (needs.build-frontend.outputs.outcome == 'failure' || needs.build-backend.outputs.outcome == 'failure')
 
