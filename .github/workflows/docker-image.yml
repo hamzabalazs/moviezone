@@ -124,6 +124,10 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch }}
         fetch-depth: 0 
+    - name: set user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
     - name: Undo push
       continue-on-error: true
       uses: fabriziocacicia/undo-latest-commit-action@v0.1.0
