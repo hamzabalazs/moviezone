@@ -124,14 +124,12 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch }}
         fetch-depth: 0 
-    - name: set user
-      run: |
-        git config --global user.name ${{ secrets.PUSH_ACTION_USERNAME }}
-        git config --global user.email ${{ secrets.PUSH_ACTION_PASSWORD }}
     - name: Undo push
-      run: |
-        git reset --hard HEAD~1
-        git push --force
+      continue-on-error: true
+      uses: hamzabalazs/undo-push@v1
+      with:
+        branch: ${{ github.event.inputs.branch }}
+      
     if: |
        needs.build-frontend.outputs.outcome != 'success' &&
        needs.build-backend.outputs.outcome != 'success'
